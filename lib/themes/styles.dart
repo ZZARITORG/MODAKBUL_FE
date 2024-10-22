@@ -27,18 +27,18 @@ extension CustomStyles on TextTheme {
       fontSize: 16.0, fontWeight: FontWeight.w700, letterSpacing: -0.5);
 
   TextStyle get smallHeadLine1 => const TextStyle(
-      fontSize: 18.0, fontWeight: FontWeight.w600, letterSpacing: 0.25);
+      fontSize: 20.0, fontWeight: FontWeight.w600, letterSpacing: 0.25);
   TextStyle get smallHeadLine2 => const TextStyle(
       fontSize: 18.0, fontWeight: FontWeight.w600, letterSpacing: 0.25);
   TextStyle get smallHeadLine3 => const TextStyle(
-      fontSize: 18.0, fontWeight: FontWeight.w600, letterSpacing: 0.25);
+      fontSize: 16.0, fontWeight: FontWeight.w600, letterSpacing: 0.25);
 
   TextStyle get body1 => const TextStyle(
       fontSize: 18.0, fontWeight: FontWeight.w500, letterSpacing: 1.25);
   TextStyle get body2 => const TextStyle(
-      fontSize: 18.0, fontWeight: FontWeight.w500, letterSpacing: 1.25);
+      fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 1.25);
   TextStyle get body3 => const TextStyle(
-      fontSize: 18.0, fontWeight: FontWeight.w500, letterSpacing: 1.25);
+      fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: 1.25);
 
   TextStyle get caption => const TextStyle(
       fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 1.25);
