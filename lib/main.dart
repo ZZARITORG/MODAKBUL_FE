@@ -4,7 +4,15 @@ import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ScreenUtilInit(
+      designSize: const Size(393, 852), // 디자인 기준의 크기 (너비, 높이)
+      minTextAdapt: true,
+      builder: (context, child) {
+        return MyApp(); // Your root widget
+      },
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,14 +21,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-        designSize: const Size(393, 852),
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          routes: Routes.routes,
-          theme: Styles.kThemeData,
-          home: const MyHomePage(title: '테스트'),
-        ));
+    return MaterialApp(
+      title: 'Flutter Demo',
+      routes: Routes.routes,
+      theme: Styles.kThemeData,
+      home: const MyHomePage(title: '테스트'),
+    );
   }
 }
 
