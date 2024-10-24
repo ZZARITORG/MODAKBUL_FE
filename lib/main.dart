@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ScreenUtilInit(
+      designSize: const Size(393, 852), // 디자인 기준의 크기 (너비, 높이)
+      minTextAdapt: true,
+      builder: (context, child) {
+        return MyApp(); // Your root widget
+      },
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -69,7 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title, style: Theme.of(context).textTheme.bigHeadLine2,),
+        title: Text(
+          widget.title,
+          style: Theme.of(context).textTheme.bigHeadLine2,
+        ),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
