@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class ColorSchemes {
 
   ColorSchemes._();
@@ -16,17 +18,18 @@ class ColorSchemes {
 
   static const Color red = Color(0xFFFF6464);
 
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color black = Color(0xFF000000);
+  static const Color white = Colors.white;
+  static const Color black = Colors.black;
 
-  static const Color primaryColor = Color(0xFFFFA564);
-  static const Color primaryColorLight = Color(0xFFFFA564);
-
-  //static const Color blackColor;
-  //static const Color whiteColor;
-  //static const Color redColor;
-
-  static const Color grayColorDark = Color(0xFF17171B);
-  static const Color grayColorMedium = Color(0xFF4D4D4D);
-  static const Color grayColorLight = Color(0xFF666666);
+  /** static const ColorScheme kColorScheme = ColorScheme(
+    primary: orange200,
+    secondary: orange100,
+    surface: white,
+    error: red,
+    onError: red,
+    onPrimary: orange200,
+    onSecondary: orange100,
+    onSurface: white,
+    brightness: Brightness.light,
+  ); */
 }
