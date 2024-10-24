@@ -22,7 +22,7 @@ class Styles {
   static AppBarTheme kAppAppBarTheme = const AppBarTheme(
     color: Colors.white,
     scrolledUnderElevation: 0,
-    titleSpacing: 16,
+    titleSpacing: 16, //여기 디폴트패딩 상수로 넣기
   );
 
   ///BottomSheet 테마
