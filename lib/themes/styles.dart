@@ -16,6 +16,7 @@ class Styles {
     appBarTheme: kAppAppBarTheme,
     bottomSheetTheme: kBottomSheetThemeData,
     elevatedButtonTheme: kElevatedButtonThemeData,
+    iconButtonTheme: kIconButtonThemeData,
     useMaterial3: true,
   );
 
@@ -43,6 +44,13 @@ class Styles {
           borderRadius: BorderRadius.circular(14),
         ),
       ));
+
+  ///IconButton 테마
+  static IconButtonThemeData kIconButtonThemeData =
+  const IconButtonThemeData(
+    style: ButtonStyle(
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    ),);
 
 /** static TextTheme textTheme = TextTheme(
     ); */
