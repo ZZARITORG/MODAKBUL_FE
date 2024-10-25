@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/constants/style_constants.dart';
 
 import 'color_schemes.dart';
 
@@ -24,7 +25,7 @@ class Styles {
   static AppBarTheme kAppAppBarTheme = AppBarTheme(
     color: Colors.white,
     scrolledUnderElevation: 0,
-    titleSpacing: 16.w,
+    titleSpacing: StyleConstants.defaultPadding,
   );
 
   ///BottomSheet 테마
@@ -41,7 +42,7 @@ class Styles {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
         ),
       ));
 
