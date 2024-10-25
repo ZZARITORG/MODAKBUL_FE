@@ -28,14 +28,11 @@ class AlertListTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 40,
-            width: 40,
-            child: CircleAvatar(
-              backgroundColor: ColorSchemes.gray100,
+          CircleAvatar(
+            radius: StyleConstants.circleSizeM,
+            backgroundColor: ColorSchemes.gray100,
 
-              ///이미지 영역
-            ),
+            ///이미지 영역
           ),
           const SizedBox(
             width: 6,
