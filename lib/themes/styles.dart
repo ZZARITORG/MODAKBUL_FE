@@ -28,21 +28,21 @@ class Styles {
 
   ///BottomSheet 테마
   static BottomSheetThemeData kBottomSheetThemeData =
-      const BottomSheetThemeData(
+  const BottomSheetThemeData(
     backgroundColor: ColorSchemes.white,
   );
 
   ///ElevatedButton 테마
   static ElevatedButtonThemeData kElevatedButtonThemeData =
-      ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-    minimumSize: Size.zero,
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    elevation: 0,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(14),
-    ),
-  ));
+  ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ));
 
 /** static TextTheme textTheme = TextTheme(
     ); */
