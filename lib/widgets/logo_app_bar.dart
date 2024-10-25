@@ -3,11 +3,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String appBarType;
+  final VoidCallback? onActionPressed;
 
-  const LogoAppBar({Key? key, this.appBarType = 'basic'}) : super(key: key);
+  const LogoAppBar({Key? key, this.appBarType = 'basic', this.onActionPressed})
+      : super(key: key);
 
-  factory LogoAppBar.actions() => const LogoAppBar(
+  factory LogoAppBar.actions({required VoidCallback onActionPressed}) =>
+      LogoAppBar(
         appBarType: 'action',
+        onActionPressed: onActionPressed,
       );
 
   @override
@@ -18,10 +22,10 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         if (appBarType == 'action')
           IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            onPressed: (){},
-            icon: SvgPicture.asset('아이콘 경로')),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onPressed: onActionPressed,
+              icon: SvgPicture.asset('아이콘 경로')),
       ],
     );
   }
