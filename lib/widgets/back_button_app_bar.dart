@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class BackButtonAppBar extends StatelessWidget {
-  final String appBarType;
+  final bool isActionButton;
   final VoidCallback? onActionPressed;
 
-  const BackButtonAppBar({Key? key, this.appBarType = 'basic', this.onActionPressed}) : super(key: key);
+  const BackButtonAppBar({Key? key, this.isActionButton = false, this.onActionPressed}) : super(key: key);
 
   factory BackButtonAppBar.actions({required VoidCallback onActionPressed}) =>
       BackButtonAppBar(
-        appBarType: 'action',
+        isActionButton: true,
         onActionPressed: onActionPressed,
       );
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: false, ///스타일로 옮기기
       automaticallyImplyLeading: false,
       leading: IconButton(
           padding: EdgeInsets.zero,
@@ -23,7 +24,7 @@ class BackButtonAppBar extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
           icon: SvgPicture.asset('아이콘 경로')),
       actions: [
-        if (appBarType == 'action')
+        if (isActionButton)
           IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
