@@ -39,6 +39,7 @@ class Styles {
   ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         minimumSize: Size.zero,
+        padding: EdgeInsets.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         elevation: 0,
         shape: RoundedRectangleBorder(
