@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/widgets/user_list_profile.dart';
 
 void main() {
   runApp(
@@ -105,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
+            UserListProfile(userName: 'userName', userId: 'userId'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
