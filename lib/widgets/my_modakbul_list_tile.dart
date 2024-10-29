@@ -27,8 +27,7 @@ class MyModakbulListTile extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
       ),
-      color: ColorSchemes.orange000,
-
+      color: ColorSchemes.white,
       ///clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.zero,
       elevation: 0,
