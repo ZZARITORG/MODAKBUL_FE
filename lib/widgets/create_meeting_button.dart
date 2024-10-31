@@ -24,9 +24,7 @@ class CreateMeetingButton extends StatelessWidget {
       width: 361.w,
       height: 62.h,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        color: Colors.white
-      ),
+          borderRadius: BorderRadius.circular(14), color: Colors.white),
       padding: EdgeInsets.fromLTRB(16.w, 17.h, 16.w, 17.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,7 +37,10 @@ class CreateMeetingButton extends StatelessWidget {
               ),
               Text(
                 type,
-                style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray400),
+                style: Theme.of(context)
+                    .textTheme
+                    .smallHeadLine2
+                    .copyWith(color: ColorSchemes.gray400),
               ),
             ],
           ),
@@ -52,7 +53,10 @@ class CreateMeetingButton extends StatelessWidget {
                   icon: SvgPicture.asset('assets/icons/dd')),
               Text(
                 content,
-                style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.orange200),
+                style: Theme.of(context)
+                    .textTheme
+                    .smallHeadLine3
+                    .copyWith(color: ColorSchemes.orange200),
               ),
             ],
           ),
