@@ -20,4 +20,3 @@ class StyleConstants {
 
   static final double defaultPadding = 16.r;
 }
-
