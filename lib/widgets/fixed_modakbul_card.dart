@@ -19,72 +19,77 @@ class FixedModakbulCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(14.w, 24.h, 21.w, 18.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 250.w,
-              height: 48.h,
-              child: Text(
+    return SizedBox(
+      width: 285.w,
+      height: 154,
+      child: Card(
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(
+            StyleConstants.radiusMedium)),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 24.h, 14.w, 18.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
                 title,
-
+              maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context)
                       .textTheme.bigHeadLine4
-                      .copyWith(color: ColorSchemes.gray400)
+                      .copyWith(color: ColorSchemes.gray400,
+                  height: 1.1935)
+              ),
+              SizedBox(height: 14.h),
+              Row(
+               children: [
+                 SizedBox(
+                   width: 20.w,
+                   height: 20.h,
+                   child: SvgPicture.asset(
+                     'assets/icons/Group 3336.svg'
+                   ),
+                 ),
+                 SizedBox(
+                   width: 4.w,
+                 ),
+                 Text(
+                   date,
+                     style: Theme.of(context)
+                         .textTheme.body3
+                         .copyWith(color: ColorSchemes.orange001,
+                         height: 1.5714)
+                 )
+               ],
+              ),
+              SizedBox(
+                  height: 6.h
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20.w,
+                    height: 20.h,
+                    child: SvgPicture.asset(
+                        'assets/icons/Subtract.svg'
+                    ),
+                  ),
+                  SizedBox(
+                    width: 4.w,
+                  ),
+                  Text(
+                      location,
+                      style: Theme.of(context)
+                          .textTheme.body3
+                          .copyWith(color: ColorSchemes.orange001,
+                          height: 1.5714)
+                  )
+                ],
               ),
 
-
-            ),
-            SizedBox(height: 14.h),
-            Row(
-             children: [
-               SizedBox(
-                 width: 20.w,
-                 height: 20.h,
-                 child: SvgPicture.asset(
-                   'assets/icons/Group 3336.svg'
-                 ),
-               ),
-               SizedBox(
-                 width: 4.w,
-               ),
-               Text(
-                 date,
-                   style: Theme.of(context)
-                       .textTheme.body3
-                       .copyWith(color: ColorSchemes.orange001)
-               )
-             ],
-            ),
-            SizedBox(
-                height: 6.h
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 20.w,
-                  height: 20.h,
-                  child: SvgPicture.asset(
-                      'assets/icons/Subtract.svg'
-                  ),
-                ),
-                SizedBox(
-                  width: 4.w,
-                ),
-                Text(
-                    location,
-                    style: Theme.of(context)
-                        .textTheme.body3
-                        .copyWith(color: ColorSchemes.orange001)
-                )
-              ],
-            ),
-
-          ],
+            ],
+          ),
         ),
       ),
     );
