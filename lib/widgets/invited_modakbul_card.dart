@@ -168,6 +168,7 @@ class InvitedModakbulCard extends StatelessWidget {
               SizedBox(height: 16.h),
               Divider(
                 height:1.h ,
+                thickness: 1.h,
                 color: ColorSchemes.gray100,
               ),
               SizedBox(height: 16.h),
