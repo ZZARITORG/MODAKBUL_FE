@@ -15,6 +15,8 @@ class ColorSchemes {
   static const Color orange000 = Color(0xFFFFF2E9);
   static const Color orange100 = Color(0xFFFFC0AA);
   static const Color orange200 = Color(0xFFFF8B64);
+  static const Color orange001 = Color(0xFFFFC0AA);
+
 
   static const Color red = Color(0xFFFF6464);
 
