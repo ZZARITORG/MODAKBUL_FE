@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // InvitedModakbulCard를 추가
             InvitedModakbulCard(
               profileImage1: 'https://example.com/profile.jpg', // 프로필 이미지 URL 또는 리스트
-              profileLength: 2,
+              profileLength: 4,
               userName: '김지호',
               userId: 'kim_jjO',
               title: '편의점에서 간단하게 맥주 먹을 사람!',
