@@ -21,8 +21,9 @@ class FixedModakbulCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 285.w,
-      height: 154,
+      height: 154.h,
       child: Card(
+        color: Colors.white,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(
