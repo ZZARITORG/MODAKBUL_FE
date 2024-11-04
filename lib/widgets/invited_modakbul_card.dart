@@ -224,8 +224,8 @@ class InvitedModakbulCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 20,
-                      width: 20,
+                      height: 20.h,
+                      width: 20.w,
                       child: SvgPicture.asset('assets/icons/Group 3336.svg'),
                     ),
                     SizedBox(width: 4.w),
@@ -243,8 +243,8 @@ class InvitedModakbulCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 20,
-                      width: 20,
+                      height: 20.h,
+                      width: 20.w,
                       child: SvgPicture.asset('assets/icons/Subtract.svg'),
                     ),
                     SizedBox(width: 4.w),
