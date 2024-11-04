@@ -61,18 +61,23 @@ class InvitedModakbulCard extends StatelessWidget {
                           children: [
                             Text(
                               userName,
-                              style: Theme.of(context)
+                              style: Theme
+                                  .of(context)
                                   .textTheme
                                   .smallHeadLine3
-                                  .copyWith(color: ColorSchemes.gray400),
+                                  .copyWith(color: ColorSchemes.gray400,
+                              height: 1.193),
+
                             ),
                             SizedBox(height: 2.h),
                             Text(
                               userId,
-                              style: Theme.of(context)
+                              style: Theme
+                                  .of(context)
                                   .textTheme
                                   .body3
-                                  .copyWith(color: ColorSchemes.gray300),
+                                  .copyWith(color: ColorSchemes.gray300,
+                                  height:1.571),
                             ),
                           ],
                         ),
@@ -85,10 +90,12 @@ class InvitedModakbulCard extends StatelessWidget {
                           children: [
                             Text(
                               '참여자가 없습니다',
-                              style: Theme.of(context)
+                              style: Theme
+                                  .of(context)
                                   .textTheme
                                   .body3
-                                  .copyWith(color: ColorSchemes.gray200),
+                                  .copyWith(color: ColorSchemes.gray200,
+                                  height:1.571),
                             ),
                             SizedBox(width: 6.w),
                             IconButton(
@@ -161,10 +168,12 @@ class InvitedModakbulCard extends StatelessWidget {
                             SizedBox(width: 7.w),
                             Text(
                               '${profileLength - 1}명',
-                              style: Theme.of(context)
+                              style: Theme
+                                  .of(context)
                                   .textTheme
                                   .body3
-                                  .copyWith(color: ColorSchemes.gray200),
+                                  .copyWith(color: ColorSchemes.gray200,
+                                  height:1.571),
                             ),
                             SizedBox(width: 6.w),
                             IconButton(
@@ -185,12 +194,14 @@ class InvitedModakbulCard extends StatelessWidget {
                 SizedBox(
                   width: 329.w,
                   child: Text(
-                    title,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme
-                        .smallHeadLine1
-                        .copyWith(color: ColorSchemes.gray500),
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .smallHeadLine1
+                          .copyWith(color: ColorSchemes.gray500,
+                          height:1.194)
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -200,10 +211,12 @@ class InvitedModakbulCard extends StatelessWidget {
                     description,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                    style: Theme.of(context)
+                    style: Theme
+                        .of(context)
                         .textTheme
                         .body3
-                        .copyWith(color: ColorSchemes.gray300),
+                        .copyWith(color: ColorSchemes.gray300,
+                        height:1.714),
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -231,10 +244,12 @@ class InvitedModakbulCard extends StatelessWidget {
                     SizedBox(width: 4.w),
                     Text(
                       date,
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .body3
-                          .copyWith(color: ColorSchemes.orange200),
+                          .copyWith(color: ColorSchemes.orange200,
+                          height:1.571),
                     ),
                   ],
                 ),
@@ -250,10 +265,12 @@ class InvitedModakbulCard extends StatelessWidget {
                     SizedBox(width: 4.w),
                     Text(
                       location,
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .body3
-                          .copyWith(color: ColorSchemes.orange200),
+                          .copyWith(color: ColorSchemes.orange200,
+                          height:1.571),
                     ),
                   ],
                 ),
