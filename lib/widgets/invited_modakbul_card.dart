@@ -32,184 +32,235 @@ class InvitedModakbulCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color:Colors.white,
+      color: Colors.white,
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(StyleConstants.radiusMedium)),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 24.h),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // 1. 상단 사용자 정보 영역
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: StyleConstants.circleSizeXS,
-                  ),
-                  SizedBox(width: 4.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        userName,
-                        style: Theme.of(context)
-                            .textTheme
-                            .smallHeadLine3
-                            .copyWith(color: ColorSchemes.gray400),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        userId,
-                        style: Theme.of(context)
-                            .textTheme
-                            .body3
-                            .copyWith(color: ColorSchemes.gray300),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  profileLength == 1
-                      ? Center(
-                          child: Text(
-                            '참여자가 없습니다',
-                            style: Theme.of(context)
-                                .textTheme
-                                .body3
-                                .copyWith(color: ColorSchemes.gray200),
-                          ),
+        borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 0.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. 상단 사용자 정보 영역
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: StyleConstants.circleSizeXS,
+                        ),
+                        SizedBox(width: 4.w),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              userName,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .smallHeadLine3
+                                  .copyWith(color: ColorSchemes.gray400),
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              userId,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body3
+                                  .copyWith(color: ColorSchemes.gray300),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        profileLength == 1
+                            ? Row(
+                          children: [
+                            Text(
+                              '참여자가 없습니다',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body3
+                                  .copyWith(color: ColorSchemes.gray200),
+                            ),
+                            SizedBox(width: 6.w),
+                            IconButton(
+                              onPressed: () {},
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              icon: SvgPicture.asset(
+                                  'assets/icons/Vector 7.svg'),
+                            ),
+                          ],
                         )
-                      : SizedBox(
-                    width: profileLength >= 4 ? 84.w : (profileLength == 3 ? 60.w : 36.w),
-                    child: Stack(
-
-                            children: [
-                              if (profileLength >= 2)
-                                Positioned(
-
-
-                                  child: CircleAvatar(
-                                    radius: StyleConstants.circleSizeXXXXXS,
-                                    backgroundColor: ColorSchemes.white,
-                                    child: CircleAvatar(
-                                      radius: StyleConstants.circleSizeXXXXXXS,
-                                      backgroundColor: ColorSchemes.orange200,
+                            : Row(
+                          children: [
+                            SizedBox(
+                              width: profileLength >= 4
+                                  ? 84.w
+                                  : (profileLength == 3 ? 60.w : 36.w),
+                              child: Stack(
+                                children: [
+                                  if (profileLength >= 2)
+                                    Positioned(
+                                      child: CircleAvatar(
+                                        radius: StyleConstants
+                                            .circleSizeXXXXXS,
+                                        backgroundColor:
+                                        ColorSchemes.white,
+                                        child: CircleAvatar(
+                                          radius: StyleConstants
+                                              .circleSizeXXXXXXS,
+                                          backgroundColor:
+                                          ColorSchemes.orange200,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              if (profileLength >= 3)
-                                Positioned(
-                                  left: 24.w,
-                                  child: CircleAvatar(
-                                    radius: StyleConstants.circleSizeXXXXXS,
-                                    backgroundColor: ColorSchemes.white,
-                                    child: CircleAvatar(
-                                      radius: StyleConstants.circleSizeXXXXXXS,
-                                      backgroundColor: ColorSchemes.orange100,
+                                  if (profileLength >= 3)
+                                    Positioned(
+                                      left: 24.w,
+                                      child: CircleAvatar(
+                                        radius: StyleConstants
+                                            .circleSizeXXXXXS,
+                                        backgroundColor:
+                                        ColorSchemes.white,
+                                        child: CircleAvatar(
+                                          radius: StyleConstants
+                                              .circleSizeXXXXXXS,
+                                          backgroundColor:
+                                          ColorSchemes.orange100,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              if (profileLength >= 4)
-                                Positioned(
-                                  left: 48.w,
-                                  child: CircleAvatar(
-                                    radius: StyleConstants.circleSizeXXXXXS,
-                                    backgroundColor: ColorSchemes.white,
-                                    child: CircleAvatar(
-                                      radius: StyleConstants.circleSizeXXXXXXS,
-                                      backgroundColor: ColorSchemes.orange000,
+                                  if (profileLength >= 4)
+                                    Positioned(
+                                      left: 48.w,
+                                      child: CircleAvatar(
+                                        radius: StyleConstants
+                                            .circleSizeXXXXXS,
+                                        backgroundColor:
+                                        ColorSchemes.white,
+                                        child: CircleAvatar(
+                                          radius: StyleConstants
+                                              .circleSizeXXXXXXS,
+                                          backgroundColor:
+                                          ColorSchemes.orange000,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                      ),
-                  SizedBox(width: 7.w),
-                  Text('${profileLength-1}명',
-                      style: Theme.of(context)
-                          .textTheme
-                          .body3
-                          .copyWith(color: ColorSchemes.gray200)),
-                  SizedBox(width: 6.w),
-                  IconButton(
-                      onPressed: () {},
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: SvgPicture.asset('assets/icons/Vector 7.svg'))
-                ], //children
-              ),
-            ],
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 7.w),
+                            Text(
+                              '${profileLength - 1}명',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body3
+                                  .copyWith(color: ColorSchemes.gray200),
+                            ),
+                            SizedBox(width: 6.w),
+                            IconButton(
+                              onPressed: () {},
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              icon: SvgPicture.asset(
+                                  'assets/icons/Vector 7.svg'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                // 2. 모임 제목과 설명
+                SizedBox(
+                  width: 329.w,
+                  child: Text(
+                    title,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context)
+                        .textTheme
+                        .smallHeadLine1
+                        .copyWith(color: ColorSchemes.gray500),
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                SizedBox(
+                  width: 329.w,
+                  child: Text(
+                    description,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: Theme.of(context)
+                        .textTheme
+                        .body3
+                        .copyWith(color: ColorSchemes.gray300),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+              ],
+            ),
           ),
-          SizedBox(height: 8.h),
-
-          // 2. 모임 제목과 설명
-          SizedBox(
-            width: 329.w,
-            child: Text(title,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .smallHeadLine1
-                    .copyWith(color: ColorSchemes.gray500)),
-          ),
-          SizedBox(height: 8.h),
-          SizedBox(
-            width: 329.w,
-            child: Text(description,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .body3
-                    .copyWith(color: ColorSchemes.gray300)),
-          ),
-          SizedBox(height: 16.h),
           Divider(
             height: 1.h,
             thickness: 1.h,
             color: ColorSchemes.gray100,
           ),
-          SizedBox(height: 16.h),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 20.h,
-                width: 20.w,
-                child: SvgPicture.asset('assets/icons/Group 3336.svg'),
-              ),
-              SizedBox(width: 4.w),
-              Text(date,
-                  style: Theme.of(context)
-                      .textTheme
-                      .body3
-                      .copyWith(color: ColorSchemes.orange200)),
-              SizedBox(height: 6.h),
-            ],
+          Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: SvgPicture.asset('assets/icons/Group 3336.svg'),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      date,
+                      style: Theme.of(context)
+                          .textTheme
+                          .body3
+                          .copyWith(color: ColorSchemes.orange200),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: SvgPicture.asset('assets/icons/Subtract.svg'),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      location,
+                      style: Theme.of(context)
+                          .textTheme
+                          .body3
+                          .copyWith(color: ColorSchemes.orange200),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 20.h,
-                width: 20.w,
-                child: SvgPicture.asset('assets/icons/Subtract.svg'),
-              ),
-              SizedBox(width: 4.w),
-              Text(location,
-                  style: Theme.of(context)
-                      .textTheme
-                      .body3
-                      .copyWith(color: ColorSchemes.orange200)),
-            ],
-          ),
-        ]),
+        ],
       ),
     );
   }
