@@ -1,26 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class SkeletonLoader extends StatelessWidget {
-  final double width;
-  final double height;
-  final BorderRadiusGeometry borderRadius;
-
-  const SkeletonLoader({
-    Key? key,
-    required this.width,
-    required this.height,
-    this.borderRadius = const BorderRadius.all(Radius.circular(14)),
-  }) : super(key: key);
+class HomeScreenSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-
-      ),
+    return Scaffold(
+      appBar: 
+      TabBar(tabs: tabs),
     );
   }
 }
+

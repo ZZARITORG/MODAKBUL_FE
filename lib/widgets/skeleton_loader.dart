@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../themes/color_schemes.dart';
 
 class SkeletonLoader extends StatelessWidget {
   final double width;
@@ -19,7 +20,8 @@ class SkeletonLoader extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-
+        borderRadius: borderRadius,
+        color: ColorSchemes.gray200,
       ),
     );
   }
