@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 
@@ -53,13 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(
-          widget.title,
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-      ),
+      appBar: BackButtonAppBar.actions(onActionPressed: (){}),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
