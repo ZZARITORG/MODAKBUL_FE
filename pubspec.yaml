@@ -38,6 +38,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.10+1
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -61,7 +62,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/fonts/
-    - assets/icons/
+    - assets/icons/Vector 7.svg
+    - assets/icons/Group 3336.svg
+    - assets/icons/Subtract.svg
     - assets/images/
 
   fonts:
