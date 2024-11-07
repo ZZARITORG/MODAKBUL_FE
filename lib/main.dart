@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
+import 'package:modakbul/widgets/custom_search_bar.dart';
 
 void main() {
   runApp(
@@ -66,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            CreateMeetingButton(type: 'type', content: 'content', onPressed: (){}, icon: 'icon'),
+            CustomSearchBar(hintText: 'hintText'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
