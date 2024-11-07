@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/constants/style_constants.dart';
 
 class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isActionButton;
@@ -22,11 +26,18 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: SvgPicture.asset('아이콘 경로'),
       actions: [
         if (isActionButton)
-          IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onPressed: onActionPressed,
-              icon: SvgPicture.asset('아이콘 경로')),
+          Padding(
+            padding: EdgeInsets.only(right: StyleConstants.defaultPadding),
+            child: SizedBox(
+              height: 24.h,
+              width: 24.w,
+              child: IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: onActionPressed,
+                  icon: SvgPicture.asset(IconPath.notifications)),
+            ),
+          ),
       ],
     );
   }

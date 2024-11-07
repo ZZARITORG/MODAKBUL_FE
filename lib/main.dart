@@ -5,6 +5,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/logo_app_bar.dart';
 
 void main() {
   runApp(
@@ -54,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackButtonAppBar.actions(onActionPressed: (){}),
+      appBar: LogoAppBar.actions(onActionPressed: (){}),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
