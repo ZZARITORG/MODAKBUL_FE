@@ -35,6 +35,7 @@ class MyModakbulListTile extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.fromLTRB(18.w, 8.h, 18.w, 42.h),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             SizedBox(
               height: 24.r,
@@ -77,7 +78,7 @@ class MyModakbulListTile extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 98.w,
+                  width: 98.r,
                   child: Stack(
                     children: [
                       if (profileLength >= 1)
@@ -92,7 +93,7 @@ class MyModakbulListTile extends StatelessWidget {
                         )),
                       if (profileLength >= 2)
                         Positioned(
-                            left: 28.w,
+                            left: 28.r,
                             child: CircleAvatar(
                               radius: StyleConstants.circleSizeXS,
                               backgroundColor: ColorSchemes.white,
@@ -103,7 +104,7 @@ class MyModakbulListTile extends StatelessWidget {
                             )),
                       if (profileLength >= 3)
                         Positioned(
-                            left: 56.w,
+                            left: 56.r,
                             child: CircleAvatar(
                               radius: StyleConstants.circleSizeXS,
                               backgroundColor: ColorSchemes.white,

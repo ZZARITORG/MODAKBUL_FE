@@ -6,6 +6,7 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
+import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 
 void main() {
   runApp(
@@ -63,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            CustomSearchBar(hintText: 'hintText'),
+            MyModakbulListTile(title: 'd', time: 'd', profileLength: 5),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
