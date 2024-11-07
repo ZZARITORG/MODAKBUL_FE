@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 
@@ -21,8 +22,7 @@ class CreateMeetingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 361.w,
-      height: 62.h,
+      width: double.infinity,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14), color: Colors.white),
       padding: EdgeInsets.fromLTRB(16.w, 17.h, 16.w, 17.h),
@@ -32,32 +32,30 @@ class CreateMeetingButton extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 28.w,
-                height: 28.h,
+                width: 32.r,
+                height: 32.r,
+                child: SvgPicture.asset(icon, fit: BoxFit.scaleDown),
               ),
               Text(
                 type,
                 style: Theme.of(context)
                     .textTheme
                     .smallHeadLine2
-                    .copyWith(color: ColorSchemes.gray400),
+                    .copyWith(color: ColorSchemes.orange200),
               ),
             ],
           ),
           Row(
             children: [
-              IconButton(
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  onPressed: onPressed,
-                  icon: SvgPicture.asset('assets/icons/dd')),
               Text(
                 content,
                 style: Theme.of(context)
                     .textTheme
                     .smallHeadLine3
-                    .copyWith(color: ColorSchemes.orange200),
+                    .copyWith(color: ColorSchemes.gray400),
               ),
+              SizedBox(width: 11.w),
+              SvgPicture.asset(IconPath.arrowForward15Gray200),
             ],
           ),
         ],

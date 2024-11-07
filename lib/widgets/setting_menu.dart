@@ -7,18 +7,19 @@ import 'package:modakbul/themes/styles.dart';
 class SettingMenu extends StatelessWidget {
   final String menu;
   final VoidCallback? onPressed;
+  final String icon;
 
   const SettingMenu({
     Key? key,
     required this.menu,
     required this.onPressed,
+    required this.icon,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 361.w,
-      height: 35.h,
+      width: double.infinity,
       decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(color: ColorSchemes.gray100, width: 1.w),
@@ -30,15 +31,16 @@ class SettingMenu extends StatelessWidget {
           children: [
             Row(
               children: [
-                SvgPicture.asset('assets/icons/Rectangle 97.svg'),
-                Padding(
-                  padding: EdgeInsets.only(left: 9.w),
-                  child: Text(menu,
+                SizedBox(
+                    width: 24.r,
+                    height: 24.r,
+                    child: SvgPicture.asset(icon, fit: BoxFit.scaleDown)),
+                SizedBox(width: 2.w),
+                Text(menu,
                       style: Theme.of(context)
                           .textTheme
                           .body2
                           .copyWith(color: ColorSchemes.gray500)),
-                ),
               ],
             ),
             Text('0.1.0',
