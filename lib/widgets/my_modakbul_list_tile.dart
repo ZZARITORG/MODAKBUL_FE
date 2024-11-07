@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -42,7 +43,7 @@ class MyModakbulListTile extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: (){},
-                  icon: SvgPicture.asset('아이콘 경로')),
+                  icon: SvgPicture.asset(IconPath.moreHorizontal)),
             ),
             SizedBox(
               height: 10.h,
