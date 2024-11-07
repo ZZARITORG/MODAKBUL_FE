@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/invited_modakbul_card.dart';
+import 'package:modakbul/widgets/create_meeting_button.dart';
+
 
 void main() {
   runApp(
@@ -65,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
+            CreateMeetingButton(type: 'type', content: 'content', onPressed: (){}, icon: 'icon'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
