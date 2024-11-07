@@ -6,6 +6,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/content_info.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/setting_menu.dart';
 import 'package:modakbul/widgets/user_info_check.dart';
 
 void main() {
@@ -70,7 +71,6 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            UserInfoCheck(text: '참여자 정보를 확인하세요.', onPressed: () {}),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
