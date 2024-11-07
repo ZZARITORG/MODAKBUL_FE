@@ -4,7 +4,6 @@ import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 
-
 void main() {
   runApp(
     ScreenUtilInit(
@@ -35,6 +34,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
 
+
   final String title;
 
   @override
@@ -54,8 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(
           widget.title,
           style: Theme.of(context).textTheme.headlineMedium,
