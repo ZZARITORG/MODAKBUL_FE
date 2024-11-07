@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/back_button_app_bar.dart';
+import 'package:modakbul/widgets/content_info.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
-import 'package:modakbul/widgets/logo_app_bar.dart';
-import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
+import 'package:modakbul/widgets/setting_menu.dart';
+import 'package:modakbul/widgets/user_info_check.dart';
 
 void main() {
   runApp(
@@ -64,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            MyModakbulListTile(title: 'd', time: 'd', profileLength: 5),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
