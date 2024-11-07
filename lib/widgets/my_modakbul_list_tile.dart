@@ -37,13 +37,13 @@ class MyModakbulListTile extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 24.h,
-              width: 24.w,
+              height: 24.r,
+              width: 24.r,
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: (){},
-                  icon: SvgPicture.asset(IconPath.moreHorizontal)),
+                  icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
             ),
             SizedBox(
               height: 10.h,

@@ -16,16 +16,15 @@ class CustomSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 50.h,
       child: TextField(
           style: Theme.of(context).textTheme.body1.copyWith(color: ColorSchemes.gray500),
           cursorColor: Theme.of(context).primaryColorLight, //바뀔 수도 있음
           decoration: InputDecoration(
             prefixIcon: Padding(
-              padding: EdgeInsets.only(left: 14.w, right: 4.w),
+              padding: EdgeInsets.only(left: 14.w, right: 4.w, top: 13.h, bottom: 13.h),
               child: SizedBox(
-                height: 24.h,
-                width: 24.w,
+                height: 24.r,
+                width: 24.r,
                 child: SvgPicture.asset(
                   IconPath.search,
                   fit: BoxFit.scaleDown,
@@ -33,8 +32,8 @@ class CustomSearchBar extends StatelessWidget {
               ),
             ),
             prefixIconConstraints: BoxConstraints(
-              minWidth: 24.w,
-              minHeight: 24.h,
+              minWidth: 24.r,
+              minHeight: 24.r,
             ),
             hintText: hintText,
             hintStyle: Theme.of(context).textTheme.body1.copyWith(color: ColorSchemes.gray200),

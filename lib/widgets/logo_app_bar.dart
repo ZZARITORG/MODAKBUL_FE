@@ -29,13 +29,13 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
           Padding(
             padding: EdgeInsets.only(right: StyleConstants.defaultPadding),
             child: SizedBox(
-              height: 24.h,
-              width: 24.w,
+              height: 32.r,
+              width: 32.r,
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: onActionPressed,
-                  icon: SvgPicture.asset(IconPath.notifications)),
+                  icon: SvgPicture.asset(IconPath.notifications, fit: BoxFit.scaleDown,)),
             ),
           ),
       ],

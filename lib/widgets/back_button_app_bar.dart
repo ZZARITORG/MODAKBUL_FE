@@ -40,13 +40,13 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
           Padding(
             padding: EdgeInsets.only(right: StyleConstants.defaultPadding),
             child: SizedBox(
-              height: 24.h,
-              width: 24.w,
+              height: 24.r,
+              width: 24.r,
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: onActionPressed,
-                  icon: SvgPicture.asset(IconPath.moreHorizontal)),
+                  icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
             ),
           ),
       ],
