@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/fixed_modakbul_card.dart'; // FixedModakbulCard 파일 import 추가
+import 'package:modakbul/widgets/create_meeting_button.dart';
 
 void main() {
   runApp(
@@ -33,13 +33,22 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
+
+
   final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-
 class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,11 +60,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Center(
-        child: FixedModakbulCard(
-          title: '편의점에서 간단하게 맥주 먹을 사람!',
-          date: '10.1(화) 오후 7시',
-          location: 'GS25 세운푸르지오점',
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'You have pushed the button this many times:',
+            ),
+            CreateMeetingButton(type: 'type', content: 'content', onPressed: (){}, icon: 'icon'),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 20),
+          ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
       ),
     );
   }
