@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/main.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -21,7 +22,7 @@ class AlertListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 18, 12, 9),
+      padding: EdgeInsets.fromLTRB(12.w, 18.h, 12.w, 9.h),
       decoration: BoxDecoration(
           color: ColorSchemes.white,
           borderRadius: BorderRadius.circular(StyleConstants.radiusMedium)),
@@ -34,8 +35,8 @@ class AlertListTile extends StatelessWidget {
 
             ///이미지 영역
           ),
-          const SizedBox(
-            width: 6,
+          SizedBox(
+            width: 6.w,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,16 +48,16 @@ class AlertListTile extends StatelessWidget {
                     .bigHeadLine5
                     .copyWith(color: Theme.of(context).primaryColor),
               ),
-              const SizedBox(
-                height: 4,
+              SizedBox(
+                height: 4.h,
               ),
               Text(content,
                   style: Theme.of(context)
                   .textTheme
                   .body2
                   .copyWith(color: ColorSchemes.gray400),),
-              const SizedBox(
-                height: 8,
+              SizedBox(
+                height: 8.h,
               ),
               Text(time,
                 style: Theme.of(context)
