@@ -49,7 +49,7 @@ class FixedModakbulCard extends StatelessWidget {
                    width: 20.w,
                    height: 20.h,
                    child: SvgPicture.asset(
-                     'assets/icons/Group 3336.svg'
+                     'assets/icons/time_orange100.svg'
                    ),
                  ),
                  SizedBox(
@@ -73,7 +73,7 @@ class FixedModakbulCard extends StatelessWidget {
                     width: 20.w,
                     height: 20.h,
                     child: SvgPicture.asset(
-                        'assets/icons/Subtract.svg'
+                        'assets/icons/pin_drop_orange100.svg'
                     ),
                   ),
                   SizedBox(

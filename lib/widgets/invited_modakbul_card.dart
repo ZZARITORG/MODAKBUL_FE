@@ -103,7 +103,7 @@ class InvitedModakbulCard extends StatelessWidget {
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               icon: SvgPicture.asset(
-                                  'assets/icons/Vector 7.svg'),
+                                  'assets/icons/arrow_forward_1.5_gray200.svg'),
                             ),
                           ],
                         )
@@ -181,7 +181,7 @@ class InvitedModakbulCard extends StatelessWidget {
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               icon: SvgPicture.asset(
-                                  'assets/icons/Vector 7.svg'),
+                                  'assets/icons/arrow_forward_1.5_gray200.svg'),
                             ),
                           ],
                         ),
@@ -239,7 +239,7 @@ class InvitedModakbulCard extends StatelessWidget {
                     SizedBox(
                       height: 20.h,
                       width: 20.w,
-                      child: SvgPicture.asset('assets/icons/Group 3336.svg'),
+                      child: SvgPicture.asset('assets/icons/time_orange200.svg'),
                     ),
                     SizedBox(width: 4.w),
                     Text(
@@ -260,7 +260,7 @@ class InvitedModakbulCard extends StatelessWidget {
                     SizedBox(
                       height: 20.h,
                       width: 20.w,
-                      child: SvgPicture.asset('assets/icons/Subtract.svg'),
+                      child: SvgPicture.asset('assets/icons/pin_drop_orange200.svg'),
                     ),
                     SizedBox(width: 4.w),
                     Text(
