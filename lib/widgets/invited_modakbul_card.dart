@@ -239,7 +239,8 @@ class InvitedModakbulCard extends StatelessWidget {
                     SizedBox(
                       height: 20.r,
                       width: 20.r,
-                      child: SvgPicture.asset('assets/icons/time_orange200.svg'),
+                      child: Center(
+                          child: SvgPicture.asset('assets/icons/time_orange200.svg')),
                     ),
                     SizedBox(width: 4.w),
                     Text(
@@ -260,7 +261,8 @@ class InvitedModakbulCard extends StatelessWidget {
                     SizedBox(
                       height: 20.r,
                       width: 20.r,
-                      child: SvgPicture.asset('assets/icons/pin_drop_orange200.svg'),
+                      child: Center(
+                          child: SvgPicture.asset('assets/icons/pin_drop_orange200.svg')),
                     ),
                     SizedBox(width: 4.w),
                     Text(
