@@ -96,13 +96,9 @@ class InvitedModakbulCard extends StatelessWidget {
                                               height: 1.571),
                                     ),
                                     SizedBox(width: 6.w),
-                                    IconButton(
-                                      onPressed: () {},
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      icon: SvgPicture.asset(
-                                          IconPath.arrowForward15Gray200),
-                                    ),
+                                    SvgPicture.asset(
+                                        IconPath.arrowForward15Gray200,
+                                        width: 8.r),
                                   ],
                                 )
                               : Row(
