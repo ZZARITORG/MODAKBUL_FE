@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
 import '../themes/color_schemes.dart';
@@ -46,10 +47,13 @@ class FixedModakbulCard extends StatelessWidget {
               Row(
                children: [
                  SizedBox(
-                   width: 20.w,
-                   height: 20.h,
-                   child: SvgPicture.asset(
-                     'assets/icons/Group 3336.svg'
+                   width: 20.r,
+                   height: 20.r,
+                   child: Center(
+                     child: SvgPicture.asset(
+                       IconPath.timeOrange100,
+                       width: 20.r
+                     ),
                    ),
                  ),
                  SizedBox(
@@ -70,10 +74,13 @@ class FixedModakbulCard extends StatelessWidget {
               Row(
                 children: [
                   SizedBox(
-                    width: 20.w,
-                    height: 20.h,
-                    child: SvgPicture.asset(
-                        'assets/icons/Subtract.svg'
+                    width: 20.r,
+                    height: 20.r,
+                    child: Center(
+                      child: SvgPicture.asset(
+                          IconPath.pinDropOrange100,
+                        width: 12.r
+                      ),
                     ),
                   ),
                   SizedBox(

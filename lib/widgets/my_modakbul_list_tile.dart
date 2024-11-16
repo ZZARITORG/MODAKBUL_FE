@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -34,15 +35,16 @@ class MyModakbulListTile extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.fromLTRB(18.w, 8.h, 18.w, 42.h),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             SizedBox(
-              height: 24.h,
-              width: 24.w,
+              height: 24.r,
+              width: 24.r,
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: (){},
-                  icon: SvgPicture.asset('아이콘 경로')),
+                  icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
             ),
             SizedBox(
               height: 10.h,
@@ -76,7 +78,7 @@ class MyModakbulListTile extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 98.w,
+                  width: 98.r,
                   child: Stack(
                     children: [
                       if (profileLength >= 1)
@@ -91,7 +93,7 @@ class MyModakbulListTile extends StatelessWidget {
                         )),
                       if (profileLength >= 2)
                         Positioned(
-                            left: 28.w,
+                            left: 28.r,
                             child: CircleAvatar(
                               radius: StyleConstants.circleSizeXS,
                               backgroundColor: ColorSchemes.white,
@@ -102,7 +104,7 @@ class MyModakbulListTile extends StatelessWidget {
                             )),
                       if (profileLength >= 3)
                         Positioned(
-                            left: 56.w,
+                            left: 56.r,
                             child: CircleAvatar(
                               radius: StyleConstants.circleSizeXS,
                               backgroundColor: ColorSchemes.white,

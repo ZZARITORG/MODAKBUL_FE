@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
@@ -38,11 +39,15 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (isActionButton)
           Padding(
             padding: EdgeInsets.only(right: StyleConstants.defaultPadding),
-            child: IconButton(
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onPressed: onActionPressed,
-                icon: SvgPicture.asset(IconPath.moreHorizontal)),
+            child: SizedBox(
+              height: 24.r,
+              width: 24.r,
+              child: IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: onActionPressed,
+                  icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
+            ),
           ),
       ],
     );
