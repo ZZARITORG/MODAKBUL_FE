@@ -9,7 +9,8 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isActionButton;
   final VoidCallback? onActionPressed;
 
-  const LogoAppBar({Key? key, this.isActionButton = false, this.onActionPressed})
+  const LogoAppBar(
+      {Key? key, this.isActionButton = false, this.onActionPressed})
       : super(key: key);
 
   factory LogoAppBar.actions({required VoidCallback onActionPressed}) =>
@@ -21,7 +22,9 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      centerTitle: false, ///스타일 폴더로 옮기기
+      centerTitle: false,
+
+      ///스타일 폴더로 옮기기
       automaticallyImplyLeading: false,
       title: SvgPicture.asset('아이콘 경로'),
       actions: [
@@ -35,7 +38,11 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: onActionPressed,
-                  icon: SvgPicture.asset(IconPath.notifications, fit: BoxFit.scaleDown,)),
+                  icon: SvgPicture.asset(
+                    IconPath.notifications,
+                    width: 20.r,
+                    fit: BoxFit.scaleDown,
+                  )),
             ),
           ),
       ],
@@ -44,5 +51,5 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   // TODO: implement preferredSize
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight.h);
 }

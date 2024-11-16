@@ -12,14 +12,16 @@ class MyModakbulListTile extends StatelessWidget {
   final String? profileImage1;
   final String? profileImage2;
   final int profileLength;
+  final bool isSelected;
 
   const MyModakbulListTile(
       {Key? key,
-      required this.title,
-      required this.time,
-      this.profileImage1,
-      this.profileImage2,
-      required this.profileLength})
+        required this.title,
+        required this.time,
+        this.profileImage1,
+        this.profileImage2,
+        required this.profileLength,
+        required this.isSelected,})
       : super(key: key);
 
   @override
@@ -27,6 +29,10 @@ class MyModakbulListTile extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
+        side: BorderSide(
+          color: isSelected ? ColorSchemes.orange200 : Colors.transparent,
+          width: 3.0.w,
+        ),
       ),
       color: ColorSchemes.white,
       ///clipBehavior: Clip.antiAlias,
@@ -52,31 +58,32 @@ class MyModakbulListTile extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                        width: 200.w,
-                        child: Text(
-                          title,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .smallHeadLine1
-                              .copyWith(color: ColorSchemes.gray500),
-                        )),
-                    SizedBox(
-                      height: 8.h,
-                    ),
-                    Text(
-                      time,
-                      style: Theme.of(context)
-                          .textTheme
-                          .body3
-                          .copyWith(color: ColorSchemes.orange200),
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                            .textTheme
+                            .smallHeadLine1
+                            .copyWith(color: isSelected ? ColorSchemes.orange200 : ColorSchemes.gray500,),
+                      ),
+                      SizedBox(
+                        height: 8.h,
+                      ),
+                      Text(
+                        time,
+                        style: Theme.of(context)
+                            .textTheme
+                            .body3
+                            .copyWith(color: ColorSchemes.orange100),
+                      ),
+                    ],
+                  ),
                 ),
+                SizedBox(width: 8.w,),
                 SizedBox(
                   width: 98.r,
                   child: Stack(
@@ -84,13 +91,13 @@ class MyModakbulListTile extends StatelessWidget {
                       if (profileLength >= 1)
                         Positioned(
                             child: CircleAvatar(
-                          radius: StyleConstants.circleSizeXS,
-                          backgroundColor: ColorSchemes.white,
-                          child: CircleAvatar(
-                            radius: StyleConstants.circleSizeXXXS,
-                            backgroundColor: ColorSchemes.orange200,
-                          ),
-                        )),
+                              radius: StyleConstants.circleSizeXS,
+                              backgroundColor: ColorSchemes.white,
+                              child: CircleAvatar(
+                                radius: StyleConstants.circleSizeXXXS,
+                                backgroundColor: ColorSchemes.orange200,
+                              ),
+                            )),
                       if (profileLength >= 2)
                         Positioned(
                             left: 28.r,
@@ -111,12 +118,15 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.gray300,
-                                child: Text(
-                                  '+${profileLength - 2}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .body3
-                                      .copyWith(color: ColorSchemes.white),
+                                child: FittedBox(
+                                  fit: BoxFit.fitWidth,
+                                  child: Text(
+                                    '+${profileLength - 2}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .body3
+                                        .copyWith(color: ColorSchemes.white),
+                                  ),
                                 ),
                               ),
                             )),
