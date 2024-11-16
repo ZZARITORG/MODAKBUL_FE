@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/main.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -79,9 +81,17 @@ class UserListProfile extends StatelessWidget {
                 ),
               if (!isButton)
                 SizedBox(
-                  width: 24.w,
-                  height: 24.h,
-                ),
+                    width: 24.r,
+                    height: 24.r,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {},
+                      icon: SvgPicture.asset(
+                        IconPath.moreHorizontal,
+                        width: 20.r,
+                      ),
+                    )),
             ],
           ),
         )
