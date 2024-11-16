@@ -6,6 +6,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/content_info.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/logo_app_bar.dart';
 import 'package:modakbul/widgets/user_list_profile.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
 import 'package:modakbul/widgets/user_info_check.dart';

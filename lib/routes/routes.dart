@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modakbul/screens/alert/alert_screen.dart';
 import 'package:modakbul/screens/auth/auth_code_screen.dart';
@@ -10,6 +9,8 @@ import 'package:modakbul/screens/auth/terms_agreement_screen.dart';
 import 'package:modakbul/screens/home/home_screen.dart';
 import 'package:modakbul/screens/modakbul/create_content_screen.dart';
 import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
+import 'package:modakbul/screens/modakbul/group_select_screen.dart';
+import 'package:modakbul/screens/modakbul/map_search_screen.dart';
 import 'package:modakbul/screens/modakbul/map_select_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_detail_screen.dart';
 import 'package:modakbul/screens/search/add_friend_list_screen.dart';
@@ -24,35 +25,26 @@ import 'package:modakbul/screens/setting/terms_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/screens/start_screen.dart';
 
-
 class Routes {
   Routes._();
 
   ///라우트 변수 선언 예시
-
   static const String alertScreen = '/alertScreen';
-
   static const String authCodeScreen = '/authCodeScreen';
   static const String authIdScreen = '/authIdScreen';
   static const String authNameScreen = '/authNameScreen';
   static const String authPhoneScreen = '/authPhoneScreen';
   static const String authProfileScreen = '/authProfileScreen';
   static const String termsAgreementScreen = '/termsAgreementScreen';
-
-  static const String createGroupScreen = '/createGroupScreen';
-  static const String friendScreen = '/friendScreen';
-
   static const String homeScreen = '/homeScreen';
-
   static const String createContentScreen = '/createContentScreen';
   static const String createModakbulScreen = '/createModakbulScreen';
+  static const String groupSelectScreen = '/groupSelectScreen';
+  static const String mapSearchScreen = '/mapSearchScreen';
   static const String mapSelectScreen = '/mapSelectScreen';
   static const String modakbulDetailScreen = '/modakbulDetailScreen';
-
   static const String addFriendListScreen = '/addFriendListScreen';
   static const String searchScreen = '/searchScreen';
-
-
   static const String alertSettingScreen = '/alertSettingScreen';
   static const String commonSettingScreen = '/commonSettingScreen';
   static const String editMyProfileScreen = '/editMyProfileScreen';
@@ -60,13 +52,11 @@ class Routes {
   static const String infoScreen = '/infoScreen';
   static const String myProfileScreen = '/myProfileScreen';
   static const String termsScreen = '/termsScreen';
-
   static const String splashScreen = '/splashScreen';
   static const String startScreen = '/startScreen';
 
   ///라우트 추가 예시
-  static final routes = <String, WidgetBuilder> {
-
+  static final Map<String, WidgetBuilder> routes = {
     ///alert
     alertScreen: (BuildContext context) => const AlertScreen(),
 
@@ -84,6 +74,8 @@ class Routes {
     ///modakbul
     createContentScreen: (BuildContext context) => const CreateContentScreen(),
     createModakbulScreen: (BuildContext context) => const CreateModakbulScreen(),
+    groupSelectScreen: (BuildContext context) => const GroupSelectScreen(),
+    mapSearchScreen: (BuildContext context) => const MapSearchScreen(),
     mapSelectScreen: (BuildContext context) => const MapSelectScreen(),
     modakbulDetailScreen: (BuildContext context) => const ModakbulDetailScreen(),
 
@@ -103,6 +95,41 @@ class Routes {
     ///splash
     splashScreen: (BuildContext context) => const SplashScreen(),
     startScreen: (BuildContext context) => const StartScreen(),
-
   };
+
+  /// FadeTransition을 사용하는 커스텀 페이지 빌더
+  static PageRouteBuilder _fadePage(Widget page, Object? arguments) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return FadeTransition(
+          opacity: animation,
+          child: page,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 300),
+      settings: RouteSettings(arguments: arguments),
+    );
+  }
+
+  static Future<void> navigateTo(BuildContext context, String routeName, {Object? arguments}) {
+    return Navigator.push(
+      context,
+      _fadePage(routes[routeName]!(context), arguments),
+    );
+  }
+
+  static Future<void> navigateAndRemoveUntil(BuildContext context, String routeName, {Object? arguments}) {
+    return Navigator.pushAndRemoveUntil(
+      context,
+      _fadePage(routes[routeName]!(context), arguments), // Arguments 전달
+          (route) => false, // 모든 이전 페이지를 제거
+    );
+  }
+
+  static Future<void> navigateReplacement(BuildContext context, String routeName, {Object? arguments}) {
+    return Navigator.pushReplacement(
+      context,
+      _fadePage(routes[routeName]!(context), arguments),
+    );
+  }
 }
