@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/screens/auth/auth_id_screen.dart';
+import 'package:modakbul/screens/auth/auth_phone_screen.dart';
+import 'package:modakbul/screens/auth/terms_agreement_screen.dart';
+import 'package:modakbul/widgets/custom_calender_picker.dart';
+import 'package:modakbul/screens/modakbul/create_content_screen.dart';
+import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
+import 'package:modakbul/screens/modakbul/group_select_screen.dart';
+import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/content_info.dart';
-import 'package:modakbul/widgets/create_meeting_button.dart';
-import 'package:modakbul/widgets/custom_search_bar.dart';
-import 'package:modakbul/widgets/logo_app_bar.dart';
-import 'package:modakbul/widgets/user_list_profile.dart';
-import 'package:modakbul/widgets/setting_menu.dart';
-import 'package:modakbul/widgets/user_info_check.dart';
-
-
 void main() {
   runApp(
     ScreenUtilInit(
@@ -30,58 +28,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const MyHomePage(title: '테스트'),
+      home: const AuthPhoneScreen(),
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: LogoAppBar.actions(onActionPressed: (){}),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-
   }
 }
