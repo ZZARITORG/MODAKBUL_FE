@@ -7,13 +7,15 @@ import 'package:modakbul/constants/style_constants.dart';
 class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isActionButton;
   final VoidCallback? onActionPressed;
+  final Color? backgroundColor;
 
   const BackButtonAppBar(
-      {Key? key, this.isActionButton = false, this.onActionPressed})
+      {Key? key, this.backgroundColor, this.isActionButton = false, this.onActionPressed})
       : super(key: key);
 
-  factory BackButtonAppBar.actions({required VoidCallback onActionPressed}) =>
+  factory BackButtonAppBar.actions({required VoidCallback onActionPressed, required Color backgroundColor}) =>
       BackButtonAppBar(
+        backgroundColor: backgroundColor,
         isActionButton: true,
         onActionPressed: onActionPressed,
       );
@@ -21,18 +23,22 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      centerTitle: false, ///스타일로 옮기기
+      centerTitle: false,
+      backgroundColor: backgroundColor,
+      ///스타일로 옮기기
       automaticallyImplyLeading: false,
       leading: Padding(
         padding: EdgeInsets.only(left: StyleConstants.defaultPadding),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-            children: [
+        child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               onPressed: () => Navigator.pop(context),
-              icon: SvgPicture.asset(IconPath.arrowBack)),
+              icon: SvgPicture.asset(
+                IconPath.arrowBack,
+                height: 22.r, // 반응형 높이
+                width: 22.r, fit: BoxFit.scaleDown,
+              )),
         ]),
       ),
       actions: [
@@ -46,7 +52,11 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: onActionPressed,
-                  icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
+                  icon: SvgPicture.asset(
+                    IconPath.moreHorizontal,
+                    width: 20.r,
+                    fit: BoxFit.scaleDown,
+                  )),
             ),
           ),
       ],
@@ -55,5 +65,5 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   // TODO: implement preferredSize
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight.h);
 }
