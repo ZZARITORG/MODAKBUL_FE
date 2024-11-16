@@ -81,10 +81,17 @@ class UserListProfile extends StatelessWidget {
                 ),
               if (!isButton)
                 SizedBox(
-                  width: 24.w,
-                  height: 24.h,
-                  child: SvgPicture.asset(IconPath.moreHorizontal),
-                ),
+                    width: 24.r,
+                    height: 24.r,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {},
+                      icon: SvgPicture.asset(
+                        IconPath.moreHorizontal,
+                        width: 20.r,
+                      ),
+                    )),
             ],
           ),
         )
