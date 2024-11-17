@@ -5,7 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StyleConstants {
   static final double circleSizeXXXXXXS = 16.r;
-  static final double circleSizeXXXXXS = 18.r;
+  static final double circleSizeXXXXXS = 17.r;
+  static final double circleSizeXXXXS = 18.r;
   static final double circleSizeXXXS = 19.r;
   static final double circleSizeXXS = 20.r;
   static final double circleSizeXS = 21.r;
