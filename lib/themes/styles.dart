@@ -18,6 +18,7 @@ class Styles {
     bottomSheetTheme: kBottomSheetThemeData,
     elevatedButtonTheme: kElevatedButtonThemeData,
     iconButtonTheme: kIconButtonThemeData,
+    textButtonTheme: kTextButtonThemeData,
     useMaterial3: true,
   );
 
@@ -42,6 +43,8 @@ class Styles {
         padding: EdgeInsets.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         elevation: 0,
+        overlayColor: ColorSchemes.orange100,
+        shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
         ),
@@ -54,6 +57,17 @@ class Styles {
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
     ),);
 
+  ///TextButton 테마
+  static TextButtonThemeData kTextButtonThemeData =
+  TextButtonThemeData(
+    style: TextButton.styleFrom(
+      minimumSize: Size.zero,
+      padding: EdgeInsets.zero,
+      overlayColor: ColorSchemes.orange100,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    ),
+  );
+
 /** static TextTheme textTheme = TextTheme(
     ); */
 }
@@ -63,68 +77,68 @@ extension CustomStyles on TextTheme {
 
   ///bigHeadLine
   TextStyle get bigHeadLine1 => TextStyle(
-      letterSpacing: -1.5.sp,
+      letterSpacing: -1.5.w,
       fontSize: 38.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 700),]);
   TextStyle get bigHeadLine2 => TextStyle(
-      letterSpacing: -1.5.sp,
+      letterSpacing: -1.5.w,
       fontSize: 32.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 700),]);
   TextStyle get bigHeadLine3 => TextStyle(
-      letterSpacing: -0.5.sp,
-      fontSize: 24.sp,
+      letterSpacing: -0.5.w,
+      fontSize: 22.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 700),]);
   TextStyle get bigHeadLine4 => TextStyle(
-      letterSpacing: -0.5.sp,
+      letterSpacing: -0.5.w,
       fontSize: 20.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 700),]);
   TextStyle get bigHeadLine5 => TextStyle(
-      letterSpacing: -0.5.sp,
+      letterSpacing: -0.5.w,
       fontSize: 16.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 700),]);
 
   ///smallHeadLine
   TextStyle get smallHeadLine1 => TextStyle(
-      letterSpacing: 0.25.sp,
+      letterSpacing: 0.25.w,
       fontSize: 20.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 600),]);
   TextStyle get smallHeadLine2 => TextStyle(
-      letterSpacing: 0.25.sp,
+      letterSpacing: 0.25.w,
       fontSize: 18.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 600),]);
   TextStyle get smallHeadLine3 => TextStyle(
-      letterSpacing: 0.25.sp,
+      letterSpacing: 0.25.w,
       fontSize: 16.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 600),]);
 
   ///body
   TextStyle get body1 => TextStyle(
-      letterSpacing: 1.25.sp,
+      letterSpacing: 1.25.w,
       fontSize: 18.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 500),]);
   TextStyle get body2 => TextStyle(
-      letterSpacing: 1.25.sp,
+      letterSpacing: 1.25.w,
       fontSize: 16.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 500),]);
   TextStyle get body3 => TextStyle(
-      letterSpacing: 1.25.sp,
+      letterSpacing: 1.25.w,
       fontSize: 14.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 500),]);
 
   ///caption
   TextStyle get caption => TextStyle(
-      letterSpacing: 1.25.sp,
+      letterSpacing: 1.25.w,
       fontSize: 14.sp,
       fontVariations: const <FontVariation>[
         FontVariation('wght', 400),]);

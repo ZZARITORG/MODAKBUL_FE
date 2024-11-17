@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/screens/auth/auth_id_screen.dart';
+import 'package:modakbul/screens/auth/auth_phone_screen.dart';
+import 'package:modakbul/screens/auth/terms_agreement_screen.dart';
+import 'package:modakbul/widgets/custom_calender_picker.dart';
+import 'package:modakbul/screens/modakbul/create_content_screen.dart';
+import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
+import 'package:modakbul/screens/modakbul/group_select_screen.dart';
+import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/home_screen_skeleton.dart'; // home_screen_skeleton 파일 import
 
@@ -22,35 +30,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const MyHomePage(title: '테스트'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(
-          widget.title,
-          style: Theme.of(context).textTheme.bigHeadLine2,
-        ),
-      ),
-      body: const HomeScreenSkeleton(), // home_screen_skeleton으로 변경
+      home: const AuthPhoneScreen(),
     );
   }
 }
