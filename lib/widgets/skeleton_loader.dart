@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import '../themes/color_schemes.dart';
 
 class SkeletonLoader extends StatelessWidget {
@@ -10,18 +11,21 @@ class SkeletonLoader extends StatelessWidget {
     Key? key,
     required this.width,
     required this.height,
-    this.borderRadius = const BorderRadius.all(Radius.circular(14)),
+    required this.borderRadius
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        borderRadius: borderRadius,
-        color: ColorSchemes.gray200,
-      ),
-    );
+    return Shimmer.fromColors(
+        baseColor: ColorSchemes.gray200,
+        highlightColor: Colors.white,
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            borderRadius: borderRadius,
+            color: ColorSchemes.gray200,
+          ),
+        ));
   }
 }
