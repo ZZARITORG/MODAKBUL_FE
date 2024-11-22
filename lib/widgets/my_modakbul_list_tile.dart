@@ -21,7 +21,7 @@ class MyModakbulListTile extends StatelessWidget {
         this.profileImage1,
         this.profileImage2,
         required this.profileLength,
-        required this.isSelected,})
+        this.isSelected = false,})
       : super(key: key);
 
   @override
