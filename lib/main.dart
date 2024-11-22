@@ -12,6 +12,10 @@ import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/home_screen_2_skeleton.dart';
 import 'package:modakbul/widgets/home_screen_skeleton.dart';
+import 'package:modakbul/widgets/fixed_modakbul_card.dart';
+import 'package:modakbul/widgets/home_screen_skeleton.dart';
+import 'package:modakbul/widgets/invited_modakbul_card.dart'; // home_screen_skeleton 파일 import
+
 
 void main() {
   runApp(
