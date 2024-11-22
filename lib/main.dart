@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const FixedModakbulCard(title: 'ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ', date: '2024-01-12', location: 'ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ'),
+      home: const AuthPhoneScreen(),
     );
   }
 }
