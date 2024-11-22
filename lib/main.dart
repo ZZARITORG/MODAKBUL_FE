@@ -10,7 +10,8 @@ import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
 import 'package:modakbul/screens/modakbul/group_select_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/home_screen_skeleton.dart'; // home_screen_skeleton 파일 import
+import 'package:modakbul/widgets/home_screen_skeleton.dart';
+import 'package:modakbul/widgets/invited_modakbul_card.dart'; // home_screen_skeleton 파일 import
 
 void main() {
   runApp(

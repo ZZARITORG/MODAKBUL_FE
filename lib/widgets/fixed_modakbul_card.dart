@@ -88,6 +88,7 @@ class FixedModakbulCard extends StatelessWidget {
                   ),
                   Text(
                       location,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context)
                           .textTheme.body3
                           .copyWith(color: ColorSchemes.orange001,
