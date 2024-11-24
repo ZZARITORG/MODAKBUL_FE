@@ -44,15 +44,17 @@ class ModakbulDetailCard extends StatelessWidget {
                   children: [
                     Text(
                       userName,
-                      style: Theme.of(context).textTheme.bigHeadLine5.copyWith(
-                            color: ColorSchemes.gray500,
-                          ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bigHeadLine5
+                          .copyWith(color: ColorSchemes.gray500, height: 1.193),
                     ),
                     Text(
                       userId,
-                      style: Theme.of(context).textTheme.caption.copyWith(
-                            color: ColorSchemes.gray300,
-                          ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .caption
+                          .copyWith(color: ColorSchemes.gray300, height: 1.193),
                     ),
                   ],
                 )
