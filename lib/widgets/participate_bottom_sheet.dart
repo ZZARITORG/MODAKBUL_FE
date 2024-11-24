@@ -36,12 +36,15 @@ class ParticipateBottomSheet extends StatelessWidget {
           SizedBox(
             height: 12.h,
           ),
-          Text(
-            '정말로 모닥불에 참여하시겠습니까?',
-            style: Theme.of(context)
-                .textTheme
-                .body2
-                .copyWith(color: ColorSchemes.gray400, height: 1.5, decoration: TextDecoration.none),
+          FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Text(
+              '정말로 모닥불에 참여하시겠습니까?',
+              style: Theme.of(context)
+                  .textTheme
+                  .body2
+                  .copyWith(color: ColorSchemes.gray400, height: 1.5, decoration: TextDecoration.none),
+            ),
           ),
           SizedBox(
             height: 57.h,
