@@ -56,8 +56,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                 height: 20.r,
                                 child: SvgPicture.asset(
                                   IconPath.timeOrange200,
-                                  width: 20.r,
-                                  height: 20.r,
+                                  width: 16.r,
+                                  height: 16.r,
                                 ),
                               ),
                               SizedBox(
