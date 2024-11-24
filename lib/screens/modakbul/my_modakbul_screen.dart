@@ -55,55 +55,62 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: ColorSchemes.gray000,
         appBar: BackButtonAppBar.actions(
             onActionPressed: () {}, backgroundColor: ColorSchemes.gray000),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
 
-          ///데이터의 양이 많지 않고 단순한 하나의 스크롤이라 NestedScrollView 사용 안함
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 24.h,
-                ),
-                SizedBox(
-                  width: 205.w,
-                  child: Text('약속된 모닥불이\n2개 있습니다',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine2
-                          .copyWith(color: ColorSchemes.gray500)),
-                ),
-                SizedBox(
-                  height: 8.h,
-                ),
-                Text('그룹을 선택하면 자동으로 알림이 전송됩니다.',
-                    style: Theme.of(context)
-                        .textTheme
-                        .body2
-                        .copyWith(color: ColorSchemes.gray400)),
-                SizedBox(
-                  height: 24.h,
-                ),
-                ...modakbuls.map((modakbul) {
-                  int index = modakbuls.indexOf(modakbul);
-                  return Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () => _toggleSelectedCard(index),
-                        child: MyModakbulListTile(
+            ///데이터의 양이 많지 않고 단순한 하나의 스크롤이라 NestedScrollView 사용 안함
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 24.h,
+                  ),
+                  SizedBox(
+                    width: 205.w,
+                    child: Text('약속된 모닥불이\n2개 있습니다',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bigHeadLine2
+                            .copyWith(color: ColorSchemes.gray500)),
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text('그룹을 선택하면 자동으로 알림이 전송됩니다.',
+                        style: Theme.of(context)
+                            .textTheme
+                            .body2
+                            .copyWith(color: ColorSchemes.gray400)),
+                  ),
+                  SizedBox(
+                    height: 24.h,
+                  ),
+                  ...modakbuls.map((modakbul) {
+                    int index = modakbuls.indexOf(modakbul);
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () => _toggleSelectedCard(index),
+                          child: MyModakbulListTile(
                             title: modakbul['title'],
                             time: modakbul['time'],
                             profileLength: modakbul['length'],
-                            isSelected: modakbul['isSelected']),
-                      ),
-                      if (index != modakbuls.length - 1) SizedBox(height: 16.h),
-                    ],
-                  );
-                })
-              ],
+                          ),
+                        ),
+                        if (index != modakbuls.length - 1)
+                          SizedBox(height: 14.h),
+                      ],
+                    );
+                  })
+                ],
+              ),
             ),
           ),
         ));
