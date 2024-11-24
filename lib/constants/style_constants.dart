@@ -17,9 +17,9 @@ class StyleConstants {
   static final double circleSizeXXL = 84.5.r;
   static final double circleSizeXXXL = 123.r;
 
-  static const double radiusSmall = 6;
-  static const double radiusMedium = 14;
-  static const double radiusLarge = 24;
+  static final double radiusSmall = 6.r;
+  static final double radiusMedium = 14.r;
+  static final double radiusLarge = 24.r;
 
   static final double defaultPadding = 16.r;
 }
