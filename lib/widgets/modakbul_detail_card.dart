@@ -25,7 +25,7 @@ class ModakbulDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 16.w),
+      padding: EdgeInsets.symmetric(vertical: 18.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
