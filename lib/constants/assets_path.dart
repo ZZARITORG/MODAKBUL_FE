@@ -19,6 +19,7 @@ class IconPath {
   static const String calendarMonthOrange200 = 'assets/icons/calendar_month_orange200.svg';
   static const String call = 'assets/icons/call.svg';
   static const String cancel = 'assets/icons/cancel.svg';
+  static const String check = 'assets/icons/check.svg';
   static const String checkCircleActivate = 'assets/icons/check_circle_activate.svg';
   static const String checkCircleActivateAll = 'assets/icons/check_circle_activate_all.svg';
   static const String checkCircleDisabled = 'assets/icons/check_circle_disabled.svg';
@@ -46,6 +47,7 @@ class IconPath {
   static const String pinDropGray200 = 'assets/icons/pin_drop_gray200.svg';
   static const String pinDropOrange100 = 'assets/icons/pin_drop_orange100.svg';
   static const String pinDropOrange200 = 'assets/icons/pin_drop_orange200.svg';
+  static const String plus = 'assets/icons/plus.svg';
   static const String search = 'assets/icons/search.svg';
   static const String timeOrange100 = 'assets/icons/time_orange100.svg';
   static const String timeOrange200 = 'assets/icons/time_orange200.svg';
