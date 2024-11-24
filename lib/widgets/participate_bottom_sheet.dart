@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
-
-import '../themes/color_schemes.dart';
 
 class ParticipateBottomSheet extends StatelessWidget {
   const ParticipateBottomSheet({Key? key}) : super(key: key);
@@ -12,12 +12,11 @@ class ParticipateBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 269.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+            topLeft: Radius.circular(StyleConstants.radiusLarge),
+            topRight: Radius.circular(StyleConstants.radiusLarge),
           ),
           color: ColorSchemes.white),
       child: Column(
