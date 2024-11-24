@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/participant_list_profile.dart';
 
-import '../constants/assets_path.dart';
-import '../themes/color_schemes.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/themes/color_schemes.dart';
 
 class ParticipantBottomSheet extends StatefulWidget {
   const ParticipantBottomSheet({Key? key}) : super(key: key);
