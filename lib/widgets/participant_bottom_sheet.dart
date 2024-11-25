@@ -46,7 +46,9 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
                         child: IconButton(
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                           icon: SvgPicture.asset(
                             IconPath.close,
                             width: 14.r,
