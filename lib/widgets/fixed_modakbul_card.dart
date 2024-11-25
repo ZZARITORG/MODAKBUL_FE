@@ -47,12 +47,12 @@ class FixedModakbulCard extends StatelessWidget {
               Row(
                children: [
                  SizedBox(
-                   width: 20.r,
-                   height: 20.r,
+                   width: 16.r,
+                   height: 16.r,
                    child: Center(
                      child: SvgPicture.asset(
                        IconPath.timeOrange100,
-                       width: 20.r
+                       width: 16.r
                      ),
                    ),
                  ),
@@ -74,8 +74,8 @@ class FixedModakbulCard extends StatelessWidget {
               Row(
                 children: [
                   SizedBox(
-                    width: 20.r,
-                    height: 20.r,
+                    width: 16.r,
+                    height: 16.r,
                     child: Center(
                       child: SvgPicture.asset(
                           IconPath.pinDropOrange100,

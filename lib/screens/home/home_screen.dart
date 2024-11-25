@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/screens/home/tab_screens/browse_tab_screen.dart';
 import 'package:modakbul/screens/home/tab_screens/default_tab_screen.dart';
+import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
 
 import '../../widgets/custom_tab_bar.dart';
@@ -31,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorSchemes.gray000,
       appBar: LogoAppBar.actions(onActionPressed: (){}),
       body: Column(
         children: [
@@ -42,9 +45,9 @@ class _HomeScreenState extends State<HomeScreen>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
+              children: const [
                 DefaultTabScreen(),
-                Center(child: Text('둘러보기', style: TextStyle(fontSize: 18.sp))),
+                BrowseTabScreen(),
               ],
             ),
           ),
