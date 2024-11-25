@@ -46,6 +46,7 @@ class IconPath {
   static const String pinDropGray200 = 'assets/icons/pin_drop_gray200.svg';
   static const String pinDropOrange100 = 'assets/icons/pin_drop_orange100.svg';
   static const String pinDropOrange200 = 'assets/icons/pin_drop_orange200.svg';
+  static const String plus = 'assets/icons/plus.svg';
   static const String search = 'assets/icons/search.svg';
   static const String timeOrange100 = 'assets/icons/time_orange100.svg';
   static const String timeOrange200 = 'assets/icons/time_orange200.svg';

@@ -191,7 +191,7 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
               if (selectedFridnds.isNotEmpty)
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.only(left: StyleConstants.defaultPadding, right: 4.w),
+                  padding: EdgeInsets.only(right: 4.w),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: selectedFridnds.map((friend) {

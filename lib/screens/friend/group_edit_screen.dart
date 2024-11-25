@@ -52,25 +52,21 @@ class _GroupEditScreenState extends State<GroupEditScreen>
       body: Column(
         children: [
           SizedBox(height: 24.h),
-          Container(
-            margin: EdgeInsets.only(left: 16.w, right: 16.w),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
             child: TextField(
                 style: Theme.of(context)
                     .textTheme
                     .body1
                     .copyWith(color: ColorSchemes.gray500),
-                cursorColor: Theme.of(context).primaryColorLight,
+                cursorColor: ColorSchemes.orange100,
                 //바뀔 수도 있음
                 onTapOutside: (event) =>
                     FocusManager.instance.primaryFocus?.unfocus(),
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: ColorSchemes.gray100,
-                      width: 2.w,
-                    ),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+                  counterText: '',
                   suffixIcon: SizedBox(
                     height: 32.r,
                     width: 32.r,
@@ -92,7 +88,13 @@ class _GroupEditScreenState extends State<GroupEditScreen>
                       .textTheme
                       .smallHeadLine1
                       .copyWith(color: ColorSchemes.gray200),
-                  fillColor: ColorSchemes.gray000,
+                  isDense: true,
+                  contentPadding:
+                  EdgeInsets.only(left: 4.w, bottom: 4.h),
+                  border: InputBorder.none,
+                  errorText: null,
+                  errorStyle: const TextStyle(
+                      color: ColorSchemes.orange100, fontSize: 0),
                   ///suffixIcon: 추후 x아이콘
                 )),
           ),
