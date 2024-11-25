@@ -53,5 +53,8 @@ class IconPath {
 }
 
 class ImagePath {
+  ImagePath._();
 
+  static const String smallBonfire = 'assets/images/small_bonfire.png';
+  static const String friendAlert = 'assets/images/friend_alert.png';
 }
