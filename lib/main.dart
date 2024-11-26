@@ -13,6 +13,7 @@ import 'package:modakbul/screens/setting/alert_setting_screen.dart';
 import 'package:modakbul/screens/setting/blocked_user_screen.dart';
 import 'package:modakbul/screens/setting/common_setting_screen.dart';
 import 'package:modakbul/screens/setting/edit_my_profile_screen.dart';
+import 'package:modakbul/screens/setting/edit_phone_screen.dart';
 import 'package:modakbul/screens/setting/friend_setting_screen.dart';
 import 'package:modakbul/screens/setting/info_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: EditMyProfileScreen(),
+      home: EditPhoneScreen(),
     );
   }
 }
