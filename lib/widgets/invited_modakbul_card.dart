@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/themes/color_schemes.dart';
+import '../themes/color_schemes.dart';
 
 class InvitedModakbulCard extends StatelessWidget {
   final String? profileImage1;
@@ -70,15 +70,15 @@ class InvitedModakbulCard extends StatelessWidget {
                                       .textTheme
                                       .smallHeadLine3
                                       .copyWith(
-                                          color: ColorSchemes.gray400,
-                                          ),
+                                    color: ColorSchemes.gray400,
+                                  ),
                                 ),
                                 SizedBox(height: 2.h),
                                 Text(
                                   userId,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context).textTheme.body3.copyWith(
-                                      color: ColorSchemes.gray300, ),
+                                    color: ColorSchemes.gray300, ),
                                 ),
                               ],
                             ),
@@ -93,23 +93,22 @@ class InvitedModakbulCard extends StatelessWidget {
                         children: [
                           profileLength == 1
                               ? Row(
-                                  children: [
-                                    Text(
-                                      '참여자가 없습니다',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .body3
-                                          .copyWith(
-                                              color: ColorSchemes.gray200,
-                                              ),
-                                    ),
-                                    SizedBox(width: 6.w),
-                                    SvgPicture.asset(
-                                        IconPath.arrowForward15Gray200,
-                                        width: 8.r),
-                                  ],
-                                )
-
+                            children: [
+                              Text(
+                                '참여자가 없습니다',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body3
+                                    .copyWith(
+                                  color: ColorSchemes.gray200,
+                                ),
+                              ),
+                              SizedBox(width: 6.w),
+                              SvgPicture.asset(
+                                  IconPath.arrowForward15Gray200,
+                                  width: 8.r),
+                            ],
+                          )
                               : Row(
                             children: [
                               SizedBox(
@@ -165,21 +164,6 @@ class InvitedModakbulCard extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(width: 7.w),
-                                    Text(
-                                      '${profileLength - 1}명',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .body3
-                                          .copyWith(
-                                              color: ColorSchemes.gray200,
-                                              ),
-                                    ),
-                                    SizedBox(width: 6.w),
-                                    SvgPicture.asset(
-                                        IconPath.arrowForward15Gray200,
-                                        width: 8.r),
                                   ],
                                 ),
                               ),
@@ -190,8 +174,8 @@ class InvitedModakbulCard extends StatelessWidget {
                                     .textTheme
                                     .body3
                                     .copyWith(
-                                    color: ColorSchemes.gray200,
-                                    height: 1.571),
+                                  color: ColorSchemes.gray200,
+                                ),
                               ),
                               SizedBox(width: 6.w),
                               SvgPicture.asset(
@@ -213,7 +197,7 @@ class InvitedModakbulCard extends StatelessWidget {
                         .textTheme
                         .smallHeadLine1
                         .copyWith(
-                            color: ColorSchemes.gray500)),
+                        color: ColorSchemes.gray500)),
                 SizedBox(height: 8.h),
                 Text(
                   description,
