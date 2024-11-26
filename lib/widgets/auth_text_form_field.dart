@@ -109,7 +109,7 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
                 widget.onChanged!(value);
                 _validateInput(value);
               },
-              autofocus: widget.isBigHeadLine2 ? false : true,
+              autofocus: true,
               maxLength: widget.maxLength,
               validator: widget.validator,
               controller: widget.textEditingController,
@@ -159,7 +159,7 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
               right: 0,
               bottom: 0,
               child: Container(
-                height: 2.w,
+                height: 2.h,
                 decoration: BoxDecoration(
                     color: underlineColor,
                     borderRadius: BorderRadius.circular(2.r)),
@@ -168,7 +168,7 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
           ],
         ),
         if (_hasError && _errorText != null) ...[
-          SizedBox(height: 10.h),
+          SizedBox(height: widget.isBigHeadLine2 ? 8.h : 10.h),
           Text(_errorText!,
               style: Theme.of(context)
                   .textTheme
