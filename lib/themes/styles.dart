@@ -19,6 +19,7 @@ class Styles {
     elevatedButtonTheme: kElevatedButtonThemeData,
     iconButtonTheme: kIconButtonThemeData,
     textButtonTheme: kTextButtonThemeData,
+    dialogTheme: kDialogTheme,
     useMaterial3: true,
   );
 
@@ -67,6 +68,16 @@ class Styles {
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
     ),
   );
+
+  ///Dialog 테마
+  static DialogTheme kDialogTheme =
+      DialogTheme(
+        backgroundColor: ColorSchemes.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(StyleConstants.radiusMedium))
+        )
+      );
 
 /** static TextTheme textTheme = TextTheme(
     ); */

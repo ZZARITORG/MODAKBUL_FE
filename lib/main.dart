@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const InfoScreen(),
+      home: const MyProfileScreen(),
     );
   }
 }
