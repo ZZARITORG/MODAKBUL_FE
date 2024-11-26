@@ -18,8 +18,8 @@ class SettingMenu extends StatelessWidget {
   const SettingMenu(
       {Key? key,
       required this.menu,
-      required this.onPressed,
       required this.icon,
+      this.onPressed,
       this.iconWidth,
       this.iconHeight,
       this.trailingWidget})
@@ -69,7 +69,6 @@ class SettingMenu extends StatelessWidget {
             activeColor: activeColor ?? ColorSchemes.orange200,
           ),
         ),
-        onPressed: () {},
       );
 
   factory SettingMenu.version({
