@@ -77,7 +77,7 @@ class MyModakbulListTile extends StatelessWidget {
                         time,
                         style: Theme.of(context)
                             .textTheme
-                            .body3
+                            .caption
                             .copyWith(color: ColorSchemes.orange100),
                       ),
                     ],

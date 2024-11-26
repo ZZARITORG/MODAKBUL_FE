@@ -62,7 +62,6 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
 
-            ///데이터의 양이 많지 않고 단순한 하나의 스크롤이라 NestedScrollView 사용 안함
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
