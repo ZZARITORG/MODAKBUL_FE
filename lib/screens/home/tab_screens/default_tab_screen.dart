@@ -21,13 +21,6 @@ class _State extends State<DefaultTabScreen> {
 
   final List<Map<String, dynamic>> myModakbulData = [
     {
-      'profileLength': 3,
-      'title': '편의점에서 간단하게 맥주 한 잔 할 사람?',
-      'group': '서현애들',
-      'date': '10.2(화) 오후 8시',
-      'location': '렁지랕지',
-    },
-    {
       'profileLength': 4,
       'title': '양지원 집 가서 옷 뺏을 사람?',
       'group': '디스코드',
@@ -42,18 +35,11 @@ class _State extends State<DefaultTabScreen> {
       'location': '코지카페',
     },
     {
-      'profileLength': 2,
-      'title': '모각코 할 분?',
-      'group': '코딩스터디',
-      'date': '11.25(월) 오후 2시',
-      'location': '코지카페',
-    },
-    {
-      'profileLength': 2,
-      'title': '모각코 할 분?',
-      'group': '코딩스터디',
-      'date': '11.25(월) 오후 2시',
-      'location': '코지카페',
+      'profileLength': 3,
+      'title': '편의점에서 간단하게 맥주 한 잔 할 사람?',
+      'group': '서현애들',
+      'date': '10.2(화) 오후 8시',
+      'location': '렁지랕지',
     },
   ];
 
@@ -92,52 +78,56 @@ class _State extends State<DefaultTabScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
-            decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.circular(StyleConstants.radiusMedium),
-                color: ColorSchemes.white,
-                boxShadow: const [
-                  BoxShadow(
-                      offset: Offset(0, 4),
-                      blurRadius: 10,
-                      color: Color(0x40F3F3F3))
-                ]),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('혼자는 너무 춥지 않아?',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bigHeadLine4
-                            .copyWith(color: ColorSchemes.orange200)),
-                    SizedBox(
-                      height: 6.h,
-                    ),
-                    Row(
-                      children: [
-                        Text('모닥불 피우러가기',
-                            style: Theme.of(context)
-                                .textTheme
-                                .body2
-                                .copyWith(color: ColorSchemes.orange100)),
-                        SizedBox(
-                          width: 6.w,
-                        ),
-                        SvgPicture.asset(IconPath.arrowForward15Orange100),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 75.w,
-                  height: 75.h,
-                )
-              ],
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+              decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(StyleConstants.radiusMedium),
+                  color: ColorSchemes.white,
+                  boxShadow: const [
+                    BoxShadow(
+                        offset: Offset(0, 4),
+                        blurRadius: 10,
+                        color: Color(0x40F3F3F3))
+                  ]),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('혼자는 너무 춥지 않아?',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bigHeadLine4
+                              .copyWith(color: ColorSchemes.orange200)),
+                      SizedBox(
+                        height: 6.h,
+                      ),
+                      Row(
+                        children: [
+                          Text('모닥불 피우러가기',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body2
+                                  .copyWith(color: ColorSchemes.orange100)),
+                          SizedBox(
+                            width: 6.w,
+                          ),
+                          SvgPicture.asset(IconPath.arrowForward15Orange100),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 75.r,
+                    height: 75.r,
+                    child: Image.asset(ImagePath.homeModakbul),
+                  )
+                ],
+              ),
             ),
           ),
           SizedBox(
@@ -147,7 +137,6 @@ class _State extends State<DefaultTabScreen> {
             height: 238.h,
             child: Stack(
               children: [
-                // PageView 내부
                 Positioned.fill(
                   child: ClipRect(
                     child: PageView.builder(
@@ -197,18 +186,23 @@ class _State extends State<DefaultTabScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
-                      myModakbulData.length,
+                      myModakbulData.length >= 5 ? 5 : myModakbulData.length,
                       (dotIndex) => AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         margin: EdgeInsets.symmetric(horizontal: 2.w),
-                        width: _currentPage == dotIndex ? 18.w : 6.w,
+                        width: (_currentPage >= 5 && dotIndex == 4) ||
+                                (_currentPage == dotIndex)
+                            ? 18.w
+                            : 6.w,
                         height: 6.h,
                         decoration: BoxDecoration(
-                          color: _currentPage == dotIndex
+                          color: (_currentPage >= 5 && dotIndex == 4) ||
+                                  _currentPage == dotIndex
                               ? ColorSchemes.orange200
                               : ColorSchemes.gray200,
                           borderRadius: BorderRadius.circular(
-                            _currentPage == dotIndex && _currentPage != dotIndex
+                            (_currentPage >= 5 && dotIndex == 4) ||
+                                    _currentPage == dotIndex
                                 ? 4.r
                                 : 50.r,
                           ),
@@ -233,7 +227,7 @@ class _State extends State<DefaultTabScreen> {
                       .bigHeadLine4
                       .copyWith(color: ColorSchemes.gray500)),
               TextButton(
-                onPressed: (){},
+                onPressed: () {},
                 child: Text('전체보기',
                     style: Theme.of(context)
                         .textTheme
@@ -250,11 +244,13 @@ class _State extends State<DefaultTabScreen> {
             child: Row(
               children: List.generate(
                 scheduledModakbulData.length,
-                    (index) {
+                (index) {
                   final data = scheduledModakbulData[index];
                   return Padding(
                     padding: EdgeInsets.only(
-                      right: index == scheduledModakbulData.length - 1 ? 0 : 8.w, // 마지막 카드에는 오른쪽 간격 없앰
+                      right: index == scheduledModakbulData.length - 1
+                          ? 0
+                          : 8.w, // 마지막 카드에는 오른쪽 간격 없앰
                     ),
                     child: FixedModakbulCard(
                       title: data['title'],

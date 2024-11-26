@@ -53,5 +53,8 @@ class IconPath {
 }
 
 class ImagePath {
+  ImagePath._();
 
+  static const String homeModakbul = 'assets/images/home_modakbul.png';
+  static const String browseSmallModakbul = 'assets/images/browse_small_modakbul.png';
 }
