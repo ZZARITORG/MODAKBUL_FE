@@ -185,72 +185,68 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
           children: [
             SizedBox(height: 24.h),
             if (selectedFridnds.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: StyleConstants.defaultPadding),
-                child: ClipRRect(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    clipBehavior: Clip.hardEdge,
-                    child: Row(
-                      children: selectedFridnds.map((friend) {
-                        return Padding(
-                          padding: EdgeInsets.only(right: 12.w),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(
+                    left: StyleConstants.defaultPadding, right: 4.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: selectedFridnds.map((friend) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Stack(
                             children: [
-                              Stack(
-                                children: [
-                                  CircleAvatar(
-                                    radius: StyleConstants.circleSizeM,
-                                  ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: SizedBox(
-                                      height: 24.r,
-                                      width: 24.r,
-                                      child: IconButton(
-                                        padding: EdgeInsets.zero,
-                                        constraints: const BoxConstraints(),
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedFridnds.removeWhere(
-                                              (item) =>
-                                                  item['userId'] ==
-                                                  friend['userId'],
-                                            );
-                                          });
-                                        },
-                                        icon: SvgPicture.asset(
-                                          IconPath.cancel,
-                                          width: 24.r,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              CircleAvatar(
+                                radius: StyleConstants.circleSizeM,
                               ),
-                              SizedBox(height: 4.h),
-                              SizedBox(
-                                width: StyleConstants.circleSizeM * 2,
-                                child: Center(
-                                  child: Text(
-                                    friend['userName']!,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .body3
-                                        .copyWith(color: ColorSchemes.gray300),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: SizedBox(
+                                  height: 24.r,
+                                  width: 24.r,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedFridnds.removeWhere(
+                                          (item) =>
+                                              item['userId'] ==
+                                              friend['userId'],
+                                        );
+                                      });
+                                    },
+                                    icon: SvgPicture.asset(
+                                      IconPath.cancel,
+                                      width: 24.r,
+                                    ),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                          SizedBox(height: 4.h),
+                          SizedBox(
+                            width: StyleConstants.circleSizeM * 2,
+                            child: Center(
+                              child: Text(
+                                friend['userName']!,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body3
+                                    .copyWith(color: ColorSchemes.gray300),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
             SizedBox(height: 10.h),
