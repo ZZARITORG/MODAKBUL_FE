@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const MyModakbulScreen(),
+      home: const HomeScreen(),
     );
   }
 }
