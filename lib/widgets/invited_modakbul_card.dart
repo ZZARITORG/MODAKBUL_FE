@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
-import '../themes/color_schemes.dart';
+import 'package:modakbul/themes/color_schemes.dart';
 
 class InvitedModakbulCard extends StatelessWidget {
   final String? profileImage1;
@@ -109,62 +109,61 @@ class InvitedModakbulCard extends StatelessWidget {
                                         width: 8.r),
                                   ],
                                 )
+
                               : Row(
+                            children: [
+                              SizedBox(
+                                width: profileLength >= 4
+                                    ? 84.w
+                                    : (profileLength == 3 ? 60.w : 36.w),
+                                child: Stack(
                                   children: [
-                                    SizedBox(
-                                      width: profileLength >= 4
-                                          ? 84.w
-                                          : (profileLength == 3 ? 60.w : 36.w),
-                                      child: Stack(
-                                        children: [
-                                          if (profileLength >= 2)
-                                            Positioned(
-                                              child: CircleAvatar(
-                                                radius: StyleConstants
-                                                    .circleSizeXXXXXS,
-                                                backgroundColor:
-                                                    ColorSchemes.white,
-                                                child: CircleAvatar(
-                                                  radius: StyleConstants
-                                                      .circleSizeXXXXXXS,
-                                                  backgroundColor:
-                                                      ColorSchemes.orange200,
-                                                ),
-                                              ),
-                                            ),
-                                          if (profileLength >= 3)
-                                            Positioned(
-                                              left: 24.w,
-                                              child: CircleAvatar(
-                                                radius: StyleConstants
-                                                    .circleSizeXXXXXS,
-                                                backgroundColor:
-                                                    ColorSchemes.white,
-                                                child: CircleAvatar(
-                                                  radius: StyleConstants
-                                                      .circleSizeXXXXXXS,
-                                                  backgroundColor:
-                                                      ColorSchemes.orange100,
-                                                ),
-                                              ),
-                                            ),
-                                          if (profileLength >= 4)
-                                            Positioned(
-                                              left: 48.w,
-                                              child: CircleAvatar(
-                                                radius: StyleConstants
-                                                    .circleSizeXXXXXS,
-                                                backgroundColor:
-                                                    ColorSchemes.white,
-                                                child: CircleAvatar(
-                                                  radius: StyleConstants
-                                                      .circleSizeXXXXXXS,
-                                                  backgroundColor:
-                                                      ColorSchemes.orange000,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
+                                    if (profileLength >= 2)
+                                      Positioned(
+                                        child: CircleAvatar(
+                                          radius: StyleConstants
+                                              .circleSizeXXXXXS,
+                                          backgroundColor:
+                                          ColorSchemes.white,
+                                          child: CircleAvatar(
+                                            radius: StyleConstants
+                                                .circleSizeXXXXXXS,
+                                            backgroundColor:
+                                            ColorSchemes.orange200,
+                                          ),
+                                        ),
+                                      ),
+                                    if (profileLength >= 3)
+                                      Positioned(
+                                        left: 24.w,
+                                        child: CircleAvatar(
+                                          radius: StyleConstants
+                                              .circleSizeXXXXXS,
+                                          backgroundColor:
+                                          ColorSchemes.white,
+                                          child: CircleAvatar(
+                                            radius: StyleConstants
+                                                .circleSizeXXXXXXS,
+                                            backgroundColor:
+                                            ColorSchemes.orange100,
+                                          ),
+                                        ),
+                                      ),
+                                    if (profileLength >= 4)
+                                      Positioned(
+                                        left: 48.w,
+                                        child: CircleAvatar(
+                                          radius: StyleConstants
+                                              .circleSizeXXXXXS,
+                                          backgroundColor:
+                                          ColorSchemes.white,
+                                          child: CircleAvatar(
+                                            radius: StyleConstants
+                                                .circleSizeXXXXXXS,
+                                            backgroundColor:
+                                            ColorSchemes.orange000,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                     SizedBox(width: 7.w),
@@ -183,6 +182,23 @@ class InvitedModakbulCard extends StatelessWidget {
                                         width: 8.r),
                                   ],
                                 ),
+                              ),
+                              SizedBox(width: 7.w),
+                              Text(
+                                '${profileLength - 1}명',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body3
+                                    .copyWith(
+                                    color: ColorSchemes.gray200,
+                                    height: 1.571),
+                              ),
+                              SizedBox(width: 6.w),
+                              SvgPicture.asset(
+                                  IconPath.arrowForward15Gray200,
+                                  width: 8.r),
+                            ],
+                          ),
                         ],
                       ),
                     ),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/screens/alert/alert_screen.dart';
 import 'package:modakbul/screens/auth/auth_id_screen.dart';
 import 'package:modakbul/screens/auth/auth_phone_screen.dart';
 import 'package:modakbul/screens/auth/terms_agreement_screen.dart';
+import 'package:modakbul/screens/modakbul/modakbul_detail_screen.dart';
+import 'package:modakbul/screens/modakbul/my_modakbul_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_map_detail_screen.dart';
 import 'package:modakbul/screens/home/home_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
@@ -40,7 +43,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const MyProfileScreen(),
+      home: const ModakbulDetailScreen(),
     );
   }
 }
