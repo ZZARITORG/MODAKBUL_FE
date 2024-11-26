@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
+import 'package:modakbul/widgets/log_out_dialog.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -137,7 +138,11 @@ class MyProfileScreen extends StatelessWidget {
             Center(
               child: InkWell(
                 overlayColor: WidgetStateProperty.all(ColorSchemes.orange000),
-                onTap: (){},
+                onTap: () {
+                  showDialog(context: context, builder: (context) {
+                    return LogOutDialog();
+                  });
+                },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                     children: [
