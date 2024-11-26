@@ -57,4 +57,6 @@ class ImagePath {
 
   static const String homeModakbul = 'assets/images/home_modakbul.png';
   static const String browseSmallModakbul = 'assets/images/browse_small_modakbul.png';
+  static const String smallBonfire = 'assets/images/small_bonfire.png';
+  static const String friendAlert = 'assets/images/friend_alert.png';
 }

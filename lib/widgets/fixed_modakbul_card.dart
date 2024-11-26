@@ -10,7 +10,7 @@ class FixedModakbulCard extends StatelessWidget {
   final String title;
   final String date;
   final String location;
-  
+
   const FixedModakbulCard({
     Key? key,
     required this.title,
@@ -82,21 +82,24 @@ class FixedModakbulCard extends StatelessWidget {
                         width: 12.r
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 4.w,
-                  ),
-                  Text(
-                      location,
-                      style: Theme.of(context)
-                          .textTheme.body3
-                          .copyWith(color: ColorSchemes.orange001,
-                          height: 1.5714)
-                  )
-                ],
-              ),
+                    SizedBox(
+                      width: 4.w,
+                    ),
+                    Flexible(
+                      child: Text(
+                          location,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme.body3
+                              .copyWith(color: ColorSchemes.orange001,
+                              height: 1.5714)
+                      ),
+                    )
+                  ],
+                ),
 
-            ],
+              ],
+            ),
           ),
         ),
       ),
