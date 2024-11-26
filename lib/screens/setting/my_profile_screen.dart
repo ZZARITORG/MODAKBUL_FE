@@ -56,8 +56,8 @@ class MyProfileScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Positioned(
-                                      left: 40.w,
-                                      top: 40.h,
+                                      right: 0,
+                                      bottom: 0,
                                       child: CircleAvatar(
                                         backgroundColor: ColorSchemes.orange200,
                                         radius: StyleConstants.circleSizeXXXXXXXS,

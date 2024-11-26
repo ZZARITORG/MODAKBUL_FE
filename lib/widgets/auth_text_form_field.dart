@@ -15,18 +15,40 @@ class AuthTextFormField extends StatefulWidget {
   final TextEditingController textEditingController;
   final int maxLength;
   final FocusNode focusNode; // FocusNode 추가
+  final bool isBigHeadLine2;
 
   const AuthTextFormField(
       {Key? key,
-        required this.textInputType,
-        required this.hintText,
-        required this.onChanged,
-        required this.validator,
-        required this.textEditingController,
-        required this.maxLength,
-        required this.focusNode,
-        this.formatters})
+      this.isBigHeadLine2 = false,
+      required this.textInputType,
+      required this.hintText,
+      required this.onChanged,
+      required this.validator,
+      required this.textEditingController,
+      required this.maxLength,
+      required this.focusNode,
+      this.formatters})
       : super(key: key);
+
+  factory AuthTextFormField.bigHeadLine2({
+    required TextInputType textInputType,
+    required String hintText,
+    required ValueChanged<String>? onChanged,
+    required FormFieldValidator<String>? validator,
+    required TextEditingController textEditingController,
+    required int maxLength,
+    required FocusNode focusNode,
+    List<TextInputFormatter>? formatters,
+  }) =>
+      AuthTextFormField(
+          isBigHeadLine2: true,
+          textInputType: textInputType,
+          hintText: hintText,
+          onChanged: onChanged,
+          validator: validator,
+          textEditingController: textEditingController,
+          maxLength: maxLength,
+          focusNode: focusNode);
 
   @override
   State<AuthTextFormField> createState() => _AuthTextFormFieldState();
@@ -39,6 +61,21 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
   @override
   void initState() {
     super.initState();
+    // FocusNode 리스너 추가
+    widget.focusNode.addListener(_handleFocusChange);
+  }
+
+  @override
+  void dispose() {
+    // FocusNode 리스너 제거
+    widget.focusNode.removeListener(_handleFocusChange);
+    super.dispose();
+  }
+
+  void _handleFocusChange() {
+    setState(() {
+      // Focus 상태가 변경되면 UI 업데이트
+    });
   }
 
   void _validateInput(String value) {
@@ -55,7 +92,7 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
 
     if (_hasError) {
       underlineColor = ColorSchemes.orange000;
-    } else if (widget.focusNode?.hasFocus ?? false) {
+    } else if (widget.focusNode.hasFocus) {
       underlineColor = ColorSchemes.orange200;
     } else {
       underlineColor = ColorSchemes.gray100;
@@ -72,7 +109,7 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
                 widget.onChanged!(value);
                 _validateInput(value);
               },
-              autofocus: true,
+              autofocus: widget.isBigHeadLine2 ? false : true,
               maxLength: widget.maxLength,
               validator: widget.validator,
               controller: widget.textEditingController,
@@ -81,17 +118,31 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
               keyboardType: widget.textInputType,
               inputFormatters: widget.formatters,
               textInputAction: TextInputAction.done,
-              onTapOutside: (event) =>
-                  FocusManager.instance.primaryFocus?.unfocus(),
+              onTap: () {
+                setState(() {
+                  FocusScope.of(context).requestFocus(widget.focusNode);
+                });
+              },
+              onTapOutside: (event) {
+                setState(() {
+                  widget.focusNode.unfocus();
+                });
+              },
               cursorColor: ColorSchemes.orange100,
-              style: Theme.of(context)
+              style: widget.isBigHeadLine2 ? Theme.of(context)
+                  .textTheme
+                  .bigHeadLine2
+                  .copyWith(color: ColorSchemes.gray500) : Theme.of(context)
                   .textTheme
                   .bigHeadLine1
                   .copyWith(color: ColorSchemes.gray500),
               decoration: InputDecoration(
                 counterText: '',
                 hintText: widget.hintText,
-                hintStyle: Theme.of(context)
+                hintStyle: widget.isBigHeadLine2 ? Theme.of(context)
+                    .textTheme
+                    .bigHeadLine2
+                    .copyWith(color: ColorSchemes.gray200) : Theme.of(context)
                     .textTheme
                     .bigHeadLine1
                     .copyWith(color: ColorSchemes.gray200),
@@ -100,7 +151,7 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
                 border: InputBorder.none,
                 errorText: null,
                 errorStyle:
-                const TextStyle(color: ColorSchemes.orange100, fontSize: 0),
+                    const TextStyle(color: ColorSchemes.orange100, fontSize: 0),
               ),
             ),
             Positioned(

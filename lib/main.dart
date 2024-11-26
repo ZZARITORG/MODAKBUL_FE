@@ -9,6 +9,7 @@ import 'package:modakbul/screens/modakbul/modakbul_detail_screen.dart';
 import 'package:modakbul/screens/modakbul/my_modakbul_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_map_detail_screen.dart';
 import 'package:modakbul/screens/home/home_screen.dart';
+import 'package:modakbul/screens/setting/edit_my_profile_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/widgets/custom_calender_picker.dart';
 import 'package:modakbul/screens/modakbul/create_content_screen.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const ModakbulDetailScreen(),
+      home: const EditMyProfileScreen(),
     );
   }
 }
