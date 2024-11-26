@@ -63,7 +63,7 @@ class SettingMenu extends StatelessWidget {
         iconHeight: iconHeight,
         trailingWidget: Padding(
           padding: EdgeInsets.only(right: 4.w),
-          child: Switch(
+          child: Switch.adaptive(
             value: isToggled,
             onChanged: onToggleChanged,
             activeColor: activeColor ?? ColorSchemes.orange200,
