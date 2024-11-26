@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:modakbul/screens/friend/tab_screens/friends_tab_screen.dart';
+import 'package:modakbul/screens/friend/tab_screens/friends_tab_screen2.dart';
 import 'package:modakbul/screens/friend/tab_screens/groups_tab_screen.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';

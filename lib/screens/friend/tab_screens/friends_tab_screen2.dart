@@ -180,82 +180,11 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
         SingleChildScrollView(
           controller: _scrollController,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 24.h,
+                height: 12.h,
               ),
-              if (selectedFridends.isNotEmpty) ...[
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.only(
-                      left: StyleConstants.defaultPadding,
-                      right: 4.w,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: selectedFridends.map((friend) {
-                        return Padding(
-                          padding: EdgeInsets.only(right: 12.w),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Stack(
-                                children: [
-                                  CircleAvatar(
-                                    radius: StyleConstants.circleSizeM,
-                                  ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: SizedBox(
-                                      height: 24.r,
-                                      width: 24.r,
-                                      child: IconButton(
-                                        padding: EdgeInsets.zero,
-                                        constraints: const BoxConstraints(),
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedFridends.removeWhere(
-                                                  (item) => item['userId'] == friend['userId'],
-                                            );
-                                          });
-                                        },
-                                        icon: SvgPicture.asset(
-                                          IconPath.cancel,
-                                          width: 24.r,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 4.h),
-                              SizedBox(
-                                width: StyleConstants.circleSizeM * 2,
-                                child: Center(
-                                  child: Text(
-                                    friend['userName']!,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .body3
-                                        .copyWith(color: ColorSchemes.gray300),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10.h,
-                )
-              ],
               Padding(
                 padding:
                 EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
@@ -309,12 +238,15 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  '자주 만나는 친구',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bigHeadLine4
-                                      .copyWith(color: ColorSchemes.gray500),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 4.w),
+                                  child: Text(
+                                    '자주 만나는 친구',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bigHeadLine4
+                                        .copyWith(color: ColorSchemes.gray500),
+                                  ),
                                 ),
                                 TextButton(
                                   onPressed: () {
