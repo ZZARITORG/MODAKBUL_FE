@@ -71,14 +71,14 @@ class InvitedModakbulCard extends StatelessWidget {
                                       .smallHeadLine3
                                       .copyWith(
                                           color: ColorSchemes.gray400,
-                                          height: 1.193),
+                                          ),
                                 ),
                                 SizedBox(height: 2.h),
                                 Text(
                                   userId,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context).textTheme.body3.copyWith(
-                                      color: ColorSchemes.gray300, height: 1.571),
+                                      color: ColorSchemes.gray300, ),
                                 ),
                               ],
                             ),
@@ -101,7 +101,7 @@ class InvitedModakbulCard extends StatelessWidget {
                                           .body3
                                           .copyWith(
                                               color: ColorSchemes.gray200,
-                                              height: 1.571),
+                                              ),
                                     ),
                                     SizedBox(width: 6.w),
                                     SvgPicture.asset(
@@ -175,7 +175,7 @@ class InvitedModakbulCard extends StatelessWidget {
                                           .body3
                                           .copyWith(
                                               color: ColorSchemes.gray200,
-                                              height: 1.571),
+                                              ),
                                     ),
                                     SizedBox(width: 6.w),
                                     SvgPicture.asset(
@@ -197,7 +197,7 @@ class InvitedModakbulCard extends StatelessWidget {
                         .textTheme
                         .smallHeadLine1
                         .copyWith(
-                            color: ColorSchemes.gray500, height: 1.194)),
+                            color: ColorSchemes.gray500)),
                 SizedBox(height: 8.h),
                 Text(
                   description,
@@ -206,7 +206,7 @@ class InvitedModakbulCard extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .body3
-                      .copyWith(color: ColorSchemes.gray300, height: 1.714),
+                      .copyWith(color: ColorSchemes.gray300),
                 ),
                 SizedBox(height: 16.h),
               ],
@@ -236,7 +236,7 @@ class InvitedModakbulCard extends StatelessWidget {
                     Text(
                       date,
                       style: Theme.of(context).textTheme.body3.copyWith(
-                          color: ColorSchemes.orange200, height: 1.571),
+                          color: ColorSchemes.orange200),
                     ),
                   ],
                 ),
@@ -256,7 +256,7 @@ class InvitedModakbulCard extends StatelessWidget {
                       location,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.body3.copyWith(
-                          color: ColorSchemes.orange200, height: 1.571),
+                          color: ColorSchemes.orange200),
                     ),
                   ],
                 ),
