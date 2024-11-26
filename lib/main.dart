@@ -4,6 +4,7 @@ import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/screens/auth/auth_id_screen.dart';
 import 'package:modakbul/screens/auth/auth_phone_screen.dart';
 import 'package:modakbul/screens/auth/terms_agreement_screen.dart';
+import 'package:modakbul/screens/modakbul/my_modakbul_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_map_detail_screen.dart';
 import 'package:modakbul/screens/home/home_screen.dart';
 import 'package:modakbul/widgets/custom_calender_picker.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const ModakbulMapDetailScreen(),
+      home: const MyModakbulScreen(),
     );
   }
 }
