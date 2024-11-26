@@ -54,49 +54,60 @@ class _GroupEditScreenState extends State<GroupEditScreen>
           SizedBox(height: 24.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-            child: TextField(
-                style: Theme.of(context)
-                    .textTheme
-                    .body1
-                    .copyWith(color: ColorSchemes.gray500),
-                cursorColor: ColorSchemes.orange100,
-                //바뀔 수도 있음
-                onTapOutside: (event) =>
-                    FocusManager.instance.primaryFocus?.unfocus(),
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  counterText: '',
-                  suffixIcon: SizedBox(
-                    height: 32.r,
-                    width: 32.r,
-                    child: IconButton(
-                      padding: EdgeInsets.only(right: 2.w),
-                      onPressed: () {},
-                      icon: SvgPicture.asset(
-                        IconPath.edit,
-                        fit: BoxFit.scaleDown,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  style: Theme.of(context)
+                      .textTheme
+                      .body1
+                      .copyWith(color: ColorSchemes.gray500),
+                  cursorColor: ColorSchemes.orange100,
+                  onTapOutside: (event) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    counterText: '',
+                    suffixIcon: SizedBox(
+                      height: 32.r,
+                      width: 32.r,
+                      child: IconButton(
+                        padding: EdgeInsets.only(right: 2.w),
+                        onPressed: () {},
+                        icon: SvgPicture.asset(
+                          IconPath.edit,
+                          fit: BoxFit.scaleDown,
+                        ),
                       ),
                     ),
+                    suffixIconConstraints: BoxConstraints(
+                      minWidth: 0.w,
+                      minHeight: 0.h,
+                    ),
+                    hintText: '가볍게 커피챗하는 모임',
+                    hintStyle: Theme.of(context)
+                        .textTheme
+                        .smallHeadLine1
+                        .copyWith(color: ColorSchemes.gray200),
+                    isDense: true,
+                    contentPadding: EdgeInsets.only(left: 4.w, bottom: 4.h),
+                    border: InputBorder.none,
+                    errorText: null,
+                    errorStyle: const TextStyle(
+                        color: ColorSchemes.orange100, fontSize: 0),
                   ),
-                  suffixIconConstraints: BoxConstraints(
-                    minWidth: 0.w,
-                    minHeight: 0.h,
+                ),
+                SizedBox(height: 10.h),
+                Container(
+                  height: 2.w,
+                  decoration: BoxDecoration(
+                    color: ColorSchemes.gray100,
+                    borderRadius: BorderRadius.circular(2.r),
                   ),
-                  hintText: '가볍게 커피챗하는 모임',
-                  hintStyle: Theme.of(context)
-                      .textTheme
-                      .smallHeadLine1
-                      .copyWith(color: ColorSchemes.gray200),
-                  isDense: true,
-                  contentPadding:
-                  EdgeInsets.only(left: 4.w, bottom: 4.h),
-                  border: InputBorder.none,
-                  errorText: null,
-                  errorStyle: const TextStyle(
-                      color: ColorSchemes.orange100, fontSize: 0),
-                  ///suffixIcon: 추후 x아이콘
-                )),
+                ),
+              ],
+            ),
           ),
           const Expanded(
             child: CustomFriendsTabScreen(),
