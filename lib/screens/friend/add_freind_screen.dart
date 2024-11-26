@@ -57,12 +57,15 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '친구요청',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine4
-                          .copyWith(color: ColorSchemes.gray500),
+                    Padding(
+                      padding: EdgeInsets.only(left: 4.w),
+                      child: Text(
+                        '친구요청',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bigHeadLine4
+                            .copyWith(color: ColorSchemes.gray500),
+                      ),
                     ),
                   ],
                 ),
@@ -70,11 +73,13 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: 4,
+                  itemCount: friendRequests.length,
                   itemBuilder: (context, index) {
                     final friend = friendRequests[index];
                     return Padding(
-                      padding: EdgeInsets.only(bottom: 24.h),
+                      padding: EdgeInsets.only(
+                        bottom: index == friendRequests.length - 1 ? 0 : 24.h,
+                      ),
                       child: AddFriendProfile(
                         userName: friend['userName']!,
                         userId: friend['userId']!,

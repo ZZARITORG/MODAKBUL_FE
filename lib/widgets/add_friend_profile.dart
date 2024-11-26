@@ -37,12 +37,18 @@ class AddFriendProfile extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(userName, style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray500),),
+                  Padding(
+                    padding: EdgeInsets.only(left: 4.w),
+                    child: Text(userName, style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray500),),
+                  ),
                   Text(time, style: Theme.of(context).textTheme.caption.copyWith(color: ColorSchemes.gray200),),
                 ],
               ),
               SizedBox(height: 2.h,),
-              Text(userId, style: Theme.of(context).textTheme.body3.copyWith(color: ColorSchemes.gray300),),
+              Padding(
+                padding: EdgeInsets.only(left: 4.w),
+                child: Text(userId, style: Theme.of(context).textTheme.body3.copyWith(color: ColorSchemes.gray300),),
+              ),
               SizedBox(height: 9.h,),
               Row(
                 children: [
