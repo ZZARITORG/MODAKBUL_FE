@@ -4,6 +4,7 @@ import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/screens/auth/auth_id_screen.dart';
 import 'package:modakbul/screens/auth/auth_phone_screen.dart';
 import 'package:modakbul/screens/auth/terms_agreement_screen.dart';
+import 'package:modakbul/screens/friend/friend_search_screen.dart';
 import 'package:modakbul/widgets/custom_calender_picker.dart';
 import 'package:modakbul/screens/modakbul/create_content_screen.dart';
 import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const AuthPhoneScreen(),
+      home: const FriendSearchScreen(),
     );
   }
 }

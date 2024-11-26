@@ -11,6 +11,7 @@ import '../../constants/assets_path.dart';
 import '../../constants/style_constants.dart';
 import '../../widgets/custom_search_bar.dart';
 import '../../widgets/logo_app_bar.dart';
+import 'create_group_screen.dart';
 
 
 class FriendSearchScreen extends StatefulWidget {
@@ -68,7 +69,12 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                           .copyWith(color: ColorSchemes.gray500),
                     ),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CreateGroupScreen()), // AddFreindScreen 으로 이동해야함
+                          );
+                        },
                         child: Text(
                           '전체보기',
                           style: Theme.of(context)
@@ -82,7 +88,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: 2,
+                  itemCount: friendRequests.length,
                   itemBuilder: (context, index) {
                     final friend = friendRequests[index];
                     return Padding(
@@ -121,11 +127,13 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: 4,
+                  itemCount: friendRequests.length,
                   itemBuilder: (context, index) {
                     final friend = friendRequests[index];
                     return Padding(
-                      padding: EdgeInsets.only(bottom: 24.h),
+                      padding: EdgeInsets.only(
+                        bottom: index == friendRequests.length - 1 ? 0 : 24.h,
+                      ),
                       child: AddFriendProfile(
                         userName: friend['userName']!,
                         userId: friend['userId']!,
