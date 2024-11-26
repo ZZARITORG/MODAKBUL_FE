@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,29 +12,37 @@ class SettingMenu extends StatelessWidget {
   final VoidCallback? onPressed;
   final String icon;
   final Widget? trailingWidget;
+  final double? iconWidth;
+  final double? iconHeight;
 
   const SettingMenu(
       {Key? key,
       required this.menu,
       required this.onPressed,
       required this.icon,
+      this.iconWidth,
+      this.iconHeight,
       this.trailingWidget})
       : super(key: key);
 
   factory SettingMenu.arrow({
     required String menu,
     required String icon,
+    required double iconWidth,
+    double? iconHeight,
     VoidCallback? onPressed,
   }) =>
       SettingMenu(
         menu: menu,
         icon: icon,
         onPressed: onPressed,
+        iconWidth: iconWidth,
+        iconHeight: iconHeight,
         trailingWidget: Padding(
           padding: EdgeInsets.only(right: 2.w),
           child: SvgPicture.asset(
             IconPath.arrowForward15Gray200,
-            fit: BoxFit.scaleDown,
+            width: 8.r,
           ),
         ),
       );
@@ -40,6 +50,8 @@ class SettingMenu extends StatelessWidget {
   factory SettingMenu.toggle({
     required String menu,
     required String icon,
+    required double iconWidth,
+    double? iconHeight,
     required bool isToggled,
     required ValueChanged<bool> onToggleChanged,
     Color? activeColor, // 스위치 On 상태 색상
@@ -47,6 +59,8 @@ class SettingMenu extends StatelessWidget {
       SettingMenu(
         menu: menu,
         icon: icon,
+        iconWidth: iconWidth,
+        iconHeight: iconHeight,
         trailingWidget: Padding(
           padding: EdgeInsets.only(right: 4.w),
           child: Switch(
@@ -61,21 +75,24 @@ class SettingMenu extends StatelessWidget {
   factory SettingMenu.version({
     required String menu,
     required String icon,
+    required double iconWidth,
+    double? iconHeight,
     VoidCallback? onPressed,
   }) =>
       SettingMenu(
         menu: menu,
         icon: icon,
+        iconWidth: iconWidth,
+        iconHeight: iconHeight,
         onPressed: onPressed,
         trailingWidget:
-            Padding(
-                padding: EdgeInsets.only(right: 2.w),
-                child: Text('0.1.0')),
+            Padding(padding: EdgeInsets.only(right: 2.w), child: Text('0.1.0')),
       );
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
+      overlayColor: WidgetStateProperty.all(ColorSchemes.orange000),
       onTap: onPressed,
       child: Container(
         width: double.infinity,
@@ -83,7 +100,7 @@ class SettingMenu extends StatelessWidget {
             border: Border(
           bottom: BorderSide(color: ColorSchemes.gray100, width: 1.w),
         )),
-        child: Container(
+        child: Padding(
           padding: EdgeInsets.symmetric(vertical: 10.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,7 +110,9 @@ class SettingMenu extends StatelessWidget {
                   SizedBox(
                       width: 24.r,
                       height: 24.r,
-                      child: SvgPicture.asset(icon, fit: BoxFit.scaleDown)),
+                      child: Center(
+                          child: SvgPicture.asset(icon,
+                              width: iconWidth, height: iconHeight))),
                   SizedBox(width: 2.w),
                   Text(menu,
                       style: Theme.of(context)
