@@ -30,7 +30,7 @@ class SettingMenu extends StatelessWidget {
     required String icon,
     required double iconWidth,
     double? iconHeight,
-    VoidCallback? onPressed,
+    required VoidCallback onPressed,
   }) =>
       SettingMenu(
         menu: menu,
