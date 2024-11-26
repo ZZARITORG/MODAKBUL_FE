@@ -13,6 +13,7 @@ import 'package:modakbul/screens/setting/alert_setting_screen.dart';
 import 'package:modakbul/screens/setting/common_setting_screen.dart';
 import 'package:modakbul/screens/setting/edit_my_profile_screen.dart';
 import 'package:modakbul/screens/setting/friend_setting_screen.dart';
+import 'package:modakbul/screens/setting/info_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/screens/setting/terms_screen.dart';
 import 'package:modakbul/widgets/custom_calender_picker.dart';
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const TermsScreen(),
+      home: const InfoScreen(),
     );
   }
 }
