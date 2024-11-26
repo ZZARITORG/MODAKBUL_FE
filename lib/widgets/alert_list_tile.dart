@@ -7,14 +7,14 @@ import 'package:modakbul/themes/styles.dart';
 class AlertListTile extends StatelessWidget {
   final String title;
   final String content;
-  final String iconName;
+  final String alertType;
   final String time;
 
   const AlertListTile(
       {Key? key,
       required this.title,
       required this.content,
-      required this.iconName,
+      required this.alertType,
       required this.time})
       : super(key: key);
 
@@ -31,7 +31,6 @@ class AlertListTile extends StatelessWidget {
           CircleAvatar(
             radius: StyleConstants.circleSizeXXS,
             backgroundColor: ColorSchemes.gray100,
-            ///이미지 영역
           ),
           SizedBox(
             width: 6.w,
@@ -50,20 +49,24 @@ class AlertListTile extends StatelessWidget {
                 SizedBox(
                   height: 4.h,
                 ),
-                Text(content,
-                    maxLines: 2,
-                    style: Theme.of(context)
-                    .textTheme
-                    .body2
-                    .copyWith(color: ColorSchemes.gray400),),
+                Text(
+                  content,
+                  maxLines: 2,
+                  style: Theme.of(context)
+                      .textTheme
+                      .body2
+                      .copyWith(color: ColorSchemes.gray400),
+                ),
                 SizedBox(
                   height: 8.h,
                 ),
-                Text(time,
+                Text(
+                  time,
                   style: Theme.of(context)
                       .textTheme
                       .body3
-                      .copyWith(color: ColorSchemes.gray200),),
+                      .copyWith(color: ColorSchemes.gray200),
+                ),
               ],
             ),
           )

@@ -31,21 +31,20 @@ class _AlertScreenState extends State<AlertScreen> {
         appBar: BackButtonAppBar(),
         body: SafeArea(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 20.h),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      buildAlertSection('오늘', todayAlerts),
-                      buildAlertSection('어제', yesterdayAlerts),
-                    ],
+              padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 20.h),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        buildAlertSection('오늘', todayAlerts),
+                        buildAlertSection('어제', yesterdayAlerts),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            )
-          ),
+                ],
+              )),
         ));
   }
 
@@ -86,10 +85,11 @@ class _AlertScreenState extends State<AlertScreen> {
                 AlertListTile(
                   title: title,
                   content: content,
-                  iconName: 'iconName',
+                  alertType: alert['type'],
                   time: alert['time'],
                 ),
-                if (alerts.indexOf(alert) != alert.length - 1) SizedBox(height: 12.h),
+                if (alerts.indexOf(alert) != alert.length - 1)
+                  SizedBox(height: 12.h),
               ],
             );
           }).toList(),
