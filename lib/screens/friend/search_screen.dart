@@ -6,6 +6,7 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
+import 'package:modakbul/widgets/participant_list_profile.dart';
 import 'package:modakbul/widgets/select_user_list_profile.dart';
 import 'package:modakbul/widgets/tab_bar_delegate.dart';
 import '../../constants/assets_path.dart';
@@ -196,16 +197,19 @@ class _SearchScreenState extends State<SearchScreen> {
               controller: _searchController,
             ),
             SizedBox(height: 24.h),
-            Row(
-              children: [
-                Text(
-                  '검색결과',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bigHeadLine4
-                      .copyWith(color: ColorSchemes.gray500),
-                ),
-              ],
+            Padding(
+              padding: EdgeInsets.only(left: 4.w),
+              child: Row(
+                children: [
+                  Text(
+                    '검색결과',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bigHeadLine4
+                        .copyWith(color: ColorSchemes.gray500),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 14.h),
             Expanded(
@@ -225,12 +229,10 @@ class _SearchScreenState extends State<SearchScreen> {
                       _searchController.text = '';
                     },
                     onTapDown: (_) {},
-                    child: SelectUserListProfile(
+                    child: Participantlistprofile(
                       userName: _filteredFriends[index]['username'],
                       userId: _filteredFriends[index]['id'],
-                      profileImage: _filteredFriends[index]['profilePicture'],
-                      isChecked: isChecked,
-                    ),
+                      profileImage: _filteredFriends[index]['profilePicture'],)
                   );
                 },
               ),
