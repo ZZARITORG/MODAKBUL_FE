@@ -19,14 +19,17 @@ class ModakbulDetailScreen extends StatefulWidget {
 class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
   final String title = '편의점에서 간단하게 맥주 먹을 사람!';
   final String description =
-      '해당 영역에 본문이 작성되고 최대 글자수에 따라 해상도 별로 줄이 길어지면 하단 위치 위젯과 동일한 마진으로 개발합니다. 하단과의 마진은 32px입니다, 해당 영역에 본문이 작성되고 최대 글자수에 따라 해상도 별로 줄이 길어지면 하단 위치 위젯과 동일한 마진으로 개발합니다. 하단과의 마진은 32px입니다, 해당 영역에 본문이 작성되고 최대 글자수에 따라 해상도 별로 줄이 길어지면 하단 위치 위젯과 동일한 마진으로 개발합니다. 하단과의 마진은 32px입니다';
+      '해당 영역에 본문이 작성되고 최대 글자수에 따라 해상도 별로 줄이 길어지면 하단 위치 위젯과 동일한 마진으로 개발합니다. 하단과의 마진은 32px입니다, 해당 영역에 본문이 작성되고 최대 글자수에 따라 해상도 별로 줄이 길어지면 하단 위치 위젯과 동일한 마진으로 개발합니다. 하단과의 마진은 32px입니다, 해당 영역에 본문이 작성되고 최대 글자수에 따라 해상도 별로 줄이 길어지면 하단 위치 위젯과 동일한 마진으로 개발합니다. 하단과의 마진은 32px입니다 하단과의 마진은 32px입니다 하단과의 마진은 32px입니다 하단과의 마진은 32px입니다 하단과의 마진은 32px입니다 하단과의 마진은 32px입니다 하단과의 마진은 32px입니다 하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다하단과의 마진은 32px입니다';
   final String time = '10.1(화) 오후 7시';
   final String location = '서울 중구 마른대로 79';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const BackButtonAppBar(),
+      backgroundColor: ColorSchemes.gray000,
+      appBar: const BackButtonAppBar(
+        backgroundColor: ColorSchemes.gray000,
+      ),
       body: SafeArea(
         child: Stack(
           children: [
@@ -85,15 +88,20 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                     .textTheme
                                     .bigHeadLine3
                                     .copyWith(
-                                        color: ColorSchemes.gray500, height: 1.193),
+                                        color: ColorSchemes.gray500,
+                                        height: 1.193),
                               ),
                               SizedBox(
                                 height: 8.h,
                               ),
                               Text(
                                 description,
-                                style: Theme.of(context).textTheme.body3.copyWith(
-                                    color: ColorSchemes.gray400, height: 1.625),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body3
+                                    .copyWith(
+                                        color: ColorSchemes.gray400,
+                                        height: 1.625),
                               ),
                             ],
                           ),
@@ -105,7 +113,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       '위치',
@@ -170,14 +179,19 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    location,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .body3
-                                        .copyWith(
-                                            color: ColorSchemes.gray300,
-                                            height: 1.571),
+                                  Flexible(
+                                    child: FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(
+                                        location,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .body3
+                                            .copyWith(
+                                                color: ColorSchemes.gray300,
+                                                height: 1.571),
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(
                                     width: 12.w,
@@ -206,7 +220,10 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                     ),
                                   )
                                 ],
-                              )
+                              ),
+                              SizedBox(
+                                height: 88.h,
+                              ),
                             ],
                           )
                         ],
@@ -217,18 +234,38 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
               ),
             ),
             Positioned(
-                bottom: 22.h,
-                left: 16.w,
-                right: 16.w,
-                child: SizedBox(
-                  height: 56.h,
-                  width: double.infinity,
-                  child: CustomButton(
-                      text: '모닥불 참여하기',
-                      onPressed: () {},
-                      buttonColor: ColorSchemes.orange200,
-                      textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                      textColor: ColorSchemes.white),
+                bottom: 0,
+                left: 16.h,
+                right: 16.h,
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      height: 72.h,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 37.h,
+                        color: ColorSchemes.gray000,
+                      ),
+                    ),
+                    Positioned(
+                        bottom: 16.h,
+                        left: 0,
+                        right: 0,
+                        child: SizedBox(
+                          height: 56.h,
+                          child: CustomButton(
+                              text: '모닥불 참여하기',
+                              onPressed: () {},
+                              buttonColor: ColorSchemes.orange200,
+                              textStyle:
+                                  Theme.of(context).textTheme.smallHeadLine2,
+                              textColor: ColorSchemes.white),
+                        )),
+                  ],
                 ))
           ],
         ),
