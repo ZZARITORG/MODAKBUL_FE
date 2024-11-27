@@ -290,8 +290,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                         return Column(
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                SizedBox(width: 4.w,),
                                 Text(
                                   '자주 만나는 친구',
                                   style: Theme.of(context)
@@ -299,6 +299,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                       .bigHeadLine4
                                       .copyWith(color: ColorSchemes.gray500),
                                 ),
+                                const Spacer(),
                                 TextButton(
                                     onPressed: () {},
                                     child: Text(
@@ -307,7 +308,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                           .textTheme
                                           .body3
                                           .copyWith(color: ColorSchemes.gray300),
-                                    ))
+                                    )),
+                                SizedBox(width: 4.w,),
                               ],
                             ),
                             SizedBox(

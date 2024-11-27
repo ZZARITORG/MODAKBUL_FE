@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/main.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -162,95 +164,6 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                 SizedBox(
                   height: 24.h,
                 ),
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(StyleConstants.radiusMedium),
-                  ),
-                  color: ColorSchemes.white,
-
-                  ///clipBehavior: Clip.antiAlias,
-                  margin: EdgeInsets.zero,
-                  elevation: 0,
-                  child: Padding(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 35.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '모든 친구',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bigHeadLine3
-                                  .copyWith(color: ColorSchemes.gray500),
-                            ),
-                            SizedBox(
-                              height: 8.h,
-                            ),
-                            Text(
-                              '친구 모두에게 모닥불을 전송합니다!',
-                              style:
-                              Theme.of(context).textTheme.caption.copyWith(
-                                color: ColorSchemes.orange100,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 98.r,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                  child: CircleAvatar(
-                                    radius: StyleConstants.circleSizeXS,
-                                    backgroundColor: ColorSchemes.white,
-                                    child: CircleAvatar(
-                                      radius: StyleConstants.circleSizeXXXS,
-                                      backgroundColor: ColorSchemes.orange200,
-                                    ),
-                                  )),
-                              Positioned(
-                                  left: 28.r,
-                                  child: CircleAvatar(
-                                    radius: StyleConstants.circleSizeXS,
-                                    backgroundColor: ColorSchemes.white,
-                                    child: CircleAvatar(
-                                      radius: StyleConstants.circleSizeXXXS,
-                                      backgroundColor: ColorSchemes.orange100,
-                                    ),
-                                  )),
-                              Positioned(
-                                  left: 56.r,
-                                  child: CircleAvatar(
-                                    radius: StyleConstants.circleSizeXS,
-                                    backgroundColor: ColorSchemes.white,
-                                    child: CircleAvatar(
-                                      radius: StyleConstants.circleSizeXXXS,
-                                      backgroundColor: ColorSchemes.gray300,
-                                      child: FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: Text(
-                                          '+120',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .body3
-                                              .copyWith(
-                                              color: ColorSchemes.white),
-                                        ),
-                                      ),
-                                    ),
-                                  )),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                 SizedBox(
                   height: 16.h,
                 ),
@@ -277,8 +190,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                     return Column(
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            SizedBox(width: 4.w,),
                             Text(
                               '최신순',
                               style: Theme.of(context)
@@ -286,6 +199,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                   .bigHeadLine4
                                   .copyWith(color: ColorSchemes.gray500),
                             ),
+                            const Spacer(),
                             TextButton(
                                 onPressed: () {},
                                 child: Text(
@@ -294,8 +208,81 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                       .textTheme
                                       .body3
                                       .copyWith(color: ColorSchemes.gray300),
-                                ))
+                                )),
+                            SizedBox(width: 4.w,),
                           ],
+                        ),
+                        SizedBox(height: 14.h,),
+                        SizedBox(
+                          width: double.infinity,
+                          child: GestureDetector(
+                            onTap: () {
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
+                              ),
+                              color: ColorSchemes.gray100,
+                              margin: EdgeInsets.zero,
+                              elevation: 0,
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 20.h, bottom: 14.h),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: 98.r,
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                            child: CircleAvatar(
+                                              radius: StyleConstants.circleSizeXS,
+                                              backgroundColor: ColorSchemes.white,
+                                              child: CircleAvatar(
+                                                radius: StyleConstants.circleSizeXXXS,
+                                                backgroundColor: ColorSchemes.orange200,
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            left: 28.r,
+                                            child: CircleAvatar(
+                                              radius: StyleConstants.circleSizeXS,
+                                              backgroundColor: ColorSchemes.white,
+                                              child: CircleAvatar(
+                                                radius: StyleConstants.circleSizeXXXS,
+                                                backgroundColor: ColorSchemes.orange100,
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            left: 56.r,
+                                            child: CircleAvatar(
+                                              radius: StyleConstants.circleSizeXS,
+                                              backgroundColor: ColorSchemes.white,
+                                              child: CircleAvatar(
+                                                radius: StyleConstants.circleSizeXXXS,
+                                                backgroundColor: ColorSchemes.gray300,
+                                                child: SvgPicture.asset(IconPath.plus, width: 11.r),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.h),
+                                    Text(
+                                      '그룹 생성하기',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .smallHeadLine3
+                                          .copyWith(color: ColorSchemes.gray200),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                         SizedBox(
                           height: 14.h,

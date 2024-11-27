@@ -98,10 +98,10 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                 description,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .body3
+                                    .body2
                                     .copyWith(
                                         color: ColorSchemes.gray400,
-                                        height: 1.625),
+                                        height: 26.h / 16.sp),
                               ),
                             ],
                           ),
