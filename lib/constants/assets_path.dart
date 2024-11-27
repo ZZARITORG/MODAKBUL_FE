@@ -38,6 +38,7 @@ class IconPath {
   static const String locationSearching = 'assets/icons/location_searching.svg';
   static const String lock = 'assets/icons/lock.svg';
   static const String mail = 'assets/icons/mail.svg';
+  static const String modakbulLogo = 'assets/icons/modakbul_logo.svg';
   static const String notifications = 'assets/icons/notifications.svg';
   static const String notificationsBell = 'assets/icons/notifications_bell.svg';
   static const String notificationsOff = 'assets/icons/notifications_off.svg';
