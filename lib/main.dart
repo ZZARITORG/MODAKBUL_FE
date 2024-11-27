@@ -19,6 +19,7 @@ import 'package:modakbul/screens/setting/friend_setting_screen.dart';
 import 'package:modakbul/screens/setting/info_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/screens/setting/terms_screen.dart';
+import 'package:modakbul/widgets/add_friend_list_screen_skeleton.dart';
 import 'package:modakbul/widgets/custom_calender_picker.dart';
 import 'package:modakbul/screens/modakbul/create_content_screen.dart';
 import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: EditPhoneScreen(),
+      home: AddFriendListScreenSkeleton(),
     );
   }
 }
