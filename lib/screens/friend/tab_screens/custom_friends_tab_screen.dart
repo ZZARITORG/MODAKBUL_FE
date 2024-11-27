@@ -13,13 +13,13 @@ import 'package:modakbul/widgets/user_info_check.dart';
 
 ///TODO 검색방식 생각, 키보드 내리는것도 생각(탭바 안쓸수도있음), 리스트 끝까지올렸을때 마진 고려
 class CustomFriendsTabScreen extends StatefulWidget {
-  const CustomFriendsTabScreen({super.key});
+  const CustomFriendsTabScreen ({super.key});
 
   @override
-  State<CustomFriendsTabScreen> createState() => _CustomFriendsTabScreenState();
+  State<CustomFriendsTabScreen > createState() => _CustomFriendsTabScreenState();
 }
 
-class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
+class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
   final List<Map<String, dynamic>> friends = [
     {
       'username': '김민수asdasdasdasdasdsadsadsadadadadsadd',
@@ -274,29 +274,21 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
                           return Center(
                             child: Text(
                               '검색 결과가 없습니다',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .body1
-                                  .copyWith(color: ColorSchemes.gray300),
+                              style: Theme.of(context).textTheme.body1.copyWith(color: ColorSchemes.gray300),
                             ),
                           );
                         } else {
                           return Column(
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 4.w),
-                                    child: Text(
-                                      '자주 만나는 친구',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bigHeadLine4
-                                          .copyWith(
-                                              color: ColorSchemes.gray500),
-                                    ),
+                                  Text(
+                                    '자주 만나는 친구',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bigHeadLine4
+                                        .copyWith(color: ColorSchemes.gray500),
                                   ),
                                   TextButton(
                                     onPressed: () {},
@@ -305,30 +297,26 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
                                       style: Theme.of(context)
                                           .textTheme
                                           .body3
-                                          .copyWith(
-                                              color: ColorSchemes.gray300),
+                                          .copyWith(color: ColorSchemes.gray300),
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 14.h),
+                              SizedBox(
+                                  height: 14.h
+                              ),
                               ListView.builder(
                                 primary: false,
                                 shrinkWrap: true,
                                 itemCount: _filteredFriends.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   final friend = _filteredFriends[index];
-                                  final isChecked = selectedFridnds.any(
-                                      (selectedFriend) =>
-                                          selectedFriend['userId'] ==
-                                          friend['id']);
+                                  final isChecked = selectedFridnds.any((selectedFriend) =>
+                                  selectedFriend['userId'] == friend['id']);
                                   return GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () {
-                                      _toggleSelectGroup(
-                                          friend['id'],
-                                          friend['username'],
-                                          friend['profilePicture']);
+                                      _toggleSelectGroup(friend['id'], friend['username'], friend['profilePicture']);
                                       _filteredFriends = friends;
                                       _searchController.text = '';
                                     },
@@ -346,13 +334,15 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
                           );
                         }
                       }),
-                      SizedBox(height: 88.h),
+                      SizedBox(
+                          height: 88.h
+                      ),
                     ],
                   ),
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
         Positioned(
           bottom: 0,
