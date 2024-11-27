@@ -51,6 +51,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
             controller: _scrollController,
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 32.h),
                 CustomSearchBar(
@@ -59,8 +60,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                 ),
                 SizedBox(height: 24.h),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    SizedBox(width: 4.w),
                     Text(
                       '친구요청',
                       style: Theme.of(context)
@@ -68,6 +69,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                           .bigHeadLine4
                           .copyWith(color: ColorSchemes.gray500),
                     ),
+                    Spacer(),
                     TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -81,7 +83,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                               .textTheme
                               .body3
                               .copyWith(color: ColorSchemes.orange200),
-                        ))
+                        )),
+                    SizedBox(width: 4.w),
                   ],
                 ),
                 SizedBox(height: 24.h),
@@ -112,16 +115,15 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                   ),
                 ),
                 SizedBox(height: 32.h),
-                Row(
-                  children: [
-                    Text(
-                      '알 수도 있는 사람',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine4
-                          .copyWith(color: ColorSchemes.gray500),
-                    ),
-                  ],
+                Padding(
+                  padding: EdgeInsets.only(left: 4.w),
+                  child: Text(
+                    '알 수도 있는 사람',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bigHeadLine4
+                        .copyWith(color: ColorSchemes.gray500),
+                  ),
                 ),
                 SizedBox(height: 24.h),
                 ListView.builder(
@@ -132,7 +134,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                     final friend = friendRequests[index];
                     return Padding(
                       padding: EdgeInsets.only(
-                        bottom: index == friendRequests.length - 1 ? 0 : 24.h,
+                        bottom: 24.h,
                       ),
                       child: AddFriendProfile(
                         userName: friend['userName']!,

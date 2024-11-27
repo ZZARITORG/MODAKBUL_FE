@@ -180,92 +180,95 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                  height: 24.h
-              ),
-              if (selectedFridnds.isNotEmpty)
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.only(left: StyleConstants.defaultPadding, right: 4.w),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: selectedFridnds.map((friend) {
-                      return Padding(
-                        padding: EdgeInsets.only(right: 12.w),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Stack(
-                              children: [
-                                CircleAvatar(
-                                  radius: StyleConstants.circleSizeM,
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: SizedBox(
-                                    height: 24.r,
-                                    width: 24.r,
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedFridnds.removeWhere(
-                                                (item) => item['userId'] == friend['userId'],
-                                          );
-                                        });
-                                      },
-                                      icon: SvgPicture.asset(
-                                        IconPath.cancel,
-                                        width: 24.r,
-                                      ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+                height: 24.h
+            ),
+            if (selectedFridnds.isNotEmpty)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(left: StyleConstants.defaultPadding, right: 4.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: selectedFridnds.map((friend) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: StyleConstants.circleSizeM,
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: SizedBox(
+                                  height: 24.r,
+                                  width: 24.r,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedFridnds.removeWhere(
+                                              (item) => item['userId'] == friend['userId'],
+                                        );
+                                      });
+                                    },
+                                    icon: SvgPicture.asset(
+                                      IconPath.cancel,
+                                      width: 24.r,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(
-                                height: 4.h
-                            ),
-                            SizedBox(
-                              width: StyleConstants.circleSizeM * 2,
-                              child: Center(
-                                child: Text(
-                                  friend['userName']!,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .body3
-                                      .copyWith(color: ColorSchemes.gray300),
-                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                              height: 4.h
+                          ),
+                          SizedBox(
+                            width: StyleConstants.circleSizeM * 2,
+                            child: Center(
+                              child: Text(
+                                friend['userName']!,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body3
+                                    .copyWith(color: ColorSchemes.gray300),
                               ),
                             ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
                 ),
-              SizedBox(
-                  height: 10.h
               ),
-              CustomSearchBar(
+            SizedBox(
+                height: 10.h
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+              child: CustomSearchBar(
                 hintText: '그룹을 검색해보세요.',
                 controller: _searchController,
                 focusNode: _searchFocusNode,
               ),
-              SizedBox(
-                  height: 24.h
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
+            ),
+            SizedBox(
+                height: 24.h
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -281,8 +284,8 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
                           return Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
+                                  SizedBox(width: 4.w),
                                   Text(
                                     '자주 만나는 친구',
                                     style: Theme.of(context)
@@ -290,6 +293,7 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
                                         .bigHeadLine4
                                         .copyWith(color: ColorSchemes.gray500),
                                   ),
+                                  Spacer(),
                                   TextButton(
                                     onPressed: () {},
                                     child: Text(
@@ -300,6 +304,7 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
                                           .copyWith(color: ColorSchemes.gray300),
                                     ),
                                   ),
+                                  SizedBox(width: 4.w),
                                 ],
                               ),
                               SizedBox(
@@ -341,8 +346,8 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
                   ),
                 ),
               ),
-            ],
-          ),
+            )
+          ],
         ),
         Positioned(
           bottom: 0,
