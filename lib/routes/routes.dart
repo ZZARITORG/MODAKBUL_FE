@@ -17,6 +17,7 @@ import 'package:modakbul/screens/search/add_friend_list_screen.dart';
 import 'package:modakbul/screens/search/search_screen.dart';
 import 'package:modakbul/screens/setting/alert_setting_screen.dart';
 import 'package:modakbul/screens/setting/common_setting_screen.dart';
+import 'package:modakbul/screens/setting/edit_code_screen.dart';
 import 'package:modakbul/screens/setting/edit_my_profile_screen.dart';
 import 'package:modakbul/screens/setting/friend_setting_screen.dart';
 import 'package:modakbul/screens/setting/info_screen.dart';
@@ -47,6 +48,7 @@ class Routes {
   static const String searchScreen = '/searchScreen';
   static const String alertSettingScreen = '/alertSettingScreen';
   static const String commonSettingScreen = '/commonSettingScreen';
+  static const String editCodeScreen = '/editCodeScreen';
   static const String editMyProfileScreen = '/editMyProfileScreen';
   static const String friendSettingScreen = '/friendSettingScreen';
   static const String infoScreen = '/infoScreen';
@@ -86,6 +88,7 @@ class Routes {
     ///setting
     alertSettingScreen: (BuildContext context) => const AlertSettingScreen(),
     commonSettingScreen: (BuildContext context) => const CommonSettingScreen(),
+    editCodeScreen: (BuildContext context) => const EditCodeScreen(),
     editMyProfileScreen: (BuildContext context) => const EditMyProfileScreen(),
     friendSettingScreen: (BuildContext context) => const FriendSettingScreen(),
     infoScreen: (BuildContext context) => const InfoScreen(),

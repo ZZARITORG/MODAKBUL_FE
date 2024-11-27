@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
-import 'package:modakbul/main.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 
 class AlertListTile extends StatelessWidget {
   final String title;
   final String content;
-  final String iconName;
+  final String alertType;
   final String time;
 
   const AlertListTile(
       {Key? key,
       required this.title,
       required this.content,
-      required this.iconName,
+      required this.alertType,
       required this.time})
       : super(key: key);
 
@@ -32,39 +31,44 @@ class AlertListTile extends StatelessWidget {
           CircleAvatar(
             radius: StyleConstants.circleSizeXXS,
             backgroundColor: ColorSchemes.gray100,
-
-            ///이미지 영역
           ),
           SizedBox(
             width: 6.w,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context)
-                    .textTheme
-                    .bigHeadLine5
-                    .copyWith(color: Theme.of(context).primaryColor),
-              ),
-              SizedBox(
-                height: 4.h,
-              ),
-              Text(content,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
                   style: Theme.of(context)
-                  .textTheme
-                  .body2
-                  .copyWith(color: ColorSchemes.gray400),),
-              SizedBox(
-                height: 8.h,
-              ),
-              Text(time,
-                style: Theme.of(context)
-                    .textTheme
-                    .body3
-                    .copyWith(color: ColorSchemes.gray200),),
-            ],
+                      .textTheme
+                      .bigHeadLine5
+                      .copyWith(color: Theme.of(context).primaryColor),
+                ),
+                SizedBox(
+                  height: 4.h,
+                ),
+                Text(
+                  content,
+                  maxLines: 2,
+                  style: Theme.of(context)
+                      .textTheme
+                      .body2
+                      .copyWith(color: ColorSchemes.gray400),
+                ),
+                SizedBox(
+                  height: 8.h,
+                ),
+                Text(
+                  time,
+                  style: Theme.of(context)
+                      .textTheme
+                      .body3
+                      .copyWith(color: ColorSchemes.gray200),
+                ),
+              ],
+            ),
           )
         ],
       ),
