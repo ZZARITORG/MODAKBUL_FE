@@ -166,12 +166,12 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
     setState(() {
       _filteredFriends = friends
           .where((friend) =>
-              friend['username']
-                  .toLowerCase()
-                  .contains(_searchController.text.toLowerCase()) ||
-              friend['id']
-                  .toLowerCase()
-                  .contains(_searchController.text.toLowerCase()))
+      friend['username']
+          .toLowerCase()
+          .contains(_searchController.text.toLowerCase()) ||
+          friend['id']
+              .toLowerCase()
+              .contains(_searchController.text.toLowerCase()))
           .toList();
     });
   }
@@ -180,90 +180,90 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 24.h),
-            if (selectedFridnds.isNotEmpty)
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(
-                    left: StyleConstants.defaultPadding, right: 4.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: selectedFridnds.map((friend) {
-                    return Padding(
-                      padding: EdgeInsets.only(right: 12.w),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: StyleConstants.circleSizeM,
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child: SizedBox(
-                                  height: 24.r,
-                                  width: 24.r,
-                                  child: IconButton(
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                    onPressed: () {
-                                      setState(() {
-                                        selectedFridnds.removeWhere(
-                                          (item) =>
-                                              item['userId'] ==
-                                              friend['userId'],
-                                        );
-                                      });
-                                    },
-                                    icon: SvgPicture.asset(
-                                      IconPath.cancel,
-                                      width: 24.r,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                  height: 24.h
+              ),
+              if (selectedFridnds.isNotEmpty)
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.only(left: StyleConstants.defaultPadding, right: 4.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: selectedFridnds.map((friend) {
+                      return Padding(
+                        padding: EdgeInsets.only(right: 12.w),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Stack(
+                              children: [
+                                CircleAvatar(
+                                  radius: StyleConstants.circleSizeM,
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: SizedBox(
+                                    height: 24.r,
+                                    width: 24.r,
+                                    child: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () {
+                                        setState(() {
+                                          selectedFridnds.removeWhere(
+                                                (item) => item['userId'] == friend['userId'],
+                                          );
+                                        });
+                                      },
+                                      icon: SvgPicture.asset(
+                                        IconPath.cancel,
+                                        width: 24.r,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 4.h),
-                          SizedBox(
-                            width: StyleConstants.circleSizeM * 2,
-                            child: Center(
-                              child: Text(
-                                friend['userName']!,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .body3
-                                    .copyWith(color: ColorSchemes.gray300),
+                              ],
+                            ),
+                            SizedBox(
+                                height: 4.h
+                            ),
+                            SizedBox(
+                              width: StyleConstants.circleSizeM * 2,
+                              child: Center(
+                                child: Text(
+                                  friend['userName']!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .body3
+                                      .copyWith(color: ColorSchemes.gray300),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
+              SizedBox(
+                  height: 10.h
               ),
-            SizedBox(height: 10.h),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: StyleConstants.defaultPadding),
-              child: CustomSearchBar(
+              CustomSearchBar(
                 hintText: '그룹을 검색해보세요.',
                 controller: _searchController,
                 focusNode: _searchFocusNode,
               ),
-            ),
-            SizedBox(height: 24.h),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: StyleConstants.defaultPadding),
+              SizedBox(
+                  height: 24.h
+              ),
+              Expanded(
                 child: SingleChildScrollView(
                   controller: _scrollController,
                   child: Column(
@@ -334,11 +334,9 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
                                     },
                                     onTapDown: (_) {},
                                     child: SelectUserListProfile(
-                                      userName: _filteredFriends[index]
-                                          ['username'],
+                                      userName: _filteredFriends[index]['username'],
                                       userId: _filteredFriends[index]['id'],
-                                      profileImage: _filteredFriends[index]
-                                          ['profilePicture'],
+                                      profileImage: _filteredFriends[index]['profilePicture'],
                                       isChecked: isChecked,
                                     ),
                                   );
@@ -362,7 +360,9 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
           right: 16.h,
           child: Stack(
             children: [
-              SizedBox(height: 72.h),
+              SizedBox(
+                  height: 72.h
+              ),
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -380,112 +380,86 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen> {
                   height: 56.h,
                   child: CustomButton(
                     text: '그룹 만들기',
-                    onPressed: selectedFridnds.isNotEmpty
-                        ? () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(24),
-                                      topRight: Radius.circular(24),
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            StyleConstants.defaultPadding),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        SizedBox(height: 10.h),
-                                        UserInfoCheck(
-                                            text: '그룹 이름을 입력해주세요',
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            }),
-                                        SizedBox(height: 32.h),
-                                        Stack(
-                                          children: [
-                                            TextField(
-                                              maxLength:
-                                                  AppConstants.maxAddressLength,
-                                              cursorColor:
-                                                  ColorSchemes.orange100,
-                                              onTapOutside: (event) =>
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus(),
-                                              keyboardType: TextInputType.text,
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .body1
-                                                  .copyWith(
-                                                      color:
-                                                          ColorSchemes.gray500),
-                                              decoration: InputDecoration(
-                                                counterText: '',
-                                                hintText: '예) 자주 만나는 친구',
-                                                hintStyle: Theme.of(context)
-                                                    .textTheme
-                                                    .body1
-                                                    .copyWith(
-                                                        color: ColorSchemes
-                                                            .gray200),
-                                                isDense: true,
-                                                contentPadding: EdgeInsets.only(
-                                                    left: 4.w, bottom: 4.h),
-                                                border: InputBorder.none,
-                                                errorText: null,
-                                                errorStyle: const TextStyle(
-                                                    color:
-                                                        ColorSchemes.orange100,
-                                                    fontSize: 0),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 0,
-                                              right: 0,
-                                              bottom: 0,
-                                              child: Container(
-                                                height: 2.w,
-                                                decoration: BoxDecoration(
-                                                    color: ColorSchemes.gray100,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            2.r)),
-                                              ),
-                                            ),
-                                          ],
+                    onPressed: selectedFridnds.isNotEmpty ? () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(24),
+                                topRight: Radius.circular(24),
+                              ),
+                            ),
+                            child: Padding(
+                              padding:
+                              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(height: 10.h),
+                                  UserInfoCheck(text: '그룹 이름을 입력해주세요', onPressed: () {
+                                    Navigator.of(context).pop();
+                                  }),
+                                  SizedBox(height: 32.h),
+                                  Stack(
+                                    children: [
+                                      TextField(
+                                        maxLength: AppConstants.maxAddressLength,
+                                        cursorColor: ColorSchemes.orange100,
+                                        onTapOutside: (event) =>
+                                            FocusManager.instance.primaryFocus?.unfocus(),
+                                        keyboardType: TextInputType.text,
+                                        textInputAction: TextInputAction.done,
+                                        style: Theme.of(context).textTheme.body1.copyWith(
+                                            color: ColorSchemes.gray500
                                         ),
-                                        SizedBox(height: 16.h),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          height: 56.h,
-                                          child: CustomButton(
-                                              text: '모임 생성',
-                                              onPressed: () {},
-                                              buttonColor:
-                                                  ColorSchemes.orange200,
-                                              textStyle: Theme.of(context)
-                                                  .textTheme
-                                                  .smallHeadLine2,
-                                              textColor: ColorSchemes.white),
+                                        decoration: InputDecoration(
+                                          counterText: '',
+                                          hintText: '예) 자주 만나는 친구',
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .body1
+                                              .copyWith(color: ColorSchemes.gray200),
+                                          isDense: true,
+                                          contentPadding:
+                                          EdgeInsets.only(left: 4.w, bottom: 4.h),
+                                          border: InputBorder.none,
+                                          errorText: null,
+                                          errorStyle: const TextStyle(
+                                              color: ColorSchemes.orange100, fontSize: 0),
                                         ),
-                                        SizedBox(height: 16.h),
-                                      ],
-                                    ),
+                                      ),
+                                      Positioned(
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        child: Container(
+                                          height: 2.w,
+                                          decoration: BoxDecoration(
+                                              color: ColorSchemes.gray100,
+                                              borderRadius: BorderRadius.circular(2.r)),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                );
-                              },
-                            );
-                          }
-                        : null,
+                                  SizedBox(height: 16.h),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 56.h,
+                                    child: CustomButton(text: '모임 생성', onPressed: () {}, buttonColor: ColorSchemes.orange200,
+                                        textStyle: Theme.of(context).textTheme.smallHeadLine2, textColor: ColorSchemes.white),
+                                  ),
+                                  SizedBox(height: 16.h),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } : null,
                     buttonColor: ColorSchemes.orange200,
                     textStyle: Theme.of(context).textTheme.smallHeadLine2,
                     textColor: ColorSchemes.white,

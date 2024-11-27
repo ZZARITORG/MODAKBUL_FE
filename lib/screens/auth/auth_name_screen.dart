@@ -33,6 +33,12 @@ class _AuthNameScreenState extends State<AuthNameScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _userNameController.addListener(_validateForm);
+  }
+
+  @override
   void dispose() {
     _userNameFocusNode.dispose();
     _userNameController.dispose();
