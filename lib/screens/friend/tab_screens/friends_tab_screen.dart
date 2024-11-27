@@ -181,6 +181,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
         SingleChildScrollView(
           controller: _scrollController,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 height: 24.h,
@@ -308,8 +309,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                         return Column(
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                SizedBox(width: 4.w),
                                 Text(
                                   '자주 만나는 친구',
                                   style: Theme.of(context)
@@ -317,6 +318,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                       .bigHeadLine4
                                       .copyWith(color: ColorSchemes.gray500),
                                 ),
+                                Spacer(),
                                 TextButton(
                                   onPressed: () {
                                     showModalBottomSheet(
@@ -439,6 +441,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                     style: Theme.of(context).textTheme.body3.copyWith(color: ColorSchemes.gray300),
                                   ),
                                 ),
+                                SizedBox(width: 4.w),
                               ],
                             ),
                             SizedBox(

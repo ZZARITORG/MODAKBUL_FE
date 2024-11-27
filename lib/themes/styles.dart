@@ -84,91 +84,115 @@ class Styles {
 
 ///CustomTextStyles
 extension CustomStyles on TextTheme {
-  ///bigHeadLine
+  /// bigHeadLine
   TextStyle get bigHeadLine1 => TextStyle(
-          letterSpacing: -1.5.w,
-          fontSize: 38.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 700),
-          ]);
+    letterSpacing: (38.sp * -1.5 / 100).w,
+    height: 60 / 38,
+    fontSize: 38.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 700),
+    ],
+  );
 
   TextStyle get bigHeadLine2 => TextStyle(
-          letterSpacing: -1.5.w,
-          fontSize: 32.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 700),
-          ]);
+    letterSpacing: (32.sp * -1.5 / 100).w,
+    height: 42 / 32,
+    fontSize: 32.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 700),
+    ],
+  );
 
   TextStyle get bigHeadLine3 => TextStyle(
-          letterSpacing: -0.5.w,
-          fontSize: 22.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 700),
-          ]);
+    letterSpacing: (22.sp * -0.5 / 100).w,
+    height: 26.25 / 22,
+    fontSize: 22.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 700),
+    ],
+  );
 
   TextStyle get bigHeadLine4 => TextStyle(
-          letterSpacing: -0.5.w,
-          fontSize: 20.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 700),
-          ]);
+    letterSpacing: (20.sp * -0.5 / 100).w,
+    height: 23.87 / 20,
+    fontSize: 20.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 700),
+    ],
+  );
 
   TextStyle get bigHeadLine5 => TextStyle(
-          letterSpacing: -0.5.w,
-          fontSize: 16.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 700),
-          ]);
+    letterSpacing: (16.sp * -0.5 / 100).w,
+    height: 19.09 / 16,
+    fontSize: 16.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 700),
+    ],
+  );
 
-  ///smallHeadLine
+  /// smallHeadLine
   TextStyle get smallHeadLine1 => TextStyle(
-          letterSpacing: 0.25.w,
-          fontSize: 20.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 600),
-          ]);
+    letterSpacing: (20.sp * 0.25 / 100).w,
+    fontSize: 20.sp,
+    height: 23.87 / 20,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 600),
+    ],
+  );
 
   TextStyle get smallHeadLine2 => TextStyle(
-          letterSpacing: 0.25.w,
-          fontSize: 18.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 600),
-          ]);
+    letterSpacing: (18.sp * 0.25 / 100).w,
+    height: 21.48 / 18,
+    fontSize: 18.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 600),
+    ],
+  );
 
   TextStyle get smallHeadLine3 => TextStyle(
-          letterSpacing: 0.25.w,
-          fontSize: 16.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 600),
-          ]);
+    letterSpacing: (16.sp * 0.25 / 100).w,
+    height: 19.09 / 16,
+    fontSize: 16.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 600),
+    ],
+  );
 
-  ///body
+  /// body
   TextStyle get body1 => TextStyle(
-          letterSpacing: 1.25.w,
-          fontSize: 18.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 500),
-          ]);
+    letterSpacing: (18.sp * 1.25 / 100).w,
+    fontSize: 18.sp,
+    height: 21.48 / 18,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 500),
+    ],
+  );
 
   TextStyle get body2 => TextStyle(
-          letterSpacing: 1.25.w,
-          fontSize: 16.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 500),
-          ]);
+    letterSpacing: (16.sp * 1.25 / 100).w,
+    height: 24 / 16,
+    fontSize: 16.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 500),
+    ],
+  );
 
   TextStyle get body3 => TextStyle(
-          letterSpacing: 1.25.w,
-          fontSize: 14.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 500),
-          ]);
+    letterSpacing: (14.sp * 1.25 / 100).w,
+    height: 22 / 14,
+    fontSize: 14.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 500),
+    ],
+  );
 
-  ///caption
+  /// caption
   TextStyle get caption => TextStyle(
-          letterSpacing: 1.25.w,
-          fontSize: 14.sp,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 400),
-          ]);
+    letterSpacing: (14.sp * 1.25 / 100).w,
+    height: 16.71 / 14,
+    fontSize: 14.sp,
+    fontVariations: const <FontVariation>[
+      FontVariation('wght', 400),
+    ],
+  );
 }

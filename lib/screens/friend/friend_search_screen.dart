@@ -61,32 +61,34 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                       controller: _searchController,
                     ),
                     SizedBox(height: 24.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '친구요청',
+                     Row(
+                  children: [
+                    SizedBox(width: 4.w),
+                    Text(
+                      '친구요청',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bigHeadLine4
+                          .copyWith(color: ColorSchemes.gray500),
+                    ),
+                    Spacer(),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CreateGroupScreen()), // AddFreindScreen 으로 이동해야함
+                          );
+                        },
+                        child: Text(
+                          '전체보기',
                           style: Theme.of(context)
                               .textTheme
-                              .bigHeadLine4
-                              .copyWith(color: ColorSchemes.gray500),
-                        ),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => CreateGroupScreen()), // AddFreindScreen 으로 이동해야함
-                              );
-                            },
-                            child: Text(
-                              '전체보기',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .body3
-                                  .copyWith(color: ColorSchemes.orange200),
-                            ))
-                      ],
-                    ),
+                              .body3
+                              .copyWith(color: ColorSchemes.orange200),
+                        )),
+                    SizedBox(width: 4.w),
+                  ],
+                ),
                     SizedBox(height: 24.h),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
