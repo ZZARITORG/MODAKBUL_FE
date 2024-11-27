@@ -186,8 +186,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                     return Column(
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            SizedBox(width: 4.w),
                             Text(
                               '최신순',
                               style: Theme.of(context)
@@ -195,6 +195,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                   .bigHeadLine4
                                   .copyWith(color: ColorSchemes.gray500),
                             ),
+                            Spacer(),
                             TextButton(
                                 onPressed: () {},
                                 child: Text(
@@ -203,7 +204,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                       .textTheme
                                       .body3
                                       .copyWith(color: ColorSchemes.gray300),
-                                ))
+                                )),
+                            SizedBox(width: 4.w),
                           ],
                         ),
                         SizedBox(

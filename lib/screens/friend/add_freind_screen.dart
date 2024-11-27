@@ -52,22 +52,18 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
             controller: _scrollController,
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 32.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 4.w),
-                      child: Text(
-                        '친구요청',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bigHeadLine4
-                            .copyWith(color: ColorSchemes.gray500),
-                      ),
-                    ),
-                  ],
+                Padding(
+                  padding: EdgeInsets.only(left: 4.w),
+                  child: Text(
+                    '친구요청',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bigHeadLine4
+                        .copyWith(color: ColorSchemes.gray500),
+                  ),
                 ),
                 SizedBox(height: 24.h),
                 ListView.builder(

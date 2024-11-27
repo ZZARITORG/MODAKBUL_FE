@@ -7,7 +7,7 @@ class IconPath {
 
   static const String arrowBack = 'assets/icons/arrow_back.svg';
   static const String moreHorizontal = 'assets/icons/more_horizontal.svg';
-  static const String arrowDown= 'assets/icons/.arrow_down.svg';
+  static const String arrowDown= 'assets/icons/arrow_down.svg';
   static const String arrowForward15Gray200= 'assets/icons/arrow_forward_1.5_gray200.svg';
   static const String arrowForward15Orange200 = 'assets/icons/arrow_forward_1.5_orange200.svg';
   static const String arrowForward15Orange100 = 'assets/icons/arrow_forward_1.5_orange100.svg';
