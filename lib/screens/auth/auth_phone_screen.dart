@@ -71,70 +71,72 @@ class _AuthPhoneScreenState extends State<AuthPhoneScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const BackButtonAppBar(),
-      body: Padding(
-        padding:
-        EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-        child: Form(
-          key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 42.h,
-                      ),
-                      Text('전화번호를 입력해주세요.',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bigHeadLine3
-                              .copyWith(color: ColorSchemes.gray500)),
-                      SizedBox(
-                        height: 6.h,
-                      ),
-                      Text('모닥불을 피우기 전 본인인증을 진행해주세요.',
-                          style: Theme.of(context)
-                              .textTheme
-                              .body2
-                              .copyWith(color: ColorSchemes.gray200)),
-                      SizedBox(
-                        height: 78.h,
-                      ),
-                      AuthTextFormField(
-                        textInputType: TextInputType.number,
-                        hintText: '전화번호',
-                        formatters: [
-                          MultiMaskedTextInputFormatter(
-                              masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'],
-                              separator: '-')
-                        ],
-                        onChanged: (value) => _validateForm(),
-                        validator: Validators().phoneNumberValidator,
-                        textEditingController: _phoneNumberController,
-                        maxLength: AppConstants.maxPhoneNumberLength,
-                        focusNode: _phoneFocusNode, // FocusNode 전달
-                      ),
-                    ],
+      body: SafeArea(
+        child: Padding(
+          padding:
+          EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 42.h,
+                        ),
+                        Text('전화번호를 입력해주세요.',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bigHeadLine3
+                                .copyWith(color: ColorSchemes.gray500)),
+                        SizedBox(
+                          height: 6.h,
+                        ),
+                        Text('모닥불을 피우기 전 본인인증을 진행해주세요.',
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .copyWith(color: ColorSchemes.gray200)),
+                        SizedBox(
+                          height: 78.h,
+                        ),
+                        AuthTextFormField(
+                          textInputType: TextInputType.number,
+                          hintText: '전화번호',
+                          formatters: [
+                            MultiMaskedTextInputFormatter(
+                                masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'],
+                                separator: '-')
+                          ],
+                          onChanged: (value) => _validateForm(),
+                          validator: Validators().phoneNumberValidator,
+                          textEditingController: _phoneNumberController,
+                          maxLength: AppConstants.maxPhoneNumberLength,
+                          focusNode: _phoneFocusNode, // FocusNode 전달
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 56.h,
-                width: double.infinity,
-                child: CustomButton(
-                    text: '인증번호 받기',
-                    onPressed: _isButtonEnabled ? _handleButtonPress : null,
-                    buttonColor: ColorSchemes.orange200,
-                    textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                    textColor: ColorSchemes.white),
-              ),
-              SizedBox(
-                height: 16.h,
-              )
-            ],
+                SizedBox(
+                  height: 56.h,
+                  width: double.infinity,
+                  child: CustomButton(
+                      text: '인증번호 받기',
+                      onPressed: _isButtonEnabled ? _handleButtonPress : null,
+                      buttonColor: ColorSchemes.orange200,
+                      textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                      textColor: ColorSchemes.white),
+                ),
+                SizedBox(
+                  height: 16.h,
+                )
+              ],
+            ),
           ),
         ),
       ),

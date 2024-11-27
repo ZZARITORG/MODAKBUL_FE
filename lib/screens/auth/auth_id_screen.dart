@@ -66,68 +66,70 @@ class _AuthIdScreenState extends State<AuthIdScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const BackButtonAppBar(),
-      body: Padding(
-        padding:
-        EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-        child: Form(
-          key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 42.h,
-                      ),
-                      Text('아이디를 입력해주세요',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bigHeadLine3
-                              .copyWith(color: ColorSchemes.gray500)),
-                      SizedBox(
-                        height: 6.h,
-                      ),
-                      Text('4자~16자 사이의 영문, 숫자를 조합해주세요.', ///특수기호 (., _)도 가능하다는 문구로 변경
-                          style: Theme.of(context)
-                              .textTheme
-                              .body2
-                              .copyWith(color: ColorSchemes.gray200)),
-                      SizedBox(
-                        height: 78.h,
-                      ),
-                      AuthTextFormField(
-                        textInputType: TextInputType.text,
-                        hintText: '아이디',
-                        formatters: [
-                          LowerCaseTextFormatter(),
-                        ],
-                        onChanged: (value) => _validateForm(),
-                        validator: Validators().userIdValidator,
-                        textEditingController: _userIdController,
-                        maxLength: AppConstants.maxUserIdLength,
-                        focusNode: _userIdFocusNode,
-                      ),
-                    ],
+      body: SafeArea(
+        child: Padding(
+          padding:
+          EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 42.h,
+                        ),
+                        Text('아이디를 입력해주세요',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bigHeadLine3
+                                .copyWith(color: ColorSchemes.gray500)),
+                        SizedBox(
+                          height: 6.h,
+                        ),
+                        Text('4자~16자 사이의 영문, 숫자를 조합해주세요.', ///특수기호 (., _)도 가능하다는 문구로 변경
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .copyWith(color: ColorSchemes.gray200)),
+                        SizedBox(
+                          height: 78.h,
+                        ),
+                        AuthTextFormField(
+                          textInputType: TextInputType.text,
+                          hintText: '아이디',
+                          formatters: [
+                            LowerCaseTextFormatter(),
+                          ],
+                          onChanged: (value) => _validateForm(),
+                          validator: Validators().userIdValidator,
+                          textEditingController: _userIdController,
+                          maxLength: AppConstants.maxUserIdLength,
+                          focusNode: _userIdFocusNode,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 56.h,
-                width: double.infinity,
-                child: CustomButton(
-                    text: '다음',
-                    onPressed: _isButtonEnabled ? _handleButtonPress : null,
-                    buttonColor: ColorSchemes.orange200,
-                    textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                    textColor: ColorSchemes.white),
-              ),
-              SizedBox(
-                height: 16.h,
-              )
-            ],
+                SizedBox(
+                  height: 56.h,
+                  width: double.infinity,
+                  child: CustomButton(
+                      text: '다음',
+                      onPressed: _isButtonEnabled ? _handleButtonPress : null,
+                      buttonColor: ColorSchemes.orange200,
+                      textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                      textColor: ColorSchemes.white),
+                ),
+                SizedBox(
+                  height: 16.h,
+                )
+              ],
+            ),
           ),
         ),
       ),

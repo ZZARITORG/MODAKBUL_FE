@@ -58,65 +58,67 @@ class _AuthNameScreenState extends State<AuthNameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const BackButtonAppBar(),
-      body: Padding(
-        padding:
-        EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-        child: Form(
-          key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 42.h,
-                      ),
-                      Text('이름을 입력해주세요',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bigHeadLine3
-                              .copyWith(color: ColorSchemes.gray500)),
-                      SizedBox(
-                        height: 6.h,
-                      ),
-                      Text('이름은 공개되며 변경할 수 없습니다.',
-                          style: Theme.of(context)
-                              .textTheme
-                              .body2
-                              .copyWith(color: ColorSchemes.gray200)),
-                      SizedBox(
-                        height: 78.h,
-                      ),
-                      AuthTextFormField(
-                        textInputType: TextInputType.text,
-                        hintText: '이름',
-                        onChanged: (value) => _validateForm(),
-                        validator: Validators().userNameValidator,
-                        textEditingController: _userNameController,
-                        maxLength: AppConstants.maxUserNameLength,
-                        focusNode: _userNameFocusNode, // FocusNode 전달
-                      ),
-                    ],
+      body: SafeArea(
+        child: Padding(
+          padding:
+          EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 42.h,
+                        ),
+                        Text('이름을 입력해주세요',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bigHeadLine3
+                                .copyWith(color: ColorSchemes.gray500)),
+                        SizedBox(
+                          height: 6.h,
+                        ),
+                        Text('이름은 공개되며 변경할 수 없습니다.',
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .copyWith(color: ColorSchemes.gray200)),
+                        SizedBox(
+                          height: 78.h,
+                        ),
+                        AuthTextFormField(
+                          textInputType: TextInputType.text,
+                          hintText: '이름',
+                          onChanged: (value) => _validateForm(),
+                          validator: Validators().userNameValidator,
+                          textEditingController: _userNameController,
+                          maxLength: AppConstants.maxUserNameLength,
+                          focusNode: _userNameFocusNode, // FocusNode 전달
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 56.h,
-                width: double.infinity,
-                child: CustomButton(
-                    text: '다음',
-                    onPressed: _isButtonEnabled ? _handleButtonPress : null,
-                    buttonColor: ColorSchemes.orange200,
-                    textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                    textColor: ColorSchemes.white),
-              ),
-              SizedBox(
-                height: 16.h,
-              )
-            ],
+                SizedBox(
+                  height: 56.h,
+                  width: double.infinity,
+                  child: CustomButton(
+                      text: '다음',
+                      onPressed: _isButtonEnabled ? _handleButtonPress : null,
+                      buttonColor: ColorSchemes.orange200,
+                      textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                      textColor: ColorSchemes.white),
+                ),
+                SizedBox(
+                  height: 16.h,
+                )
+              ],
+            ),
           ),
         ),
       ),
