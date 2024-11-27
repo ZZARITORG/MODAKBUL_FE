@@ -222,6 +222,7 @@ class HomeScreenSkeleton extends StatelessWidget {
             height: 154.h,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
+              physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.only(left: 16.w),
               itemCount: 2,
               itemBuilder: (context, index) {
