@@ -106,57 +106,59 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
                         top: Radius.circular(StyleConstants.radiusLarge)),
                   ),
                   builder: (context) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: StyleConstants.defaultPadding),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                height: 28.r,
-                                width: 28.r,
-                                child: IconButton(
-                                    padding: EdgeInsets.zero, // 패딩 제거
-                                    constraints: const BoxConstraints(),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    icon: SvgPicture.asset(
-                                      IconPath.close,
-                                      width: 14.r,
-                                    )),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            '날짜를 선택해주세요',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bigHeadLine3
-                                .copyWith(color: ColorSchemes.gray500),
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Text(
-                            '기간은 최대 1달까지 선택할 수 있습니다!',
-                            style: Theme.of(context)
-                                .textTheme
-                                .body2
-                                .copyWith(color: ColorSchemes.gray500),
-                          ),
-                          SizedBox(
-                            height: 24.h,
-                          ),
-                          CustomCalendarPicker(),
-                        ],
+                    return SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: StyleConstants.defaultPadding),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  height: 28.r,
+                                  width: 28.r,
+                                  child: IconButton(
+                                      padding: EdgeInsets.zero, // 패딩 제거
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: SvgPicture.asset(
+                                        IconPath.close,
+                                        width: 14.r,
+                                      )),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              '날짜를 선택해주세요',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bigHeadLine3
+                                  .copyWith(color: ColorSchemes.gray500),
+                            ),
+                            SizedBox(
+                              height: 8.h,
+                            ),
+                            Text(
+                              '기간은 최대 1달까지 선택할 수 있습니다!',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body2
+                                  .copyWith(color: ColorSchemes.gray500),
+                            ),
+                            SizedBox(
+                              height: 24.h,
+                            ),
+                            CustomCalendarPicker(),
+                          ],
+                        ),
                       ),
                     );
                   }),
