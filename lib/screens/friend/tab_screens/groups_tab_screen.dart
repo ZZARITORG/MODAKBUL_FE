@@ -7,7 +7,6 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
-
 import '../create_group_screen.dart';
 
 class GroupsTabScreen extends StatefulWidget {
