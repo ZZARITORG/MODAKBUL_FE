@@ -42,8 +42,8 @@ class FixedModakbulCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
                         .textTheme.bigHeadLine4
-                        .copyWith(color: ColorSchemes.gray400,
-                        height: 1.1935)
+                        .copyWith(color: ColorSchemes.gray400
+                    )
                 ),
                 SizedBox(height: 14.h),
                 Row(
@@ -65,8 +65,8 @@ class FixedModakbulCard extends StatelessWidget {
                         date,
                         style: Theme.of(context)
                             .textTheme.body3
-                            .copyWith(color: ColorSchemes.orange001,
-                            height: 1.5714)
+                            .copyWith(color: ColorSchemes.orange001
+                        )
                     )
                   ],
                 ),
@@ -94,8 +94,7 @@ class FixedModakbulCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme.body3
-                              .copyWith(color: ColorSchemes.orange001,
-                              height: 1.5714)
+                              .copyWith(color: ColorSchemes.orange001)
                       ),
                     )
                   ],

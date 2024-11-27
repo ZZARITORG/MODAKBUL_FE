@@ -44,6 +44,11 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _codeController.addListener(_validateForm);
+  }
 
   @override
   void dispose() {
