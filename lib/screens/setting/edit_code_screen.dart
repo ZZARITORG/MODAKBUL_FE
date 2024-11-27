@@ -10,6 +10,7 @@ import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/edit_phone_bottom_sheet.dart';
 
 class EditCodeScreen extends StatefulWidget {
   const EditCodeScreen({super.key});
@@ -30,6 +31,10 @@ class _EditCodeScreenState extends State<EditCodeScreen> {
       return;
     }
     FocusScope.of(context).requestFocus(_codeFocusNode);
+    showModalBottomSheet(backgroundColor: Colors.transparent,
+        isScrollControlled: true,context: context, builder: (context) {
+      return EditPhoneBottomSheet();
+    });
    // Routes.navigateReplacement(context, Routes.authNameScreen);
   }
 

@@ -29,7 +29,7 @@ class _EditPhoneScreenState extends State<EditPhoneScreen> {
       return;
     }
     FocusScope.of(context).requestFocus(_phoneFocusNode);
-    //Routes.navigateTo(context, Routes.authCodeScreen, arguments: _phoneNumberController.text);
+    Routes.navigateTo(context, Routes.editCodeScreen, arguments: _phoneNumberController.text);
   }
 
   void _validateForm() {
