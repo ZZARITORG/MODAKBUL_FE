@@ -50,8 +50,14 @@ class IconPath {
   static const String timeOrange100 = 'assets/icons/time_orange100.svg';
   static const String timeOrange200 = 'assets/icons/time_orange200.svg';
   static const String verifiedUser = 'assets/icons/verified_user.svg';
+  static const String powerSettingsNew = 'assets/icons/power_settings_new.svg';
 }
 
 class ImagePath {
+  ImagePath._();
 
+  static const String homeModakbul = 'assets/images/home_modakbul.png';
+  static const String browseSmallModakbul = 'assets/images/browse_small_modakbul.png';
+  static const String smallBonfire = 'assets/images/small_bonfire.png';
+  static const String friendAlert = 'assets/images/friend_alert.png';
 }
