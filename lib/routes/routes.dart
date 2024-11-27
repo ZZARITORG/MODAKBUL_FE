@@ -103,7 +103,10 @@ class Routes {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) {
         return FadeTransition(
-          opacity: animation,
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ),
           child: page,
         );
       },
@@ -133,4 +136,28 @@ class Routes {
       _fadePage(routes[routeName]!(context), arguments),
     );
   }
+
+  static PageRouteBuilder _fadePageSplash(Widget page, Object? arguments) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ),
+          child: page,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 1200),
+      settings: RouteSettings(arguments: arguments),
+    );
+  }
+
+  static Future<void> navigateSplashReplacement(BuildContext context, String routeName, {Object? arguments}) {
+    return Navigator.pushReplacement(
+      context,
+      _fadePageSplash(routes[routeName]!(context), arguments),
+    );
+  }
 }
+
