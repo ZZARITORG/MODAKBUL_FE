@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const PushScreenSkeleton(),
+      home: const GroupScreenSkeleton(),
     );
   }
 }
