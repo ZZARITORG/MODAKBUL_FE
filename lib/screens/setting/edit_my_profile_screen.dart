@@ -1,11 +1,165 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modakbul/constants/app_constants.dart';
+import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/screens/modakbul/map_select_screen.dart';
+import 'package:modakbul/themes/color_schemes.dart';
+import 'package:modakbul/utils/validators.dart';
+import 'package:modakbul/widgets/auth_text_form_field.dart';
+import 'package:modakbul/widgets/back_button_app_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/edit_profile_bottom_sheet.dart';
 
-class EditMyProfileScreen extends StatelessWidget {
+class EditMyProfileScreen extends StatefulWidget {
   const EditMyProfileScreen({super.key});
 
   @override
+  State<EditMyProfileScreen> createState() => _EditMyProfileScreenState();
+}
+
+class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
+
+  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: ColorSchemes.gray000,
+      appBar: BackButtonAppBar(backgroundColor: ColorSchemes.gray000),
+      body: SafeArea(
+        child: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 42.h),
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(radius: StyleConstants.circleSizeXXL),
+                    Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: CircleAvatar(
+                          backgroundColor: ColorSchemes.orange100,
+                          radius: StyleConstants.circleSizeXS,
+                          child: SvgPicture.asset(
+                              IconPath.photoCameraOrange100,
+                              width: 23.06.r),
+                        )),
+                  ],
+                ),
+              ),
+              SizedBox(height: 42.h),
+              Text('이름',
+                  style: Theme.of(context)
+                      .textTheme
+                      .smallHeadLine3
+                      .copyWith(color: ColorSchemes.orange200)),
+              SizedBox(height: 10.h),
+              InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (context) {
+                        return EditProfileBottomSheet.name(hintText: '김지호');
+                      });
+                },
+                overlayColor:
+                    WidgetStateProperty.all(ColorSchemes.orange100),
+                child: Column(
+                  children: [
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        SizedBox(width: 4.w),
+                        Text('김지호',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bigHeadLine2
+                                .copyWith(color: ColorSchemes.gray200)),
+                        const Spacer(),
+                        SizedBox(
+                          width: 32.r,
+                          height: 32.r,
+                          child: Center(
+                            child: SvgPicture.asset(IconPath.edit,
+                                width: 27.r),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    Container(
+                      height: 2.h,
+                      decoration: BoxDecoration(
+                          color: ColorSchemes.gray100,
+                          borderRadius: BorderRadius.circular(2.r)),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 32.h),
+              Text('아이디',
+                  style: Theme.of(context)
+                      .textTheme
+                      .smallHeadLine3
+                      .copyWith(color: ColorSchemes.orange200)),
+              SizedBox(height: 10.h),
+              InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (context) {
+                        return EditProfileBottomSheet.id(hintText: 'kim_jj0');
+                      });
+                },
+                overlayColor:
+                    WidgetStateProperty.all(ColorSchemes.orange100),
+                child: Column(
+                  children: [
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        SizedBox(width: 4.w),
+                        Text('diwjdqdf',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bigHeadLine2
+                                .copyWith(color: ColorSchemes.gray200)),
+                        const Spacer(),
+                        SizedBox(
+                          width: 32.r,
+                          height: 32.r,
+                          child: Center(
+                            child: SvgPicture.asset(IconPath.edit,
+                                width: 27.r),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    Container(
+                      height: 2.h,
+                      decoration: BoxDecoration(
+                          color: ColorSchemes.gray100,
+                          borderRadius: BorderRadius.circular(2.r)),
+                    ),
+                  ],
+                ),
+              ),
+
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

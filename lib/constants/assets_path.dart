@@ -19,6 +19,7 @@ class IconPath {
   static const String calendarMonthOrange200 = 'assets/icons/calendar_month_orange200.svg';
   static const String call = 'assets/icons/call.svg';
   static const String cancel = 'assets/icons/cancel.svg';
+  static const String check = 'assets/icons/check.svg';
   static const String checkCircleActivate = 'assets/icons/check_circle_activate.svg';
   static const String checkCircleActivateAll = 'assets/icons/check_circle_activate_all.svg';
   static const String checkCircleDisabled = 'assets/icons/check_circle_disabled.svg';
@@ -51,8 +52,14 @@ class IconPath {
   static const String timeOrange100 = 'assets/icons/time_orange100.svg';
   static const String timeOrange200 = 'assets/icons/time_orange200.svg';
   static const String verifiedUser = 'assets/icons/verified_user.svg';
+  static const String powerSettingsNew = 'assets/icons/power_settings_new.svg';
 }
 
 class ImagePath {
+  ImagePath._();
 
+  static const String homeModakbul = 'assets/images/home_modakbul.png';
+  static const String browseSmallModakbul = 'assets/images/browse_small_modakbul.png';
+  static const String smallBonfire = 'assets/images/small_bonfire.png';
+  static const String friendAlert = 'assets/images/friend_alert.png';
 }

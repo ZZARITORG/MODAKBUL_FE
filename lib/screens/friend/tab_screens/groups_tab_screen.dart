@@ -7,6 +7,7 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
+import '../create_group_screen.dart';
 
 class GroupsTabScreen extends StatefulWidget {
   GroupsTabScreen({super.key});
@@ -210,24 +211,30 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                         ),
                         SizedBox(
                           width: double.infinity,
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.circular(StyleConstants.radiusMedium),
-                            ),
-                            color: ColorSchemes.gray100,
-                            ///clipBehavior: Clip.antiAlias,
-                            margin: EdgeInsets.zero,
-                            elevation: 0,
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 20.h, bottom: 14.h),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    width: 98.r,
-                                    child: Stack(
-                                      children: [
-                                        Positioned(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => CreateGroupScreen()),
+                              );
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
+                              ),
+                              color: ColorSchemes.gray100,
+                              margin: EdgeInsets.zero,
+                              elevation: 0,
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 20.h, bottom: 14.h),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: 98.r,
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
                                             child: CircleAvatar(
                                               radius: StyleConstants.circleSizeXS,
                                               backgroundColor: ColorSchemes.white,
@@ -235,8 +242,9 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                                 radius: StyleConstants.circleSizeXXXS,
                                                 backgroundColor: ColorSchemes.orange200,
                                               ),
-                                            )),
-                                        Positioned(
+                                            ),
+                                          ),
+                                          Positioned(
                                             left: 28.r,
                                             child: CircleAvatar(
                                               radius: StyleConstants.circleSizeXS,
@@ -245,30 +253,33 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                                 radius: StyleConstants.circleSizeXXXS,
                                                 backgroundColor: ColorSchemes.orange100,
                                               ),
-                                            )),
-                                        Positioned(
+                                            ),
+                                          ),
+                                          Positioned(
                                             left: 56.r,
                                             child: CircleAvatar(
                                               radius: StyleConstants.circleSizeXS,
                                               backgroundColor: ColorSchemes.white,
                                               child: CircleAvatar(
-                                                  radius: StyleConstants.circleSizeXXXS,
-                                                  backgroundColor: ColorSchemes.gray300,
-                                                  child: SvgPicture.asset(IconPath.plus, width: 11.r)
+                                                radius: StyleConstants.circleSizeXXXS,
+                                                backgroundColor: ColorSchemes.gray300,
+                                                child: SvgPicture.asset(IconPath.plus, width: 11.r),
                                               ),
-                                            )),
-                                      ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    '그룹 생성하기',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .smallHeadLine3
-                                        .copyWith(color: ColorSchemes.gray200),
-                                  ),
-                                ],
+                                    SizedBox(height: 8.h),
+                                    Text(
+                                      '그룹 생성하기',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .smallHeadLine3
+                                          .copyWith(color: ColorSchemes.gray200),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -282,7 +293,12 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                             shrinkWrap: true,
                             itemBuilder: (BuildContext context, int index) {
                               return GestureDetector(
-                                onTap: () => _toggleSelectedGroup(index),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => CreateGroupScreen()),//이거 GroupEditScreen 머지할때 바꿔주삼
+                                  );
+                                },
                                 child: Column(
                                   children: [
                                     MyModakbulListTile(
