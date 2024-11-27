@@ -31,6 +31,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/home_screen_2_skeleton.dart';
 import 'package:modakbul/widgets/home_screen_skeleton.dart';
 import 'package:modakbul/widgets/fixed_modakbul_card.dart';
+import 'package:modakbul/widgets/group_select_screen_skeleton.dart';
 import 'package:modakbul/widgets/friend_screen_skeleton.dart';
 import 'package:modakbul/widgets/group_edit_screen_skeleton.dart';
 import 'package:modakbul/widgets/home_screen_skeleton.dart';
@@ -64,7 +65,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const GroupScreenSkeleton(),
+      home: const GroupSelectScreenSkeleton(),
     );
   }
 }
