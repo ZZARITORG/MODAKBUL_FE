@@ -30,8 +30,8 @@ import 'package:modakbul/widgets/home_screen_skeleton.dart';
 import 'package:modakbul/widgets/fixed_modakbul_card.dart';
 import 'package:modakbul/widgets/home_screen_skeleton.dart';
 import 'package:modakbul/widgets/invited_modakbul_card.dart';
+import 'package:modakbul/widgets/modakbul_detail_screen_skeleton.dart'; // home_screen_skeleton 파일 import
 import 'package:modakbul/widgets/participate_bottom_sheet.dart'; // home_screen_skeleton 파일 import
-
 
 void main() {
   runApp(
