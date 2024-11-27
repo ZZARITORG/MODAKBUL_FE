@@ -24,7 +24,6 @@ import 'package:modakbul/screens/setting/info_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/screens/setting/terms_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
-import 'package:modakbul/screens/start_screen.dart';
 
 class Routes {
   Routes._();
@@ -97,7 +96,6 @@ class Routes {
 
     ///splash
     splashScreen: (BuildContext context) => const SplashScreen(),
-    startScreen: (BuildContext context) => const StartScreen(),
   };
 
   /// FadeTransition을 사용하는 커스텀 페이지 빌더
