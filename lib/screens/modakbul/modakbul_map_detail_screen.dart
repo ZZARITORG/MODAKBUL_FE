@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/modakbul_map_screen_skeleton.dart';
 
 import '../../themes/color_schemes.dart';
 
@@ -20,16 +22,20 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackButtonAppBar(),
-      body: Stack(
+      backgroundColor: ColorSchemes.gray000,
+      appBar: BackButtonAppBar(
+        backgroundColor: ColorSchemes.gray000
+      ),
+      body: /*Skeleton 들어갈 자리 */ Stack(
         children: [
           Column(
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(height: 24.h),
                     Text(
                       '모닥불이 피워진 위치를\n확인해 주세요',
                       style: Theme.of(context)

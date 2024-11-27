@@ -10,9 +10,7 @@ class SearchScreenSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorSchemes.gray000,
-      body: Column(
+    return Column(
         children: [
           Padding(
             padding:
@@ -323,7 +321,6 @@ class SearchScreenSkeleton extends StatelessWidget {
             ),
           )
         ],
-      ),
-    );
+      );
   }
 }

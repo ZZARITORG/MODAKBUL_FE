@@ -6,6 +6,7 @@ import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/group_screen_skeleton.dart';
 import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 import '../create_group_screen.dart';
 
@@ -120,7 +121,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     super.initState();
     _filteredGroups = groups;
     _searchController.addListener(_filterGroups);
-  }
+    }
 
   @override
   void dispose() {
@@ -158,7 +159,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
           child: Padding(
             padding:
             EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-            child: Column(
+            child: /*Skeleton 들어갈 자리*/ Column(
               children: [
                 SizedBox(
                   height: 10.h,

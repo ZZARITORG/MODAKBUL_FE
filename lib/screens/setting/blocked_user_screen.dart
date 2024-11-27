@@ -123,7 +123,7 @@ class BlockedUserScreen extends StatelessWidget {
         child: Padding(
           padding:
               EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: SingleChildScrollView(
+          child: /*Skeleton 들어갈 자리 */ SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

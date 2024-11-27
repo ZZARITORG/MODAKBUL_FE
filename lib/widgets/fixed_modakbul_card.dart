@@ -22,7 +22,6 @@ class FixedModakbulCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 285.w,
-      height: 154.h,
       child: Card(
         color: Colors.white,
         elevation: 0,
@@ -31,77 +30,79 @@ class FixedModakbulCard extends StatelessWidget {
             StyleConstants.radiusMedium)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 24.h, 14.w, 18.h),
-          child: Flexible(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 20.sp * 23.87 / 20 * 2,
+                child: Text(
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
                         .textTheme.bigHeadLine4
-                        .copyWith(color: ColorSchemes.gray400
+                        .copyWith(
+                    color: ColorSchemes.gray400
                     )
                 ),
-                SizedBox(height: 14.h),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 20.r,
-                      height: 20.r,
-                      child: Center(
-                        child: SvgPicture.asset(
-                            IconPath.timeOrange100,
-                            width: 16.r
-                        ),
+              ),
+              SizedBox(height: 14.h),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20.r,
+                    height: 20.r,
+                    child: Center(
+                      child: SvgPicture.asset(
+                          IconPath.timeOrange100,
+                          width: 16.r
                       ),
                     ),
-                    SizedBox(
-                      width: 4.w,
+                  ),
+                  SizedBox(
+                    width: 4.w,
+                  ),
+                  Text(
+                      date,
+                      style: Theme.of(context)
+                          .textTheme.body3
+                          .copyWith(color: ColorSchemes.orange001
+                      )
+                  )
+                ],
+              ),
+              SizedBox(
+                  height: 6.h
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20.r,
+                    height: 20.r,
+                    child: Center(
+                      child: SvgPicture.asset(
+                          IconPath.pinDropOrange100,
+                          width: 12.r
+                      ),
                     ),
-                    Text(
-                        date,
+                  ),
+                  SizedBox(
+                    width: 4.w,
+                  ),
+                  Flexible(
+                    child: Text(
+                        location,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context)
                             .textTheme.body3
-                            .copyWith(color: ColorSchemes.orange001
-                        )
-                    )
-                  ],
-                ),
-                SizedBox(
-                    height: 6.h
-                ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 20.r,
-                      height: 20.r,
-                      child: Center(
-                        child: SvgPicture.asset(
-                            IconPath.pinDropOrange100,
-                            width: 12.r
-                        ),
-                      ),
+                            .copyWith(color: ColorSchemes.orange001)
                     ),
-                    SizedBox(
-                      width: 4.w,
-                    ),
-                    Flexible(
-                      child: Text(
-                          location,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme.body3
-                              .copyWith(color: ColorSchemes.orange001)
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
+              ),
 
-              ],
-            ),
+            ],
           ),
         ),
       ),

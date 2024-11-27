@@ -43,30 +43,32 @@ class _FriendScreenState extends State<FriendScreen> with SingleTickerProviderSt
       appBar: const LogoAppBar(
         backgroundColor: ColorSchemes.gray000,
       ),
-      body: DefaultTabController(
-        initialIndex: 1,
-        length: 2,
-        child: NestedScrollView(
-          floatHeaderSlivers: true,
-          scrollDirection: Axis.vertical,
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: TabBarDelegate(
-                  tabController: _tabController,
-                  leftTabTitle: '친구',
-                  rightTabTitle: '그룹',
-                  maxHeight: 58.h,
-                  minHeight: 58.h,
-                  isRebuild: false),
-            ),
-          ],
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              FriendsTabScreen(),
-              GroupsTabScreen(),
+      body: SafeArea(
+        child: DefaultTabController(
+          initialIndex: 1,
+          length: 2,
+          child: NestedScrollView(
+            floatHeaderSlivers: true,
+            scrollDirection: Axis.vertical,
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: TabBarDelegate(
+                    tabController: _tabController,
+                    leftTabTitle: '친구',
+                    rightTabTitle: '그룹',
+                    maxHeight: 58.h,
+                    minHeight: 58.h,
+                    isRebuild: false),
+              ),
             ],
+            body: TabBarView(
+              controller: _tabController,
+              children: [
+                FriendsTabScreen(),
+                GroupsTabScreen(),
+              ],
+            ),
           ),
         ),
       ),

@@ -4,6 +4,7 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
+import 'package:modakbul/widgets/my_modakbul_screen_skeleton.dart';
 
 class MyModakbulScreen extends StatefulWidget {
   const MyModakbulScreen({super.key});
@@ -61,8 +62,8 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
-
-            child: SingleChildScrollView(
+            child: /* Skeleton 들어갈 자리 */
+            SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

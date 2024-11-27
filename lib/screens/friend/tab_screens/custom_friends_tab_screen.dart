@@ -253,13 +253,10 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
             SizedBox(
                 height: 10.h
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-              child: CustomSearchBar(
-                hintText: '그룹을 검색해보세요.',
-                controller: _searchController,
-                focusNode: _searchFocusNode,
-              ),
+            CustomSearchBar(
+              hintText: '그룹을 검색해보세요.',
+              controller: _searchController,
+              focusNode: _searchFocusNode,
             ),
             SizedBox(
                 height: 24.h
@@ -267,23 +264,21 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
             Expanded(
               child: SingleChildScrollView(
                 controller: _scrollController,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Builder(builder: (context) {
-                        if (_filteredFriends.isEmpty) {
-                          return Center(
-                            child: Text(
-                              '검색 결과가 없습니다',
-                              style: Theme.of(context).textTheme.body1.copyWith(color: ColorSchemes.gray300),
-                            ),
-                          );
-                        } else {
-                          return Column(
-                            children: [
-                              Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Builder(builder: (context) {
+                      if (_filteredFriends.isEmpty) {
+                        return Center(
+                          child: Text(
+                            '검색 결과가 없습니다',
+                            style: Theme.of(context).textTheme.body1.copyWith(color: ColorSchemes.gray300),
+                          ),
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                           Row(
                                 children: [
                                   SizedBox(width: 4.w),
                                   Text(
@@ -307,46 +302,45 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
                                   SizedBox(width: 4.w),
                                 ],
                               ),
-                              SizedBox(
-                                  height: 14.h
-                              ),
-                              ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: _filteredFriends.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final friend = _filteredFriends[index];
-                                  final isChecked = selectedFridnds.any((selectedFriend) =>
-                                  selectedFriend['userId'] == friend['id']);
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () {
-                                      _toggleSelectGroup(friend['id'], friend['username'], friend['profilePicture']);
-                                      _filteredFriends = friends;
-                                      _searchController.text = '';
-                                    },
-                                    onTapDown: (_) {},
-                                    child: SelectUserListProfile(
-                                      userName: _filteredFriends[index]['username'],
-                                      userId: _filteredFriends[index]['id'],
-                                      profileImage: _filteredFriends[index]['profilePicture'],
-                                      isChecked: isChecked,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          );
-                        }
-                      }),
-                      SizedBox(
-                          height: 88.h
-                      ),
-                    ],
-                  ),
+                            SizedBox(
+                                height: 14.h
+                            ),
+                            ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemCount: _filteredFriends.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final friend = _filteredFriends[index];
+                                final isChecked = selectedFridnds.any((selectedFriend) =>
+                                selectedFriend['userId'] == friend['id']);
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () {
+                                    _toggleSelectGroup(friend['id'], friend['username'], friend['profilePicture']);
+                                    _filteredFriends = friends;
+                                    _searchController.text = '';
+                                  },
+                                  onTapDown: (_) {},
+                                  child: SelectUserListProfile(
+                                    userName: _filteredFriends[index]['username'],
+                                    userId: _filteredFriends[index]['id'],
+                                    profileImage: _filteredFriends[index]['profilePicture'],
+                                    isChecked: isChecked,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      }
+                    }),
+                    SizedBox(
+                        height: 88.h
+                    ),
+                  ],
                 ),
               ),
-            )
+            ),
           ],
         ),
         Positioned(
