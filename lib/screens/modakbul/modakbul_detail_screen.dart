@@ -88,8 +88,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                     .textTheme
                                     .bigHeadLine3
                                     .copyWith(
-                                        color: ColorSchemes.gray500,
-                                        height: 1.193),
+                                        color: ColorSchemes.gray500,),
                               ),
                               SizedBox(
                                 height: 8.h,
@@ -101,7 +100,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                     .body2
                                     .copyWith(
                                         color: ColorSchemes.gray400,
-                                        height: 26.h / 16.sp),
+                                        height: 26 / 16),
                               ),
                             ],
                           ),
