@@ -10,15 +10,16 @@ import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/edit_phone_bottom_sheet.dart';
 
-class AuthCodeScreen extends StatefulWidget {
-  const AuthCodeScreen({super.key});
+class EditCodeScreen extends StatefulWidget {
+  const EditCodeScreen({super.key});
 
   @override
-  State<AuthCodeScreen> createState() => _AuthCodeScreenState();
+  State<EditCodeScreen> createState() => _EditCodeScreenState();
 }
 
-class _AuthCodeScreenState extends State<AuthCodeScreen> {
+class _EditCodeScreenState extends State<EditCodeScreen> {
   final TextEditingController _codeController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isButtonEnabled = false;
@@ -30,7 +31,11 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       return;
     }
     FocusScope.of(context).requestFocus(_codeFocusNode);
-    Routes.navigateReplacement(context, Routes.authNameScreen);
+    showModalBottomSheet(backgroundColor: Colors.transparent,
+        isScrollControlled: true,context: context, builder: (context) {
+      return EditPhoneBottomSheet();
+    });
+   // Routes.navigateReplacement(context, Routes.authNameScreen);
   }
 
   void _validateForm() {
