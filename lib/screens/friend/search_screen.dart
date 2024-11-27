@@ -6,6 +6,7 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
+import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/participant_list_profile.dart';
 import 'package:modakbul/widgets/select_user_list_profile.dart';
 import 'package:modakbul/widgets/tab_bar_delegate.dart';
@@ -219,16 +220,121 @@ class _SearchScreenState extends State<SearchScreen> {
                 itemCount: _filteredFriends.length,
                 itemBuilder: (BuildContext context, int index) {
                   final friend = _filteredFriends[index];
-                  final isChecked = selectedFridnds.any((selectedFriend) =>
-                  selectedFriend['userId'] == friend['id']);
                   return GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      _toggleSelectGroup(friend['id'], friend['username'], friend['profilePicture']);
-                      _filteredFriends = friends;
-                      _searchController.text = '';
-                    },
-                    onTapDown: (_) {},
+                      onTap: () {
+                        final selectedFriend = _filteredFriends[index];
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(24),
+                                  topRight: Radius.circular(24),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(height: 24.h),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 24.w, right: 24.w),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        IconButton(
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                          onPressed: () {},
+                                          icon: SvgPicture.asset(
+                                            IconPath.moreHorizontal,
+                                            fit: BoxFit.scaleDown,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                          onPressed: () {},
+                                          icon: SvgPicture.asset(
+                                            IconPath.arrowDown,
+                                            fit: BoxFit.scaleDown,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 18.h),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 20.h, right: 24.h),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                selectedFriend['username'],
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bigHeadLine2
+                                                    .copyWith(color: ColorSchemes.gray500),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                              Text(
+                                                selectedFriend['id'],
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .body2
+                                                    .copyWith(color: ColorSchemes.gray300),
+                                              ),
+                                              Text(
+                                                '함께하는 친구가 10명 있습니다!',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .body3
+                                                    .copyWith(color: ColorSchemes.gray200),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 37.w), // 고정 간격 추가
+                                        CircleAvatar(
+                                          radius: StyleConstants.circleSizeL,
+                                          backgroundImage: NetworkImage(selectedFriend['profilePicture']),
+                                          backgroundColor: ColorSchemes.gray500,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 32.h),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      height: 56.h,
+                                      child: CustomButton(
+                                          text: '친구수락',
+                                          onPressed: () {},
+                                          buttonColor: ColorSchemes.orange200,
+                                          textStyle: Theme.of(context)
+                                          .textTheme
+                                          .smallHeadLine2,
+                                          textColor: Colors.white
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 56.h),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      onTapDown: (_) {},
                     child: Participantlistprofile(
                       userName: _filteredFriends[index]['username'],
                       userId: _filteredFriends[index]['id'],
