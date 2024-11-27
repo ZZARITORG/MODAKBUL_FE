@@ -11,6 +11,7 @@ import 'package:modakbul/screens/friend/add_freind_screen.dart';
 import 'package:modakbul/screens/friend/search_screen.dart';
 import 'package:modakbul/screens/friend/friend_search_screen.dart';
 import 'package:modakbul/screens/friend/friend_screen.dart';
+import 'package:modakbul/screens/friend/tab_screens/friends_tab_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_detail_screen.dart';
 import 'package:modakbul/screens/modakbul/my_modakbul_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_map_detail_screen.dart';
@@ -33,15 +34,14 @@ import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
 import 'package:modakbul/screens/modakbul/group_select_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/home_screen_2_skeleton.dart';
-import 'package:modakbul/widgets/home_screen_skeleton.dart';
+import 'package:modakbul/widgets/browse_tab_screen_skeleton.dart';
+import 'package:modakbul/widgets/default_tab_screen_skeleton.dart';
 import 'package:modakbul/widgets/fixed_modakbul_card.dart';
-import 'package:modakbul/widgets/group_select_screen_skeleton.dart';
 import 'package:modakbul/widgets/friend_screen_skeleton.dart';
 import 'package:modakbul/widgets/group_edit_screen_skeleton.dart';
-import 'package:modakbul/widgets/home_screen_skeleton.dart';
+import 'package:modakbul/widgets/default_tab_screen_skeleton.dart';
 import 'package:modakbul/widgets/invited_modakbul_card.dart';
-import 'package:modakbul/widgets/push_screen_skeleton.dart'; // home_screen_skeleton 파일 import
+import 'package:modakbul/widgets/alert_screen_skeleton.dart'; // home_screen_skeleton 파일 import
 import 'package:modakbul/widgets/participate_bottom_sheet.dart';
 import 'package:modakbul/widgets/search_screen_skeleton.dart'; // home_screen_skeleton 파일 import
 import 'package:modakbul/widgets/modakbul_map_screen_skeleton.dart'; // home_screen_skeleton 파일 import
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const GroupEditScreen(),
+      home: const FriendSearchScreen(),
     );
   }
 }

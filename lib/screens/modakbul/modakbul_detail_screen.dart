@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/modakbul_detail_card.dart';
+import 'package:modakbul/widgets/modakbul_detail_screen_skeleton.dart';
 
 import '../../themes/color_schemes.dart';
 
@@ -34,8 +36,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
         child: Stack(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Column(
+              padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+              child: /*Skeleton 들어갈 자리 */ Column(
                 children: [
                   const ModakbulDetailCard(
                       userName: 'userName',

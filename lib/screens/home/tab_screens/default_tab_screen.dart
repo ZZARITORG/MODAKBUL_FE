@@ -6,6 +6,7 @@ import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/fixed_modakbul_card.dart';
+import 'package:modakbul/widgets/default_tab_screen_skeleton.dart';
 import 'package:modakbul/widgets/my_modakbul_card.dart';
 
 class DefaultTabScreen extends StatefulWidget {
@@ -102,177 +103,181 @@ class _State extends State<DefaultTabScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
-                  decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(StyleConstants.radiusMedium),
-                      color: ColorSchemes.white,
-                      boxShadow: const [
-                        BoxShadow(
-                            offset: Offset(0, 4),
-                            blurRadius: 10,
-                            color: Color(0x40F3F3F3))
-                      ]),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      children: [ /* 스켈레톤 조건문 들어갈 영역 */
+       Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 14.h),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(StyleConstants.radiusMedium),
+                          color: ColorSchemes.white,
+                          boxShadow: const [
+                            BoxShadow(
+                                offset: Offset(0, 4),
+                                blurRadius: 10,
+                                color: Color(0x40F3F3F3))
+                          ]),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('혼자는 너무 춥지 않아?',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bigHeadLine4
-                                  .copyWith(color: ColorSchemes.orange200)),
-                          SizedBox(
-                            height: 6.h,
-                          ),
-                          Row(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('모닥불 피우러가기',
+                              Text('혼자는 너무 춥지 않아?',
                                   style: Theme.of(context)
                                       .textTheme
-                                      .body2
-                                      .copyWith(color: ColorSchemes.orange100)),
+                                      .bigHeadLine4
+                                      .copyWith(color: ColorSchemes.orange200)),
                               SizedBox(
-                                width: 6.w,
+                                height: 6.h,
                               ),
-                              SvgPicture.asset(IconPath.arrowForward15Orange100),
+                              Row(
+                                children: [
+                                  Text('모닥불 피우러가기',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body2
+                                          .copyWith(color: ColorSchemes.orange100)),
+                                  SizedBox(
+                                    width: 6.w,
+                                  ),
+                                  SvgPicture.asset(IconPath.arrowForward15Orange100),
+                                ],
+                              ),
                             ],
                           ),
+                          SizedBox(
+                            width: 75.r,
+                            height: 75.r,
+                            child: Image.asset(ImagePath.homeModakbul),
+                          )
                         ],
                       ),
-                      SizedBox(
-                        width: 75.r,
-                        height: 75.r,
-                        child: Image.asset(ImagePath.homeModakbul),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 14.h,
-              ),
-              Container(
-                height: 238.h,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: ClipRect(
-                        child: PageView.builder(
-                          controller: _pageController,
-                          itemCount: myModakbulData.length,
-                          onPageChanged: (index) {
-                            setState(() {
-                              _currentPage = index;
-                            });
-                          },
-                          itemBuilder: (context, index) {
-                            final data = myModakbulData[index];
-                            return Container(
-                              padding: EdgeInsets.fromLTRB(16.w, 30.h, 16.w, 16.h),
-                              decoration: BoxDecoration(
-                                color: ColorSchemes.white,
-                                borderRadius: BorderRadius.circular(
-                                  StyleConstants.radiusMedium,
-                                ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    offset: Offset(0, 4),
-                                    blurRadius: 10,
-                                    color: Color(0x40F3F3F3),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  MyModakbulCard(
-                                      profileLength: data['profileLength'],
-                                      title: data['title'],
-                                      group: data['group'],
-                                      date: data['date'],
-                                      location: data['location']),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
                     ),
-                    Positioned(
-                      bottom: 16.h,
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          myModakbulData.length >= 5 ? 5 : myModakbulData.length,
-                          (dotIndex) => AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: EdgeInsets.symmetric(horizontal: 2.w),
-                            width: (_currentPage >= 5 && dotIndex == 4) ||
-                                    (_currentPage == dotIndex)
-                                ? 18.w
-                                : 6.w,
-                            height: 6.h,
-                            decoration: BoxDecoration(
-                              color: (_currentPage >= 5 && dotIndex == 4) ||
-                                      _currentPage == dotIndex
-                                  ? ColorSchemes.orange200
-                                  : ColorSchemes.gray200,
-                              borderRadius: BorderRadius.circular(
-                                (_currentPage >= 5 && dotIndex == 4) ||
-                                        _currentPage == dotIndex
-                                    ? 4.r
-                                    : 50.r,
+                  ),
+                  SizedBox(
+                    height: 14.h,
+                  ),
+                  Container(
+                    height: 238.h,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: ClipRect(
+                            child: PageView.builder(
+                              controller: _pageController,
+                              itemCount: myModakbulData.length,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _currentPage = index;
+                                });
+                              },
+                              itemBuilder: (context, index) {
+                                final data = myModakbulData[index];
+                                return Container(
+                                  padding: EdgeInsets.fromLTRB(16.w, 30.h, 16.w, 16.h),
+                                  decoration: BoxDecoration(
+                                    color: ColorSchemes.white,
+                                    borderRadius: BorderRadius.circular(
+                                      StyleConstants.radiusMedium,
+                                    ),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        blurRadius: 10,
+                                        color: Color(0x40F3F3F3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      MyModakbulCard(
+                                          profileLength: data['profileLength'],
+                                          title: data['title'],
+                                          group: data['group'],
+                                          date: data['date'],
+                                          location: data['location']),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 16.h,
+                          left: 0,
+                          right: 0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              myModakbulData.length >= 5 ? 5 : myModakbulData.length,
+                              (dotIndex) => AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                margin: EdgeInsets.symmetric(horizontal: 2.w),
+                                width: (_currentPage >= 5 && dotIndex == 4) ||
+                                        (_currentPage == dotIndex)
+                                    ? 18.w
+                                    : 6.w,
+                                height: 6.h,
+                                decoration: BoxDecoration(
+                                  color: (_currentPage >= 5 && dotIndex == 4) ||
+                                          _currentPage == dotIndex
+                                      ? ColorSchemes.orange200
+                                      : ColorSchemes.gray200,
+                                  borderRadius: BorderRadius.circular(
+                                    (_currentPage >= 5 && dotIndex == 4) ||
+                                            _currentPage == dotIndex
+                                        ? 4.r
+                                        : 50.r,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 24.h,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text('약속된 모닥불',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine4
-                          .copyWith(color: ColorSchemes.gray500)),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text('전체보기',
-                        style: Theme.of(context)
-                            .textTheme
-                            .body3
-                            .copyWith(color: ColorSchemes.gray300)),
                   ),
+                  SizedBox(
+                    height: 24.h,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('약속된 모닥불',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bigHeadLine4
+                              .copyWith(color: ColorSchemes.gray500)),
+                      TextButton(
+                        onPressed: () {},
+                        child: Text('전체보기',
+                            style: Theme.of(context)
+                                .textTheme
+                                .body3
+                                .copyWith(color: ColorSchemes.gray300)),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 14.h,
+                  ),
+
                 ],
               ),
-              SizedBox(
-                height: 14.h,
-              ),
+            ),
 
-            ],
-          ),
-        ),
         SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           scrollDirection: Axis.horizontal,
@@ -296,6 +301,8 @@ class _State extends State<DefaultTabScreen> {
               },
             ),
           ),
+        ),
+          ],
         ),
       ],
     );

@@ -5,6 +5,7 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
+import 'package:modakbul/widgets/search_screen_skeleton.dart';
 import 'package:modakbul/widgets/select_user_list_profile.dart';
 import 'package:modakbul/widgets/tab_bar_delegate.dart';
 import '../../constants/assets_path.dart';
@@ -45,108 +46,114 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
       appBar: const LogoAppBar(
         backgroundColor: ColorSchemes.gray000,
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            controller: _scrollController,
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Column(
-              children: [
-                SizedBox(height: 32.h),
-                CustomSearchBar(
-                  hintText: '사용자를 검색해보세요.',
-                  controller: _searchController,
-                ),
-                SizedBox(height: 24.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body:/*Skeleton 들어갈 자리 */ SafeArea(
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                child: Column(
                   children: [
-                    Text(
-                      '친구요청',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine4
-                          .copyWith(color: ColorSchemes.gray500),
+                    SizedBox(height: 32.h),
+                    CustomSearchBar(
+                      hintText: '사용자를 검색해보세요.',
+                      controller: _searchController,
                     ),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => CreateGroupScreen()), // AddFreindScreen 으로 이동해야함
-                          );
-                        },
-                        child: Text(
-                          '전체보기',
+                    SizedBox(height: 24.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '친구요청',
                           style: Theme.of(context)
                               .textTheme
-                              .body3
-                              .copyWith(color: ColorSchemes.orange200),
-                        ))
+                              .bigHeadLine4
+                              .copyWith(color: ColorSchemes.gray500),
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => CreateGroupScreen()), // AddFreindScreen 으로 이동해야함
+                              );
+                            },
+                            child: Text(
+                              '전체보기',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body3
+                                  .copyWith(color: ColorSchemes.orange200),
+                            ))
+                      ],
+                    ),
+                    SizedBox(height: 24.h),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: friendRequests.length,
+                      itemBuilder: (context, index) {
+                        final friend = friendRequests[index];
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 24.h),
+                          child: AddFriendProfile(
+                            userName: friend['userName']!,
+                            userId: friend['userId']!,
+                            time: friend['time']!,
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
-                SizedBox(height: 24.h),
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: friendRequests.length,
-                  itemBuilder: (context, index) {
-                    final friend = friendRequests[index];
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 24.h),
-                      child: AddFriendProfile(
-                        userName: friend['userName']!,
-                        userId: friend['userId']!,
-                        time: friend['time']!,
-                      ),
-                    );
-                  },
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: ColorSchemes.gray100,
-                        width: 2.w,
-                      ),
+              ),
+                  Divider(
+                    thickness: 2.h,
+                    height: 2.h,
+                    color: ColorSchemes.gray100,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 32.h),
+                    Row(
+                      children: [
+                        Text(
+                          '알 수도 있는 사람',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bigHeadLine4
+                              .copyWith(color: ColorSchemes.gray500),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 24.h),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: friendRequests.length,
+                      itemBuilder: (context, index) {
+                        final friend = friendRequests[index];
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: index == friendRequests.length - 1 ? 0 : 24.h,
+                          ),
+                          child: AddFriendProfile(
+                            userName: friend['userName']!,
+                            userId: friend['userId']!,
+                            time: friend['time']!,
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 84.h),
+                      ],
                     ),
                   ),
-                ),
-                SizedBox(height: 32.h),
-                Row(
-                  children: [
-                    Text(
-                      '알 수도 있는 사람',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine4
-                          .copyWith(color: ColorSchemes.gray500),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 24.h),
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: friendRequests.length,
-                  itemBuilder: (context, index) {
-                    final friend = friendRequests[index];
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: index == friendRequests.length - 1 ? 0 : 24.h,
-                      ),
-                      child: AddFriendProfile(
-                        userName: friend['userName']!,
-                        userId: friend['userId']!,
-                        time: friend['time']!,
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 84.h),
-              ],
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

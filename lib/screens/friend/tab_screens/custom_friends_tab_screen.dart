@@ -180,169 +180,166 @@ class _CustomFriendsTabScreenState extends State<CustomFriendsTabScreen > {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                  height: 24.h
-              ),
-              if (selectedFridnds.isNotEmpty)
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.only(left: StyleConstants.defaultPadding, right: 4.w),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: selectedFridnds.map((friend) {
-                      return Padding(
-                        padding: EdgeInsets.only(right: 12.w),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Stack(
-                              children: [
-                                CircleAvatar(
-                                  radius: StyleConstants.circleSizeM,
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: SizedBox(
-                                    height: 24.r,
-                                    width: 24.r,
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedFridnds.removeWhere(
-                                                (item) => item['userId'] == friend['userId'],
-                                          );
-                                        });
-                                      },
-                                      icon: SvgPicture.asset(
-                                        IconPath.cancel,
-                                        width: 24.r,
-                                      ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+                height: 24.h
+            ),
+            if (selectedFridnds.isNotEmpty)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(left: StyleConstants.defaultPadding, right: 4.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: selectedFridnds.map((friend) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: StyleConstants.circleSizeM,
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: SizedBox(
+                                  height: 24.r,
+                                  width: 24.r,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedFridnds.removeWhere(
+                                              (item) => item['userId'] == friend['userId'],
+                                        );
+                                      });
+                                    },
+                                    icon: SvgPicture.asset(
+                                      IconPath.cancel,
+                                      width: 24.r,
                                     ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                              height: 4.h
+                          ),
+                          SizedBox(
+                            width: StyleConstants.circleSizeM * 2,
+                            child: Center(
+                              child: Text(
+                                friend['userName']!,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body3
+                                    .copyWith(color: ColorSchemes.gray300),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            SizedBox(
+                height: 10.h
+            ),
+            CustomSearchBar(
+              hintText: '그룹을 검색해보세요.',
+              controller: _searchController,
+              focusNode: _searchFocusNode,
+            ),
+            SizedBox(
+                height: 24.h
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Builder(builder: (context) {
+                      if (_filteredFriends.isEmpty) {
+                        return Center(
+                          child: Text(
+                            '검색 결과가 없습니다',
+                            style: Theme.of(context).textTheme.body1.copyWith(color: ColorSchemes.gray300),
+                          ),
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '자주 만나는 친구',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine4
+                                      .copyWith(color: ColorSchemes.gray500),
+                                ),
+                                TextButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    '정렬',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .body3
+                                        .copyWith(color: ColorSchemes.gray300),
                                   ),
                                 ),
                               ],
                             ),
                             SizedBox(
-                                height: 4.h
+                                height: 14.h
                             ),
-                            SizedBox(
-                              width: StyleConstants.circleSizeM * 2,
-                              child: Center(
-                                child: Text(
-                                  friend['userName']!,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .body3
-                                      .copyWith(color: ColorSchemes.gray300),
-                                ),
-                              ),
+                            ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemCount: _filteredFriends.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final friend = _filteredFriends[index];
+                                final isChecked = selectedFridnds.any((selectedFriend) =>
+                                selectedFriend['userId'] == friend['id']);
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () {
+                                    _toggleSelectGroup(friend['id'], friend['username'], friend['profilePicture']);
+                                    _filteredFriends = friends;
+                                    _searchController.text = '';
+                                  },
+                                  onTapDown: (_) {},
+                                  child: SelectUserListProfile(
+                                    userName: _filteredFriends[index]['username'],
+                                    userId: _filteredFriends[index]['id'],
+                                    profileImage: _filteredFriends[index]['profilePicture'],
+                                    isChecked: isChecked,
+                                  ),
+                                );
+                              },
                             ),
                           ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              SizedBox(
-                  height: 10.h
-              ),
-              CustomSearchBar(
-                hintText: '그룹을 검색해보세요.',
-                controller: _searchController,
-                focusNode: _searchFocusNode,
-              ),
-              SizedBox(
-                  height: 24.h
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Builder(builder: (context) {
-                        if (_filteredFriends.isEmpty) {
-                          return Center(
-                            child: Text(
-                              '검색 결과가 없습니다',
-                              style: Theme.of(context).textTheme.body1.copyWith(color: ColorSchemes.gray300),
-                            ),
-                          );
-                        } else {
-                          return Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '자주 만나는 친구',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bigHeadLine4
-                                        .copyWith(color: ColorSchemes.gray500),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      '정렬',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .body3
-                                          .copyWith(color: ColorSchemes.gray300),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                  height: 14.h
-                              ),
-                              ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: _filteredFriends.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final friend = _filteredFriends[index];
-                                  final isChecked = selectedFridnds.any((selectedFriend) =>
-                                  selectedFriend['userId'] == friend['id']);
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () {
-                                      _toggleSelectGroup(friend['id'], friend['username'], friend['profilePicture']);
-                                      _filteredFriends = friends;
-                                      _searchController.text = '';
-                                    },
-                                    onTapDown: (_) {},
-                                    child: SelectUserListProfile(
-                                      userName: _filteredFriends[index]['username'],
-                                      userId: _filteredFriends[index]['id'],
-                                      profileImage: _filteredFriends[index]['profilePicture'],
-                                      isChecked: isChecked,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          );
-                        }
-                      }),
-                      SizedBox(
-                          height: 88.h
-                      ),
-                    ],
-                  ),
+                        );
+                      }
+                    }),
+                    SizedBox(
+                        height: 88.h
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         Positioned(
           bottom: 0,

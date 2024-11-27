@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/alert_list_tile.dart';
+import 'package:modakbul/widgets/alert_screen_skeleton.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 
 class AlertScreen extends StatefulWidget {
@@ -28,12 +30,15 @@ class _AlertScreenState extends State<AlertScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: ColorSchemes.gray000,
-        appBar: BackButtonAppBar(),
+        appBar: BackButtonAppBar(
+          backgroundColor: ColorSchemes.gray000,
+        ),
         body: SafeArea(
           child: Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 20.h),
-              child: Column(
+              padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+              child: /*Skeleton 들어갈 자리 */ Column(
                 children: [
+                  SizedBox(height: 24.h),
                   Expanded(
                     child: ListView(
                       shrinkWrap: true,
@@ -43,6 +48,9 @@ class _AlertScreenState extends State<AlertScreen> {
                       ],
                     ),
                   ),
+                  SizedBox(
+                    height: 16.h
+                  )
                 ],
               )),
         ));

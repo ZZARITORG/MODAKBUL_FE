@@ -6,6 +6,7 @@ import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/friend_screen_skeleton.dart';
 import 'package:modakbul/widgets/user_list_profile.dart';
 
 ///TODO 검색방식 생각, 키보드 내리는것도 생각(탭바 안쓸수도있음), 리스트 끝까지올렸을때 마진 고려
@@ -131,7 +132,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
     super.initState();
     _filteredFriends = friends;
     _searchController.addListener(_filterFriends);
-  }
+    }
 
   @override
   void dispose() {
@@ -259,7 +260,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
               Padding(
                 padding:
                 EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                child: Column(
+                child: /*Skeleton 들어갈 자리*/ Column(
                   children: [
                     CustomSearchBar(
                       hintText: '사용자를 검색해보세요.',
