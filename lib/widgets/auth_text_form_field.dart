@@ -169,11 +169,16 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
         ),
         if (_hasError && _errorText != null) ...[
           SizedBox(height: widget.isBigHeadLine2 ? 8.h : 10.h),
-          Text(_errorText!,
-              style: Theme.of(context)
-                  .textTheme
-                  .body2
-                  .copyWith(color: ColorSchemes.red)),
+          Row(
+            children: [
+              SizedBox(width: 4.w,),
+              Text(_errorText!,
+                  style: Theme.of(context)
+                      .textTheme
+                      .body2
+                      .copyWith(color: ColorSchemes.red)),
+            ],
+          ),
         ]
       ],
     );

@@ -145,22 +145,25 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                           ),
                         ),
                         SizedBox(height: 6.h),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: '$_contentLength',
-                                style: Theme.of(context).textTheme.caption.copyWith(
-                                  color: _contentController.text.isNotEmpty ? ColorSchemes.orange200 : ColorSchemes.gray200,
+                        Padding(
+                          padding: EdgeInsets.only(right: 4.w),
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '$_contentLength',
+                                  style: Theme.of(context).textTheme.caption.copyWith(
+                                    color: _contentController.text.isNotEmpty ? ColorSchemes.orange200 : ColorSchemes.gray200,
+                                  ),
                                 ),
-                              ),
-                              TextSpan(
-                                text: ' /${AppConstants.maxContentLength}',
-                                style: Theme.of(context).textTheme.caption.copyWith(
-                                  color: ColorSchemes.gray200,
+                                TextSpan(
+                                  text: ' /${AppConstants.maxContentLength}',
+                                  style: Theme.of(context).textTheme.caption.copyWith(
+                                    color: ColorSchemes.gray200,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -172,13 +175,13 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                   onPressed: () {},
                   icon: isActivated ? IconPath.groupOrange200 : IconPath.groupOrange100,
                   isActivated: isActivated,
-                  iconWidth: 20.r,
+                  iconWidth: 18.r,
                 ),
                 SizedBox(height: 18.h),
                 ContentInfo(
                   info: '투파인드피터 서현점',
                   onPressed: () {},
-                  icon: isActivated ? IconPath.pinDropOrange200 : IconPath.groupOrange100,
+                  icon: isActivated ? IconPath.pinDropOrange200 : IconPath.pinDropOrange100,
                   isActivated: isActivated,
                   iconWidth: 16.r,
                 ),
@@ -188,7 +191,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                   onPressed: () {},
                   icon: isActivated ? IconPath.calendarMonthOrange200 : IconPath.calendarMonthOrange100,
                   isActivated: isActivated,
-                  iconWidth: 19.r,
+                  iconWidth: 16.r,
                 ),
                 SizedBox(height: 18.h),
                 ContentInfo(
@@ -196,7 +199,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                   onPressed: () {},
                   icon: isActivated ? IconPath.timeOrange200 : IconPath.timeOrange100,
                   isActivated: isActivated,
-                  iconWidth: 20.r,
+                  iconWidth: 18.r,
                 ),
                 SizedBox(
                   height: 100.h,

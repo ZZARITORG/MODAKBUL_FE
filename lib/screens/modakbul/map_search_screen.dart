@@ -181,8 +181,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                             height: 24.h,
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              SizedBox(width: 4.w,),
                               Text(
                                 '최근 검색한 위치',
                                 style: Theme.of(context)
@@ -190,6 +190,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                     .bigHeadLine4
                                     .copyWith(color: ColorSchemes.gray500),
                               ),
+                              const Spacer(),
                               TextButton(
                                 onPressed: () {
                                   setState(() {
@@ -204,6 +205,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                       .copyWith(color: ColorSchemes.orange100),
                                 ),
                               ),
+                              SizedBox(width: 4.w,),
                             ],
                           ),
                           SizedBox(
@@ -270,8 +272,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                             height: 24.h,
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              SizedBox(width: 4.w,),
                               Text(
                                 '검색 결과',
                                 style: Theme.of(context)
@@ -279,6 +281,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                     .bigHeadLine4
                                     .copyWith(color: ColorSchemes.gray500),
                               ),
+                              const Spacer(),
                               TextButton(
                                   onPressed: () {},
                                   child: Text(
@@ -288,6 +291,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                         .body3
                                         .copyWith(color: ColorSchemes.gray300),
                                   )),
+                              SizedBox(width: 4.w,),
                             ],
                           ),
                           SizedBox(
