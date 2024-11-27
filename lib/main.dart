@@ -31,6 +31,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/home_screen_2_skeleton.dart';
 import 'package:modakbul/widgets/home_screen_skeleton.dart';
 import 'package:modakbul/widgets/fixed_modakbul_card.dart';
+import 'package:modakbul/widgets/friend_screen_skeleton.dart';
 import 'package:modakbul/widgets/group_edit_screen_skeleton.dart';
 import 'package:modakbul/widgets/home_screen_skeleton.dart';
 import 'package:modakbul/widgets/invited_modakbul_card.dart';
