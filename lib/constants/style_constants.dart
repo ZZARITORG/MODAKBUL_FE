@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 ///버튼 사이즈, 아이콘 사이즈, 듀레이션, 마진, 패딩 등
 
 class StyleConstants {
+  static final double circleSizeXXXXXXXS = 12.r;
   static final double circleSizeXXXXXXS = 16.r;
   static final double circleSizeXXXXXS = 17.r;
   static final double circleSizeXXXXS = 18.r;

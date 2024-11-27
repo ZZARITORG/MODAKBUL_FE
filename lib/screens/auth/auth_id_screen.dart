@@ -41,6 +41,12 @@ class _AuthIdScreenState extends State<AuthIdScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _userIdController.addListener(_validateForm);
+  }
+
+  @override
   void dispose() {
     _userIdController.dispose();
     _userIdFocusNode.dispose();
