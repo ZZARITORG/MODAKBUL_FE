@@ -43,12 +43,16 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
             ),
             SizedBox(
                 width: 322.w,
-                child: Text(
-                  '원활한 모닥불을 위해\n아래 내용을 선택해주세요.',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bigHeadLine2
-                      .copyWith(color: ColorSchemes.gray500),
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    '원활한 모닥불을 위해\n아래 내용을 선택해주세요.',
+                    maxLines: 2,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bigHeadLine2
+                        .copyWith(color: ColorSchemes.gray500),
+                  ),
                 )),
             SizedBox(
               height: 8.h,
