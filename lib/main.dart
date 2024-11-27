@@ -5,6 +5,7 @@ import 'package:modakbul/screens/alert/alert_screen.dart';
 import 'package:modakbul/screens/auth/auth_id_screen.dart';
 import 'package:modakbul/screens/auth/auth_phone_screen.dart';
 import 'package:modakbul/screens/auth/terms_agreement_screen.dart';
+import 'package:modakbul/screens/friend/add_freind_screen.dart';
 import 'package:modakbul/screens/friend/search_screen.dart';
 import 'package:modakbul/screens/friend/friend_search_screen.dart';
 import 'package:modakbul/screens/friend/friend_screen.dart';
