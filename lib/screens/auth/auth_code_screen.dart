@@ -25,7 +25,6 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
   final FocusNode _codeFocusNode = FocusNode();
 
   _handleButtonPress() {
-    // no nickname
     if (_codeController.text.isEmpty) {
       return;
     }
