@@ -162,7 +162,7 @@ class MyProfileScreen extends StatelessWidget {
                 ]),
               ),
             ),
-            SizedBox(height: 116.h)
+            SizedBox(height: 38.h)
           ],
         ),
       ),
