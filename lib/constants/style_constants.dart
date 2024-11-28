@@ -22,5 +22,5 @@ class StyleConstants {
   static final double radiusMedium = 14.r;
   static final double radiusLarge = 24.r;
 
-  static final double defaultPadding = 16.r;
+  static final double defaultPadding = 16.w;
 }
