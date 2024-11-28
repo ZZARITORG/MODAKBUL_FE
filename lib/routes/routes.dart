@@ -24,7 +24,6 @@ import 'package:modakbul/screens/setting/info_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/screens/setting/terms_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
-import 'package:modakbul/screens/start_screen.dart';
 
 class Routes {
   Routes._();
@@ -97,7 +96,6 @@ class Routes {
 
     ///splash
     splashScreen: (BuildContext context) => const SplashScreen(),
-    startScreen: (BuildContext context) => const StartScreen(),
   };
 
   /// FadeTransition을 사용하는 커스텀 페이지 빌더
@@ -105,7 +103,10 @@ class Routes {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) {
         return FadeTransition(
-          opacity: animation,
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ),
           child: page,
         );
       },
@@ -135,4 +136,28 @@ class Routes {
       _fadePage(routes[routeName]!(context), arguments),
     );
   }
+
+  static PageRouteBuilder _fadePageSplash(Widget page, Object? arguments) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ),
+          child: page,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 1200),
+      settings: RouteSettings(arguments: arguments),
+    );
+  }
+
+  static Future<void> navigateSplashReplacement(BuildContext context, String routeName, {Object? arguments}) {
+    return Navigator.pushReplacement(
+      context,
+      _fadePageSplash(routes[routeName]!(context), arguments),
+    );
+  }
 }
+
