@@ -19,7 +19,7 @@ class MyProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorSchemes.gray000,
-      appBar: const BackButtonAppBar(
+      appBar: const LogoAppBar(
         backgroundColor: ColorSchemes.gray000,
       ),
       body: Padding(

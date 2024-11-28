@@ -12,6 +12,7 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/custom_calender_picker.dart';
+import 'package:modakbul/widgets/logo_app_bar.dart';
 
 
 class CreateModakbulScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorSchemes.gray000,
-      appBar: const BackButtonAppBar(
+      appBar: const LogoAppBar(
         backgroundColor: ColorSchemes.gray000,
       ),
       body: Padding(

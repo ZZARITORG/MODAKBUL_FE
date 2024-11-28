@@ -13,10 +13,11 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
       {Key? key, this.backgroundColor,this.isActionButton = false, this.onActionPressed})
       : super(key: key);
 
-  factory LogoAppBar.actions({required VoidCallback onActionPressed}) =>
+  factory LogoAppBar.actions({required VoidCallback onActionPressed, Color? backgroundColor}) =>
       LogoAppBar(
         isActionButton: true,
         onActionPressed: onActionPressed,
+        backgroundColor: backgroundColor,
       );
 
   @override
@@ -26,7 +27,7 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: backgroundColor,
       ///스타일 폴더로 옮기기
       automaticallyImplyLeading: false,
-      title: SvgPicture.asset('아이콘 경로'),
+      title: SvgPicture.asset(IconPath.modakbulLogo, width: 79.w,),
       actions: [
         if (isActionButton)
           Padding(

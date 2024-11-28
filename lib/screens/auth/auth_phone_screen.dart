@@ -9,6 +9,7 @@ import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/logo_app_bar.dart';
 import 'package:multi_masked_formatter/multi_masked_formatter.dart';
 
 class AuthPhoneScreen extends StatefulWidget {
@@ -70,7 +71,7 @@ class _AuthPhoneScreenState extends State<AuthPhoneScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const BackButtonAppBar(),
+      appBar: const LogoAppBar(),
       body: SafeArea(
         child: Padding(
           padding:

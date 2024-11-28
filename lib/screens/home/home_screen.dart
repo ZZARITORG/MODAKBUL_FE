@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorSchemes.gray000,
-      appBar: LogoAppBar.actions(onActionPressed: (){}),
+      appBar: LogoAppBar.actions(onActionPressed: (){}, backgroundColor: ColorSchemes.gray000,),
       body: Column(
         children: [
           CustomTabBar(
