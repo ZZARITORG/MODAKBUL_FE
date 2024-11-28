@@ -192,7 +192,7 @@ class InvitedModakbulCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 20.h),
                 // 2. 모임 제목과 설명
                 Text(title,
                     overflow: TextOverflow.ellipsis,
