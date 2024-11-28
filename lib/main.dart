@@ -55,7 +55,7 @@ import 'firebase_options.dart'; // home_screen_skeleton 파일 import
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load();
   runApp(
