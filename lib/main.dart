@@ -12,6 +12,7 @@ import 'package:modakbul/screens/friend/search_screen.dart';
 import 'package:modakbul/screens/friend/friend_search_screen.dart';
 import 'package:modakbul/screens/friend/friend_screen.dart';
 import 'package:modakbul/screens/friend/tab_screens/friends_tab_screen.dart';
+import 'package:modakbul/screens/main_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_detail_screen.dart';
 import 'package:modakbul/screens/modakbul/my_modakbul_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_map_detail_screen.dart';
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: Routes.routes,
       theme: Styles.kThemeData,
-      home: const SplashScreen(),
+      home: const MainScreen(),
     );
   }
 }
