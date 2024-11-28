@@ -18,7 +18,7 @@ class ApiPath{
   //notification
   static const String notification = '/api/v0/notification/notification-list';
 
-  //frieng
+  //friend
   static const String friend = '/api/v0/friend';
   static const String friendReq = '/api/v0/friend/friend-request';
   static const String friendAccept = '/api/v0/friend/friend-accept';
