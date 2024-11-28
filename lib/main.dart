@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/routes/routes.dart';
@@ -47,9 +48,15 @@ import 'package:modakbul/widgets/participate_bottom_sheet.dart';
 import 'package:modakbul/widgets/search_screen_skeleton.dart'; // home_screen_skeleton 파일 import
 import 'package:modakbul/widgets/modakbul_map_screen_skeleton.dart'; // home_screen_skeleton 파일 import
 import 'package:modakbul/widgets/modakbul_detail_screen_skeleton.dart'; // home_screen_skeleton 파일 import
-import 'package:modakbul/widgets/participate_bottom_sheet.dart'; // home_screen_skeleton 파일 import
+import 'package:modakbul/widgets/participate_bottom_sheet.dart';
 
-void main() {
+import 'firebase_options.dart'; // home_screen_skeleton 파일 import
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     ScreenUtilInit(
       designSize: const Size(393, 852), // 디자인 기준의 크기 (너비, 높이)

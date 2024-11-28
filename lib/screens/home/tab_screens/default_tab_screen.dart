@@ -168,7 +168,7 @@ class _State extends State<DefaultTabScreen> {
                     height: 14.h,
                   ),
                   Container(
-                    height: 238.h,
+                    height: 114.h + 92.25.sp + 34.r,
                     child: Stack(
                       children: [
                         Positioned.fill(
