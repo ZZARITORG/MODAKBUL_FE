@@ -1,6 +1,9 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ApiPath{
   ///static const String baseUrl = 'https://api.example.com';
   ///static const String exampleEndpoint = '/example';
+  static String baseUrl = dotenv.env['BASE_URL'] ?? '';
  //auth
   static const String signUp = '/api/v0/auth/signup';
   static const String login = '/api/v0/auth/login';
