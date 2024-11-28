@@ -64,7 +64,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,
-        height: 78.h,
+        height: 56.h,
         elevation: 0, // 그림자 없애기
         color: Colors.white,
         child: Padding(
