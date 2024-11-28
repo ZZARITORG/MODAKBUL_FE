@@ -75,10 +75,11 @@ class _State extends State<BrowseTabScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 14.h,),
           GestureDetector(
             onTap: () {},
             child: Container(

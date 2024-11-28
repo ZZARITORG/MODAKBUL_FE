@@ -106,7 +106,7 @@ class MyModakbulCard extends StatelessWidget {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
               decoration: BoxDecoration(
@@ -194,7 +194,7 @@ class MyModakbulCard extends StatelessWidget {
                             Text(
                               '${profileLength - 1}명',
                               style: Theme.of(context).textTheme.body3.copyWith(
-                                  color: ColorSchemes.gray200, height: 1.571),
+                                  color: ColorSchemes.gray200),
                             ),
                             SizedBox(width: 6.w),
                             SvgPicture.asset(IconPath.arrowForward15Gray200,
