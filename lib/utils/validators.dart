@@ -16,7 +16,7 @@ class Validators {
     return null;
   }
 
-  String? codeValidator(String? value) {
+  String? codeValidator(String? value, String? errorMessage) {
     if (value == null || value.isEmpty) {
       return null; // 텍스트 필드가 비어있으면 에러 메시지를 반환하지 않음
     }
@@ -25,7 +25,11 @@ class Validators {
     final numberPattern = RegExp(r'^[0-9]+$');
 
     if (!numberPattern.hasMatch(value)) {
-      return '전화번호는 숫자만 가능합니다.';
+      return '인증번호는 숫자만 가능합니다.';
+    }
+
+    if (errorMessage != null) {
+      return errorMessage;
     }
 
     return null;

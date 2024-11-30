@@ -79,8 +79,12 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
   }
 
   void _validateInput(String value) {
-    final validationError = widget.validator?.call(value);
+    // 입력값이 변경될 때마다 에러 상태 초기화
     setState(() {
+      print('validationError: $_errorText');
+
+      // 기존 validator 호출하여 에러 메시지 설정
+      String? validationError = widget.validator?.call(value);
       _hasError = validationError != null;
       _errorText = validationError;
     });
@@ -111,7 +115,16 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
               },
               autofocus: true,
               maxLength: widget.maxLength,
-              validator: widget.validator,
+              validator: (value) {
+                String? validationError = widget.validator?.call(value);
+                if (validationError != null) {
+                  setState(() {
+                    _errorText = validationError;
+                    _hasError = true;
+                  });
+                }
+                return validationError;
+              },
               controller: widget.textEditingController,
               focusNode: widget.focusNode,
               // 전달된 FocusNode 사용
