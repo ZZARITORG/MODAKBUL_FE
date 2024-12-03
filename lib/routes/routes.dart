@@ -5,8 +5,10 @@ import 'package:modakbul/screens/auth/auth_id_screen.dart';
 import 'package:modakbul/screens/auth/auth_name_screen.dart';
 import 'package:modakbul/screens/auth/auth_phone_screen.dart';
 import 'package:modakbul/screens/auth/auth_profile_screen.dart';
+import 'package:modakbul/screens/auth/image_cropper_screen.dart';
 import 'package:modakbul/screens/auth/terms_agreement_screen.dart';
 import 'package:modakbul/screens/home/home_screen.dart';
+import 'package:modakbul/screens/main_screen.dart';
 import 'package:modakbul/screens/modakbul/create_content_screen.dart';
 import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
 import 'package:modakbul/screens/modakbul/group_select_screen.dart';
@@ -35,6 +37,7 @@ class Routes {
   static const String authNameScreen = '/authNameScreen';
   static const String authPhoneScreen = '/authPhoneScreen';
   static const String authProfileScreen = '/authProfileScreen';
+  static const String imageCropperScreen = '/imageCropperScreen';
   static const String termsAgreementScreen = '/termsAgreementScreen';
   static const String homeScreen = '/homeScreen';
   static const String createContentScreen = '/createContentScreen';
@@ -54,7 +57,7 @@ class Routes {
   static const String myProfileScreen = '/myProfileScreen';
   static const String termsScreen = '/termsScreen';
   static const String splashScreen = '/splashScreen';
-  static const String startScreen = '/startScreen';
+  static const String mainScreen = '/mainScreen';
 
   ///라우트 추가 예시
   static final Map<String, WidgetBuilder> routes = {
@@ -67,6 +70,7 @@ class Routes {
     authNameScreen: (BuildContext context) => const AuthNameScreen(),
     authPhoneScreen: (BuildContext context) => const AuthPhoneScreen(),
     authProfileScreen: (BuildContext context) => const AuthProfileScreen(),
+    imageCropperScreen: (BuildContext context) => const ImageCropperScreen(),
     termsAgreementScreen: (BuildContext context) => const TermsAgreementScreen(),
 
     ///home
@@ -96,6 +100,7 @@ class Routes {
 
     ///splash
     splashScreen: (BuildContext context) => const SplashScreen(),
+    mainScreen: (BuildContext context) => const MainScreen(),
   };
 
   /// FadeTransition을 사용하는 커스텀 페이지 빌더

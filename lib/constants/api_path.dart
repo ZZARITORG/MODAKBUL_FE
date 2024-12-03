@@ -4,10 +4,17 @@ class ApiPath{
   ///static const String baseUrl = 'https://api.example.com';
   ///static const String exampleEndpoint = '/example';
   static String baseUrl = dotenv.env['BASE_URL'] ?? '';
- //auth
-  static const String signUp = '/api/v0/auth/signup';
+  static String s3Url = dotenv.env['S3_URL'] ?? '';
+
+  //health check
+  static String healthCheck = '/api/v0/health';
+
+  //auth
+  static const String signUp = '/api/v0/auth/sign-up';
   static const String login = '/api/v0/auth/login';
   static const String tokenRefresh = '/api/v0/auth/refresh-token';
+  static const String checkUserExists = '/api/v0/auth/phoneNo';
+  static String checkIdDuplication(String userId) => '/api/v0/auth/$userId';
 
   //meeting
   static const String meeting = '/api/v0/meeting';
@@ -37,6 +44,6 @@ class ApiPath{
   static const String userMe = '/api/v0/user/me';
 
   //AWS
-  static const String aws = '/api/v0/aws/presigned';
+  static String getPresignedUrl(String userId) => '/api/v0/aws/presigned/$userId';
 
 }

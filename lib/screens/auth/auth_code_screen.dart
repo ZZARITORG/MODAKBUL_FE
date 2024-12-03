@@ -4,13 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/phone_number.dart';
+import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/providers/auth_provider.dart'
     as modakbul_auth_provider;
 import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/services/firebase_auth_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -34,18 +38,38 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
   bool _isButtonEnabled = false;
   final FocusNode _codeFocusNode = FocusNode();
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
+  AuthService _authService = AuthService();
   String? _errorMessage;
   late modakbul_auth_provider.AuthProvider authProvider;
   Timer? _resendTimer;
   int _resendTime = 30; // 타이머 시간을 초 단위로 설정합니다.
   bool _canResend = false;
+  FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
-  _handleButtonPress() {
+  _handleButtonPress() async {
     if (_codeController.text.isEmpty) {
       return;
     }
-    _firebaseAuthService.verifyVerificationCode(
-        _codeController.text, onSignInSuccess, onSignInFailure);
+
+    // 버튼 비활성화
+    setState(() {
+      _isButtonEnabled = false;
+    });
+
+    try {
+      await _firebaseAuthService.verifyVerificationCode(
+          _codeController.text, onSignInSuccess, onSignInFailure);
+    } catch (e) {
+      // 실패 시 오류 메시지 처리
+      onSignInFailure('인증 실패');
+    } finally {
+      // 비동기 작업이 끝난 후 버튼을 활성화
+      setState(() {
+        _isButtonEnabled = true;
+      });
+    }
+    //마운트 체크
+    if (!context.mounted) return;
     FocusScope.of(context).requestFocus(_codeFocusNode);
   }
 
@@ -87,12 +111,31 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
     _startResendTimer(); // 타이머를 다시 시작합니다.
   }
 
-  void onSignInSuccess() {
-    Routes.navigateReplacement(context, Routes.authNameScreen);
-
+  void onSignInSuccess() async {
     ///하이픈(-) 제거 후 갱신
     authProvider.phoneNumber =
         StringUtils().removeHyphens(authProvider.phoneNumber);
+
+    bool isExists = await _authService
+        .checkUserExists(PhoneNumber(phoneNumber: authProvider.phoneNumber!));
+    if (isExists) {
+      Tokens tokens = await _authService
+          .login(PhoneNumber(phoneNumber: authProvider.phoneNumber!));
+
+      ///secureStorage에 토큰 저장
+      await Future.wait([
+        secureStorage.write(
+            key: AppConstants.accessToken, value: tokens.accessToken),
+        secureStorage.write(
+            key: AppConstants.refreshToken, value: tokens.refreshToken),
+        secureStorage.write(
+            key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
+      ]);
+      Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
+    } else {
+      if (!context.mounted) return;
+      Routes.navigateAndRemoveUntil(context, Routes.authNameScreen);
+    }
   }
 
   void onSignInFailure(String errorCode) {
@@ -131,8 +174,8 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
 
   @override
   void dispose() {
-    _codeController.dispose()
-    ;_resendTimer?.cancel();
+    _codeController.dispose();
+    _resendTimer?.cancel();
     super.dispose();
   }
 
@@ -196,7 +239,10 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
                         style: Theme.of(context)
                             .textTheme
                             .smallHeadLine3
-                            .copyWith(color: _canResend ? ColorSchemes.orange100 : ColorSchemes.gray200),
+                            .copyWith(
+                                color: _canResend
+                                    ? ColorSchemes.orange100
+                                    : ColorSchemes.gray200),
                       )),
                 ),
                 SizedBox(

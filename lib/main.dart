@@ -4,6 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/screens/auth/auth_profile_screen.dart';
+import 'package:modakbul/screens/home/home_screen.dart';
 import 'package:modakbul/screens/main_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';

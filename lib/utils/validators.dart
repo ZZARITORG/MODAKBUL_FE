@@ -62,7 +62,7 @@ class Validators {
     return null;
   }
 
-  String? userIdValidator(String? value) {
+  String? userIdValidator(String? value, String? errorMessage) {
     if (value == null || value.isEmpty) {
       return null; //
     }
@@ -74,7 +74,9 @@ class Validators {
       return '숫자, 영어 알파벳, 언더스코어(_) 또는 점(.)만 입력할 수 있습니다.';
     }
 
-    // Firestore에서 아이디 중복 확인 (여기서는 생략)
+    if (errorMessage != null) {
+      return errorMessage;
+    }
 
     return null;
   }

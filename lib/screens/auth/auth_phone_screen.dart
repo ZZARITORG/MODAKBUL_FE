@@ -76,7 +76,7 @@ class _AuthPhoneScreenState extends State<AuthPhoneScreen> {
 
   @override
   Widget build(BuildContext context) {
-    authProvider = Provider.of<AuthProvider>(context);
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       appBar: const LogoAppBar(),
       body: SafeArea(
