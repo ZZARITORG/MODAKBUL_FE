@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -10,6 +11,7 @@ import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
 
 class AuthNameScreen extends StatefulWidget {
   const AuthNameScreen({super.key});
@@ -23,13 +25,16 @@ class _AuthNameScreenState extends State<AuthNameScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isButtonEnabled = false;
   final FocusNode _userNameFocusNode = FocusNode();
+  late AuthProvider authProvider;
 
   _handleButtonPress() {
     if (_userNameController.text.isEmpty) {
       return;
     }
     FocusScope.of(context).requestFocus(_userNameFocusNode);
-    Routes.navigateTo(context, Routes.authIdScreen, arguments: _userNameController.text);
+    authProvider.userName = _userNameController.text;
+    Routes.navigateTo(context, Routes.authIdScreen,
+        arguments: _userNameController.text);
   }
 
   @override
@@ -48,20 +53,21 @@ class _AuthNameScreenState extends State<AuthNameScreen> {
   void _validateForm() {
     setState(() {
       /// 버튼 활성화 여부 설정
-      _isButtonEnabled = _userNameController.text.length >=
-          AppConstants.minUserNameLength &&
-          _formKey.currentState?.validate() == true;
+      _isButtonEnabled =
+          _userNameController.text.length >= AppConstants.minUserNameLength &&
+              _formKey.currentState?.validate() == true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       appBar: const BackButtonAppBar(),
       body: SafeArea(
         child: Padding(
           padding:
-          EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: Form(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/lower_case_text_formatter.dart';
@@ -11,7 +12,7 @@ import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
-
+import 'package:provider/provider.dart';
 
 class AuthIdScreen extends StatefulWidget {
   const AuthIdScreen({super.key});
@@ -25,11 +26,17 @@ class _AuthIdScreenState extends State<AuthIdScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isButtonEnabled = false;
   final FocusNode _userIdFocusNode = FocusNode();
+  late AuthProvider authProvider;
+  bool isDuplicateId = true;
+  final AuthService _authService = AuthService();
+  String? _errorMessage;
 
-  _handleButtonPress() {
+  _handleButtonPress() async {
+
     if (_userIdController.text.isEmpty) {
       return;
     }
+
     FocusScope.of(context).unfocus();
 
     // 화면 전환 후에 포커스를 설정해 키보드를 올림
@@ -37,7 +44,28 @@ class _AuthIdScreenState extends State<AuthIdScreen> {
       FocusScope.of(context).requestFocus(_userIdFocusNode);
     });
 
-    Routes.navigateTo(context, Routes.termsAgreementScreen, arguments: _userIdController.text);
+    setState(() {
+      _isButtonEnabled = false;
+    });
+
+    // 버튼 비활성화
+    bool isDuplicate =
+        await _authService.checkIdDuplication(_userIdController.text);
+
+    setState(() {
+      _isButtonEnabled = true;
+    });
+
+    if (isDuplicate) {
+      authProvider.userId = _userIdController.text;
+      //마운트 체크
+      if (!context.mounted) return;
+      Routes.navigateTo(context, Routes.termsAgreementScreen);
+    } else {
+      setState(() {
+        _errorMessage = '가입할 수 없는 아이디 입니다.';
+      });
+    }
   }
 
   @override
@@ -56,20 +84,22 @@ class _AuthIdScreenState extends State<AuthIdScreen> {
   void _validateForm() {
     setState(() {
       /// 버튼 활성화 여부 설정
-      _isButtonEnabled = _userIdController.text.length >=
-          AppConstants.minUserIdLength &&
-          _formKey.currentState?.validate() == true;
+      _isButtonEnabled =
+          _userIdController.text.length >= AppConstants.minUserIdLength &&
+              _formKey.currentState?.validate() == true;
+      _errorMessage = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       appBar: const BackButtonAppBar(),
       body: SafeArea(
         child: Padding(
           padding:
-          EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: Form(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -91,7 +121,9 @@ class _AuthIdScreenState extends State<AuthIdScreen> {
                         SizedBox(
                           height: 6.h,
                         ),
-                        Text('4자~16자 사이의 영문, 숫자를 조합해주세요.', ///특수기호 (., _)도 가능하다는 문구로 변경
+                        Text('4자~16자 사이의 영문, 숫자를 조합해주세요.',
+
+                            ///특수기호 (., _)도 가능하다는 문구로 변경
                             style: Theme.of(context)
                                 .textTheme
                                 .body2
@@ -106,7 +138,8 @@ class _AuthIdScreenState extends State<AuthIdScreen> {
                             LowerCaseTextFormatter(),
                           ],
                           onChanged: (value) => _validateForm(),
-                          validator: Validators().userIdValidator,
+                          validator: (value) => Validators()
+                              .userIdValidator(value, _errorMessage),
                           textEditingController: _userIdController,
                           maxLength: AppConstants.maxUserIdLength,
                           focusNode: _userIdFocusNode,

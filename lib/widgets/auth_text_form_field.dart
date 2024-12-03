@@ -5,6 +5,7 @@ import 'package:modakbul/main.dart';
 
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/utils/string_utils.dart';
 
 class AuthTextFormField extends StatefulWidget {
   final TextInputType textInputType;
@@ -79,8 +80,10 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
   }
 
   void _validateInput(String value) {
-    final validationError = widget.validator?.call(value);
+    // 입력값이 변경될 때마다 에러 상태 초기화
     setState(() {
+      // 기존 validator 호출하여 에러 메시지 설정
+      String? validationError = widget.validator?.call(value);
       _hasError = validationError != null;
       _errorText = validationError;
     });
@@ -111,7 +114,16 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
               },
               autofocus: true,
               maxLength: widget.maxLength,
-              validator: widget.validator,
+              validator: (value) {
+                String? validationError = widget.validator?.call(value);
+                if (validationError != null) {
+                  setState(() {
+                    _errorText = validationError;
+                    _hasError = true;
+                  });
+                }
+                return validationError;
+              },
               controller: widget.textEditingController,
               focusNode: widget.focusNode,
               // 전달된 FocusNode 사용
@@ -129,23 +141,27 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
                 });
               },
               cursorColor: ColorSchemes.orange100,
-              style: widget.isBigHeadLine2 ? Theme.of(context)
-                  .textTheme
-                  .bigHeadLine2
-                  .copyWith(color: ColorSchemes.gray500) : Theme.of(context)
-                  .textTheme
-                  .bigHeadLine1
-                  .copyWith(color: ColorSchemes.gray500),
+              style: widget.isBigHeadLine2
+                  ? Theme.of(context)
+                      .textTheme
+                      .bigHeadLine2
+                      .copyWith(color: ColorSchemes.gray500)
+                  : Theme.of(context)
+                      .textTheme
+                      .bigHeadLine1
+                      .copyWith(color: ColorSchemes.gray500),
               decoration: InputDecoration(
                 counterText: '',
                 hintText: widget.hintText,
-                hintStyle: widget.isBigHeadLine2 ? Theme.of(context)
-                    .textTheme
-                    .bigHeadLine2
-                    .copyWith(color: ColorSchemes.gray200) : Theme.of(context)
-                    .textTheme
-                    .bigHeadLine1
-                    .copyWith(color: ColorSchemes.gray200),
+                hintStyle: widget.isBigHeadLine2
+                    ? Theme.of(context)
+                        .textTheme
+                        .bigHeadLine2
+                        .copyWith(color: ColorSchemes.gray200)
+                    : Theme.of(context)
+                        .textTheme
+                        .bigHeadLine1
+                        .copyWith(color: ColorSchemes.gray200),
                 isDense: true,
                 contentPadding: EdgeInsets.only(left: 4.w),
                 border: InputBorder.none,
@@ -169,10 +185,12 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
         ),
         if (_hasError && _errorText != null) ...[
           SizedBox(height: widget.isBigHeadLine2 ? 8.h : 10.h),
-          SizedBox(width: 4.w,),
+          SizedBox(
+            width: 4.w,
+          ),
           Padding(
             padding: EdgeInsets.only(left: 4.w),
-            child: Text(_errorText!.replaceAllMapped(RegExp(r'(\S)(?=\S)'), (m) => '${m[1]}\u200D'),
+            child: Text(StringUtils().wordBreaks(_errorText!),
                 style: Theme.of(context)
                     .textTheme
                     .body2

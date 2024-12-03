@@ -24,6 +24,7 @@ class _EditCodeScreenState extends State<EditCodeScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isButtonEnabled = false;
   final FocusNode _codeFocusNode = FocusNode();
+  String? _errorMessage;
 
   _handleButtonPress() {
     // no nickname
@@ -105,7 +106,7 @@ class _EditCodeScreenState extends State<EditCodeScreen> {
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         onChanged: (value) => _validateForm(),
-                        validator: Validators().codeValidator,
+                        validator: (value) => Validators().codeValidator(value, _errorMessage),
                         textEditingController: _codeController,
                         maxLength: AppConstants.verificationCodeLength,
                         focusNode: _codeFocusNode,

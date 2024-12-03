@@ -22,4 +22,9 @@ class AppConstants {
 
   ///그룹 이름 최대 길이
   static const int maxGroupNameLength = 20;
+
+  ///FlutterSecureStorage Token 키
+  static const String accessToken = 'ACCESS_TOKEN';
+  static const String refreshToken = 'REFRESH_TOKEN';
+  static const String phoneNumber = 'PHONE_NUMBER';
 }

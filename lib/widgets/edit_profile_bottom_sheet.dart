@@ -46,6 +46,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isButtonEnabled = false;
   final FocusNode _focusNode = FocusNode();
+  String? _errorMessage;
 
   void _validateForm() {
     setState(() {
@@ -82,7 +83,8 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
       child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
           decoration: BoxDecoration(
             color: ColorSchemes.white,
@@ -140,7 +142,8 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                       onChanged: (value) => _validateForm(),
                       validator: widget.isName
                           ? Validators().userNameValidator
-                          : Validators().userIdValidator,
+                          : (value) =>
+                              Validators().codeValidator(value, _errorMessage),
                       textEditingController: _textEditingController,
                       maxLength: widget.isName
                           ? AppConstants.maxUserNameLength

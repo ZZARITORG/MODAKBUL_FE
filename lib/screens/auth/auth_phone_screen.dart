@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/utils/digits_with_dash_input_formatter.dart';
 import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
 import 'package:multi_masked_formatter/multi_masked_formatter.dart';
+import 'package:provider/provider.dart';
 
 class AuthPhoneScreen extends StatefulWidget {
   const AuthPhoneScreen({super.key});
@@ -24,13 +28,15 @@ class _AuthPhoneScreenState extends State<AuthPhoneScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isButtonEnabled = false;
   final FocusNode _phoneFocusNode = FocusNode();
+  late AuthProvider authProvider;
 
   _handleButtonPress() {
     if (_phoneNumberController.text.isEmpty) {
       return;
     }
     FocusScope.of(context).requestFocus(_phoneFocusNode);
-    Routes.navigateTo(context, Routes.authCodeScreen, arguments: _phoneNumberController.text);
+    authProvider.phoneNumber = _phoneNumberController.text;
+    Routes.navigateTo(context, Routes.authCodeScreen,);
   }
 
   void _validateForm() {
@@ -70,6 +76,7 @@ class _AuthPhoneScreenState extends State<AuthPhoneScreen> {
 
   @override
   Widget build(BuildContext context) {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       appBar: const LogoAppBar(),
       body: SafeArea(
@@ -111,7 +118,8 @@ class _AuthPhoneScreenState extends State<AuthPhoneScreen> {
                           formatters: [
                             MultiMaskedTextInputFormatter(
                                 masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'],
-                                separator: '-')
+                                separator: '-'),
+                            DigitsWithDashInputFormatter(),
                           ],
                           onChanged: (value) => _validateForm(),
                           validator: Validators().phoneNumberValidator,
