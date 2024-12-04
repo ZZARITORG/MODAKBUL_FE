@@ -95,7 +95,7 @@ class Routes {
     editMyProfileScreen: (BuildContext context) => const EditMyProfileScreen(),
     friendSettingScreen: (BuildContext context) => const FriendSettingScreen(),
     infoScreen: (BuildContext context) => const InfoScreen(),
-    myProfileScreen: (BuildContext context) => const MyProfileScreen(),
+    myProfileScreen: (BuildContext context) => MyProfileScreen(),
     termsScreen: (BuildContext context) => const TermsScreen(),
 
     ///splash

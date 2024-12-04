@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -48,7 +49,16 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
       authProvider.profileUrl =
           await awsService.uploadProfileImage(authProvider.profileImage!);
     }
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    // 개발자 권한 받으면 변경 예정
+    String? fcmToken;
+    if (Platform.isIOS) {
+      fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
+      // await Future.delayed(Duration(seconds: 2));
+      // fcmToken = await FirebaseMessaging.instance.getToken();
+      print('APNS Token: $fcmToken');
+    } else if (Platform.isAndroid) {
+      fcmToken = await FirebaseMessaging.instance.getToken();
+    }
     Tokens tokens = await authService.signUp(User(
         userId: authProvider.userId!,
         name: authProvider.userName!,

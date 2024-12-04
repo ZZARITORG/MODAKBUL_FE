@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/constants/api_path.dart';
@@ -94,7 +97,16 @@ class DioInterceptor extends InterceptorsWrapper {
                 // . . .
                 String? phoneNumber =
                 await secureStorage.read(key: AppConstants.phoneNumber);
-                String? fcmToken = await FirebaseMessaging.instance.getToken();
+                // 개발자 권한 받으면 변경 예정
+                String? fcmToken;
+                if (Platform.isIOS) {
+                  fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
+                  // await Future.delayed(Duration(seconds: 2));
+                  // fcmToken = await FirebaseMessaging.instance.getToken();
+                  print('APNS Token: $fcmToken');
+                } else if (Platform.isAndroid) {
+                  fcmToken = await FirebaseMessaging.instance.getToken();
+                }
                 Response response = await refreshDio.post(
                   ApiPath.login,
                   data: Login(phoneNo: phoneNumber!, fcmToken: fcmToken!),
