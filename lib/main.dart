@@ -11,7 +11,7 @@ import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:provider/provider.dart';
 
-import 'firebase_options.dart'; // home_screen_skeleton 파일 import
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
