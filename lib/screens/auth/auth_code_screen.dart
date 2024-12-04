@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:modakbul/constants/app_constants.dart';
@@ -121,9 +123,18 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
     bool isExists = await _authService
         .checkUserExists(PhoneNumber(phoneNumber: authProvider.phoneNumber!));
     if (isExists) {
-      String? fcmToken = await FirebaseMessaging.instance.getToken();
-      Tokens tokens = await _authService
-          .login(Login(phoneNo: authProvider.phoneNumber!, fcmToken: fcmToken!));
+      // 개발자 권한 받으면 변경 예정
+      String? fcmToken;
+      if (Platform.isIOS) {
+        fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
+       // await Future.delayed(Duration(seconds: 2));
+       // fcmToken = await FirebaseMessaging.instance.getToken();
+        print('APNS Token: $fcmToken');
+      } else if (Platform.isAndroid) {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+      }
+      Tokens tokens = await _authService.login(
+          Login(phoneNo: authProvider.phoneNumber!, fcmToken: fcmToken!));
 
       ///secureStorage에 토큰 저장
       await Future.wait([
