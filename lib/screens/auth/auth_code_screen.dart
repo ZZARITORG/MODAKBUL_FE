@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/login.dart';
 import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/providers/auth_provider.dart'
@@ -119,8 +121,9 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
     bool isExists = await _authService
         .checkUserExists(PhoneNumber(phoneNumber: authProvider.phoneNumber!));
     if (isExists) {
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
       Tokens tokens = await _authService
-          .login(PhoneNumber(phoneNumber: authProvider.phoneNumber!));
+          .login(Login(phoneNo: authProvider.phoneNumber!, fcmToken: fcmToken!));
 
       ///secureStorage에 토큰 저장
       await Future.wait([

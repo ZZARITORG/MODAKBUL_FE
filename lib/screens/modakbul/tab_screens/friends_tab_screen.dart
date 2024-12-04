@@ -185,7 +185,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 24.h,
+                height: 22.h,
               ),
               Builder(builder: (context) {
                 if (selectedFridnds.isEmpty) {

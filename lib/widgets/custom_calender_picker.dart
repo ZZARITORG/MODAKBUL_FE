@@ -5,18 +5,25 @@ import 'package:intl/intl.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/utils/date_time_utils.dart';
 
 import 'custom_button.dart';
 
 class CustomCalendarPicker extends StatefulWidget {
+  final Function(DateTime) onDateSelected;
+
+  const CustomCalendarPicker({required this.onDateSelected, Key? key})
+      : super(key: key);
 
   @override
-  _CustomCalendarPickerState createState() => _CustomCalendarPickerState();
+  State<CustomCalendarPicker> createState() => _CustomCalendarPickerState();
 }
 
 class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
-  DateTime _selectedDate = DateTime.now();
-  DateTime _focusedDate = DateTime.now();
+  DateTime? _selectedDate;
+  DateTime? _focusedDate;
+  DateTime? _today;
+  DateTime? _limitDate;
   List<String> weekdays = ['일', '월', '화', '수', '목', '금', '토'];
 
   DateTime _dateOnly(DateTime date) {
@@ -24,17 +31,31 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
   }
 
   void _onPreviousMonth() {
-    if (_focusedDate.month > DateTime.now().month || _focusedDate.year > DateTime.now().year) {
+    if (_canGoToPreviousMonth()) {
       setState(() {
-        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
+        _focusedDate = DateTime(_focusedDate!.year, _focusedDate!.month - 1);
       });
     }
   }
 
   void _onNextMonth() {
-    setState(() {
-      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
-    });
+    if (_canGoToNextMonth()) {
+      setState(() {
+        _focusedDate = DateTime(_focusedDate!.year, _focusedDate!.month + 1);
+      });
+    }
+  }
+
+  bool _canGoToPreviousMonth() {
+    if (_today == null || _focusedDate == null) return false;
+    return _focusedDate!.month > _today!.month ||
+        _focusedDate!.year > _today!.year;
+  }
+
+  bool _canGoToNextMonth() {
+    if (_today == null || _limitDate == null) return false;
+    return _focusedDate!.month < _limitDate!.month ||
+        _focusedDate!.year < _limitDate!.year;
   }
 
   void _onDateSelected(DateTime date) {
@@ -43,24 +64,45 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
     });
   }
 
+  Future<void> _initializeFocusedDate() async {
+    _today = _dateOnly(await DateTimeUtils.getKoreaTime());
+    _limitDate = _today!.add(const Duration(days: 30));
+    _focusedDate = _today;
+    _selectedDate = _today;
+    setState(() {});
+  }
+
+  bool _isDateSelectable(DateTime date) {
+    if (_today == null || _limitDate == null) return false;
+    return !date.isBefore(_today!) && !date.isAfter(_limitDate!);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFocusedDate();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final firstDayOfMonth = DateTime(_focusedDate.year, _focusedDate.month, 1);
+    if (_focusedDate == null && _selectedDate == null) {
+      return const SizedBox.shrink();
+    }
+
+    final firstDayOfMonth = DateTime(_focusedDate!.year, _focusedDate!.month, 1);
     final firstWeekdayOffset = firstDayOfMonth.weekday % 7;
-    final lastDayOfMonth = DateUtils.getDaysInMonth(_focusedDate.year, _focusedDate.month);
-    final today = _dateOnly(DateTime.now());
+    final lastDayOfMonth = DateUtils.getDaysInMonth(_focusedDate!.year, _focusedDate!.month);
 
     final totalItems = firstWeekdayOffset + lastDayOfMonth;
-    //final rows = ((totalItems + 6) ~/ 7); // 필요한 행의 수 계산
 
     return Column(
-      mainAxisSize: MainAxisSize.min, // Column이 필요한 만큼만 공간 차지하도록 설정
+      mainAxisSize: MainAxisSize.min,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              DateFormat('M월').format(_focusedDate),
+              DateFormat('M월').format(_focusedDate!),
               style: Theme.of(context)
                   .textTheme
                   .bigHeadLine2
@@ -69,7 +111,10 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
             Row(
               children: [
                 Visibility(
-                  visible: _focusedDate.month > DateTime.now().month || _focusedDate.year > DateTime.now().year,
+                  visible: _canGoToPreviousMonth(),
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
                   child: SizedBox(
                     height: 28.r,
                     width: 28.r,
@@ -80,19 +125,25 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                   ),
                 ),
                 SizedBox(width: 24.w),
-                SizedBox(
-                  height: 28.r,
-                  width: 28.r,
-                  child: IconButton(
-                    icon: SvgPicture.asset(IconPath.dateArrowForward, width: 10.r),
-                    onPressed: _onNextMonth,
+                Visibility(
+                  visible: _canGoToNextMonth(),
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  child: SizedBox(
+                    height: 28.r,
+                    width: 28.r,
+                    child: IconButton(
+                      icon: SvgPicture.asset(IconPath.dateArrowForward, width: 10.r),
+                      onPressed: _onNextMonth,
+                    ),
                   ),
                 ),
               ],
             ),
           ],
         ),
-        SizedBox(height: 22.h,),
+        SizedBox(height: 22.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: weekdays.map((day) {
@@ -112,11 +163,10 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
           }).toList(),
         ),
         SizedBox(height: 5.w),
-        // GridView를 SizedBox로 감싸고 정확한 높이 지정
         SizedBox(
-          height: 6 * 56.r, // 각 행의 높이(42.r + 14.h의 spacing)
+          height: 6 * 56.r,
           child: GridView.builder(
-            physics: const NeverScrollableScrollPhysics(), // 스크롤 비활성화
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
               mainAxisSpacing: 14.h,
@@ -126,27 +176,23 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
             ),
             itemCount: totalItems,
             itemBuilder: (context, index) {
-              DateTime date;
-              TextStyle textStyle;
-
               if (index < firstWeekdayOffset) {
                 return Container();
-              } else {
-                date = DateTime(_focusedDate.year, _focusedDate.month,
-                    index - firstWeekdayOffset + 1);
-                textStyle = _dateOnly(date).isBefore(today)
-                    ? Theme.of(context)
-                    .textTheme
-                    .body2
-                    .copyWith(color: ColorSchemes.gray300)
-                    : Theme.of(context)
-                    .textTheme
-                    .body2
-                    .copyWith(color: ColorSchemes.orange100);
               }
 
-              final isSelected = _dateOnly(date) == _dateOnly(_selectedDate);
-              final isSelectable = !_dateOnly(date).isBefore(today);
+              final date = DateTime(_focusedDate!.year, _focusedDate!.month, index - firstWeekdayOffset + 1);
+              final isSelectable = _isDateSelectable(date);
+              final isSelected = _dateOnly(date) == _dateOnly(_selectedDate!);
+
+              TextStyle textStyle = isSelectable
+                  ? Theme.of(context)
+                  .textTheme
+                  .body2
+                  .copyWith(color: ColorSchemes.orange100)
+                  : Theme.of(context)
+                  .textTheme
+                  .body2
+                  .copyWith(color: ColorSchemes.gray300);
 
               return GestureDetector(
                 onTap: isSelectable ? () => _onDateSelected(date) : null,
@@ -163,7 +209,9 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                     child: Text(
                       '${date.day}',
                       style: textStyle.copyWith(
-                          color: isSelected ? ColorSchemes.white : textStyle.color),
+                          color: isSelected
+                              ? ColorSchemes.white
+                              : textStyle.color),
                     ),
                   ),
                 ),
@@ -175,16 +223,21 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
           height: 56.h,
           width: double.infinity,
           child: CustomButton(
-              text: _selectedDate.toString(),
-              onPressed: () {},
-              buttonColor: ColorSchemes.orange200,
-              textStyle:
-              Theme.of(context).textTheme.smallHeadLine2,
-              textColor: ColorSchemes.white),
+            text: '${DateFormat('M월 d일').format(_selectedDate!)} 등록',
+            onPressed: () {
+              if (_isDateSelectable(_selectedDate!)) {
+                widget.onDateSelected(_selectedDate!);
+                Navigator.pop(context);
+              }
+            },
+            buttonColor: _isDateSelectable(_selectedDate!)
+                ? ColorSchemes.orange200
+                : ColorSchemes.gray300,
+            textStyle: Theme.of(context).textTheme.smallHeadLine2,
+            textColor: ColorSchemes.white,
+          ),
         ),
-        SizedBox(
-          height: 16.h,
-        ),
+        SizedBox(height: 16.h),
       ],
     );
   }
