@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/constants/app_constants.dart';
+import 'package:modakbul/models/login.dart';
 import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/refresh_token_request.dart';
 import 'package:modakbul/models/refresh_token_response.dart';
@@ -92,9 +94,10 @@ class DioInterceptor extends InterceptorsWrapper {
                 // . . .
                 String? phoneNumber =
                 await secureStorage.read(key: AppConstants.phoneNumber);
+                String? fcmToken = await FirebaseMessaging.instance.getToken();
                 Response response = await refreshDio.post(
                   ApiPath.login,
-                  data: PhoneNumber(phoneNumber: phoneNumber!).toJson(),
+                  data: Login(phoneNo: phoneNumber!, fcmToken: fcmToken!),
                   options: Options(
                     extra: {'skipToken': true},
                   ),

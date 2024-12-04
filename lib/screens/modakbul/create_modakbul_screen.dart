@@ -8,10 +8,10 @@ import 'package:modakbul/main.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/custom_calender_picker.dart';
+import 'package:modakbul/widgets/custom_time_picker.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
 
 
@@ -24,6 +24,12 @@ class CreateModakbulScreen extends StatefulWidget {
 
 class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
   DateTime? selectDate;
+
+  void _onDateSelected(DateTime date) {
+    setState(() {
+      selectDate = date;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +104,9 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
             ),
             CreateMeetingButton(
               type: '날짜',
-              content: '날짜 선택',
+              content: selectDate != null
+                  ? DateFormat('M월 d일').format(selectDate!)
+                  : '날짜 선택',
               onPressed: () => showModalBottomSheet(
                   isScrollControlled: true,
                   context: context,
@@ -157,16 +165,16 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
                             SizedBox(
                               height: 24.h,
                             ),
-                            CustomCalendarPicker(),
+                            CustomCalendarPicker(onDateSelected: _onDateSelected,),
                           ],
                         ),
                       ),
                     );
                   }),
-              icon: IconPath.calendarMonthOrange100,
-              typeColor: ColorSchemes.orange100,
-              contentColor: ColorSchemes.gray200,
-              arrowIcon: IconPath.arrowForward15Gray200,
+              icon: selectDate != null ? IconPath.calendarMonthOrange200 : IconPath.calendarMonthOrange100,
+              typeColor: selectDate != null ? ColorSchemes.orange200 : ColorSchemes.orange100,
+              contentColor: selectDate != null ? ColorSchemes.orange100 : ColorSchemes.gray200,
+              arrowIcon: selectDate != null ? IconPath.arrowForward15Orange100 : IconPath.arrowForward15Gray200,
               iconWidth: 19.r,
             ),
             SizedBox(
@@ -175,7 +183,70 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
             CreateMeetingButton(
               type: '시간',
               content: '시간 선택',
-              onPressed: () {},
+              onPressed: () => showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(StyleConstants.radiusLarge)),
+                ),
+                builder: (context) {
+                  return SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: StyleConstants.defaultPadding),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                height: 28.r,
+                                width: 28.r,
+                                child: IconButton(
+                                    padding: EdgeInsets.zero, // 패딩 제거
+                                    constraints: const BoxConstraints(),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: SvgPicture.asset(
+                                      IconPath.close,
+                                      width: 14.r,
+                                    )),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            '시간을 선택해주세요',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bigHeadLine3
+                                .copyWith(color: ColorSchemes.gray500),
+                          ),
+                          SizedBox(
+                            height: 8.h,
+                          ),
+                          Text(
+                            '다른 모닥들과 모일 시간을 선택해주세요!',
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .copyWith(color: ColorSchemes.gray500),
+                          ),
+                          SizedBox(
+                            height: 24.h,
+                          ),
+                          CustomTimePicker(),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
               icon: IconPath.timeOrange100,
               typeColor: ColorSchemes.orange100,
               contentColor: ColorSchemes.gray200,

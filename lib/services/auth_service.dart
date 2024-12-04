@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/core/dio_client.dart';
+import 'package:modakbul/models/login.dart';
 import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/refresh_token_request.dart';
 import 'package:modakbul/models/refresh_token_response.dart';
@@ -31,10 +32,10 @@ class AuthService {
     return Tokens.fromJson(response.data['data']);
   }
 
-  Future<Tokens> login(PhoneNumber phoneNumber) async {
+  Future<Tokens> login(Login login) async {
     Response response = await dio.post(
       ApiPath.login,
-      data: phoneNumber.toJson(),
+      data: login.toJson(),
       options: Options(
         extra: {'skipToken': true},
       ),

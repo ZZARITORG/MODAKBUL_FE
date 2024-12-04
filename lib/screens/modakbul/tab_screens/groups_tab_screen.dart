@@ -162,10 +162,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 24.h,
-                ),
-                SizedBox(
-                  height: 16.h,
+                  height: 22.h,
                 ),
                 CustomSearchBar(
                   hintText: '그룹을 검색해보세요.',
