@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/my_profile.dart';
+import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/log_out_dialog.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
@@ -13,7 +16,9 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
 
 class MyProfileScreen extends StatelessWidget {
-  const MyProfileScreen({super.key});
+  MyProfileScreen({super.key});
+
+  UserService userService = UserService();
 
   @override
   Widget build(BuildContext context) {
@@ -47,51 +52,69 @@ class MyProfileScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Stack(children: [
-                                  Positioned(
-                                    child: CircleAvatar(
-                                      radius: StyleConstants.circleSizeS,
-                                    ),
-                                  ),
-                                  Positioned(
-                                      right: 0,
-                                      bottom: 0,
-                                      child: CircleAvatar(
-                                        backgroundColor: ColorSchemes.orange200,
-                                        radius: StyleConstants.circleSizeXXXXXXXS,
-                                        child: SvgPicture.asset(
-                                            IconPath.photoCameraOrange100,
-                                            width: 13.83.r),
-                                      )),
-                                ]),
-                                SizedBox(width: 8.w),
-                                Flexible(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '김지호',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bigHeadLine4
-                                            .copyWith(color: ColorSchemes.gray500),
+                          FutureBuilder<MyProfile>(
+                              future: userService.getMyProfile(),
+                              builder: (context, snapshot) {
+                                String? profileUrl =
+                                    snapshot.data?.profileUrl;
+                                String? userId = snapshot.data?.userId;
+                                String? userName = snapshot.data?.userName;
+                              return Expanded(
+                                child: Row(
+                                  children: [
+                                    Stack(children: [
+                                      CircleAvatar(
+                                        radius:
+                                        StyleConstants.circleSizeS,
+                                        backgroundImage:
+                                        NetworkImage(profileUrl!),
                                       ),
-                                      SizedBox(height: 2.h),
-                                      Text(
-                                        'kim_jj0_',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .body3
-                                            .copyWith(color: ColorSchemes.gray400),
+                                      Positioned(
+                                          right: 0,
+                                          bottom: 0,
+                                          child: CircleAvatar(
+                                            backgroundColor:
+                                            ColorSchemes.orange200,
+                                            radius: StyleConstants
+                                                .circleSizeXXXXXXXS,
+                                            child: SvgPicture.asset(
+                                                IconPath
+                                                    .photoCameraOrange100,
+                                                width: 13.83.r),
+                                          )),
+                                    ]),
+                                    SizedBox(width: 8.w),
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            userName!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bigHeadLine4
+                                                .copyWith(
+                                                color: ColorSchemes
+                                                    .gray500),
+                                          ),
+                                          SizedBox(height: 2.h),
+                                          Text(
+                                            userId!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .body3
+                                                .copyWith(
+                                                color: ColorSchemes
+                                                    .gray400),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
                           ),
                           SizedBox(width: 32.w),
                           Text(
@@ -114,11 +137,29 @@ class MyProfileScreen extends StatelessWidget {
                         .copyWith(color: ColorSchemes.orange200),
                   ),
                   SizedBox(height: 14.h),
-                  SettingMenu.arrow(menu: '계정정보 관리', icon: IconPath.verifiedUser, iconWidth: 16.r, onPressed: () {}),
+                  SettingMenu.arrow(
+                      menu: '계정정보 관리',
+                      icon: IconPath.verifiedUser,
+                      iconWidth: 16.r,
+                      onPressed: () {
+                        Routes.navigateTo(context, Routes.commonSettingScreen);
+                      }),
                   SizedBox(height: 18.h),
-                  SettingMenu.arrow(menu: '알림설정', icon: IconPath.notificationsBell, iconWidth: 13.r, onPressed: () {}),
+                  SettingMenu.arrow(
+                      menu: '알림설정',
+                      icon: IconPath.notificationsBell,
+                      iconWidth: 13.r,
+                      onPressed: () {
+                        Routes.navigateTo(context, Routes.alertSettingScreen);
+                      }),
                   SizedBox(height: 18.h),
-                  SettingMenu.arrow(menu: '친구설정', icon: IconPath.friend, iconWidth: 18.r, onPressed: () {}),
+                  SettingMenu.arrow(
+                      menu: '친구설정',
+                      icon: IconPath.friend,
+                      iconWidth: 18.r,
+                      onPressed: () {
+                        Routes.navigateTo(context, Routes.friendSettingScreen);
+                      }),
                   SizedBox(height: 32.h),
                   Text(
                     '보안',
@@ -128,24 +169,35 @@ class MyProfileScreen extends StatelessWidget {
                         .copyWith(color: ColorSchemes.orange200),
                   ),
                   SizedBox(height: 14.h),
-                  SettingMenu.arrow(menu: '이용약관', iconWidth: 12.r, icon: IconPath.lock, onPressed: (){}),
+                  SettingMenu.arrow(
+                      menu: '이용약관',
+                      iconWidth: 12.r,
+                      icon: IconPath.lock,
+                      onPressed: () {
+                        Routes.navigateTo(context, Routes.termsScreen);
+                      }),
                   SizedBox(height: 18.h),
-                  SettingMenu.arrow(menu: '정보', iconWidth: 15.r, icon: IconPath.description, onPressed: (){}),
+                  SettingMenu.arrow(
+                      menu: '정보',
+                      iconWidth: 15.r,
+                      icon: IconPath.description,
+                      onPressed: () {
+                        Routes.navigateTo(context, Routes.infoScreen);
+                      }),
                 ],
               ),
             ),
-
             Center(
               child: InkWell(
                 overlayColor: WidgetStateProperty.all(ColorSchemes.orange000),
                 onTap: () {
-                  showDialog(context: context, builder: (context) {
-                    return LogOutDialog();
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return LogOutDialog();
+                      });
                 },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                    children: [
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
                   SizedBox(
                       width: 24.r,
                       height: 24.r,

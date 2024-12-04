@@ -10,6 +10,7 @@ import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/health_check_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,6 +32,15 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
     Future.delayed(const Duration(milliseconds: 2000), () async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      if (prefs.getBool('first_run') ?? true) {
+        FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
+        await secureStorage.deleteAll();
+
+        prefs.setBool('first_run', false);
+      }
       String? accessToken = await secureStorage.read(key: AppConstants.accessToken);
       String? refreshToken = await secureStorage.read(key: AppConstants.refreshToken);
       String? phoneNumber = await secureStorage.read(key: AppConstants.phoneNumber);

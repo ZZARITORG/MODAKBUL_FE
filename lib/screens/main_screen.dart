@@ -52,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
     const FriendScreen(),
     const CreateModakbulScreen(),
     const FriendSearchScreen(),
-    const MyProfileScreen(),
+    MyProfileScreen(),
   ];
 
   @override
