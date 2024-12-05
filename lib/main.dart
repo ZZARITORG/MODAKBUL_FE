@@ -10,7 +10,6 @@ import 'package:modakbul/screens/main_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:provider/provider.dart';
-
 import 'firebase_options.dart';
 
 void main() async {

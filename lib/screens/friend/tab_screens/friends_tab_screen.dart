@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/friend_list.dart';
+import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
@@ -124,6 +126,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   List<Map<String, dynamic>> _filteredFriends = [];
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  FriendService friendService = FriendService();
 
   final FocusNode _searchFocusNode = FocusNode();
 
@@ -132,7 +135,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
     super.initState();
     _filteredFriends = friends;
     _searchController.addListener(_filterFriends);
-    }
+  }
 
   @override
   void dispose() {
@@ -164,12 +167,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
     setState(() {
       _filteredFriends = friends
           .where((friend) =>
-      friend['username']
-          .toLowerCase()
-          .contains(_searchController.text.toLowerCase()) ||
-          friend['id']
-              .toLowerCase()
-              .contains(_searchController.text.toLowerCase()))
+              friend['username']
+                  .toLowerCase()
+                  .contains(_searchController.text.toLowerCase()) ||
+              friend['id']
+                  .toLowerCase()
+                  .contains(_searchController.text.toLowerCase()))
           .toList();
     });
   }
@@ -220,7 +223,9 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                         onPressed: () {
                                           setState(() {
                                             selectedFridends.removeWhere(
-                                                  (item) => item['userId'] == friend['userId'],
+                                              (item) =>
+                                                  item['userId'] ==
+                                                  friend['userId'],
                                             );
                                           });
                                         },
@@ -259,233 +264,317 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                 )
               ],
               Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                child: /*Skeleton 들어갈 자리*/ Column(
-                  children: [
-                    CustomSearchBar(
-                      hintText: '사용자를 검색해보세요.',
-                      controller: _searchController,
-                      focusNode: _searchFocusNode,
-                    ),
-                    SizedBox(
-                      height: 24.h,
-                    ),
-                    Builder(builder: (context) {
-                      if(_filteredFriends.isEmpty) {
-                        ///이부분 정하기
+                padding: EdgeInsets.symmetric(
+                    horizontal: StyleConstants.defaultPadding),
+                child: FutureBuilder<List<FriendList>>(
+                    future: friendService.getFriendList(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const FriendScreenSkeleton();
+                      } else if (snapshot.hasError) {
+                        print(snapshot.data);
+                        return Text('에라떳다!!!!!!!!!!!');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Text('데이타가 없음 ㅜㅜ');
+                      } else if (snapshot.hasData) {
                         return Column(
                           children: [
-                             Row(
-                               children: [
-                                 Text(
-                                    '검색결과',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bigHeadLine4
-                                        .copyWith(color: ColorSchemes.gray500),
-                                  ),
-                               ],
-                             ),
-                            SizedBox(height: 116.h),
-                            Text(
-                              '검색결과가 없습니다',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bigHeadLine3
-                                  .copyWith(color: ColorSchemes.orange100),
-                            ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              '검색어를 다시 확인해 주세요',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .body2
-                                  .copyWith(color: ColorSchemes.gray300),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return Column(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(width: 4.w),
-                                Text(
-                                  '자주 만나는 친구',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bigHeadLine4
-                                      .copyWith(color: ColorSchemes.gray500),
-                                ),
-                                Spacer(),
-                                TextButton(
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                          decoration: const BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(24),
-                                              topRight: Radius.circular(24),
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding:
-                                            EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(height: 38.h),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            '필터',
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .bigHeadLine3
-                                                                .copyWith(color: ColorSchemes.gray500),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                SizedBox(height: 24.h),
-                                                      Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            '최신순',
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .smallHeadLine3
-                                                                .copyWith(color: ColorSchemes.orange200),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 24.r,
-                                                            width: 24.r,
-                                                            child: IconButton(
-                                                                padding: EdgeInsets.zero,
-                                                                constraints: const BoxConstraints(),
-                                                                onPressed: () {},
-                                                                icon: SvgPicture.asset(
-                                                                  IconPath.blockOrange100,
-                                                                  width: 20.r,
-                                                                  fit: BoxFit.scaleDown,
-                                                                )),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                SizedBox(height: 24.h),
-                                                      Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            '가나다순',
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .body2
-                                                                .copyWith(color: ColorSchemes.gray300),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 24.r,
-                                                            width: 24.r,
-                                                            child: IconButton(
-                                                                padding: EdgeInsets.zero,
-                                                                constraints: const BoxConstraints(),
-                                                                onPressed: () {},
-                                                                icon: SvgPicture.asset(
-                                                                  IconPath.blockOrange100,
-                                                                  width: 20.r,
-                                                                  fit: BoxFit.scaleDown,
-                                                                )),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                SizedBox(height: 24.h),
-                                                      Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            '자주 만나는 사람',
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .body2
-                                                                .copyWith(color: ColorSchemes.gray300),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 24.r,
-                                                            width: 24.r,
-                                                            child: IconButton(
-                                                                padding: EdgeInsets.zero,
-                                                                constraints: const BoxConstraints(),
-                                                                onPressed: () {},
-                                                                icon: SvgPicture.asset(
-                                                                  IconPath.blockOrange100,
-                                                                  width: 20.r,
-                                                                  fit: BoxFit.scaleDown,
-                                                                )),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                SizedBox(height: 56.h),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Text(
-                                    '필터',
-                                    style: Theme.of(context).textTheme.body3.copyWith(color: ColorSchemes.gray300),
-                                  ),
-                                ),
-                                SizedBox(width: 4.w),
-                              ],
+                            CustomSearchBar(
+                              hintText: '사용자를 검색해보세요.',
+                              controller: _searchController,
+                              focusNode: _searchFocusNode,
                             ),
                             SizedBox(
-                              height: 14.h,
+                              height: 24.h,
                             ),
-                            ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: _filteredFriends.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final friend = _filteredFriends[index];
-                                  final isChecked = selectedFridends.any((selectedFriend) =>
-                                  selectedFriend['userId'] == friend['id']);
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    /*overlayColor: const WidgetStatePropertyAll(
+                            Builder(builder: (context) {
+                              if (_filteredFriends.isEmpty) {
+                                ///이부분 정하기
+                                return Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          '검색결과',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bigHeadLine4
+                                              .copyWith(
+                                                  color: ColorSchemes.gray500),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 116.h),
+                                    Text(
+                                      '검색결과가 없습니다',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bigHeadLine3
+                                          .copyWith(
+                                              color: ColorSchemes.orange100),
+                                    ),
+                                    SizedBox(height: 8.h),
+                                    Text(
+                                      '검색어를 다시 확인해 주세요',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body2
+                                          .copyWith(
+                                              color: ColorSchemes.gray300),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          '자주 만나는 친구',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bigHeadLine4
+                                              .copyWith(
+                                                  color: ColorSchemes.gray500),
+                                        ),
+                                        Spacer(),
+                                        TextButton(
+                                          onPressed: () {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Container(
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(24),
+                                                      topRight:
+                                                          Radius.circular(24),
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            StyleConstants
+                                                                .defaultPadding),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        SizedBox(height: 38.h),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              '필터',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bigHeadLine3
+                                                                  .copyWith(
+                                                                      color: ColorSchemes
+                                                                          .gray500),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 24.h),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              '최신순',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .smallHeadLine3
+                                                                  .copyWith(
+                                                                      color: ColorSchemes
+                                                                          .orange200),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 24.r,
+                                                              width: 24.r,
+                                                              child: IconButton(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  constraints:
+                                                                      const BoxConstraints(),
+                                                                  onPressed:
+                                                                      () {},
+                                                                  icon:
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                    IconPath
+                                                                        .check,
+                                                                    width: 20.r,
+                                                                    fit: BoxFit
+                                                                        .scaleDown,
+                                                                  )),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 24.h),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              '가나다순',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .body2
+                                                                  .copyWith(
+                                                                      color: ColorSchemes
+                                                                          .gray300),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 24.r,
+                                                              width: 24.r,
+                                                              child: IconButton(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  constraints:
+                                                                      const BoxConstraints(),
+                                                                  onPressed:
+                                                                      () {},
+                                                                  icon:
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                    IconPath
+                                                                        .check,
+                                                                    width: 20.r,
+                                                                    fit: BoxFit
+                                                                        .scaleDown,
+                                                                  )),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 24.h),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              '자주 만나는 사람',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .body2
+                                                                  .copyWith(
+                                                                      color: ColorSchemes
+                                                                          .gray300),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 24.r,
+                                                              width: 24.r,
+                                                              child: IconButton(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  constraints:
+                                                                      const BoxConstraints(),
+                                                                  onPressed:
+                                                                      () {},
+                                                                  icon:
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                    IconPath
+                                                                        .check,
+                                                                    width: 20.r,
+                                                                    fit: BoxFit
+                                                                        .scaleDown,
+                                                                  )),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 56.h),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Text(
+                                            '필터',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .body3
+                                                .copyWith(
+                                                    color:
+                                                        ColorSchemes.gray300),
+                                          ),
+                                        ),
+                                        SizedBox(width: 4.w),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 14.h,
+                                    ),
+                                    ListView.builder(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        itemCount: snapshot.data!.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          final friend =
+                                              _filteredFriends[index];
+                                          final isChecked = selectedFridends
+                                              .any((selectedFriend) =>
+                                                  selectedFriend['userId'] ==
+                                                  friend['id']);
+                                          String profileUrl =
+                                              snapshot.data![index].profileUrl;
+                                          String userName =
+                                              snapshot.data![index].userName;
+                                          String userId =
+                                              snapshot.data![index].userId;
+                                          return GestureDetector(
+                                            behavior:
+                                                HitTestBehavior.translucent,
+                                            /*overlayColor: const WidgetStatePropertyAll(
                               Colors.transparent,
                               ///투명으로 바꿀수도있음
                             ),*/
-                                    onTap: () {
-                                      _toggleSelectGroup(friend['id'], friend['username'],
-                                          friend['profilePicture']);
-                                      _filteredFriends = friends;
-                                      _searchController.text = '';
-                                    },
-                                    onTapDown: (_) {
-                                      /// 터치 이벤트가 상위로 전파되는 것을 막습니다
-                                      /// 이렇게 하면 SelectUserListProfile을 터치해도 키보드가 내려가지 않습니다
-                                    },
-                                    child: UserListProfile(
-                                        userName:  _filteredFriends[index]['username'],
-                                        userId: _filteredFriends[index]['id'],
-                                        profileImage: _filteredFriends[index]
-                                        ['profilePicture'],
-                                    ),
-                                  );
-                                }),
+                                            onTap: () {
+                                              _toggleSelectGroup(
+                                                  friend['id'],
+                                                  friend['username'],
+                                                  friend['profilePicture']);
+                                              _filteredFriends = friends;
+                                              _searchController.text = '';
+                                            },
+                                            onTapDown: (_) {
+                                              /// 터치 이벤트가 상위로 전파되는 것을 막습니다
+                                              /// 이렇게 하면 SelectUserListProfile을 터치해도 키보드가 내려가지 않습니다
+                                            },
+                                            child: UserListProfile(
+                                                userName: userName,
+                                                userId: userId,
+                                                profileImage: profileUrl),
+                                          );
+                                        }),
+                                  ],
+                                );
+                              }
+                            }),
+                            SizedBox(height: 53.h),
                           ],
                         );
+                      } else {
+                        return Text('에라떳다아아아아아아아');
                       }
                     }),
-                    SizedBox(height: 53 .h),
-                  ],
-                ),
               )
             ],
           ),
