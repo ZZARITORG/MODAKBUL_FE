@@ -340,20 +340,20 @@ class _State extends State<DefaultTabScreen> {
                           ],
                         ),
                       ),
-                      SingleChildScrollView(
+                      acceptedModakbulList.length > 0 ? SingleChildScrollView(
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: List.generate(
                             scheduledModakbulData.length,
-                            (index) {
+                                (index) {
                               final data = scheduledModakbulData[index];
                               return Padding(
                                 padding: EdgeInsets.only(
                                   right:
-                                      index == scheduledModakbulData.length - 1
-                                          ? 0
-                                          : 8.w,
+                                  index == scheduledModakbulData.length - 1
+                                      ? 0
+                                      : 8.w,
                                 ),
                                 child: FixedModakbulCard(
                                   title: data['title'],
@@ -364,7 +364,7 @@ class _State extends State<DefaultTabScreen> {
                             },
                           ),
                         ),
-                      ),
+                      ) : Text('데이터가 없습니다.'),
                       SizedBox(height: 16.h),
                     ],
                   );
