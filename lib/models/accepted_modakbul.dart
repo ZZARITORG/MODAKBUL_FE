@@ -1,4 +1,4 @@
-class MyHostModakbul {
+class AcceptedModakbul {
   String id;
   String title;
   String content;
@@ -9,7 +9,7 @@ class MyHostModakbul {
   DateTime date;
   List<UserStatus> users;
 
-  MyHostModakbul({
+  AcceptedModakbul({
     required this.id,
     required this.title,
     required this.content,
@@ -21,8 +21,8 @@ class MyHostModakbul {
     required this.users,
   });
 
-  factory MyHostModakbul.fromJson(Map<String, dynamic> json) {
-    return MyHostModakbul(
+  factory AcceptedModakbul.fromJson(Map<String, dynamic> json) {
+    return AcceptedModakbul(
       id: json['id'],
       title: json['title'],
       content: json['content'],
@@ -36,7 +36,6 @@ class MyHostModakbul {
           .toList(),
     );
   }
-
 }
 
 class UserStatus {
