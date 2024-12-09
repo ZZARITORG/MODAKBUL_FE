@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -324,7 +325,7 @@ class _State extends State<DefaultTabScreen> {
                                         .bigHeadLine4
                                         .copyWith(color: ColorSchemes.gray500)),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () => Routes.navigateTo(context, Routes.myModakbulScreen),
                                   child: Text('전체보기',
                                       style: Theme.of(context)
                                           .textTheme
