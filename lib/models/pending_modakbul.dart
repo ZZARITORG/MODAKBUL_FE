@@ -1,4 +1,4 @@
-class MyHostModakbul {
+class PendingModakbul {
   String id;
   String title;
   String content;
@@ -7,9 +7,10 @@ class MyHostModakbul {
   String address;
   String detailAddress;
   DateTime date;
+  DateTime createdAt;
   List<UserStatus> users;
 
-  MyHostModakbul({
+  PendingModakbul({
     required this.id,
     required this.title,
     required this.content,
@@ -18,11 +19,12 @@ class MyHostModakbul {
     required this.address,
     required this.detailAddress,
     required this.date,
+    required this.createdAt,
     required this.users,
   });
 
-  factory MyHostModakbul.fromJson(Map<String, dynamic> json) {
-    return MyHostModakbul(
+  factory PendingModakbul.fromJson(Map<String, dynamic> json) {
+    return PendingModakbul(
       id: json['id'],
       title: json['title'],
       content: json['content'],
@@ -31,18 +33,12 @@ class MyHostModakbul {
       address: json['address'],
       detailAddress: json['detailAddress'],
       date: DateTime.parse(json['date']),
+      createdAt: DateTime.parse(json['createdAt']),
       users: (json['user'] as List)
           .map((userJson) => UserStatus.fromJson(userJson))
           .toList(),
     );
   }
-
-  /* print 해보는 함수*/
-  @override
-  String toString() {
-    return 'MyHostModakbul(id: $id, title: $title, content: $content, hostId: $hostId, location: $location, address: $address, detailAddress: $detailAddress, date: $date, users: $users)';
-  }
-
 }
 
 class UserStatus {

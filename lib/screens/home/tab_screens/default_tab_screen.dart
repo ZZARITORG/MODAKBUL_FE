@@ -130,6 +130,11 @@ class _State extends State<DefaultTabScreen> {
                   final myHostModaktbulList = snapshot.data![0];
                   final acceptedModakbulList = snapshot.data![1];
 
+                  logger.i('My Host Modakbul List:');
+                  for (var item in myHostModaktbulList) {
+                    logger.i(item.toString());
+                  }
+
                   return Column(
                     children: [
                       Padding(
@@ -139,7 +144,8 @@ class _State extends State<DefaultTabScreen> {
                           children: [
                             SizedBox(height: 14.h),
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () => Routes.navigateTo(context, Routes.createModakbulScreen),
+                              behavior: HitTestBehavior.opaque,
                               child: Container(
                                 padding:
                                     EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
@@ -223,15 +229,9 @@ class _State extends State<DefaultTabScreen> {
                                           String content =
                                               myHostModaktbulList[index]!
                                                   .content;
-                                          String location =
-                                              myHostModaktbulList[index]!
-                                                  .location;
                                           String address =
                                               myHostModaktbulList[index]!
                                                   .address;
-                                          String detailAddress =
-                                              myHostModaktbulList[index]!
-                                                  .detailAddress;
                                           DateTime date =
                                               myHostModaktbulList[index]!.date;
                                           List<UserStatus> users =
@@ -256,12 +256,20 @@ class _State extends State<DefaultTabScreen> {
                                             ),
                                             child: Column(
                                               children: [
-                                                MyModakbulCard(
-                                                    profileLength: users.length,
-                                                    title: title,
-                                                    group: data['group'],
-                                                    date: date.toString(),
-                                                    location: address),
+                                                GestureDetector(
+                                                  onTap: () => Routes.navigateTo(
+                                                    context,
+                                                    Routes.modakbulDetailScreen,
+                                                    arguments: {'id': myHostModaktbulList[index].id}
+                                                  ),
+                                                  behavior: HitTestBehavior.opaque,
+                                                  child: MyModakbulCard(
+                                                      profileLength: users.length,
+                                                      title: title,
+                                                      group: data['group'],
+                                                      date: date.toString(),
+                                                      location: address),
+                                                ),
                                               ],
                                             ),
                                           );
@@ -356,10 +364,18 @@ class _State extends State<DefaultTabScreen> {
                                       ? 0
                                       : 8.w,
                                 ),
-                                child: FixedModakbulCard(
-                                  title: data['title'],
-                                  date: data['date'],
-                                  location: data['location'],
+                                child: GestureDetector(
+                                  onTap: () => Routes.navigateTo(
+                                      context,
+                                      Routes.modakbulDetailScreen,
+                                      arguments: {'id': acceptedModakbulList[index].id}
+                                  ),
+                                  behavior: HitTestBehavior.opaque,
+                                  child: FixedModakbulCard(
+                                    title: data['title'],
+                                    date: data['date'],
+                                    location: data['location'],
+                                  ),
                                 ),
                               );
                             },
