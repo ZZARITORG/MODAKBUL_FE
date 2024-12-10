@@ -117,13 +117,18 @@ class MyProfileScreen extends StatelessWidget {
                             }
                           ),
                           SizedBox(width: 32.w),
-                          Text(
-                            '수정하기',
-                            style: Theme.of(context)
-                                .textTheme
-                                .smallHeadLine3
-                                .copyWith(color: ColorSchemes.orange200),
-                          )
+                          InkWell(
+                            onTap: () {
+                              Routes.navigateTo(context, Routes.editMyProfileScreen);
+                            },
+                            child: Text(
+                              '수정하기',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .smallHeadLine3
+                                  .copyWith(color: ColorSchemes.orange200),
+                            ),
+                          ),
                         ],
                       ),
                     ),
