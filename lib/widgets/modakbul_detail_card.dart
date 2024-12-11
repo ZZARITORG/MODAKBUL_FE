@@ -35,6 +35,7 @@ class ModakbulDetailCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: StyleConstants.circleSizeXS,
+                  backgroundImage: NetworkImage(posterProfileImage),
                 ),
                 SizedBox(
                   width: 8.w,

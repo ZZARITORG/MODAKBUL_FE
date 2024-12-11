@@ -1,7 +1,8 @@
-class MyHostModakbul {
+import 'package:logger/logger.dart';
+
+class ModakbulDetail {
   String id;
   String title;
-  String groupName;
   String content;
   String hostId;
   String location;
@@ -9,11 +10,12 @@ class MyHostModakbul {
   String detailAddress;
   DateTime date;
   List<UserStatus> users;
+  double lat;
+  double lng;
 
-  MyHostModakbul({
+  ModakbulDetail({
     required this.id,
     required this.title,
-    required this.groupName,
     required this.content,
     required this.hostId,
     required this.location,
@@ -21,13 +23,17 @@ class MyHostModakbul {
     required this.detailAddress,
     required this.date,
     required this.users,
+    required this.lat,
+    required this.lng,
   });
 
-  factory MyHostModakbul.fromJson(Map<String, dynamic> json) {
-    return MyHostModakbul(
+  factory ModakbulDetail.fromJson(Map<String, dynamic> json) {
+    Logger logger = Logger();
+    logger.i(json['lat'].runtimeType);
+    logger.i(json['lng']);
+    return ModakbulDetail(
       id: json['id'],
       title: json['title'],
-      groupName: json['groupName'],
       content: json['content'],
       hostId: json['hostId'],
       location: json['location'],
@@ -37,15 +43,10 @@ class MyHostModakbul {
       users: (json['user'] as List)
           .map((userJson) => UserStatus.fromJson(userJson))
           .toList(),
+      lat: (json['lat'] is String ? double.tryParse(json['lat']) : json['lat']) ?? 0.0,
+      lng: (json['lng'] is String ? double.tryParse(json['lng']) : json['lng']) ?? 0.0,
     );
   }
-
-  /* print 해보는 함수*/
-  @override
-  String toString() {
-    return 'MyHostModakbul(id: $id, title: $title, groupName: $groupName, content: $content, hostId: $hostId, location: $location, address: $address, detailAddress: $detailAddress, date: $date, users: $users)';
-  }
-
 }
 
 class UserStatus {

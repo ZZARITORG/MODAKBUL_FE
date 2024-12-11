@@ -10,6 +10,7 @@ import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/invited_modakbul_card.dart';
 import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import '../../../routes/routes.dart';
 
@@ -213,7 +214,7 @@ class _State extends State<BrowseTabScreen> {
                             ),
                             pendingModakbulList.length > 0
                                 ? ListView.builder(
-                                    itemCount: invitedModakbulData.length,
+                                    itemCount: pendingModakbulList.length,
                                     shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
