@@ -50,11 +50,7 @@ class LogOutDialog extends StatelessWidget {
           ),
           actions: [
             InkWell(
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-
-                final storage = FlutterSecureStorage();
-                await storage.deleteAll();
+              onTap: () {
 
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     Routes.splashScreen,

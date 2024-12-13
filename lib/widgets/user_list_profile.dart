@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,11 +25,12 @@ class UserListProfile extends StatelessWidget {
   }) : super(key: key);
 
   factory UserListProfile.icon(
-      {required String userName, required String userId}) =>
+      {required String userName, required String userId, String? profileImage}) =>
       UserListProfile(
         isButton: false,
         userName: userName,
         userId: userId,
+        profileImage:  profileImage,
       );
 
   @override
@@ -44,6 +46,7 @@ class UserListProfile extends StatelessWidget {
                 CircleAvatar(
                   radius: StyleConstants.circleSizeS,
                   backgroundColor: ColorSchemes.gray500,
+                  backgroundImage: NetworkImage(profileImage!)
                 ),
                 SizedBox(
                   width: 8.w,

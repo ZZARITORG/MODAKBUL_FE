@@ -6,6 +6,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
+import 'package:modakbul/routes/routes.dart';
 
 class FriendSettingScreen extends StatefulWidget {
   const FriendSettingScreen({super.key});
@@ -49,7 +50,9 @@ class _FriendSettingScreenState extends State<FriendSettingScreen> {
                   });
                 }),
             SizedBox(height: 28.h),
-            SettingMenu.arrow(menu: '차단된 사용자', icon: IconPath.blockOrange100, iconWidth: 16.r, onPressed: (){})
+            SettingMenu.arrow(menu: '차단된 사용자', icon: IconPath.blockOrange100, iconWidth: 16.r, onPressed: (){
+              Routes.navigateTo(context, Routes.blockedUserScreen);
+            })
           ],
       ),
       ),

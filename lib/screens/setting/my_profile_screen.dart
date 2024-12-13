@@ -1,10 +1,20 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/logout.dart';
 import 'package:modakbul/models/my_profile.dart';
+import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/log_out_dialog.dart';
@@ -19,6 +29,7 @@ class MyProfileScreen extends StatelessWidget {
   MyProfileScreen({super.key});
 
   UserService userService = UserService();
+  AuthService authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -55,65 +66,77 @@ class MyProfileScreen extends StatelessWidget {
                           FutureBuilder<MyProfile>(
                               future: userService.getMyProfile(),
                               builder: (context, snapshot) {
-                                String? profileUrl =
-                                    snapshot.data?.profileUrl;
-                                String? userId = snapshot.data?.userId;
-                                String? userName = snapshot.data?.userName;
-                              return Expanded(
-                                child: Row(
-                                  children: [
-                                    Stack(children: [
-                                      CircleAvatar(
-                                        radius:
-                                        StyleConstants.circleSizeS,
-                                        backgroundImage:
-                                        NetworkImage(profileUrl!),
-                                      ),
-                                      Positioned(
-                                          right: 0,
-                                          bottom: 0,
-                                          child: CircleAvatar(
-                                            backgroundColor:
-                                            ColorSchemes.orange200,
-                                            radius: StyleConstants
-                                                .circleSizeXXXXXXXS,
-                                            child: SvgPicture.asset(
-                                                IconPath
-                                                    .photoCameraOrange100,
-                                                width: 13.83.r),
-                                          )),
-                                    ]),
-                                    SizedBox(width: 8.w),
-                                    Flexible(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            userName!,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bigHeadLine4
-                                                .copyWith(
-                                                color: ColorSchemes
-                                                    .gray500),
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return CircularProgressIndicator(); // 스켈레톤 만들어야함?
+                                } else if (snapshot.hasError) {
+                                  return Text('오류 발생: ${snapshot.error}');
+                                } else if (!snapshot.hasData || snapshot.data == null) {
+                                  return Text('데이터가 없습니다.');
+                                }
+                                else if (snapshot.hasData){
+                                  String? profileUrl =
+                                      snapshot.data?.profileUrl;
+                                  String? userId = snapshot.data?.userId;
+                                  String? userName = snapshot.data?.userName;
+                                  return Expanded(
+                                    child: Row(
+                                      children: [
+                                        Stack(children: [
+                                          CircleAvatar(
+                                            radius:
+                                            StyleConstants.circleSizeS,
+                                            backgroundImage:
+                                            NetworkImage(profileUrl!),
                                           ),
-                                          SizedBox(height: 2.h),
-                                          Text(
-                                            userId!,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .body3
-                                                .copyWith(
-                                                color: ColorSchemes
-                                                    .gray400),
+                                          Positioned(
+                                              right: 0,
+                                              bottom: 0,
+                                              child: CircleAvatar(
+                                                backgroundColor:
+                                                ColorSchemes.orange200,
+                                                radius: StyleConstants
+                                                    .circleSizeXXXXXXXS,
+                                                child: SvgPicture.asset(
+                                                    IconPath
+                                                        .photoCameraOrange100,
+                                                    width: 13.83.r),
+                                              )),
+                                        ]),
+                                        SizedBox(width: 8.w),
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                userName!,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bigHeadLine4
+                                                    .copyWith(
+                                                    color: ColorSchemes
+                                                        .gray500),
+                                              ),
+                                              SizedBox(height: 2.h),
+                                              Text(
+                                                userId!,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .body3
+                                                    .copyWith(
+                                                    color: ColorSchemes
+                                                        .gray400),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }
+                                else {
+                                  return Text('error');
+                                }
                             }
                           ),
                           SizedBox(width: 32.w),
@@ -195,12 +218,41 @@ class MyProfileScreen extends StatelessWidget {
             Center(
               child: InkWell(
                 overlayColor: WidgetStateProperty.all(ColorSchemes.orange000),
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return LogOutDialog();
-                      });
+                onTap: () async {
+
+                  try {
+                    // FCM 토큰 가져오기
+                    String? fcmToken;
+                    if (Platform.isIOS) {
+                      fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
+                      // await Future.delayed(Duration(seconds: 2));
+                      // fcmToken = await FirebaseMessaging.instance.getToken();
+                      print('APNS Token: $fcmToken');
+                    } else if (Platform.isAndroid) {
+                      fcmToken = await FirebaseMessaging.instance.getToken();
+                    }
+
+                    if (fcmToken == null || fcmToken.isEmpty) {
+                      return; // fcmToken이 없으면 로그아웃 중단
+                    }
+
+                    // 로그아웃 API 호출
+                    await authService.logout(Logout(fcmToken: fcmToken));
+
+                    // Firebase 로그아웃
+                    await FirebaseAuth.instance.signOut();
+
+                    // Flutter Secure Storage 데이터 삭제
+                    const storage = FlutterSecureStorage();
+                    await storage.deleteAll();
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return LogOutDialog();
+                        });
+                  } catch (e) {
+                    // 에러 발생 시 처리 없이 무시
+                  }
                 },
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   SizedBox(
