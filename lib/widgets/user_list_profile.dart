@@ -14,6 +14,8 @@ class UserListProfile extends StatelessWidget {
   final String? profileImage;
   final String userName;
   final String userId;
+  final VoidCallback? onIconPressed;
+
 
   const UserListProfile({
     Key? key,
@@ -21,6 +23,7 @@ class UserListProfile extends StatelessWidget {
     this.profileImage,
     required this.userName,
     required this.userId,
+    this.onIconPressed,
   }) : super(key: key);
 
   factory UserListProfile.icon(
@@ -88,7 +91,7 @@ class UserListProfile extends StatelessWidget {
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  onPressed: () {},
+                  onPressed: onIconPressed,
                   icon: SvgPicture.asset(
                     IconPath.moreHorizontal,
                     width: 20.r,

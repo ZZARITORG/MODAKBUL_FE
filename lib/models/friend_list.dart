@@ -26,4 +26,10 @@ class FriendList {
       updatedAt: json['updatedAt'] as String?,
     );
   }
+
+  // 객체를 문자열로 출력하기 위해 toString() 메서드 오버라이드
+  @override
+  String toString() {
+    return 'FriendList{id: $id, userId: $userId, userName: $userName, profileUrl: $profileUrl, count: $count, updatedAt: $updatedAt}';
+  }
 }
