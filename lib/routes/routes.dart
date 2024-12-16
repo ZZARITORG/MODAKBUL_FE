@@ -95,7 +95,7 @@ class Routes {
     blockedUserScreen: (BuildContext context) => BlockedUserScreen(),
     commonSettingScreen: (BuildContext context) => const CommonSettingScreen(),
     editCodeScreen: (BuildContext context) => const EditCodeScreen(),
-    editMyProfileScreen: (BuildContext context) => const EditMyProfileScreen(),
+    editMyProfileScreen: (BuildContext context) => EditMyProfileScreen(),
     friendSettingScreen: (BuildContext context) => const FriendSettingScreen(),
     infoScreen: (BuildContext context) => const InfoScreen(),
     myProfileScreen: (BuildContext context) => MyProfileScreen(),
