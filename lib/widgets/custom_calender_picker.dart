@@ -65,7 +65,14 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
   }
 
   Future<void> _initializeFocusedDate() async {
-    _today = _dateOnly(await DateTimeUtils.getKoreaTime());
+    _today = await DateTimeUtils.getKoreaTime();
+    DateTime todayEnd = DateTime(_today!.year, _today!.month, _today!.day, 23, 0);
+    final lastHourStart = todayEnd.subtract(const Duration(hours: 1));
+
+    if (_today!.isAfter(lastHourStart)) {
+      _today = _today!.add(const Duration(days: 1));
+    }
+
     _limitDate = _today!.add(const Duration(days: 30));
     _focusedDate = _today;
     _selectedDate = _today;
@@ -74,7 +81,12 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
 
   bool _isDateSelectable(DateTime date) {
     if (_today == null || _limitDate == null) return false;
-    return !date.isBefore(_today!) && !date.isAfter(_limitDate!);
+
+    final today = _dateOnly(_today!);
+    final limitDate = _dateOnly(_limitDate!);
+    final targetDate = _dateOnly(date);
+
+    return !targetDate.isBefore(today) && !targetDate.isAfter(limitDate);
   }
 
   @override
