@@ -24,10 +24,20 @@ class CreateModakbulScreen extends StatefulWidget {
 
 class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
   DateTime? selectDate;
+  String? selectHour;
+  String? selectMinute;
 
   void _onDateSelected(DateTime date) {
     setState(() {
       selectDate = date;
+      print('selectDate: $selectDate');
+    });
+  }
+
+  void _onTimeSelected(String hour, String minute) {
+    setState(() {
+      selectHour = hour;
+      selectMinute = minute;
     });
   }
 
@@ -182,7 +192,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
             ),
             CreateMeetingButton(
               type: '시간',
-              content: '시간 선택',
+              content: selectHour!= null && selectMinute != null ? '$selectHour시 ${selectMinute!.padLeft(2, '0')}분' : '시간 선택',
               onPressed: () => showModalBottomSheet(
                 isScrollControlled: true,
                 context: context,
@@ -241,16 +251,16 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
                           SizedBox(
                             height: 24.h,
                           ),
-                          CustomTimePicker(),
+                          CustomTimePicker(selectedDate: selectDate!, onTimeSelected: _onTimeSelected,),
                         ],
                       ),
                     ),
                   );
                 }),
-              icon: IconPath.timeOrange100,
-              typeColor: ColorSchemes.orange100,
-              contentColor: ColorSchemes.gray200,
-              arrowIcon: IconPath.arrowForward15Gray200,
+              icon: selectHour!= null && selectMinute != null ? IconPath.timeOrange200 : IconPath.timeOrange100,
+              typeColor: selectHour!= null && selectMinute != null ? ColorSchemes.orange200 :ColorSchemes.orange100,
+              contentColor: selectHour!= null && selectMinute != null ? ColorSchemes.orange100 : ColorSchemes.gray200,
+              arrowIcon: selectHour!= null && selectMinute != null ? IconPath.arrowForward15Orange100 : IconPath.arrowForward15Gray200,
               iconWidth: 20.r,
             ),
             const Spacer(),
