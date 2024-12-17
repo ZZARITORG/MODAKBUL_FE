@@ -96,6 +96,7 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange200,
+                                backgroundImage: NetworkImage(profileImage1!),
                               ),
                             )),
                       if (profileLength >= 2)
@@ -107,6 +108,7 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange100,
+                                backgroundImage: NetworkImage(profileImage2!),
                               ),
                             )),
                       if (profileLength >= 3)
