@@ -81,7 +81,7 @@ class Routes {
     createModakbulScreen: (BuildContext context) => const CreateModakbulScreen(),
     groupSelectScreen: (BuildContext context) => const GroupSelectScreen(),
     mapSearchScreen: (BuildContext context) => const MapSearchScreen(),
-    mapSelectScreen: (BuildContext context) => const MapSelectScreen(),
+    mapSelectScreen: (BuildContext context) => MapSelectScreen(),
     modakbulDetailScreen: (BuildContext context) => const ModakbulDetailScreen(),
 
     ///search
