@@ -87,6 +87,7 @@ class LocationListTile extends StatelessWidget {
                         ),
                       ],
                     ),
+                    SizedBox(height: 6.h,),
                     SizedBox(
                       width: double.infinity,
                       child: FittedBox(
