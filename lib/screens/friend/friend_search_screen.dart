@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modakbul/models/friend_req_list.dart';
+import 'package:modakbul/models/friend_suggested.dart';
 import 'package:modakbul/screens/friend/add_freind_screen.dart';
 import 'package:modakbul/services/friend_req_service.dart';
+import 'package:modakbul/services/friend_suggested_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/utils/date_time_utils.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/search_screen_skeleton.dart';
 import 'package:modakbul/widgets/select_user_list_profile.dart';
+import 'package:modakbul/widgets/suggested_friend_profile.dart';
 import 'package:modakbul/widgets/tab_bar_delegate.dart';
 import '../../constants/assets_path.dart';
 import '../../constants/style_constants.dart';
 import '../../widgets/custom_search_bar.dart';
 import '../../widgets/logo_app_bar.dart';
 import 'create_group_screen.dart';
-import 'package:intl/intl.dart';
 
 class FriendSearchScreen extends StatefulWidget {
   const FriendSearchScreen({super.key});
@@ -31,12 +34,34 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
   FriendReqService friendReqService = FriendReqService();
   List<FriendReqList> friendRequests = [];
   late Future<List<FriendReqList>> getData;
+  FriendSuggestedService friendSuggestedService = FriendSuggestedService();
+  List<FriendSuggested> friendSuggested = [];
+  late Future<List<FriendSuggested>> getList;
+  late DateTime currentTime;
 
- //DateTime
+  @override
+  void initState() {
+    super.initState();
+    getData = friendReqService.getFriendReqList();
+    getList = friendSuggestedService.getFriendSuggested();
+    _initializeCurrentTime();  // 비동기 메서드 호출
+  }
 
-  static String timeAgo(DateTime dateTime) {
-    DateTime now = DateTime.now().toUtc().add(const Duration(hours: 9)); // 현재 시간 (KST)
-    Duration difference = now.difference(dateTime); // 시간 차이 계산
+  // 비동기 메서드를 따로 분리
+  Future<void> _initializeCurrentTime() async {
+    currentTime = await DateTimeUtils.getKoreaTime();
+    setState(() {});  // currentTime을 업데이트하고 화면을 리빌드
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  static String timeAgo(DateTime dateTime, DateTime currentTime) {
+    Duration difference = currentTime.difference(dateTime); // 시간 차이 계산
 
     if (difference.inDays > 0) {
       // 하루 이상 차이 나면 "몇 일 전" 형태로 출력
@@ -51,19 +76,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
       // 1분 이내로 차이가 나면 "방금 전" 형태로 출력
       return '방금 전';
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getData = friendReqService.getFriendReqList();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _scrollController.dispose();
-    super.dispose();
   }
 
   @override
@@ -134,15 +146,16 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                           return ListView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: friendRequests.length,
+                            itemCount: friendRequests.length >= 3 ? 3 : friendRequests.length,
                             itemBuilder: (context, index) {
                               final friend = friendRequests[index];
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 24.h),
                                 child: AddFriendProfile(
-                                  userName: friend.name!,
-                                  userId: friend.userId!,
-                                  time: friend.id!,
+                                  profileImage: friend.profileUrl,
+                                  userName: friend.name,
+                                  userId: friend.userId,
+                                  time: timeAgo(friend.createdAt, currentTime),
                                 ),
                               );
                             },
@@ -177,23 +190,36 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                       ],
                     ),
                     SizedBox(height: 24.h),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: friendRequests.length,
-                      itemBuilder: (context, index) {
-                        final friend = friendRequests[index];
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            bottom:
-                                index == friendRequests.length - 1 ? 0 : 24.h,
-                          ),
-                          child: AddFriendProfile(
-                            userName: friend.name!,
-                            userId: friend.userId!,
-                            time: friend.id!,
-                          ),
-                        );
+                    FutureBuilder<List<FriendSuggested>>(
+                      future: getList, // 비동기 데이터를 가져오는 Future
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator()); // 로딩 중
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}')); // 에러 발생 시 표시
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(child: Text('추천된 친구가 없습니다.')); // 데이터가 없을 때 표시
+                        } else {
+                          friendSuggested = snapshot.data!; // 데이터가 있을 경우 사용
+                          return ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: friendSuggested.length,
+                            itemBuilder: (context, index) {
+                              final friend = friendSuggested[index];
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: index == friendSuggested.length - 1 ? 0 : 24.h,
+                                ),
+                                child: SuggestedFriendProfile(
+                                  profileImage: friend.profileUrl,
+                                  userName: friend.name,
+                                  mutualFriendCount: friend.mutualFriendCount.toString(),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
                     ),
                     SizedBox(height: 84.h),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/screens/friend/tab_screens/custom_friends_tab_screen.dart';
+import 'package:modakbul/services/friend_req_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/utils/date_time_utils.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/select_user_list_profile.dart';
@@ -24,18 +27,47 @@ class AddFreindScreen extends StatefulWidget {
 class _AddFreindScreenState extends State<AddFreindScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  FriendReqService friendReqService = FriendReqService();
+  List<FriendReqList> friendRequests = [];
+  late Future<List<FriendReqList>> getData;
+  late DateTime currentTime;
 
-  final List<Map<String, String>> friendRequests = [
-    {'userName': '김지호', 'userId': '123', 'time': '1분전'},
-    {'userName': '양지원', 'userId': '345', 'time': '5분전'},
-    {'userName': '김태현', 'userId': '456', 'time': '10분전'},
-    {'userName': '주해찬', 'userId': '567', 'time': '30분전'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    getData = friendReqService.getFriendReqList();
+    _initializeCurrentTime();  // 비동기 메서드 호출
+  }
+
+  // 비동기 메서드를 따로 분리
+  Future<void> _initializeCurrentTime() async {
+    currentTime = await DateTimeUtils.getKoreaTime();
+    setState(() {});  // currentTime을 업데이트하고 화면을 리빌드
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  static String timeAgo(DateTime dateTime, DateTime currentTime) {
+    Duration difference = currentTime.difference(dateTime); // 시간 차이 계산
+
+    if (difference.inDays > 0) {
+      // 하루 이상 차이 나면 "몇 일 전" 형태로 출력
+      return '${difference.inDays}일 전';
+    } else if (difference.inHours > 0) {
+      // 한 시간 이상 차이 나면 "몇 시간 전" 형태로 출력
+      return '${difference.inHours}시간 전';
+    } else if (difference.inMinutes > 0) {
+      // 1분 이상 차이 나면 "몇 분 전" 형태로 출력
+      return '${difference.inMinutes}분 전';
+    } else {
+      // 1분 이내로 차이가 나면 "방금 전" 형태로 출력
+      return '방금 전';
+    }
   }
 
   @override
@@ -66,22 +98,35 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                   ),
                 ),
                 SizedBox(height: 24.h),
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: friendRequests.length,
-                  itemBuilder: (context, index) {
-                    final friend = friendRequests[index];
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: index == friendRequests.length - 1 ? 0 : 24.h,
-                      ),
-                      child: AddFriendProfile(
-                        userName: friend['userName']!,
-                        userId: friend['userId']!,
-                        time: friend['time']!,
-                      ),
-                    );
+                FutureBuilder<List<FriendReqList>>(
+                  future: getData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator()); // 로딩 중일 때 표시
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}')); // 에러 발생 시 표시
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No friend requests available.')); // 데이터가 없을 때 표시
+                    } else {
+                      friendRequests = snapshot.data!;
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: friendRequests.length,
+                        itemBuilder: (context, index) {
+                          final friend = friendRequests[index];
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 24.h),
+                            child: AddFriendProfile(
+                              profileImage: friend.profileUrl,
+                              userName: friend.name,
+                              userId: friend.userId,
+                              time: timeAgo(friend.createdAt, currentTime),
+                            ),
+                          );
+                        },
+                      );
+                    }
                   },
                 ),
               ],

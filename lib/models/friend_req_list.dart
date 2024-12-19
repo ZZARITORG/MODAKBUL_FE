@@ -3,14 +3,14 @@ class FriendReqList {
   final String userId;
   final String name;
   final String profileUrl;
-  final DateTime timestamp; // timestamp 필드 추가
+  final DateTime createdAt; // 새로운 createdAt 필드 추가
 
   FriendReqList({
     required this.id,
     required this.userId,
     required this.name,
     required this.profileUrl,
-    required this.timestamp, // timestamp 생성자에 추가
+    required this.createdAt, // 생성자에서 createdAt 추가
   });
 
   factory FriendReqList.fromJson(Map<String, dynamic> json) {
@@ -19,7 +19,7 @@ class FriendReqList {
       userId: json['userId'] as String,
       name: json['name'] as String,
       profileUrl: json['profileUrl'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String), // timestamp를 DateTime으로 변환
+      createdAt: DateTime.parse(json['createdAt'] as String), // createdAt 파싱
     );
   }
 
@@ -29,7 +29,7 @@ class FriendReqList {
       'userId': userId,
       'name': name,
       'profileUrl': profileUrl,
-      'timestamp': timestamp.toIso8601String(), // DateTime을 ISO 8601 형식의 문자열로 변환
+      'createdAt': createdAt.toIso8601String(), // createdAt을 ISO 8601 형식으로 변환
     };
   }
 }
