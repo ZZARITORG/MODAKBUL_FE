@@ -34,6 +34,7 @@ class SelectUserListProfile extends StatelessWidget {
                 CircleAvatar(
                   radius: StyleConstants.circleSizeS,
                   backgroundColor: ColorSchemes.gray500,
+                  backgroundImage: NetworkImage(profileImage!),
                 ),
                 SizedBox(
                   width: 8.w,

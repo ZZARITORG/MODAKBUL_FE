@@ -58,7 +58,17 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     data.sort((a, b) => a.name.compareTo(b.name));
     return data;
   }
-
+  void _reloadGroups() {
+    setState(() {
+      // 그룹 목록을 다시 가져옵니다.
+      getData = groupService.getGroupList(); // 새로운 데이터 로드
+    });
+  }
+  void _onGroupEdit() {
+    // 그룹 수정 화면에서 돌아오면서 데이터 새로고침
+    _reloadGroups(); // 새로운 데이터를 로드
+    Navigator.pop(context); // 이전 화면으로 돌아감
+  }
   // 최신순 정렬 함수 (최신 날짜가 먼저)
   List<Group> sortByRecent(List<Group> data) {
     data.sort((a, b) {
@@ -190,12 +200,17 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                             ),
                             SizedBox(height: 14.h),
                             GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => GroupEditScreen()),
-                                  );
-                                },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => CreateGroupScreen()),
+                                ).then((_) {
+                                  // GroupEditScreen에서 돌아오면 데이터를 새로 고침
+                                  _reloadGroups(); // 그룹 데이터를 갱신
+                                });
+                              },
+                              child: SizedBox(
+                                width: double.infinity,
                                 child: Card(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
@@ -257,6 +272,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                   ),
                                 ),
                               ),
+                            ),
                             SizedBox(height: 14.h),
                             // 필터링된 데이터 표시
                             ValueListenableBuilder<List<Group>>(
@@ -285,14 +301,26 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                   itemBuilder: (BuildContext context, int index) {
                                     String groupName = filteredGroups[index].name;
                                     String groupId = filteredGroups[index].id;
+                                    var members = filteredGroups[index].members;
+                                    String profileImage2 = members.length > 1 ? members[1].user.profileUrl : '';
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => CreateGroupScreen(),
+                                            builder: (context) => GroupEditScreen(),
+                                            settings: RouteSettings(
+                                              arguments: {
+                                                'groupId': filteredGroups[index].id,
+                                                'groupName': filteredGroups[index].name,  // 그룹 이름
+                                                'members': filteredGroups[index].members,  // 멤버 정보 배열
+                                              },
+                                            ),
                                           ),
-                                        );
+                                        ).then((_) {
+                                          // GroupEditScreen에서 돌아오면 데이터를 새로 고침
+                                          _reloadGroups(); // 그룹 데이터를 갱신
+                                        });
                                       },
                                       child: Column(
                                         children: [
@@ -300,8 +328,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                             title: groupName,  // 그룹 이름
                                             time: filteredGroups[index].updatedAt,  // 그룹의 마지막 업데이트 시간
                                             profileLength: filteredGroups[index].members.length,  // 멤버 수
-                                            profileImage1: filteredGroups[index].members[0].user.profileUrl,  // 첫 번째 멤버의 프로필 이미지
-                                            profileImage2: filteredGroups[index].members[1].user.profileUrl,  // 두 번째 멤버의 프로필 이미지
+                                            profileImage1: members[0].user.profileUrl,  // 첫 번째 멤버의 프로필 이미지
+                                            profileImage2: profileImage2.isEmpty ? null : profileImage2,  // 두 번째 멤버의 프로필 이미지
                                             isSelected: false,  // 선택된 그룹 여부
                                           ),
                                           SizedBox(height: 12.h),
