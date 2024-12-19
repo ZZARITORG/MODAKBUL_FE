@@ -16,6 +16,7 @@ import '../../constants/style_constants.dart';
 import '../../widgets/custom_search_bar.dart';
 import '../../widgets/logo_app_bar.dart';
 import 'create_group_screen.dart';
+import 'package:intl/intl.dart';
 
 class FriendSearchScreen extends StatefulWidget {
   const FriendSearchScreen({super.key});
@@ -30,6 +31,27 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
   FriendReqService friendReqService = FriendReqService();
   List<FriendReqList> friendRequests = [];
   late Future<List<FriendReqList>> getData;
+
+ //DateTime
+
+  static String timeAgo(DateTime dateTime) {
+    DateTime now = DateTime.now().toUtc().add(const Duration(hours: 9)); // 현재 시간 (KST)
+    Duration difference = now.difference(dateTime); // 시간 차이 계산
+
+    if (difference.inDays > 0) {
+      // 하루 이상 차이 나면 "몇 일 전" 형태로 출력
+      return '${difference.inDays}일 전';
+    } else if (difference.inHours > 0) {
+      // 한 시간 이상 차이 나면 "몇 시간 전" 형태로 출력
+      return '${difference.inHours}시간 전';
+    } else if (difference.inMinutes > 0) {
+      // 1분 이상 차이 나면 "몇 분 전" 형태로 출력
+      return '${difference.inMinutes}분 전';
+    } else {
+      // 1분 이내로 차이가 나면 "방금 전" 형태로 출력
+      return '방금 전';
+    }
+  }
 
   @override
   void initState() {

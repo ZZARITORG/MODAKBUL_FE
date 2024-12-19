@@ -12,7 +12,7 @@ class FriendReqService {
   Future<List<FriendReqList>> getFriendReqList() async {
     try {
       // API 요청
-      Response response = await dio.get(ApiPath.friendReq);
+      Response response = await dio.get(ApiPath.friendReqList);
 
       // 응답 데이터 출력
       print('Response status code: ${response.statusCode}'); // 상태 코드 확인
