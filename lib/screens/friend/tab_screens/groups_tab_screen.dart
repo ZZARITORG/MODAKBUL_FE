@@ -211,63 +211,75 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                               },
                               child: SizedBox(
                                 width: double.infinity,
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
-                                  ),
-                                  color: ColorSchemes.gray100,
-                                  margin: EdgeInsets.zero,
-                                  elevation: 0,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 22.h, bottom: 14.h),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 98.r,
-                                          child: Stack(
-                                            children: [
-                                              Positioned(
-                                                child: CircleAvatar(
-                                                  radius: StyleConstants.circleSizeS, // 원 크기 조정
-                                                  backgroundColor: ColorSchemes.white,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => CreateGroupScreen()),
+                                    );
+                                  },
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
+                                    ),
+                                    color: ColorSchemes.gray100,
+                                    margin: EdgeInsets.zero,
+                                    elevation: 0,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 20.h, bottom: 14.h),
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            width: 98.r,
+                                            child: Stack(
+                                              children: [
+                                                Positioned(
                                                   child: CircleAvatar(
                                                     radius: StyleConstants.circleSizeXS,
-                                                    backgroundColor: ColorSchemes.orange200,
+                                                    backgroundColor: ColorSchemes.white,
+                                                    child: CircleAvatar(
+                                                      radius: StyleConstants.circleSizeXXXS,
+                                                      backgroundColor: ColorSchemes.orange200,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Positioned(
-                                                left: 28.r,// 원 사이 간격 조정
-                                                child: CircleAvatar(
-                                                  radius: StyleConstants.circleSizeS, // 원 크기 조정
-                                                  backgroundColor: ColorSchemes.white,
+                                                Positioned(
+                                                  left: 28.r,
                                                   child: CircleAvatar(
                                                     radius: StyleConstants.circleSizeXS,
-                                                    backgroundColor: ColorSchemes.orange100,
+                                                    backgroundColor: ColorSchemes.white,
+                                                    child: CircleAvatar(
+                                                      radius: StyleConstants.circleSizeXXXS,
+                                                      backgroundColor: ColorSchemes.orange100,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Positioned(
-                                                left: 56.r,// 원 사이 간격 조정
-                                                child: CircleAvatar(
-                                                  radius: StyleConstants.circleSizeS, // 원 크기 조정
-                                                  backgroundColor: ColorSchemes.white,
+                                                Positioned(
+                                                  left: 56.r,
                                                   child: CircleAvatar(
                                                     radius: StyleConstants.circleSizeXS,
-                                                    backgroundColor: ColorSchemes.gray300,
-                                                    child: SvgPicture.asset(IconPath.plus, width: 11.r), // 아이콘 크기 확대
+                                                    backgroundColor: ColorSchemes.white,
+                                                    child: CircleAvatar(
+                                                      radius: StyleConstants.circleSizeXXXS,
+                                                      backgroundColor: ColorSchemes.gray300,
+                                                      child: SvgPicture.asset(IconPath.plus, width: 11.r),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(height: 10.h), // 간격 조정
-                                        Text(
-                                          '그룹 생성하기',
-                                          style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray200),
-                                        ),
-                                      ],
+                                          SizedBox(height: 8.h),
+                                          Text(
+                                            '그룹 생성하기',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .smallHeadLine3
+                                                .copyWith(color: ColorSchemes.gray200),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
