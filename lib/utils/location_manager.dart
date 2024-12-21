@@ -11,13 +11,15 @@ class LocationManager {
     List<String> locations = prefs.getStringList(_locationsKey) ?? [];
 
     // 저장된 데이터를 디코딩하여 중복 확인
-    List<Map<String, dynamic>> decodedLocations =
-    locations.map((loc) => jsonDecode(loc) as Map<String, dynamic>).toList();
+    List<Map<String, dynamic>> decodedLocations = locations
+        .map((loc) => jsonDecode(loc) as Map<String, dynamic>)
+        .toList();
 
     // x와 y가 겹치는 데이터가 있는지 확인
     bool isDuplicate = decodedLocations.any((existingLocation) =>
-    existingLocation['x'] == location['x'] &&
-        existingLocation['y'] == location['y']);
+        existingLocation['x'] == location['x'] &&
+        existingLocation['y'] == location['y'] &&
+        existingLocation['placeName'] == location['placeName']);
 
     // 중복된 데이터라면 추가하지 않음
     if (isDuplicate) {
@@ -40,11 +42,27 @@ class LocationManager {
   /// 저장된 모든 장소 데이터 가져오기
   static List<Map<String, dynamic>> getLocations() {
     List<String> locations = prefs.getStringList(_locationsKey) ?? [];
-    return locations.map((loc) => jsonDecode(loc) as Map<String, dynamic>).toList();
+    return locations
+        .map((loc) => jsonDecode(loc) as Map<String, dynamic>)
+        .toList();
   }
 
   /// 모든 데이터 삭제
   static Future<void> clearLocations() async {
     await prefs.remove(_locationsKey);
+  }
+
+  static Future<void> removeLocation(int index) async {
+    List<String> locations = prefs.getStringList(_locationsKey) ?? [];
+
+    if (index < 0 || index >= locations.length) {
+      print('잘못된 인덱스입니다.');
+      return;
+    }
+
+    locations.removeAt(index);
+
+    // 변경된 리스트 저장
+    await prefs.setStringList(_locationsKey, locations);
   }
 }

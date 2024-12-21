@@ -1,3 +1,4 @@
+import 'package:modakbul/models/address.dart';
 import 'package:modakbul/models/place.dart';
 import 'package:modakbul/models/friend_list.dart';
 import 'package:modakbul/models/group_list.dart';
@@ -11,5 +12,8 @@ class JsonUtils {
   }
   List<Group> parseGroupList(List jsonList) {
     return jsonList.map((json) => Group.fromJson(json)).toList();
+  }
+  static List<Address> convertJsonToAddress(List jsonList) {
+    return jsonList.map((json) => Address.fromJson(json)).toList();
   }
 }

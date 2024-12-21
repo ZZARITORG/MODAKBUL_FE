@@ -99,7 +99,7 @@ class MapSelectScreen extends StatelessWidget {
                                       width: 6.w,
                                     ),
                                     Text(
-                                      '${placeProvider.distance!}km',
+                                      placeProvider.distance != null ? '${placeProvider.distance!}km' : '',
                                       style: Theme.of(context)
                                           .textTheme
                                           .caption

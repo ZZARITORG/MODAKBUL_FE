@@ -49,5 +49,7 @@ class ApiPath{
 
   //KaKao
   static String kakaoRestApi = kakaoRestApiUrl;
+  static String keywordToAddress = '/local/search/keyword.json?';
+  static String coordToAddress = '/local/geo/coord2address.json?';
 
 }

@@ -12,6 +12,7 @@ import 'package:modakbul/screens/home/home_screen.dart';
 import 'package:modakbul/screens/main_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/utils/location_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
