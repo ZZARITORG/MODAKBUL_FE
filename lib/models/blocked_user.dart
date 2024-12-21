@@ -2,11 +2,13 @@ class BlockedUser {
   final String userId;
   final String name;
   final String profileUrl;
+  final String id;
 
   BlockedUser({
     required this.userId,
     required this.name,
     required this.profileUrl,
+    required this.id,
   });
 
   // Factory constructor to create a UserProfile instance from JSON
@@ -15,6 +17,7 @@ class BlockedUser {
       userId: json['userId'] as String,
       name: json['name'] as String,
       profileUrl: json['profileUrl'] as String,
+      id: json['id'] as String,
     );
   }
 }

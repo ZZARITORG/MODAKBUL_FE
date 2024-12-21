@@ -1,22 +1,22 @@
 class EditMyProfile {
-  final String userId;
-  final String phoneNo;
-  final String name;
-  final String profileUrl;
+  final String? userId;
+  final String? phoneNo;
+  final String? name;
+  final String? profileUrl;
 
   EditMyProfile({
-    required this.userId,
-    required this.phoneNo,
-    required this.name,
-    required this.profileUrl,
+    this.userId,
+    this.phoneNo,
+    this.name,
+    this.profileUrl,
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'userId': userId,
-      'phoneNo': phoneNo,
-      'name': name,
-      'profileUrl': profileUrl,
-    };
+    final data = <String, dynamic>{};
+    if (userId != null) data['userId'] = userId;
+    if (phoneNo != null) data['phoneNo'] = phoneNo;
+    if (name != null) data['name'] = name;
+    if (profileUrl != null) data['profileUrl'] = profileUrl;
+    return data;
   }
 }

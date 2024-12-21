@@ -128,7 +128,7 @@ class BlockedUserScreen extends StatelessWidget {
         child: Padding(
           padding:
               EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: /*Skeleton 들어갈 자리 */ FutureBuilder<List<BlockedUser>>(
+          child: FutureBuilder<List<BlockedUser>>(
             future: friendService.getBlockedUser(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -137,8 +137,10 @@ class BlockedUserScreen extends StatelessWidget {
                 return Text('오류 발생: ${snapshot.error}');
               } else if (!snapshot.hasData || snapshot.data == null) {
                 return Text('데이터가 없습니다.');
+              } else if (snapshot.data!.isEmpty) {
+                return Center(child: Text('차단된 사용자가 없습니다.'));
               }
-              else if (snapshot.hasData) {
+              else {
                 List<BlockedUser> blockedUserList = snapshot.data!;
                 return SingleChildScrollView(
                   child: Column(
@@ -161,16 +163,15 @@ class BlockedUserScreen extends StatelessWidget {
                               child: UserListProfile.icon(
                                   userName: blockedUserList[index].name,
                                   userId: blockedUserList[index].userId,
-                              profileImage: blockedUserList[index].profileUrl)
+                              profileImage: blockedUserList[index].profileUrl,
+                              id: blockedUserList[index].id)
                             );
                           })
                     ],
                   ),
                 );
               }
-              else {
-                return Text('error');
-              }
+
             }
           ),
         ),

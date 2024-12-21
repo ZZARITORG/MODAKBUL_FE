@@ -25,11 +25,30 @@ import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
 
-class MyProfileScreen extends StatelessWidget {
+class MyProfileScreen extends StatefulWidget {
   MyProfileScreen({super.key});
+
+  @override
+  State<MyProfileScreen> createState() => _MyProfileScreenState();
+}
+
+class _MyProfileScreenState extends State<MyProfileScreen> {
+  late Future<MyProfile> _futureProfile;
 
   UserService userService = UserService();
   AuthService authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _futureProfile = userService.getMyProfile();
+  }
+
+  void _refreshProfile() {
+    setState(() {
+      _futureProfile = userService.getMyProfile();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +83,7 @@ class MyProfileScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           FutureBuilder<MyProfile>(
-                              future: userService.getMyProfile(),
+                              future: _futureProfile,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return CircularProgressIndicator(); // 스켈레톤 만들어야함?
@@ -141,8 +160,12 @@ class MyProfileScreen extends StatelessWidget {
                           ),
                           SizedBox(width: 32.w),
                           InkWell(
-                            onTap: () {
-                              Routes.navigateTo(context, Routes.editMyProfileScreen);
+                            onTap: () async {
+                              final result = await Routes.navigateAndReturn(context, Routes.editMyProfileScreen);
+                              print('myprofilescreen 반환값: $result');
+                              if (result == true) {
+                                _refreshProfile();
+                              }
                             },
                             child: Text(
                               '수정하기',

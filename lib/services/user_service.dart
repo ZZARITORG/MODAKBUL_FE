@@ -13,7 +13,7 @@ class UserService {
   }
 
   Future<void> updateMyProfile(EditMyProfile editMyProfile) async {
-    await dio.post(
+    await dio.patch(
       ApiPath.user,
       data: editMyProfile.toJson()
     );

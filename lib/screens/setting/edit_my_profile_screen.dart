@@ -27,6 +27,13 @@ class EditMyProfileScreen extends StatefulWidget {
 }
 
 class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
+  late Future<MyProfile> _futureProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureProfile = widget.userService.getMyProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +46,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
           padding:
               EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: FutureBuilder<MyProfile>(
-              future: widget.userService.getMyProfile(),
+              future: _futureProfile,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator(); // 스켈레톤 만들어야함?
@@ -84,14 +91,21 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
                               .copyWith(color: ColorSchemes.orange200)),
                       SizedBox(height: 10.h),
                       InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
+                        onTap: () async {
+                          final result = await showModalBottomSheet(
                               backgroundColor: Colors.transparent,
                               isScrollControlled: true,
                               context: context,
                               builder: (context) {
                                 return EditProfileBottomSheet.name(hintText: userName!);
-                              });
+                              }
+                          );
+
+                          if (result == true) {
+                            setState(() {
+                              _futureProfile = widget.userService.getMyProfile();
+                            });
+                          }
                         },
                         overlayColor:
                         WidgetStateProperty.all(ColorSchemes.orange100),
@@ -135,14 +149,21 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
                               .copyWith(color: ColorSchemes.orange200)),
                       SizedBox(height: 10.h),
                       InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
+                        onTap: () async {
+                          final result = await showModalBottomSheet(
                               backgroundColor: Colors.transparent,
                               isScrollControlled: true,
                               context: context,
                               builder: (context) {
                                 return EditProfileBottomSheet.id(hintText: userId!);
-                              });
+                              }
+                          );
+
+                          if (result == true) {
+                            setState(() {
+                              _futureProfile = widget.userService.getMyProfile();
+                            });
+                          }
                         },
                         overlayColor:
                         WidgetStateProperty.all(ColorSchemes.orange100),
