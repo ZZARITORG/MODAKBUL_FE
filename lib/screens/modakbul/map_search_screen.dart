@@ -108,7 +108,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   @override
   Widget build(BuildContext context) {
     placeProvider = Provider.of<PlaceProvider>(context, listen: false);
-    List<Map<String, dynamic>> recentSearchList = LocationManager.getLocations();
+    List<Map<String, dynamic>> recentSearchList =
+        LocationManager.getLocations();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorSchemes.gray000,
@@ -158,8 +159,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                           : address[0].roadAddress.addressName;
                                   placeProvider.roadAddressName =
                                       address[0].detailedAddress.addressName;
-                                  placeProvider.x = latitude!;
-                                  placeProvider.y = longitude!;
+                                  placeProvider.x = longitude!;
+                                  placeProvider.y = latitude!;
                                   Routes.navigateTo(
                                       context, Routes.mapSelectScreen);
                                 },
@@ -223,7 +224,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                         height: 24.h,
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: StyleConstants.defaultPadding),
                         child: Row(
                           children: [
                             SizedBox(
@@ -270,15 +272,13 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                   ColorSchemes.orange000),
                               onTap: () {
                                 placeProvider.placeName =
-                                recentSearchList[index]['placeName']!;
-                                placeProvider.roadAddressName = recentSearchList[index]
-                                ['roadAddressName']!;
-                                placeProvider.x = recentSearchList[index]
-                                ['x']!;
-                                placeProvider.y = recentSearchList[index]
-                                ['y']!;
-                                placeProvider.distance = recentSearchList[index]
-                                ['distance']!;
+                                    recentSearchList[index]['placeName']!;
+                                placeProvider.roadAddressName =
+                                    recentSearchList[index]['roadAddressName']!;
+                                placeProvider.x = recentSearchList[index]['x']!;
+                                placeProvider.y = recentSearchList[index]['y']!;
+                                placeProvider.distance =
+                                    recentSearchList[index]['distance']!;
                                 Routes.navigateTo(
                                     context, Routes.mapSelectScreen);
                               },
@@ -288,8 +288,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                 address: recentSearchList[index]
                                     ['roadAddressName']!,
                                 //이부분 현재위치에서 불러오게끔 바꾸기
-                                distance: '${ recentSearchList[index]
-                                ['distance']} km',
+                                distance:
+                                    '${recentSearchList[index]['distance']} km',
                                 onPressed: () {
                                   setState(() {
                                     LocationManager.removeLocation(index);
