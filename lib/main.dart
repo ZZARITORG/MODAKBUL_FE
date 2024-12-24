@@ -2,6 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:logger/logger.dart';
+import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/screens/auth/auth_profile_screen.dart';
@@ -19,6 +22,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load();
+  AuthRepository.initialize(appKey: ApiPath.appKey);
   runApp(
     ScreenUtilInit(
       designSize: const Size(393, 852), // 디자인 기준의 크기 (너비, 높이)
