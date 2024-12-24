@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,13 +8,16 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 
-import '../constants/assets_path.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/models/unblocked_user.dart';
+import 'package:modakbul/services/friend_service.dart';
 
 class UserListProfile extends StatelessWidget {
   final bool isButton;
   final String? profileImage;
   final String userName;
   final String userId;
+  final String id;
 
   const UserListProfile({
     Key? key,
@@ -21,14 +25,17 @@ class UserListProfile extends StatelessWidget {
     this.profileImage,
     required this.userName,
     required this.userId,
+    this.id = ''
   }) : super(key: key);
 
   factory UserListProfile.icon(
-      {required String userName, required String userId}) =>
+      {required String userName, required String userId, String? profileImage, String id = ''}) =>
       UserListProfile(
         isButton: false,
         userName: userName,
         userId: userId,
+        profileImage:  profileImage,
+        id: id
       );
 
   @override
@@ -44,6 +51,7 @@ class UserListProfile extends StatelessWidget {
                 CircleAvatar(
                   radius: StyleConstants.circleSizeS,
                   backgroundColor: ColorSchemes.gray500,
+                  backgroundImage: NetworkImage(profileImage!)
                 ),
                 SizedBox(
                   width: 8.w,
@@ -101,7 +109,17 @@ class UserListProfile extends StatelessWidget {
               height: 34.h,
               child: CustomButton(
                   text: '차단해제',
-                  onPressed: () {},
+                  onPressed: () async {
+                    final friendService = FriendService();
+
+                    try {
+                      await friendService.unblockedUser(UnblockedUser(targetId: id));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('차단 해제 실패: $e')),
+                      );
+                    }
+                  },
                   buttonColor: ColorSchemes.orange100,
                   textStyle: Theme.of(context).textTheme.body3,
                   textColor: ColorSchemes.white),

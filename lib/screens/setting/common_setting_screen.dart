@@ -7,6 +7,7 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
+import 'package:modakbul/routes/routes.dart';
 
 class CommonSettingScreen extends StatefulWidget {
   const CommonSettingScreen({super.key});
@@ -77,7 +78,9 @@ class _CommonSettingScreenState extends State<CommonSettingScreen> {
                       ],
                     ),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Routes.navigateTo(context, Routes.changeNumberScreen);
+                        },
                         child: Text(
                           '변경',
                           style: Theme.of(context)

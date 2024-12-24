@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/core/dio_client.dart';
 import 'package:modakbul/models/login.dart';
+import 'package:modakbul/models/logout.dart';
 import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/refresh_token_request.dart';
 import 'package:modakbul/models/refresh_token_response.dart';
@@ -41,6 +42,13 @@ class AuthService {
       ),
     );
     return Tokens.fromJson(response.data['data']);
+  }
+
+  Future<void> logout(Logout logout) async {
+    await dio.post(
+      ApiPath.logout,
+      data: logout.toJson(),
+    );
   }
 
   Future<bool> checkUserExists(PhoneNumber phoneNumber) async {

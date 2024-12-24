@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,6 +13,9 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+
+import '../models/edit_my_profile.dart';
+import '../services/user_service.dart';
 
 class EditProfileBottomSheet extends StatefulWidget {
   final String hintText;
@@ -155,10 +159,36 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                     width: double.infinity,
                     child: CustomButton(
                         text: '다음',
-                        onPressed: _isButtonEnabled ? () {} : null,
+                        onPressed: _isButtonEnabled
+                            ? () async {
+                          try {
+                            final EditMyProfile editProfile = EditMyProfile(
+                              name: widget.isName ? _textEditingController.text : null,
+                              userId: !widget.isName ? _textEditingController.text : null,
+                            );
+
+                            final userService = UserService();
+                            await userService.updateMyProfile(editProfile);
+
+                            Navigator.pop(context, true);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('프로필이 수정되었습니다')),
+                            );
+                          } on DioException catch (e) {
+                            String errorMessage = '프로필 수정에 실패했습니다';
+                            if (e.response?.statusCode == 404) {
+                              errorMessage = 'API 경로를 찾을 수 없습니다';
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(errorMessage)),
+                            );
+                          }
+                        }
+                            : null,
                         buttonColor: ColorSchemes.orange200,
                         textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                        textColor: ColorSchemes.white),
+                        textColor: ColorSchemes.white
+                    ),
                   ),
                   SizedBox(height: 16.h)
                 ],

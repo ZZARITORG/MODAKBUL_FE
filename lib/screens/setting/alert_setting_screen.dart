@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/assets_path.dart';
@@ -18,6 +19,10 @@ class _AlertSettingScreenState extends State<AlertSettingScreen> {
   bool _isAllAlertToggled = false;
   bool _isModakbulAlertToggled = false;
   bool _isAdAlertToggled = false;
+
+  final String _allAlertTopic = 'all_alerts';
+  final String _modakbulAlertTopic = 'modakbul_alerts';
+  final String _adAlertTopic = 'ad_alerts';
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +47,15 @@ class _AlertSettingScreenState extends State<AlertSettingScreen> {
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
                 isToggled: _isAllAlertToggled,
-                onToggleChanged: (value) {
+                onToggleChanged: (value) async {
                   setState(() {
                     _isAllAlertToggled = value;
                   });
+                  if (value) {
+                    await FirebaseMessaging.instance.subscribeToTopic(_allAlertTopic);
+                  } else {
+                    await FirebaseMessaging.instance.unsubscribeFromTopic(_allAlertTopic);
+                  }
                 }),
             SizedBox(height: 28.h),
             SettingMenu.toggle(
@@ -53,10 +63,15 @@ class _AlertSettingScreenState extends State<AlertSettingScreen> {
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
                 isToggled: _isModakbulAlertToggled,
-                onToggleChanged: (value) {
+                onToggleChanged: (value) async {
                   setState(() {
                     _isModakbulAlertToggled = value;
                   });
+                  if (value) {
+                    await FirebaseMessaging.instance.subscribeToTopic(_modakbulAlertTopic);
+                  } else {
+                    await FirebaseMessaging.instance.unsubscribeFromTopic(_modakbulAlertTopic);
+                  }
                 }),
             SizedBox(height: 28.h),
             SettingMenu.toggle(
@@ -64,10 +79,15 @@ class _AlertSettingScreenState extends State<AlertSettingScreen> {
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
                 isToggled: _isAdAlertToggled,
-                onToggleChanged: (value) {
+                onToggleChanged: (value) async {
                   setState(() {
                     _isAdAlertToggled = value;
                   });
+                  if (value) {
+                    await FirebaseMessaging.instance.subscribeToTopic(_adAlertTopic);
+                  } else {
+                    await FirebaseMessaging.instance.unsubscribeFromTopic(_adAlertTopic);
+                  }
                 }),
           ],
         ),
