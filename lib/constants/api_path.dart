@@ -39,6 +39,8 @@ class ApiPath{
   static const String friendUnblock = '/api/v0/friend/friend-unblock';
   static const String friendReject = '/api/v0/friend/friend-reject';
   static const String friendList = '/api/v0/friend/friend-list';
+  static const String friendReqList = '/api/v0/friend/friend-req-list';
+  static const String friendSuggested = '/api/v0/friend/suggested-friends';
   static const String friendBlockList = '/api/v0/friend/friend-block-list';
 
   //group
