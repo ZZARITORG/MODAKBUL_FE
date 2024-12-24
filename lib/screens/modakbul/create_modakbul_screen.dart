@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/main.dart';
+import 'package:modakbul/providers/meeting_provider.dart';
+import 'package:modakbul/providers/place_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -12,8 +15,9 @@ import 'package:modakbul/widgets/create_meeting_button.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/custom_calender_picker.dart';
 import 'package:modakbul/widgets/custom_time_picker.dart';
+import 'package:modakbul/widgets/custom_toast.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
-
+import 'package:provider/provider.dart';
 
 class CreateModakbulScreen extends StatefulWidget {
   const CreateModakbulScreen({super.key});
@@ -23,16 +27,44 @@ class CreateModakbulScreen extends StatefulWidget {
 }
 
 class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
+  //String? selectAddress;
   DateTime? selectDate;
+  String? selectHour;
+  String? selectMinute;
+  late MeetingProvider meetingProvider;
+
+  /*void _onAddressSelected(String address) {
+    setState(() {
+      selectAddress = address;
+      print('selectDate: $selectDate');
+    });
+  }*/
 
   void _onDateSelected(DateTime date) {
     setState(() {
       selectDate = date;
+      print('selectDate: $selectDate');
     });
+  }
+
+  void _onTimeSelected(String hour, String minute) {
+    setState(() {
+      selectHour = hour;
+      selectMinute = minute;
+    });
+  }
+
+  bool isActivated() {
+    return meetingProvider.selectGroupName != null &&
+        meetingProvider.selectPlace != null &&
+        meetingProvider.selectDate != null &&
+        meetingProvider.selectHour != null &&
+        meetingProvider.selectMinute != null;
   }
 
   @override
   Widget build(BuildContext context) {
+    meetingProvider = Provider.of<MeetingProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorSchemes.gray000,
@@ -41,7 +73,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
       ),
       body: Padding(
         padding:
-        EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+            EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -76,13 +108,23 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
             ),
             CreateMeetingButton(
               type: '그룹',
-              content: '그룹 선택',
+              content: meetingProvider.selectGroupName != null
+                  ? meetingProvider.selectGroupName!
+                  : '그룹 선택',
               onPressed: () =>
                   Routes.navigateTo(context, Routes.groupSelectScreen),
-              icon: IconPath.groupOrange100,
-              typeColor: ColorSchemes.orange100,
-              contentColor: ColorSchemes.gray200,
-              arrowIcon: IconPath.arrowForward15Gray200,
+              icon: meetingProvider.selectGroupName != null
+                  ? IconPath.groupOrange200
+                  : IconPath.groupOrange100,
+              typeColor: meetingProvider.selectGroupName != null
+                  ? ColorSchemes.orange200
+                  : ColorSchemes.orange100,
+              contentColor: meetingProvider.selectGroupName != null
+                  ? ColorSchemes.orange100
+                  : ColorSchemes.gray200,
+              arrowIcon: meetingProvider.selectGroupName != null
+                  ? IconPath.arrowForward15Orange100
+                  : IconPath.arrowForward15Gray200,
               iconWidth: 20.r,
             ),
             SizedBox(
@@ -90,13 +132,23 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
             ),
             CreateMeetingButton(
               type: '위치',
-              content: '위치 선택',
+              content: meetingProvider.selectPlace != null
+                  ? meetingProvider.selectPlace!
+                  : '위치 선택',
               onPressed: () =>
                   Routes.navigateTo(context, Routes.mapSearchScreen),
-              icon: IconPath.pinDropOrange100,
-              typeColor: ColorSchemes.orange100,
-              contentColor: ColorSchemes.gray200,
-              arrowIcon: IconPath.arrowForward15Gray200,
+              icon: meetingProvider.selectPlace != null
+                  ? IconPath.pinDropOrange200
+                  : IconPath.pinDropOrange100,
+              typeColor: meetingProvider.selectPlace != null
+                  ? ColorSchemes.orange200
+                  : ColorSchemes.orange100,
+              contentColor: meetingProvider.selectPlace != null
+                  ? ColorSchemes.orange100
+                  : ColorSchemes.gray200,
+              arrowIcon: meetingProvider.selectPlace != null
+                  ? IconPath.arrowForward15Orange100
+                  : IconPath.arrowForward15Gray200,
               iconWidth: 16.r,
             ),
             SizedBox(
@@ -104,8 +156,8 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
             ),
             CreateMeetingButton(
               type: '날짜',
-              content: selectDate != null
-                  ? DateFormat('M월 d일').format(selectDate!)
+              content: meetingProvider.selectDate != null
+                  ? DateFormat('M월 d일').format(meetingProvider.selectDate!)
                   : '날짜 선택',
               onPressed: () => showModalBottomSheet(
                   isScrollControlled: true,
@@ -165,16 +217,24 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
                             SizedBox(
                               height: 24.h,
                             ),
-                            CustomCalendarPicker(onDateSelected: _onDateSelected,),
+                            CustomCalendarPicker(),
                           ],
                         ),
                       ),
                     );
                   }),
-              icon: selectDate != null ? IconPath.calendarMonthOrange200 : IconPath.calendarMonthOrange100,
-              typeColor: selectDate != null ? ColorSchemes.orange200 : ColorSchemes.orange100,
-              contentColor: selectDate != null ? ColorSchemes.orange100 : ColorSchemes.gray200,
-              arrowIcon: selectDate != null ? IconPath.arrowForward15Orange100 : IconPath.arrowForward15Gray200,
+              icon: meetingProvider.selectDate != null
+                  ? IconPath.calendarMonthOrange200
+                  : IconPath.calendarMonthOrange100,
+              typeColor: meetingProvider.selectDate != null
+                  ? ColorSchemes.orange200
+                  : ColorSchemes.orange100,
+              contentColor: meetingProvider.selectDate != null
+                  ? ColorSchemes.orange100
+                  : ColorSchemes.gray200,
+              arrowIcon: meetingProvider.selectDate != null
+                  ? IconPath.arrowForward15Orange100
+                  : IconPath.arrowForward15Gray200,
               iconWidth: 19.r,
             ),
             SizedBox(
@@ -182,75 +242,97 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
             ),
             CreateMeetingButton(
               type: '시간',
-              content: '시간 선택',
-              onPressed: () => showModalBottomSheet(
-                isScrollControlled: true,
-                context: context,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(StyleConstants.radiusLarge)),
-                ),
-                builder: (context) {
-                  return SafeArea(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: StyleConstants.defaultPadding),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                height: 28.r,
-                                width: 28.r,
-                                child: IconButton(
-                                    padding: EdgeInsets.zero, // 패딩 제거
-                                    constraints: const BoxConstraints(),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    icon: SvgPicture.asset(
-                                      IconPath.close,
-                                      width: 14.r,
-                                    )),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            '시간을 선택해주세요',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bigHeadLine3
-                                .copyWith(color: ColorSchemes.gray500),
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Text(
-                            '다른 모닥들과 모일 시간을 선택해주세요!',
-                            style: Theme.of(context)
-                                .textTheme
-                                .body2
-                                .copyWith(color: ColorSchemes.gray500),
-                          ),
-                          SizedBox(
-                            height: 24.h,
-                          ),
-                          CustomTimePicker(),
-                        ],
+              content: meetingProvider.selectHour != null &&
+                      meetingProvider.selectMinute != null
+                  ? '${meetingProvider.selectHour}시 ${meetingProvider.selectMinute!.padLeft(2, '0')}분'
+                  : '시간 선택',
+              onPressed: () {
+                if (meetingProvider.selectDate != null) {
+                  showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(StyleConstants.radiusLarge)),
                       ),
-                    ),
-                  );
-                }),
-              icon: IconPath.timeOrange100,
-              typeColor: ColorSchemes.orange100,
-              contentColor: ColorSchemes.gray200,
-              arrowIcon: IconPath.arrowForward15Gray200,
+                      builder: (context) {
+                        return SafeArea(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: StyleConstants.defaultPadding),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      height: 28.r,
+                                      width: 28.r,
+                                      child: IconButton(
+                                          padding: EdgeInsets.zero, // 패딩 제거
+                                          constraints: const BoxConstraints(),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          icon: SvgPicture.asset(
+                                            IconPath.close,
+                                            width: 14.r,
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  '시간을 선택해주세요',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine3
+                                      .copyWith(color: ColorSchemes.gray500),
+                                ),
+                                SizedBox(
+                                  height: 8.h,
+                                ),
+                                Text(
+                                  '다른 모닥들과 모일 시간을 선택해주세요!',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .body2
+                                      .copyWith(color: ColorSchemes.gray500),
+                                ),
+                                SizedBox(
+                                  height: 24.h,
+                                ),
+                                CustomTimePicker(
+                                    selectedDate: meetingProvider.selectDate!),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                } else {
+                  CustomToast.showToast(context, '날짜를 먼저 선택해주세요.');
+                }
+              },
+              icon: meetingProvider.selectHour != null &&
+                      meetingProvider.selectMinute != null
+                  ? IconPath.timeOrange200
+                  : IconPath.timeOrange100,
+              typeColor: meetingProvider.selectHour != null &&
+                      meetingProvider.selectMinute != null
+                  ? ColorSchemes.orange200
+                  : ColorSchemes.orange100,
+              contentColor: meetingProvider.selectHour != null &&
+                      meetingProvider.selectMinute != null
+                  ? ColorSchemes.orange100
+                  : ColorSchemes.gray200,
+              arrowIcon: meetingProvider.selectHour != null &&
+                      meetingProvider.selectMinute != null
+                  ? IconPath.arrowForward15Orange100
+                  : IconPath.arrowForward15Gray200,
               iconWidth: 20.r,
             ),
             const Spacer(),
@@ -259,8 +341,10 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
               width: double.infinity,
               child: CustomButton(
                   text: '선택완료',
-                  onPressed: () =>
-                      Routes.navigateTo(context, Routes.createContentScreen),
+                  onPressed: isActivated()
+                      ? () =>
+                          Routes.navigateTo(context, Routes.createContentScreen)
+                      : null,
                   buttonColor: ColorSchemes.orange200,
                   textStyle: Theme.of(context).textTheme.smallHeadLine2,
                   textColor: ColorSchemes.white),

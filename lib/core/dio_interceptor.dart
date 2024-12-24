@@ -29,6 +29,10 @@ class DioInterceptor extends InterceptorsWrapper {
       String? token = await secureStorage.read(key: 'ACCESS_TOKEN');
       options.headers['Authorization'] = 'Bearer $token';
     }
+    if (options.extra['isKakao'] == true) {
+      String kakaoRestApiKey = dotenv.env['KAKAO_REST_API_KEY'] ?? '';
+      options.headers['Authorization'] = 'KakaoAK $kakaoRestApiKey';
+    }
     return super.onRequest(options, handler);
   }
 
