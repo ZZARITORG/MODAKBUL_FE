@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
+import 'package:modakbul/models/modakbul_detail.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/participant_list_profile.dart';
 
@@ -10,29 +12,49 @@ import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 
 class ParticipantBottomSheet extends StatefulWidget {
-  const ParticipantBottomSheet({Key? key}) : super(key: key);
+  final List<UserStatus> users;
+  final String hostId;
+
+  const ParticipantBottomSheet(
+      {super.key, required this.users, required this.hostId});
 
   @override
   State<ParticipantBottomSheet> createState() => _ParticipantBottomSheetState();
 }
 
 class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
+  late List<UserStatus> sortedUsers;
+
+  void initState() {
+    super.initState();
+    // 호스트를 첫 번째로 정렬
+    sortedUsers = List<UserStatus>.from(widget.users);
+    sortedUsers.sort((a, b) {
+      if (a.userId == widget.hostId) return -1;
+      if (b.userId == widget.hostId) return 1;
+      return 0;
+    });
+    Logger logger = Logger();
+    logger.i('참여자 유저들');
+    logger.i(widget.users.length);
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
       child: SafeArea(
         child: Container(
-            width: double.infinity,
-            height: 390.h,
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-                color: ColorSchemes.white
-            ),
+          width: double.infinity,
+          height: 390.h,
+          padding: EdgeInsets.symmetric(horizontal: 15.w),
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+              color: ColorSchemes.white),
           child: Column(
             children: [
               Container(
@@ -74,12 +96,14 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
               Expanded(
                 child: ListView.separated(
                   padding: EdgeInsets.only(top: 24.h),
-                  itemCount: 4, // 예시로 10명
+                  itemCount: sortedUsers.length, // 예시로 10명
                   separatorBuilder: (context, index) => SizedBox(height: 18.h),
                   itemBuilder: (context, index) {
-                    return Participantlistprofile(
-                      userName: 'userName $index',
-                      userId: 'userId $index',
+                    return Participantlistprofile.icon(
+                      profileImage: sortedUsers[index].profileUrl,
+                      userName: sortedUsers[index].name,
+                      userId: sortedUsers[index].userId,
+                      users: sortedUsers,
                     );
                   },
                 ),

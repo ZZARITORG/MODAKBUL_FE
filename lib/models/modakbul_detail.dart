@@ -1,5 +1,3 @@
-import 'package:logger/logger.dart';
-
 class ModakbulDetail {
   String id;
   String title;
@@ -28,9 +26,6 @@ class ModakbulDetail {
   });
 
   factory ModakbulDetail.fromJson(Map<String, dynamic> json) {
-    Logger logger = Logger();
-    logger.i(json['lat'].runtimeType);
-    logger.i(json['lng']);
     return ModakbulDetail(
       id: json['id'],
       title: json['title'],
@@ -43,8 +38,14 @@ class ModakbulDetail {
       users: (json['user'] as List)
           .map((userJson) => UserStatus.fromJson(userJson))
           .toList(),
-      lat: (json['lat'] is String ? double.tryParse(json['lat']) : json['lat']) ?? 0.0,
-      lng: (json['lng'] is String ? double.tryParse(json['lng']) : json['lng']) ?? 0.0,
+      lat: (json['lat'] is String
+              ? double.tryParse(json['lat'])
+              : json['lat']) ??
+          0.0,
+      lng: (json['lng'] is String
+              ? double.tryParse(json['lng'])
+              : json['lng']) ??
+          0.0,
     );
   }
 }

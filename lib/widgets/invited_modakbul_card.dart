@@ -3,31 +3,32 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/pending_modakbul.dart';
 import 'package:modakbul/themes/styles.dart';
 import '../themes/color_schemes.dart';
 
 class InvitedModakbulCard extends StatelessWidget {
-  final String? profileImage1;
-  final String? profileImage2;
-  final int profileLength;
-  final String userName;
-  final String userId;
+  final String hostProfileImage;
+  final int participantLength;
+  final String hostName;
+  final String hostId;
   final String title;
-  final String description;
+  final String content;
   final String date;
-  final String location;
+  final String address;
+  final List<UserStatus> participantUsers;
 
   const InvitedModakbulCard({
     Key? key,
-    this.profileImage1,
-    this.profileImage2,
-    required this.profileLength,
-    required this.userName,
-    required this.userId,
+    required this.hostProfileImage,
+    required this.participantLength,
+    required this.hostName,
+    required this.hostId,
     required this.title,
-    required this.description,
+    required this.content,
     required this.date,
-    required this.location,
+    required this.address,
+    required this.participantUsers,
   }) : super(key: key);
 
   @override
@@ -57,6 +58,7 @@ class InvitedModakbulCard extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: StyleConstants.circleSizeXS,
+                            backgroundImage: NetworkImage(hostProfileImage),
                           ),
                           SizedBox(width: 4.w),
                           Flexible(
@@ -64,7 +66,7 @@ class InvitedModakbulCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  userName,
+                                  hostName,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
                                       .textTheme
@@ -75,7 +77,7 @@ class InvitedModakbulCard extends StatelessWidget {
                                 ),
                                 SizedBox(height: 2.h),
                                 Text(
-                                  userId,
+                                  hostId,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
                                       .textTheme
@@ -95,7 +97,7 @@ class InvitedModakbulCard extends StatelessWidget {
                       onTap: () {},
                       child: Row(
                         children: [
-                          profileLength == 1
+                          participantLength == 1
                               ? Row(
                                   children: [
                                     Text(
@@ -116,12 +118,12 @@ class InvitedModakbulCard extends StatelessWidget {
                               : Row(
                                   children: [
                                     SizedBox(
-                                      width: profileLength >= 4
+                                      width: participantLength >= 4
                                           ? 84.w
-                                          : (profileLength == 3 ? 60.w : 36.w),
+                                          : (participantLength == 3 ? 60.w : 36.w),
                                       child: Stack(
                                         children: [
-                                          if (profileLength >= 2)
+                                          if (participantLength >= 2)
                                             Positioned(
                                               child: CircleAvatar(
                                                 radius: StyleConstants
@@ -131,12 +133,11 @@ class InvitedModakbulCard extends StatelessWidget {
                                                 child: CircleAvatar(
                                                   radius: StyleConstants
                                                       .circleSizeXXXXXXS,
-                                                  backgroundColor:
-                                                      ColorSchemes.orange200,
+                                                  backgroundImage: NetworkImage(participantUsers[0].profileUrl),
                                                 ),
                                               ),
                                             ),
-                                          if (profileLength >= 3)
+                                          if (participantLength >= 3)
                                             Positioned(
                                               left: 24.w,
                                               child: CircleAvatar(
@@ -147,12 +148,11 @@ class InvitedModakbulCard extends StatelessWidget {
                                                 child: CircleAvatar(
                                                   radius: StyleConstants
                                                       .circleSizeXXXXXXS,
-                                                  backgroundColor:
-                                                      ColorSchemes.orange100,
+                                                  backgroundImage: NetworkImage(participantUsers[1].profileUrl),
                                                 ),
                                               ),
                                             ),
-                                          if (profileLength >= 4)
+                                          if (participantLength >= 4)
                                             Positioned(
                                               left: 48.w,
                                               child: CircleAvatar(
@@ -163,8 +163,7 @@ class InvitedModakbulCard extends StatelessWidget {
                                                 child: CircleAvatar(
                                                   radius: StyleConstants
                                                       .circleSizeXXXXXXS,
-                                                  backgroundColor:
-                                                      ColorSchemes.orange000,
+                                                  backgroundImage: NetworkImage(participantUsers[2].profileUrl),
                                                 ),
                                               ),
                                             ),
@@ -173,7 +172,7 @@ class InvitedModakbulCard extends StatelessWidget {
                                     ),
                                     SizedBox(width: 7.w),
                                     Text(
-                                      '${profileLength - 1}명',
+                                      '${participantLength - 1}명',
                                       style: Theme.of(context)
                                           .textTheme
                                           .body3
@@ -202,7 +201,7 @@ class InvitedModakbulCard extends StatelessWidget {
                         .copyWith(color: ColorSchemes.gray500)),
                 SizedBox(height: 8.h),
                 Text(
-                  description,
+                  content,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: Theme.of(context)
@@ -257,7 +256,7 @@ class InvitedModakbulCard extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      location,
+                      address,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context)
                           .textTheme

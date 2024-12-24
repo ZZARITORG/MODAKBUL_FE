@@ -1,20 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/modakbul_detail.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 
 class Participantlistprofile extends StatelessWidget {
-  final String? profileImage;
+  final String profileImage;
   final String userName;
   final String userId;
+  final List<UserStatus> users;
 
   const Participantlistprofile({
     Key? key,
-    this.profileImage,
+    required this.profileImage,
     required this.userName,
     required this.userId,
+    this.users = const [],
   }) : super(key: key);
+
+  factory Participantlistprofile.icon(
+          {required String profileImage,
+          required String userName,
+          required userId,
+          required List<UserStatus> users}) =>
+      Participantlistprofile(
+          profileImage: profileImage, userName: userName, userId: userId, users: users,);
+
+  Widget _buildUserStatus() {
+    if (users.isNotEmpty) {
+      if (users[0].userId == userId) { //호스트
+        return SizedBox(width: 24.w, height: 24.h,
+          child: Image.asset(ImagePath.hostBonfire, fit: BoxFit.contain,),
+        );
+      }
+    }
+    return const SizedBox.shrink();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +51,7 @@ class Participantlistprofile extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: StyleConstants.circleSizeS,
-                  backgroundColor: ColorSchemes.gray500,
+                  backgroundImage: NetworkImage(profileImage),
                 ),
                 SizedBox(
                   width: 8.w,
@@ -62,6 +85,7 @@ class Participantlistprofile extends StatelessWidget {
                     ],
                   ),
                 ),
+                _buildUserStatus()
               ],
             ),
           ),

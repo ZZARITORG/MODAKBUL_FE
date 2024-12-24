@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -7,6 +8,7 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/accept_modakbul.dart';
 import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
@@ -15,6 +17,7 @@ import 'package:modakbul/widgets/modakbul_detail_card.dart';
 import 'package:modakbul/widgets/modakbul_detail_screen_skeleton.dart';
 
 import '../../models/modakbul_detail.dart';
+import '../../routes/routes.dart';
 import '../../themes/color_schemes.dart';
 
 class ModakbulDetailScreen extends StatefulWidget {
@@ -30,6 +33,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
     super.initState();
     initializeDateFormatting();
   }
+
   @override
   void dispose() {
     mapController.dispose();
@@ -46,10 +50,6 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
     final Map<String, dynamic>? arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final String? id = arguments?['id'];
-    Logger logger = Logger(
-      printer: PrettyPrinter(),
-    );
-    logger.i('넝머온 id는 $id 입니다 ');
 
     return Scaffold(
       backgroundColor: ColorSchemes.gray000,
@@ -81,26 +81,26 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                 UserStatus host = users.firstWhere(
                   (user) => user.id == hostId,
                 );
-
+                List<UserStatus> participantUsers =
+                    users.where((user) => user.id != hostId).toList();
                 double lat = modakbulDetailData!.lat;
                 double lng = modakbulDetailData!.lng;
-                logger.i('위도 경도는 이거다잉 $lat이랑 $lng');
 
                 return Stack(
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: StyleConstants.defaultPadding),
-                      child: /*Skeleton 들어갈 자리 */
-                          Column(
+                      child: Column(
                         children: [
                           ModakbulDetailCard(
-                              userName: host.name,
-                              userId: host.userId,
-                              posterProfileImage: host.profileUrl,
-                              profileLength: users.length - 1,
-                              participantProfileImage:
-                                  'participantProfileImage'),
+                            hostName: host.name,
+                            hostId: host.userId,
+                            hostProfileImage: host.profileUrl,
+                            participantLength: users.length,
+                            users: users,
+                            participantUsers: participantUsers,
+                          ),
                           SizedBox(
                             height: 14.h,
                           ),
@@ -188,7 +188,16 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                                       height: 1.193),
                                             ),
                                             GestureDetector(
-                                              onTap: () {},
+                                              onTap: () => Routes.navigateTo(
+                                                  context,
+                                                  Routes
+                                                      .modakbulMapDetailScreen,
+                                                  arguments: {
+                                                    'address': address,
+                                                    'lat': lat,
+                                                    'lng': lng,
+                                                  }),
+                                              behavior: HitTestBehavior.opaque,
                                               child: Row(
                                                 children: [
                                                   Text(
@@ -224,33 +233,42 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                           height: 118.h,
                                           width: double.infinity,
                                           decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(14),
-                                              boxShadow: const [
-                                                BoxShadow(
-                                                  color: Color(0x40F3F3F3),
-                                                  offset: Offset(0, 4),
-                                                  blurRadius: 10,
-                                                  spreadRadius: 0,
-                                                ),
-                                              ],
+                                            borderRadius: BorderRadius.circular(
+                                                StyleConstants.radiusMedium),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Color(0x40F3F3F3),
+                                                offset: Offset(0, 4),
+                                                blurRadius: 10,
+                                                spreadRadius: 0,
                                               ),
-                                          child: StatefulBuilder(
-                                            builder: (context, setInState) {
+                                            ],
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                StyleConstants.radiusMedium),
+                                            child: StatefulBuilder(
+                                                builder: (context, setInState) {
                                               return KakaoMap(
-                                                onMapCreated: ((controller) async {
+                                                onMapCreated:
+                                                    ((controller) async {
                                                   mapController = controller;
                                                   markers.add(Marker(
-                                                    markerId: UniqueKey().toString(),
-                                                    latLng: await mapController.getCenter(),
+                                                    markerId:
+                                                        UniqueKey().toString(),
+                                                    latLng: await mapController
+                                                        .getCenter(),
+                                                    width: 18,
+                                                    height: 18,
+                                                    offsetX: 20,
+                                                    offsetY: 20,
                                                   ));
                                                   setInState(() {});
                                                 }),
                                                 markers: markers.toList(),
                                                 center: LatLng(lat, lng),
-
                                               );
-                                            }
+                                            }),
                                           ),
                                         ),
                                       ),
@@ -280,7 +298,10 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                             width: 12.w,
                                           ),
                                           GestureDetector(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Clipboard.setData(
+                                                  ClipboardData(text: address));
+                                            },
                                             child: Row(
                                               children: [
                                                 SvgPicture.asset(
@@ -343,7 +364,13 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                   height: 56.h,
                                   child: CustomButton(
                                       text: '모닥불 참여하기',
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        Logger logger = Logger();
+                                        logger.i('아이디아이다 ----는 $id');
+                                        final acceptModakbul = AcceptModakbul(meetingId: modakbulDetailData!.id);
+                                        await meetingService.acceptModakbul(acceptModakbul);
+                                        Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
+                                      },
                                       buttonColor: ColorSchemes.orange200,
                                       textStyle: Theme.of(context)
                                           .textTheme

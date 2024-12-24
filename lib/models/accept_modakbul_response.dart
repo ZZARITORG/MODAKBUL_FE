@@ -1,4 +1,27 @@
-class PendingModakbul {
+class AcceptModakbulResponse {
+  String id;
+  String status;
+  Meeting meeting;
+  User user;
+
+  AcceptModakbulResponse({
+    required this.id,
+    required this.status,
+    required this.meeting,
+    required this.user,
+  });
+
+  factory AcceptModakbulResponse.fromJson(Map<String, dynamic> json) {
+    return AcceptModakbulResponse(
+      id: json['id'].toString() ?? '',
+      status: json['status'].toString() ?? '',
+      meeting: Meeting.fromJson(json['meeting']),
+      user: User.fromJson(json['user']),
+    );
+  }
+}
+
+class Meeting {
   String id;
   String title;
   String content;
@@ -7,12 +30,11 @@ class PendingModakbul {
   String address;
   String detailAddress;
   DateTime date;
-  DateTime createdAt;
-  List<UserStatus> users;
-  double lat;
-  double lng;
+  String groupName;
+  String lat;
+  String lng;
 
-  PendingModakbul({
+  Meeting({
     required this.id,
     required this.title,
     required this.content,
@@ -21,14 +43,13 @@ class PendingModakbul {
     required this.address,
     required this.detailAddress,
     required this.date,
-    required this.createdAt,
-    required this.users,
+    required this.groupName,
     required this.lat,
     required this.lng,
   });
 
-  factory PendingModakbul.fromJson(Map<String, dynamic> json) {
-    return PendingModakbul(
+  factory Meeting.fromJson(Map<String, dynamic> json) {
+    return Meeting(
       id: json['id'],
       title: json['title'],
       content: json['content'],
@@ -37,45 +58,32 @@ class PendingModakbul {
       address: json['address'],
       detailAddress: json['detailAddress'],
       date: DateTime.parse(json['date']),
-      createdAt: DateTime.parse(json['createdAt']),
-      users: (json['user'] as List)
-          .map((userJson) => UserStatus.fromJson(userJson))
-          .toList(),
-      lat: (json['lat'] is String
-          ? double.tryParse(json['lat'])
-          : json['lat']) ??
-          0.0,
-      lng: (json['lng'] is String
-          ? double.tryParse(json['lng'])
-          : json['lng']) ??
-          0.0,
+      groupName: json['groupName'],
+      lat: json['lat'],
+      lng: json['lng'],
     );
   }
 }
 
-class UserStatus {
+class User {
   String id;
   String userId;
   String name;
   String profileUrl;
-  String status;
 
-
-  UserStatus({
+  User({
     required this.id,
     required this.userId,
     required this.name,
     required this.profileUrl,
-    required this.status,
   });
 
-  factory UserStatus.fromJson(Map<String, dynamic> json) {
-    return UserStatus(
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
       id: json['id'],
       userId: json['userId'],
       name: json['name'],
       profileUrl: json['profileUrl'],
-      status: json['status'],
     );
   }
 }
