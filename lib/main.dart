@@ -17,7 +17,6 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/location_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'firebase_options.dart';
 
 late SharedPreferences prefs;

@@ -7,7 +7,6 @@ import 'package:modakbul/main.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
-
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/models/unblocked_user.dart';
 import 'package:modakbul/services/friend_service.dart';
@@ -17,7 +16,9 @@ class UserListProfile extends StatelessWidget {
   final String? profileImage;
   final String userName;
   final String userId;
+  final VoidCallback? onIconPressed;
   final String id;
+
 
   const UserListProfile({
     Key? key,
@@ -25,6 +26,7 @@ class UserListProfile extends StatelessWidget {
     this.profileImage,
     required this.userName,
     required this.userId,
+    this.onIconPressed,
     this.id = ''
   }) : super(key: key);
 
@@ -96,7 +98,7 @@ class UserListProfile extends StatelessWidget {
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  onPressed: () {},
+                  onPressed: onIconPressed,
                   icon: SvgPicture.asset(
                     IconPath.moreHorizontal,
                     width: 20.r,
