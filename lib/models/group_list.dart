@@ -3,14 +3,16 @@ class Group {
   final String name;
   final List<Member> members;
   final int count;
-  final String updatedAt; // updatedAt 추가
+  final String updatedAt;
+  final String createdAt;
 
   Group({
     required this.id,
     required this.name,
     required this.members,
     required this.count,
-    required this.updatedAt, // 생성자에 추가
+    required this.updatedAt,
+    required this.createdAt,
   });
 
   factory Group.fromJson(Map<String, dynamic> json) {
@@ -22,7 +24,8 @@ class Group {
           .map((member) => Member.fromJson(member))
           .toList(),
       count: json['count'],
-      updatedAt: json['updatedAt'], // JSON에서 updatedAt 읽기
+      updatedAt: json['updatedAt'],
+      createdAt: json['createdAt'],
     );
   }
 
@@ -32,7 +35,8 @@ class Group {
       'name': name,
       'members': members.map((member) => member.toJson()).toList(),
       'count': count,
-      'updatedAt': updatedAt, // JSON으로 내보내기
+      'updatedAt': updatedAt,
+      'createdAt': createdAt,
     };
   }
 }

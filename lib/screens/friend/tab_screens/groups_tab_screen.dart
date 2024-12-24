@@ -338,7 +338,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                         children: [
                                           MyModakbulListTile(
                                             title: groupName,  // 그룹 이름
-                                            time: filteredGroups[index].updatedAt,  // 그룹의 마지막 업데이트 시간
+                                            time: filteredGroups[index].createdAt,  // 그룹의 마지막 업데이트 시간
                                             profileLength: filteredGroups[index].members.length,  // 멤버 수
                                             profileImage1: members[0].user.profileUrl,  // 첫 번째 멤버의 프로필 이미지
                                             profileImage2: profileImage2.isEmpty ? null : profileImage2,  // 두 번째 멤버의 프로필 이미지
