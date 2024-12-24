@@ -12,6 +12,7 @@ class DioClient {
     return _instance;
   }
 
+  //카카오 api 쓸경우 dio 따로 처리
   DioClient._internal() {
     BaseOptions baseOptions = BaseOptions(
       baseUrl: ApiPath.baseUrl,

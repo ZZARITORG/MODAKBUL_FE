@@ -5,6 +5,8 @@ class ApiPath{
   ///static const String exampleEndpoint = '/example';
   static String baseUrl = dotenv.env['BASE_URL'] ?? '';
   static String s3Url = dotenv.env['S3_URL'] ?? '';
+  static String kakaoRestApiUrl = dotenv.env['KAKAO_REST_API_URL'] ?? '';
+  static String appKey = dotenv.env['APP_KEY'] ?? '';
 
   //health check
   static String healthCheck = '/api/v0/health';
@@ -48,5 +50,10 @@ class ApiPath{
 
   //AWS
   static String getPresignedUrl(String userId) => '/api/v0/aws/presigned/$userId';
+
+  //KaKao
+  static String kakaoRestApi = kakaoRestApiUrl;
+  static String keywordToAddress = '/local/search/keyword.json?';
+  static String coordToAddress = '/local/geo/coord2address.json?';
 
 }

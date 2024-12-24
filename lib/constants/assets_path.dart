@@ -63,6 +63,7 @@ class IconPath {
   static const String timeOrange100 = 'assets/icons/time_orange100.svg';
   static const String timeOrange200 = 'assets/icons/time_orange200.svg';
   static const String verifiedUser = 'assets/icons/verified_user.svg';
+  static const String warning = 'assets/icons/warning.svg';
   static const String powerSettingsNew = 'assets/icons/power_settings_new.svg';
 }
 
@@ -73,4 +74,7 @@ class ImagePath {
   static const String browseSmallModakbul = 'assets/images/browse_small_modakbul.png';
   static const String smallBonfire = 'assets/images/small_bonfire.png';
   static const String friendAlert = 'assets/images/friend_alert.png';
+  static const String markerModakbul = 'assets/images/marker_modakbul.png';
+  static const String offBonfire = 'assets/images/off_bonfire.png';
+  static const String hostBonfire = 'assets/images/host_bonfire.png';
 }

@@ -3,16 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/providers/meeting_provider.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/date_time_utils.dart';
+import 'package:provider/provider.dart';
 
 import 'custom_button.dart';
 
 class CustomCalendarPicker extends StatefulWidget {
-  final Function(DateTime) onDateSelected;
 
-  const CustomCalendarPicker({required this.onDateSelected, Key? key})
+  const CustomCalendarPicker({Key? key})
       : super(key: key);
 
   @override
@@ -25,6 +26,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
   DateTime? _today;
   DateTime? _limitDate;
   List<String> weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+  late MeetingProvider meetingProvider;
 
   DateTime _dateOnly(DateTime date) {
     return DateTime(date.year, date.month, date.day);
@@ -65,7 +67,14 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
   }
 
   Future<void> _initializeFocusedDate() async {
-    _today = _dateOnly(await DateTimeUtils.getKoreaTime());
+    _today = await DateTimeUtils.getKoreaTime();
+    DateTime todayEnd = DateTime(_today!.year, _today!.month, _today!.day, 23, 0);
+    final lastHourStart = todayEnd.subtract(const Duration(hours: 1));
+
+    if (_today!.isAfter(lastHourStart)) {
+      _today = _today!.add(const Duration(days: 1));
+    }
+
     _limitDate = _today!.add(const Duration(days: 30));
     _focusedDate = _today;
     _selectedDate = _today;
@@ -74,7 +83,12 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
 
   bool _isDateSelectable(DateTime date) {
     if (_today == null || _limitDate == null) return false;
-    return !date.isBefore(_today!) && !date.isAfter(_limitDate!);
+
+    final today = _dateOnly(_today!);
+    final limitDate = _dateOnly(_limitDate!);
+    final targetDate = _dateOnly(date);
+
+    return !targetDate.isBefore(today) && !targetDate.isAfter(limitDate);
   }
 
   @override
@@ -85,6 +99,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
 
   @override
   Widget build(BuildContext context) {
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     if (_focusedDate == null && _selectedDate == null) {
       return const SizedBox.shrink();
     }
@@ -226,7 +241,8 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
             text: '${DateFormat('M월 d일').format(_selectedDate!)} 등록',
             onPressed: () {
               if (_isDateSelectable(_selectedDate!)) {
-                widget.onDateSelected(_selectedDate!);
+                //widget.onDateSelected(_selectedDate!);
+                meetingProvider.selectDate = _selectedDate;
                 Navigator.pop(context);
               }
             },

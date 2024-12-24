@@ -15,6 +15,8 @@ import 'package:modakbul/screens/modakbul/group_select_screen.dart';
 import 'package:modakbul/screens/modakbul/map_search_screen.dart';
 import 'package:modakbul/screens/modakbul/map_select_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_detail_screen.dart';
+import 'package:modakbul/screens/modakbul/modakbul_map_detail_screen.dart';
+import 'package:modakbul/screens/modakbul/my_modakbul_screen.dart';
 import 'package:modakbul/screens/search/add_friend_list_screen.dart';
 import 'package:modakbul/screens/search/search_screen.dart';
 import 'package:modakbul/screens/setting/alert_setting_screen.dart';
@@ -64,6 +66,8 @@ class Routes {
   static const String mainScreen = '/mainScreen';
   static const String changeNumberScreen = '/changeNumberScreen';
   static const String changeNumberCodeScreen = '/changeNumberCodeScreen';
+  static const String myModakbulScreen = '/myModakbulScreen';
+  static const String modakbulMapDetailScreen = '/modakbulMapDetailScreen';
 
   ///라우트 추가 예시
   static final Map<String, WidgetBuilder> routes = {
@@ -87,8 +91,10 @@ class Routes {
     createModakbulScreen: (BuildContext context) => const CreateModakbulScreen(),
     groupSelectScreen: (BuildContext context) => const GroupSelectScreen(),
     mapSearchScreen: (BuildContext context) => const MapSearchScreen(),
-    mapSelectScreen: (BuildContext context) => const MapSelectScreen(),
+    mapSelectScreen: (BuildContext context) => MapSelectScreen(),
     modakbulDetailScreen: (BuildContext context) => const ModakbulDetailScreen(),
+    myModakbulScreen: (BuildContext context) => const MyModakbulScreen(),
+    modakbulMapDetailScreen: (BuildContext context) => const ModakbulMapDetailScreen(),
 
     ///search
     addFriendListScreen: (BuildContext context) => const AddFriendListScreen(),
