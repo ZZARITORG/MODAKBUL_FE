@@ -87,18 +87,21 @@ class LocationListTile extends StatelessWidget {
                         ),
                       ],
                     ),
+                    SizedBox(height: 6.h,),
                     SizedBox(
                       width: double.infinity,
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          address,
+                          //주소가 없는 곳이있으면 fittedbox가 고장나기때문에 삼항연산자
+                          address == '' ? ' ' : address,
                           style: Theme
                               .of(context)
                               .textTheme
                               .caption
                               .copyWith(color: ColorSchemes.gray400),
+                          maxLines: 1,
                         ),
                       ),
                     )

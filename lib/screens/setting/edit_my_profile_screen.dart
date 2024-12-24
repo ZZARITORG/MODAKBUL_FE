@@ -13,14 +13,27 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/edit_profile_bottom_sheet.dart';
 
+import 'package:modakbul/models/my_profile.dart';
+
+import 'package:modakbul/services/user_service.dart';
+
 class EditMyProfileScreen extends StatefulWidget {
-  const EditMyProfileScreen({super.key});
+  EditMyProfileScreen({super.key});
+
+  UserService userService = UserService();
 
   @override
   State<EditMyProfileScreen> createState() => _EditMyProfileScreenState();
 }
 
 class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
+  late Future<MyProfile> _futureProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureProfile = widget.userService.getMyProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,131 +45,169 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
         child: Padding(
           padding:
               EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 42.h),
-              Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(radius: StyleConstants.circleSizeXXL),
-                    Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: CircleAvatar(
-                          backgroundColor: ColorSchemes.orange100,
-                          radius: StyleConstants.circleSizeXS,
-                          child: SvgPicture.asset(
-                              IconPath.photoCameraOrange100,
-                              width: 23.06.r),
-                        )),
-                  ],
-                ),
-              ),
-              SizedBox(height: 42.h),
-              Text('이름',
-                  style: Theme.of(context)
-                      .textTheme
-                      .smallHeadLine3
-                      .copyWith(color: ColorSchemes.orange200)),
-              SizedBox(height: 10.h),
-              InkWell(
-                onTap: () {
-                  showModalBottomSheet(
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (context) {
-                        return EditProfileBottomSheet.name(hintText: '김지호');
-                      });
-                },
-                overlayColor:
-                    WidgetStateProperty.all(ColorSchemes.orange100),
-                child: Column(
-                  children: [
-                    SizedBox(height: 8.h),
-                    Row(
-                      children: [
-                        SizedBox(width: 4.w),
-                        Text('김지호',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bigHeadLine2
-                                .copyWith(color: ColorSchemes.gray200)),
-                        const Spacer(),
-                        SizedBox(
-                          width: 32.r,
-                          height: 32.r,
-                          child: Center(
-                            child: SvgPicture.asset(IconPath.edit,
-                                width: 27.r),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 6.h),
-                    Container(
-                      height: 2.h,
-                      decoration: BoxDecoration(
-                          color: ColorSchemes.gray100,
-                          borderRadius: BorderRadius.circular(2.r)),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 32.h),
-              Text('아이디',
-                  style: Theme.of(context)
-                      .textTheme
-                      .smallHeadLine3
-                      .copyWith(color: ColorSchemes.orange200)),
-              SizedBox(height: 10.h),
-              InkWell(
-                onTap: () {
-                  showModalBottomSheet(
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (context) {
-                        return EditProfileBottomSheet.id(hintText: 'kim_jj0');
-                      });
-                },
-                overlayColor:
-                    WidgetStateProperty.all(ColorSchemes.orange100),
-                child: Column(
-                  children: [
-                    SizedBox(height: 8.h),
-                    Row(
-                      children: [
-                        SizedBox(width: 4.w),
-                        Text('diwjdqdf',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bigHeadLine2
-                                .copyWith(color: ColorSchemes.gray200)),
-                        const Spacer(),
-                        SizedBox(
-                          width: 32.r,
-                          height: 32.r,
-                          child: Center(
-                            child: SvgPicture.asset(IconPath.edit,
-                                width: 27.r),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 6.h),
-                    Container(
-                      height: 2.h,
-                      decoration: BoxDecoration(
-                          color: ColorSchemes.gray100,
-                          borderRadius: BorderRadius.circular(2.r)),
-                    ),
-                  ],
-                ),
-              ),
+          child: FutureBuilder<MyProfile>(
+              future: _futureProfile,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator(); // 스켈레톤 만들어야함?
+                } else if (snapshot.hasError) {
+                  return Text('오류 발생: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return Text('데이터가 없습니다.');
+                }
+                else if (snapshot.hasData){
+                  String? profileUrl =
+                      snapshot.data?.profileUrl;
+                  String? userId = snapshot.data?.userId;
+                  String? userName = snapshot.data?.userName;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 42.h),
+                      Center(
+                        child: Stack(
+                          children: [
+                            CircleAvatar(radius: StyleConstants.circleSizeXXL,
+                                backgroundImage:
+                                NetworkImage(profileUrl!)),
+                            Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: CircleAvatar(
+                                  backgroundColor: ColorSchemes.orange100,
+                                  radius: StyleConstants.circleSizeXS,
+                                  child: SvgPicture.asset(
+                                      IconPath.photoCameraOrange100,
+                                      width: 23.06.r),
+                                )),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 42.h),
+                      Text('이름',
+                          style: Theme.of(context)
+                              .textTheme
+                              .smallHeadLine3
+                              .copyWith(color: ColorSchemes.orange200)),
+                      SizedBox(height: 10.h),
+                      InkWell(
+                        onTap: () async {
+                          final result = await showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) {
+                                return EditProfileBottomSheet.name(hintText: userName!);
+                              }
+                          );
 
-            ],
+                          if (result == true) {
+                            setState(() {
+                              _futureProfile = widget.userService.getMyProfile();
+                            });
+                          }
+                        },
+                        overlayColor:
+                        WidgetStateProperty.all(ColorSchemes.orange100),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 8.h),
+                            Row(
+                              children: [
+                                SizedBox(width: 4.w),
+                                Text(userName!,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bigHeadLine2
+                                        .copyWith(color: ColorSchemes.gray200)),
+                                const Spacer(),
+                                SizedBox(
+                                  width: 32.r,
+                                  height: 32.r,
+                                  child: Center(
+                                    child: SvgPicture.asset(IconPath.edit,
+                                        width: 27.r),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 6.h),
+                            Container(
+                              height: 2.h,
+                              decoration: BoxDecoration(
+                                  color: ColorSchemes.gray100,
+                                  borderRadius: BorderRadius.circular(2.r)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 32.h),
+                      Text('아이디',
+                          style: Theme.of(context)
+                              .textTheme
+                              .smallHeadLine3
+                              .copyWith(color: ColorSchemes.orange200)),
+                      SizedBox(height: 10.h),
+                      InkWell(
+                        onTap: () async {
+                          final result = await showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) {
+                                return EditProfileBottomSheet.id(hintText: userId!);
+                              }
+                          );
+
+                          if (result == true) {
+                            setState(() {
+                              _futureProfile = widget.userService.getMyProfile();
+                            });
+                          }
+                        },
+                        overlayColor:
+                        WidgetStateProperty.all(ColorSchemes.orange100),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 8.h),
+                            Row(
+                              children: [
+                                SizedBox(width: 4.w),
+                                Text(userId!,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bigHeadLine2
+                                        .copyWith(color: ColorSchemes.gray200)),
+                                const Spacer(),
+                                SizedBox(
+                                  width: 32.r,
+                                  height: 32.r,
+                                  child: Center(
+                                    child: SvgPicture.asset(IconPath.edit,
+                                        width: 27.r),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 6.h),
+                            Container(
+                              height: 2.h,
+                              decoration: BoxDecoration(
+                                  color: ColorSchemes.gray100,
+                                  borderRadius: BorderRadius.circular(2.r)),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    ],
+                  );
+
+                }
+                else {
+                  return Text('error');
+                }
+              }
           ),
         ),
       ),

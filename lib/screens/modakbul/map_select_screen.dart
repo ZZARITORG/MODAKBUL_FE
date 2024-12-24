@@ -2,30 +2,44 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/main.dart';
+import 'package:modakbul/providers/meeting_provider.dart';
+import 'package:modakbul/providers/place_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
 
 class MapSelectScreen extends StatelessWidget {
-  const MapSelectScreen({super.key});
+  MapSelectScreen({super.key});
+
+  TextEditingController detailAddressController = TextEditingController();
+  Set<Marker> markers = {};
+  late PlaceProvider placeProvider;
+  late MeetingProvider meetingProvider;
 
   @override
   Widget build(BuildContext context) {
+    placeProvider = Provider.of<PlaceProvider>(context, listen: false);
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
+    late KakaoMapController kakaoMapController;
     return Scaffold(
       appBar: const BackButtonAppBar(),
       body: SafeArea(
         child: Stack(
           children: [
-            Container(
-              color: ColorSchemes.orange000,
-              height: double.infinity,
-              width: double.infinity,
+            KakaoMap(
+              onMapCreated: ((controller) {
+                kakaoMapController = controller;
+              }),
+              markers: markers.toList(),
+              center: LatLng(placeProvider.y!, placeProvider.x!),
             ),
             Positioned(
               bottom: 0,
@@ -72,23 +86,25 @@ class MapSelectScreen extends StatelessWidget {
                                     ///텍스트 영역 잡아야댐
                                     Flexible(
                                       child: Text(
-                                        '서현역 콩쥐팥쥐',
+                                        placeProvider.placeName!,
                                         overflow: TextOverflow.ellipsis,
                                         style: Theme.of(context)
                                             .textTheme
                                             .smallHeadLine2
-                                            .copyWith(color: ColorSchemes.gray500),
+                                            .copyWith(
+                                                color: ColorSchemes.gray500),
                                       ),
                                     ),
                                     SizedBox(
                                       width: 6.w,
                                     ),
                                     Text(
-                                      '2km',
+                                      placeProvider.distance != null ? '${placeProvider.distance!}km' : '',
                                       style: Theme.of(context)
                                           .textTheme
                                           .caption
-                                          .copyWith(color: ColorSchemes.gray200),
+                                          .copyWith(
+                                              color: ColorSchemes.gray200),
                                     ),
                                   ],
                                 ),
@@ -103,19 +119,24 @@ class MapSelectScreen extends StatelessWidget {
                                     fit: BoxFit.scaleDown,
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      '경기도 성남시 분당구 황새울로 360번길 12 대명프라자',
+                                      placeProvider.roadAddressName! == ''
+                                          ? ' '
+                                          : placeProvider.roadAddressName!,
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)
                                           .textTheme
                                           .caption
-                                          .copyWith(color: ColorSchemes.gray400),
+                                          .copyWith(
+                                              color: ColorSchemes.gray400),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(width: 16.w,),
+                          SizedBox(
+                            width: 16.w,
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -124,15 +145,17 @@ class MapSelectScreen extends StatelessWidget {
                       Stack(
                         children: [
                           TextField(
+                            controller: detailAddressController,
                             maxLength: AppConstants.maxAddressLength,
                             cursorColor: ColorSchemes.orange100,
                             onTapOutside: (event) =>
                                 FocusManager.instance.primaryFocus?.unfocus(),
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.done,
-                            style: Theme.of(context).textTheme.body1.copyWith(
-                                color: ColorSchemes.gray500
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .body1
+                                .copyWith(color: ColorSchemes.gray500),
                             decoration: InputDecoration(
                               counterText: '',
                               hintText: '상세주소가 필요하다면 입력해주세요.',
@@ -142,7 +165,7 @@ class MapSelectScreen extends StatelessWidget {
                                   .copyWith(color: ColorSchemes.gray200),
                               isDense: true,
                               contentPadding:
-                              EdgeInsets.only(left: 4.w, bottom: 4.h),
+                                  EdgeInsets.only(left: 4.w, bottom: 4.h),
                               border: InputBorder.none,
                               errorText: null,
                               errorStyle: const TextStyle(
@@ -162,18 +185,34 @@ class MapSelectScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 16.h,),
+                      SizedBox(
+                        height: 16.h,
+                      ),
                       SizedBox(
                         height: 56.h,
                         width: double.infinity,
                         child: CustomButton(
                             text: '다음',
                             onPressed: () {
+                              //placeProvider.detailAddressName = detailAddressController.text;
+                              meetingProvider.selectPlace =
+                                  placeProvider.placeName;
+                              meetingProvider.selectAddress =
+                                  placeProvider.roadAddressName == '' ? '\u200B' : placeProvider.roadAddressName;
+                              meetingProvider.selectDetailAddress =
+                                  detailAddressController.text.isNotEmpty
+                                      ? detailAddressController.text
+                                      : '\u200B';
+                              meetingProvider.selectLat = placeProvider.y;
+                              meetingProvider.selectLng = placeProvider.x;
+
                               ///이부분 기능 개발할때 생각
-                              Navigator.of(context).popUntil((route) => route.isFirst);
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
                             },
                             buttonColor: ColorSchemes.orange200,
-                            textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                            textStyle:
+                                Theme.of(context).textTheme.smallHeadLine2,
                             textColor: ColorSchemes.white),
                       ),
                       SizedBox(

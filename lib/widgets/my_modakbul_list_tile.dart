@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/accepted_modakbul.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 
@@ -13,6 +14,7 @@ class MyModakbulListTile extends StatelessWidget {
   final String? profileImage2;
   final int profileLength;
   final bool isSelected;
+  final List<UserStatus> participantUsers;
 
   const MyModakbulListTile(
       {Key? key,
@@ -21,6 +23,7 @@ class MyModakbulListTile extends StatelessWidget {
         this.profileImage1,
         this.profileImage2,
         required this.profileLength,
+        this.participantUsers = const [],
         this.isSelected = false,})
       : super(key: key);
 
@@ -96,6 +99,7 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange200,
+                                backgroundImage: NetworkImage(profileImage1!),
                               ),
                             )),
                       if (profileLength >= 2)
@@ -107,6 +111,7 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange100,
+                                backgroundImage: NetworkImage(profileImage2!),
                               ),
                             )),
                       if (profileLength >= 3)

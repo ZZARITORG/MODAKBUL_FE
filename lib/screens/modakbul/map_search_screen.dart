@@ -1,15 +1,25 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/main.dart';
+import 'package:modakbul/models/address.dart' as address_model;
+import 'package:modakbul/models/place.dart';
+import 'package:modakbul/providers/place_provider.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/services/kakao_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/utils/location_manager.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/location_list_tile.dart';
+import 'package:provider/provider.dart';
 
 class MapSearchScreen extends StatefulWidget {
   const MapSearchScreen({super.key});
@@ -20,36 +30,6 @@ class MapSearchScreen extends StatefulWidget {
 
 class _MapSearchScreenState extends State<MapSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> locations = [
-    {'name': '스타벅스 강남점', 'address': '서울특별시 강남구 강남대로 456', 'distance': '2km'},
-    {'name': '이마트24 홍대점', 'address': '서울특별시 마포구 양화로 161', 'distance': '1.5km'},
-    {'name': '롯데리아 종로점', 'address': '서울특별시 종로구 종로 55', 'distance': '3km'},
-    {
-      'name': '투썸플레이스 강남역점',
-      'address': '서울특별시 강남구 테헤란로 123',
-      'distance': '2.5km'
-    },
-    {'name': 'gs25 서울역점', 'address': '서울특별시 용산구 한강대로 405', 'distance': '4km'},
-    {'name': '배스킨라빈스 신촌점', 'address': '서울특별시 서대문구 신촌로 22', 'distance': '3.2km'},
-    {'name': 'cu 동대문점', 'address': '서울특별시 종로구 종로 123', 'distance': '1km'},
-    {'name': '맥도날드 건대입구점', 'address': '서울특별시 광진구 능동로 108', 'distance': '5km'},
-    {'name': '파리바게트 목동점', 'address': '서울특별시 양천구 목동로 23', 'distance': '2.8km'},
-    {'name': '빽다방 여의도점', 'address': '서울특별시 영등포구 여의대방로 20', 'distance': '3.6km'},
-    {'name': '던킨도너츠 강변역점', 'address': '서울특별시 광진구 구의동 546', 'distance': '6km'},
-    {'name': 'kfc 신림점', 'address': '서울특별시 관악구 신림로 33', 'distance': '4.5km'},
-    {'name': '이디야커피 합정점', 'address': '서울특별시 마포구 합정로 12', 'distance': '1.2km'},
-    {
-      'name': '할리스커피 압구정점',
-      'address': '서울특별시 강남구 압구정로 456',
-      'distance': '2.3km'
-    },
-    {'name': '버거킹 잠실점', 'address': '서울특별시 송파구 올림픽로 300', 'distance': '5.2km'},
-    {'name': '세븐일레븐 명동점', 'address': '서울특별시 중구 명동로 55', 'distance': '2.7km'},
-    {'name': '카페베네 신사역점', 'address': '서울특별시 강남구 논현로 12', 'distance': '3km'},
-    {'name': '엔젤리너스 사당점', 'address': '서울특별시 동작구 사당로 20', 'distance': '4km'},
-    {'name': '노브랜드 홍대점', 'address': '서울특별시 마포구 홍익로 26', 'distance': '1.8km'},
-    {'name': '빕스 종각점', 'address': '서울특별시 종로구 종로 133', 'distance': '2.1km'},
-  ];
 
   List<Map<String, String>> recentLocations = [
     {'name': '스타벅스 강남점', 'address': '서울특별시 강남구 강남대로 456', 'distance': '2km'},
@@ -57,36 +37,79 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
     {'name': '롯데리아 종로점', 'address': '서울특별시 종로구 종로 55', 'distance': '3km'},
   ];
 
-  List<Map<String, dynamic>> _filteredLocations = [];
+  List<Place> _filteredLocations = [];
+  double? latitude;
+  double? longitude;
+  late Future getData;
+  KakaoService kakaoService = KakaoService();
+  Timer? _debounce;
+  late PlaceProvider placeProvider;
+
+  Future<void> getGeoData() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('permissions are denied');
+      }
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      latitude = position.latitude;
+      longitude = position.longitude;
+      print('latitude: ${position.latitude.toString()}');
+      print('longitude: ${position.longitude.toString()}');
+    });
+  }
 
   @override
   void initState() {
+    getGeoData();
     super.initState();
-    _searchController.addListener(_filterLocation);
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _debounce?.cancel(); // Timer 해제
     super.dispose();
   }
 
-  void _filterLocation() {
-    setState(() {
-      _filteredLocations = locations
-          .where((location) =>
-      location['name']!
-          .toLowerCase()
-          .contains(_searchController.text.toLowerCase()) ||
-          location['address']!
-              .toLowerCase()
-              .contains(_searchController.text.toLowerCase()))
-          .toList();
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      _filterLocation();
     });
+  }
+
+  Future<void> _filterLocation() async {
+    if (_searchController.text.isNotEmpty &&
+        latitude != null &&
+        longitude != null) {
+      // Kakao API 호출 및 결과 가져오기
+      List<Place> results = await kakaoService.getKeywordToAddress(
+        _searchController.text.toLowerCase(),
+        latitude!.toString(),
+        longitude!.toString(),
+      );
+
+      setState(() {
+        _filteredLocations = results; // 결과를 상태에 저장
+      });
+    } else {
+      setState(() {
+        _filteredLocations = []; // 검색어가 비었을 때 목록 초기화
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    placeProvider = Provider.of<PlaceProvider>(context, listen: false);
+    List<Map<String, dynamic>> recentSearchList =
+        LocationManager.getLocations();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorSchemes.gray000,
@@ -122,26 +145,42 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                           SizedBox(
                             height: 48.h,
                             child: ElevatedButton(
-                                onPressed: () {
-                                  Routes.navigateTo(context, Routes.mapSelectScreen);
+                                onPressed: () async {
+                                  //현재 위치 없을때 토스트 띄우기
+                                  List<address_model.Address> address =
+                                      await kakaoService.getCoordToAddress(
+                                          latitude!.toString(),
+                                          longitude!.toString());
+                                  placeProvider.placeName =
+                                      address[0].roadAddress.addressName == ''
+                                          ? address[0]
+                                              .detailedAddress
+                                              .addressName
+                                          : address[0].roadAddress.addressName;
+                                  placeProvider.roadAddressName =
+                                      address[0].detailedAddress.addressName;
+                                  placeProvider.x = longitude!;
+                                  placeProvider.y = latitude!;
+                                  Routes.navigateTo(
+                                      context, Routes.mapSelectScreen);
                                 },
                                 style: Theme.of(context)
                                     .elevatedButtonTheme
                                     .style!
                                     .copyWith(
-                                  // 기본값 0
-                                  shape: WidgetStateProperty.all(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            StyleConstants.radiusSmall),
-                                        side: BorderSide(
-                                          width: 1.5.w,
-                                          color: ColorSchemes.orange100,
-                                        )),
-                                  ),
-                                  backgroundColor:
-                                  WidgetStateProperty.resolveWith(
-                                          (states) {
+                                      // 기본값 0
+                                      shape: WidgetStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                StyleConstants.radiusSmall),
+                                            side: BorderSide(
+                                              width: 1.5.w,
+                                              color: ColorSchemes.orange100,
+                                            )),
+                                      ),
+                                      backgroundColor:
+                                          WidgetStateProperty.resolveWith(
+                                              (states) {
                                         if (states
                                             .contains(WidgetState.disabled)) {
                                           return ColorSchemes
@@ -149,7 +188,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                         }
                                         return ColorSchemes.gray000; // 기본 배경색
                                       }), // 버튼 색상 적용
-                                ),
+                                    ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -172,51 +211,59 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                           .textTheme
                                           .body3
                                           .copyWith(
-                                          color: ColorSchemes.orange200),
+                                              color: ColorSchemes.orange200),
                                     )
                                   ],
                                 )),
                           ),
-                          SizedBox(
-                            height: 24.h,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(width: 4.w,),
-                              Text(
-                                '최근 검색한 위치',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bigHeadLine4
-                                    .copyWith(color: ColorSchemes.gray500),
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    recentLocations.clear();
-                                  });
-                                },
-                                child: Text(
-                                  '전체 삭제',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .body3
-                                      .copyWith(color: ColorSchemes.orange100),
-                                ),
-                              ),
-                              SizedBox(width: 4.w,),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 14.h,
-                          ),
                         ],
                       ),
                     ),
-                    if (recentLocations.isNotEmpty)
+                    if (recentSearchList.isNotEmpty) ...[
+                      SizedBox(
+                        height: 24.h,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: StyleConstants.defaultPadding),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 4.w,
+                            ),
+                            Text(
+                              '최근 검색한 위치',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bigHeadLine4
+                                  .copyWith(color: ColorSchemes.gray500),
+                            ),
+                            const Spacer(),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  LocationManager.clearLocations();
+                                });
+                              },
+                              child: Text(
+                                '전체 삭제',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body3
+                                    .copyWith(color: ColorSchemes.orange100),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4.w,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 14.h,
+                      ),
                       ListView.builder(
-                          itemCount: recentLocations.length,
+                          itemCount: recentSearchList.length,
                           primary: false,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, int index) {
@@ -224,23 +271,34 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                               overlayColor: const WidgetStatePropertyAll(
                                   ColorSchemes.orange000),
                               onTap: () {
-                                Routes.navigateTo(context, Routes.mapSelectScreen);
+                                placeProvider.placeName =
+                                    recentSearchList[index]['placeName']!;
+                                placeProvider.roadAddressName =
+                                    recentSearchList[index]['roadAddressName']!;
+                                placeProvider.x = recentSearchList[index]['x']!;
+                                placeProvider.y = recentSearchList[index]['y']!;
+                                placeProvider.distance =
+                                    recentSearchList[index]['distance']!;
+                                Routes.navigateTo(
+                                    context, Routes.mapSelectScreen);
                               },
                               child: LocationListTile.isGrayIcon(
-                                locationName: recentLocations[index]['name']!,
-                                address: recentLocations[index]['address']!,
-                                distance: recentLocations[index]['distance']!,
+                                locationName: recentSearchList[index]
+                                    ['placeName']!,
+                                address: recentSearchList[index]
+                                    ['roadAddressName']!,
+                                //이부분 현재위치에서 불러오게끔 바꾸기
+                                distance:
+                                    '${recentSearchList[index]['distance']} km',
                                 onPressed: () {
                                   setState(() {
-                                    recentLocations.removeWhere(
-                                            (recentLocation) =>
-                                        recentLocation['address'] ==
-                                            recentLocations[index]['address']);
+                                    LocationManager.removeLocation(index);
                                   });
                                 },
                               ),
                             );
-                          })
+                          }),
+                    ]
                   ],
                 );
               } else if (_filteredLocations.isEmpty) {
@@ -273,7 +331,9 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                           ),
                           Row(
                             children: [
-                              SizedBox(width: 4.w,),
+                              SizedBox(
+                                width: 4.w,
+                              ),
                               Text(
                                 '검색 결과',
                                 style: Theme.of(context)
@@ -291,7 +351,9 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                         .body3
                                         .copyWith(color: ColorSchemes.gray300),
                                   )),
-                              SizedBox(width: 4.w,),
+                              SizedBox(
+                                width: 4.w,
+                              ),
                             ],
                           ),
                           SizedBox(
@@ -305,16 +367,41 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                         primary: false,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, int index) {
+                          Place place = _filteredLocations[index];
+                          double kilometers =
+                              (place.distance / 1000 * 10).round() / 10;
                           return InkWell(
-                            onTap: (){
-                              Routes.navigateTo(context, Routes.mapSelectScreen);
+                            onTap: () async {
+                              placeProvider.distance = kilometers;
+                              placeProvider.x = place.x;
+                              placeProvider.y = place.y;
+                              placeProvider.roadAddressName =
+                                  place.roadAddressName == ''
+                                      ? place.addressName
+                                      : place.roadAddressName;
+                              placeProvider.placeName = place.placeName;
+                              Map<String, dynamic> recentSearch = {
+                                'placeName': placeProvider.placeName,
+                                'roadAddressName':
+                                    placeProvider.roadAddressName,
+                                'x': placeProvider.x,
+                                'y': placeProvider.y,
+                                'distance': placeProvider.distance
+                              };
+                              await LocationManager.addLocation(recentSearch);
+                              Routes.navigateTo(
+                                context,
+                                Routes.mapSelectScreen,
+                              );
                             },
                             overlayColor: const WidgetStatePropertyAll(
                                 ColorSchemes.orange000),
                             child: LocationListTile(
-                              locationName: _filteredLocations[index]['name'],
-                              address: _filteredLocations[index]['address'],
-                              distance: _filteredLocations[index]['distance'],
+                              locationName: place.placeName,
+                              address: place.roadAddressName == ''
+                                  ? place.addressName
+                                  : place.roadAddressName,
+                              distance: '${kilometers}km',
                             ),
                           );
                         })
