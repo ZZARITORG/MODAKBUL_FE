@@ -28,6 +28,7 @@ import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
+import 'package:modakbul/widgets/change_phone_bottom_sheet.dart';
 
 class ChangeNumberCodeScreen extends StatefulWidget {
   const ChangeNumberCodeScreen({super.key});
@@ -62,7 +63,9 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
 
     try {
       await _firebaseAuthService.verifyVerificationCode(
-          _codeController.text, onSignInSuccess, onSignInFailure);
+          _codeController.text,
+              () => _showChangePhoneBottomSheet(context),
+          onSignInFailure);
     } catch (e) {
       // 실패 시 오류 메시지 처리
       onSignInFailure('인증 실패');
@@ -191,6 +194,25 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     _codeController.dispose();
     _resendTimer?.cancel();
     super.dispose();
+  }
+
+  void _showChangePhoneBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.35,
+      ),
+      builder: (BuildContext context) {
+        return ChangePhoneBottomSheet(
+          onConfirm: () {
+            // 여기에 번호 변경 로직 추가 가능
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
   }
 
   @override
