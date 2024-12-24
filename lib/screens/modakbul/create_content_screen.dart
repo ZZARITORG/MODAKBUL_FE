@@ -2,14 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/modakbul_by_group_id.dart';
+import 'package:modakbul/models/modakbul_by_user_id.dart';
+import 'package:modakbul/providers/meeting_provider.dart';
+import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/utils/date_time_utils.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/content_info.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/custom_toast.dart';
+import 'package:provider/provider.dart';
 
 class CreateContentScreen extends StatefulWidget {
   const CreateContentScreen({super.key});
@@ -22,13 +31,26 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   bool isActivated = false;
+  bool isButtonDisabled = false;
   int _contentLength = 0;
+  late MeetingProvider meetingProvider;
+  MeetingService meetingService = MeetingService();
 
   void _updateActivationState() {
     setState(() {
       isActivated = _titleController.text.isNotEmpty &&
           _contentController.text.isNotEmpty;
     });
+  }
+
+  DateTime combineTimeWithDate(DateTime date, String hour, String minute) {
+    int hourInt = int.parse(hour);
+    int minuteInt = int.parse(minute);
+    int secondInt = 00;
+    int millisecondInt = 000;
+
+    return DateTime(date.year, date.month, date.day, hourInt, minuteInt,
+        secondInt, millisecondInt);
   }
 
   @override
@@ -51,6 +73,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
@@ -63,8 +86,8 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
         child: Stack(
           children: [
             Padding(
-              padding:
-              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+              padding: EdgeInsets.symmetric(
+                  horizontal: StyleConstants.defaultPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -80,16 +103,17 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                 controller: _titleController,
                                 maxLength: AppConstants.maxTitleLength,
                                 cursorColor: ColorSchemes.orange100,
-                                onTapOutside: (event) =>
-                                    FocusManager.instance.primaryFocus?.unfocus(),
+                                onTapOutside: (event) => FocusManager
+                                    .instance.primaryFocus
+                                    ?.unfocus(),
                                 keyboardType: TextInputType.text,
                                 textInputAction: TextInputAction.done,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bigHeadLine2
                                     .copyWith(
-                                  color: ColorSchemes.gray500,
-                                ),
+                                      color: ColorSchemes.gray500,
+                                    ),
                                 decoration: InputDecoration(
                                   counterText: '',
                                   hintText: '제목을 입력해주세요.',
@@ -99,7 +123,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                       .copyWith(color: ColorSchemes.gray200),
                                   isDense: true,
                                   contentPadding:
-                                  EdgeInsets.only(left: 4.w, bottom: 6.h),
+                                      EdgeInsets.only(left: 4.w, bottom: 6.h),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -129,8 +153,8 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                   FocusManager.instance.primaryFocus?.unfocus(),
                               keyboardType: TextInputType.multiline,
                               style: Theme.of(context).textTheme.body1.copyWith(
-                                color: ColorSchemes.gray500,
-                              ),
+                                    color: ColorSchemes.gray500,
+                                  ),
                               decoration: InputDecoration(
                                 counterText: '',
                                 hintText: '내용을 입력하고 모닥불을 피워보세요.',
@@ -140,7 +164,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                     .copyWith(color: ColorSchemes.gray200),
                                 isDense: true,
                                 contentPadding:
-                                EdgeInsets.only(left: 4.w, bottom: 6.h),
+                                    EdgeInsets.only(left: 4.w, bottom: 6.h),
                                 border: InputBorder.none,
                               ),
                             ),
@@ -153,15 +177,24 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                 children: [
                                   TextSpan(
                                     text: '$_contentLength',
-                                    style: Theme.of(context).textTheme.caption.copyWith(
-                                      color: _contentController.text.isNotEmpty ? ColorSchemes.orange200 : ColorSchemes.gray200,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption
+                                        .copyWith(
+                                          color:
+                                              _contentController.text.isNotEmpty
+                                                  ? ColorSchemes.orange200
+                                                  : ColorSchemes.gray200,
+                                        ),
                                   ),
                                   TextSpan(
                                     text: ' /${AppConstants.maxContentLength}',
-                                    style: Theme.of(context).textTheme.caption.copyWith(
-                                      color: ColorSchemes.gray200,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption
+                                        .copyWith(
+                                          color: ColorSchemes.gray200,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -172,33 +205,43 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                     ),
                   ),
                   ContentInfo(
-                    info: '곽민철 외 2명',
+                    info: meetingProvider.selectGroupName ?? ' ',
                     onPressed: () {},
-                    icon: isActivated ? IconPath.groupOrange200 : IconPath.groupOrange100,
+                    icon: isActivated
+                        ? IconPath.groupOrange200
+                        : IconPath.groupOrange100,
                     isActivated: isActivated,
                     iconWidth: 18.r,
                   ),
                   SizedBox(height: 18.h),
                   ContentInfo(
-                    info: '투파인드피터 서현점',
+                    info: meetingProvider.selectPlace ?? ' ',
                     onPressed: () {},
-                    icon: isActivated ? IconPath.pinDropOrange200 : IconPath.pinDropOrange100,
+                    icon: isActivated
+                        ? IconPath.pinDropOrange200
+                        : IconPath.pinDropOrange100,
                     isActivated: isActivated,
                     iconWidth: 16.r,
                   ),
                   SizedBox(height: 18.h),
                   ContentInfo(
-                    info: '10월 24일',
+                    info:
+                        DateFormat('M월 d일').format(meetingProvider.selectDate ?? DateTime(1999, 1, 1)),
                     onPressed: () {},
-                    icon: isActivated ? IconPath.calendarMonthOrange200 : IconPath.calendarMonthOrange100,
+                    icon: isActivated
+                        ? IconPath.calendarMonthOrange200
+                        : IconPath.calendarMonthOrange100,
                     isActivated: isActivated,
                     iconWidth: 16.r,
                   ),
                   SizedBox(height: 18.h),
                   ContentInfo(
-                    info: 'PM 12:00',
+                    info:
+                        '${meetingProvider.selectHour ?? ' '}시 ${meetingProvider.selectMinute ?? ' '!.padLeft(2, '0')}분',
                     onPressed: () {},
-                    icon: isActivated ? IconPath.timeOrange200 : IconPath.timeOrange100,
+                    icon: isActivated
+                        ? IconPath.timeOrange200
+                        : IconPath.timeOrange100,
                     isActivated: isActivated,
                     iconWidth: 18.r,
                   ),
@@ -216,11 +259,59 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                 height: 56.h,
                 child: CustomButton(
                   text: '게시하기',
-                  onPressed: isActivated ? () {} : null,
+                  onPressed: isActivated && !isButtonDisabled
+                      ? () async {
+                          setState(() {
+                            isButtonDisabled = true;
+                          });
+                          DateTime now = await DateTimeUtils.getKoreaTime();
+                          DateTime selectDateTime = combineTimeWithDate(
+                              meetingProvider.selectDate!,
+                              meetingProvider.selectHour!,
+                              meetingProvider.selectMinute!);
+                          if(selectDateTime.isAfter(now)) {
+                            if (meetingProvider.isGroup!) {
+                              await meetingService.createModakbulByGroupId(
+                                  ModakbulByGroupId(
+                                      title: _titleController.text,
+                                      content: _contentController.text,
+                                      location: meetingProvider.selectPlace!,
+                                      address: meetingProvider.selectAddress!,
+                                      detailAddress:
+                                      meetingProvider.selectDetailAddress!,
+                                      date: selectDateTime,
+                                      lat: meetingProvider.selectLat!,
+                                      lng: meetingProvider.selectLng!,
+                                      groupId: meetingProvider.selectGroupId!));
+                            } else {
+                              await meetingService.createModakbulByUserId(
+                                  ModakbulByUserId(
+                                      title: _titleController.text,
+                                      content: _contentController.text,
+                                      location: meetingProvider.selectPlace!,
+                                      address: meetingProvider.selectAddress!,
+                                      detailAddress:
+                                      meetingProvider.selectDetailAddress!,
+                                      date: selectDateTime,
+                                      lat: meetingProvider.selectLat!,
+                                      lng: meetingProvider.selectLng!,
+                                      friendIds: meetingProvider.selectFriends!));
+                            }
+                            Navigator.pop(context);
+                            meetingProvider.reset();
+                            setState(() {
+                              isButtonDisabled = false;
+                            });
+                          } else {
+                            CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.');
+                          }
+                        }
+                      : null,
                   buttonColor: ColorSchemes.orange200,
-                  textStyle: Theme.of(context).textTheme.smallHeadLine2.copyWith(
-                    color: ColorSchemes.white,
-                  ),
+                  textStyle:
+                      Theme.of(context).textTheme.smallHeadLine2.copyWith(
+                            color: ColorSchemes.white,
+                          ),
                   textColor: ColorSchemes.white,
                 ),
               ),

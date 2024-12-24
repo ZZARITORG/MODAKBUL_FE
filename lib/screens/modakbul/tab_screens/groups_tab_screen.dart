@@ -1,14 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/main.dart';
+import 'package:modakbul/models/group_list.dart';
+import 'package:modakbul/providers/meeting_provider.dart';
+import 'package:modakbul/services/group_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/group_screen_skeleton.dart';
 import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
+import 'package:provider/provider.dart';
 
 class GroupsTabScreen extends StatefulWidget {
   GroupsTabScreen({super.key});
@@ -18,310 +26,362 @@ class GroupsTabScreen extends StatefulWidget {
 }
 
 class _GroupsTabScreenState extends State<GroupsTabScreen> {
-  final List<Map<String, dynamic>> groups = [
-    {
-      'name': '개발자 커뮤니티',
-      'createdDate': '2023-01-01',
-      'members': [
-        {'username': '김민수', 'profile': 'https://example.com/profile1.jpg'},
-        {'username': '이서준', 'profile': 'https://example.com/profile2.jpg'},
-        {'username': '박지훈', 'profile': 'https://example.com/profile3.jpg'}
-      ]
-    },
-    {
-      'name': 'AI 연구 모임',
-      'createdDate': '2023-01-05',
-      'members': [
-        {'username': '최유리', 'profile': 'https://example.com/profile4.jpg'},
-        {'username': '정다은', 'profile': 'https://example.com/profile5.jpg'}
-      ]
-    },
-    {
-      'name': '프로그래밍 동호회',
-      'createdDate': '2023-01-10',
-      'members': [
-        {'username': '홍길동', 'profile': 'https://example.com/profile6.jpg'},
-        {'username': '김하늘', 'profile': 'https://example.com/profile7.jpg'},
-        {'username': '이하은', 'profile': 'https://example.com/profile8.jpg'},
-        {'username': '최서윤', 'profile': 'https://example.com/profile9.jpg'}
-      ]
-    },
-    {
-      'name': '데이터 과학자 모임',
-      'createdDate': '2023-01-15',
-      'members': [
-        {'username': '박준영', 'profile': 'https://example.com/profile10.jpg'},
-        {'username': '윤지호', 'profile': 'https://example.com/profile11.jpg'}
-      ]
-    },
-    {
-      'name': '백엔드 개발자 클럽',
-      'createdDate': '2023-01-20',
-      'members': [
-        {'username': '강다현', 'profile': 'https://example.com/profile12.jpg'},
-        {'username': '송지민', 'profile': 'https://example.com/profile13.jpg'},
-        {'username': '오수민', 'profile': 'https://example.com/profile14.jpg'},
-        {'username': '임성현', 'profile': 'https://example.com/profile15.jpg'}
-      ]
-    },
-    {
-      'name': '프론트엔드 스터디',
-      'createdDate': '2023-01-25',
-      'members': [
-        {'username': '서지우', 'profile': 'https://example.com/profile16.jpg'},
-        {'username': '한승훈', 'profile': 'https://example.com/profile17.jpg'}
-      ]
-    },
-    {
-      'name': '모바일 개발 그룹',
-      'createdDate': '2023-01-30',
-      'members': [
-        {'username': '문예진', 'profile': 'https://example.com/profile18.jpg'},
-        {'username': '차은호', 'profile': 'https://example.com/profile19.jpg'},
-        {'username': '전수빈', 'profile': 'https://example.com/profile20.jpg'}
-      ]
-    },
-    {
-      'name': '기술 혁신 모임',
-      'createdDate': '2023-02-01',
-      'members': [
-        {'username': '김민수', 'profile': 'https://example.com/profile1.jpg'},
-        {'username': '이서준', 'profile': 'https://example.com/profile2.jpg'},
-        {'username': '박지훈', 'profile': 'https://example.com/profile3.jpg'}
-      ]
-    },
-    {
-      'name': 'IT 스타트업 포럼',
-      'createdDate': '2023-02-05',
-      'members': [
-        {'username': '최유리', 'profile': 'https://example.com/profile4.jpg'},
-        {'username': '정다은', 'profile': 'https://example.com/profile5.jpg'}
-      ]
-    },
-    {
-      'name': '클라우드 엔지니어링',
-      'createdDate': '2023-02-10',
-      'members': [
-        {'username': '홍길동', 'profile': 'https://example.com/profile6.jpg'},
-        {'username': '김하늘', 'profile': 'https://example.com/profile7.jpg'},
-        {'username': '이하은', 'profile': 'https://example.com/profile8.jpg'},
-        {'username': '최서윤', 'profile': 'https://example.com/profile9.jpg'},
-        {'username': '박준영', 'profile': 'https://example.com/profile10.jpg'}
-      ]
-    },
-    // 나머지 그룹들 생략 - 패턴 동일
-  ];
-  List<Map<String, dynamic>> _filteredGroups = [];
+  String selectedFilter = 'latest';
+  String filterText = '최신순';
   final TextEditingController _searchController = TextEditingController();
-  int? selectedIndex;
   final ScrollController _scrollController = ScrollController();
+  GroupService groupService = GroupService();
+  List<Group> groupList = [];
+  final FocusNode _searchFocusNode = FocusNode();
+  late Future<List<Group>> getData;
+  Timer? _debounce;
+  Logger logger = Logger(printer: PrettyPrinter());
+  String? selectedGroupId;
+  String? selectedGroupName;
+  late MeetingProvider meetingProvider;
+
+  // ValueNotifier로 _filteredGroups 관리
+  ValueNotifier<List<Group>> _filteredGroupsNotifier = ValueNotifier([]);
 
   @override
   void initState() {
     super.initState();
-    _filteredGroups = groups;
-    _searchController.addListener(_filterGroups);
+    getData = groupService.getGroupList();
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocusNode.dispose();
+    _debounce?.cancel();
+    _filteredGroupsNotifier.dispose();
     super.dispose();
   }
 
-  void _toggleSelectedGroup(int index) {
-    setState(() {
-      if (selectedIndex == index) {
-        selectedIndex = null;
-      } else {
-        selectedIndex = index;
-      }
+  // 가나다순 정렬 함수
+  List<Group> sortByName(List<Group> data) {
+    data.sort((a, b) => a.name.compareTo(b.name));
+    return data;
+  }
+
+  // 최신순 정렬 함수 (최신 날짜가 먼저)
+  List<Group> sortByRecent(List<Group> data) {
+    data.sort((a, b) {
+      DateTime dateA = DateTime.parse(a.updatedAt!);
+      DateTime dateB = DateTime.parse(b.updatedAt!);
+      return dateB.compareTo(dateA); // 최신순 정렬
+    });
+    return data;
+  }
+
+  // 자주 만나는 그룹 순 정렬 함수 (count 높은 순)
+  List<Group> sortByCount(List<Group> data) {
+    data.sort((a, b) {
+      return b.count.compareTo(a.count); // 내림차순 정렬
+    });
+    return data;
+  }
+
+  // 검색 입력이 변경될 때마다 실행되는 함수
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _filterGroups();
     });
   }
 
-  ///TODO 디바운딩 추가, TODO 검색방식 정하기
+  // 검색 필터링 함수
   void _filterGroups() {
+    String searchQuery = _searchController.text.toLowerCase().trim();
+    List<Group> filtered = groupList.where((group) {
+      return group.name.toLowerCase().contains(searchQuery) ||
+          group.id.toLowerCase().contains(searchQuery);
+    }).toList();
+    _filteredGroupsNotifier.value = filtered;
+  }
+
+  void _toggleSelectedGroup(String groupId, String groupName) {
     setState(() {
-      _filteredGroups = groups
-          .where((group) => group['name']
-          .toLowerCase()
-          .contains(_searchController.text.toLowerCase()))
-          .toList();
+      if (selectedGroupId == groupId) {
+        selectedGroupId = null;
+        selectedGroupName = null; // 이미 선택된 그룹이면 선택 해제
+      } else {
+        selectedGroupId = groupId;
+        selectedGroupName = groupName; // 새로운 그룹 선택
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     return Stack(
       children: [
         SingleChildScrollView(
           controller: _scrollController,
           child: Padding(
             padding:
-            EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 22.h,
-                ),
-                CustomSearchBar(
-                  hintText: '그룹을 검색해보세요.',
-                  controller: _searchController,
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                Builder(builder: (context) {
-                  if (_filteredGroups.isEmpty) {
-                    ///이부분 정하기
-                    return Center(
-                      child: Text(
-                        '검색 결과가 없습니다',
-                        style: Theme.of(context)
-                            .textTheme
-                            .body1
-                            .copyWith(color: ColorSchemes.gray300),
-                      ),
-                    );
+                EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+            child: FutureBuilder<List<Group>>(
+                future: getData,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const GroupScreenSkeleton();
+                  } else if (snapshot.hasError) {
+                    return Text('에러 발생: ${snapshot.hasError}');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Text('데이터 없음');
                   } else {
+                    groupList = snapshot.data!;
+                    _filteredGroupsNotifier.value = groupList;
                     return Column(
                       children: [
-                        Row(
-                          children: [
-                            SizedBox(width: 4.w,),
-                            Text(
-                              '최신순',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bigHeadLine4
-                                  .copyWith(color: ColorSchemes.gray500),
-                            ),
-                            const Spacer(),
-                            TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  '필터',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .body3
-                                      .copyWith(color: ColorSchemes.gray300),
-                                )),
-                            SizedBox(width: 4.w,),
-                          ],
-                        ),
-                        SizedBox(height: 14.h,),
-                        SizedBox(
-                          width: double.infinity,
-                          child: GestureDetector(
-                            onTap: () {
-                            },
-                            behavior: HitTestBehavior.opaque,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
-                              ),
-                              color: ColorSchemes.gray100,
-                              margin: EdgeInsets.zero,
-                              elevation: 0,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 20.h, bottom: 14.h),
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      width: 98.r,
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                            child: CircleAvatar(
-                                              radius: StyleConstants.circleSizeXS,
-                                              backgroundColor: ColorSchemes.white,
-                                              child: CircleAvatar(
-                                                radius: StyleConstants.circleSizeXXXS,
-                                                backgroundColor: ColorSchemes.orange200,
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            left: 28.r,
-                                            child: CircleAvatar(
-                                              radius: StyleConstants.circleSizeXS,
-                                              backgroundColor: ColorSchemes.white,
-                                              child: CircleAvatar(
-                                                radius: StyleConstants.circleSizeXXXS,
-                                                backgroundColor: ColorSchemes.orange100,
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            left: 56.r,
-                                            child: CircleAvatar(
-                                              radius: StyleConstants.circleSizeXS,
-                                              backgroundColor: ColorSchemes.white,
-                                              child: CircleAvatar(
-                                                radius: StyleConstants.circleSizeXXXS,
-                                                backgroundColor: ColorSchemes.gray300,
-                                                child: SvgPicture.asset(IconPath.plus, width: 11.r),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    Text(
-                                      '그룹 생성하기',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .smallHeadLine3
-                                          .copyWith(color: ColorSchemes.gray200),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
                         SizedBox(
                           height: 14.h,
                         ),
-                        ListView.builder(
-                            itemCount: _filteredGroups.length,
-                            primary: false,
-                            shrinkWrap: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              return GestureDetector(
-                                onTap: () => _toggleSelectedGroup(index),
-                                child: Column(
-                                  children: [
-                                    MyModakbulListTile(
-                                      title: _filteredGroups[index]['name'],
-                                      time: _filteredGroups[index]
-                                      ['createdDate'],
-                                      profileLength: _filteredGroups[index]
-                                      ['members']
-                                          .length,
-                                      profileImage1: _filteredGroups[index]
-                                      ['members'][0]['profile'],
-                                      profileImage2: _filteredGroups[index]
-                                      ['members'][1]['profile'],
-
-                                      ///프로필 1,2를 보내지말고 members변수 자체를 보내면 댐
-                                      isSelected: selectedIndex == index,
-                                    ),
-                                    SizedBox(
-                                      height: 12.h,
-                                    )
-                                  ],
+                        Column(
+                          children: [
+                            CustomSearchBar(
+                              hintText: '그룹을 검색해보세요.',
+                              controller: _searchController,
+                              focusNode: _searchFocusNode,
+                            ),
+                            SizedBox(height: 24.h),
+                            Row(
+                              children: [
+                                Text(
+                                  filterText,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine4
+                                      .copyWith(color: ColorSchemes.gray500),
                                 ),
-                              );
-                            }),
+                                Spacer(),
+                                TextButton(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(StyleConstants.radiusLarge),
+                                              topRight: Radius.circular(StyleConstants.radiusLarge),
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SizedBox(height: 38.h),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '필터',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bigHeadLine3
+                                                          .copyWith(color: ColorSchemes.gray500),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 24.h),
+                                                _buildFilterOption('최신순', 'latest', context),
+                                                SizedBox(height: 24.h),
+                                                _buildFilterOption('가나다순', 'alphabetical', context),
+                                                SizedBox(height: 24.h),
+                                                _buildFilterOption('자주 만나는 그룹', 'frequent', context),
+                                                SizedBox(height: 56.h),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Text(
+                                    '필터',
+                                    style: Theme.of(context).textTheme.body3.copyWith(color: ColorSchemes.gray300),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 14.h,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: GestureDetector(
+                                onTap: () {},
+                                behavior: HitTestBehavior.opaque,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        StyleConstants.radiusMedium),
+                                  ),
+                                  color: ColorSchemes.gray100,
+                                  margin: EdgeInsets.zero,
+                                  elevation: 0,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 20.h, bottom: 14.h),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          width: 98.r,
+                                          child: Stack(
+                                            children: [
+                                              Positioned(
+                                                child: CircleAvatar(
+                                                  radius: StyleConstants
+                                                      .circleSizeXS,
+                                                  backgroundColor:
+                                                      ColorSchemes.white,
+                                                  child: CircleAvatar(
+                                                    radius: StyleConstants
+                                                        .circleSizeXXXS,
+                                                    backgroundColor:
+                                                        ColorSchemes.orange200,
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                left: 28.r,
+                                                child: CircleAvatar(
+                                                  radius: StyleConstants
+                                                      .circleSizeXS,
+                                                  backgroundColor:
+                                                      ColorSchemes.white,
+                                                  child: CircleAvatar(
+                                                    radius: StyleConstants
+                                                        .circleSizeXXXS,
+                                                    backgroundColor:
+                                                        ColorSchemes.orange100,
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                left: 56.r,
+                                                child: CircleAvatar(
+                                                  radius: StyleConstants
+                                                      .circleSizeXS,
+                                                  backgroundColor:
+                                                      ColorSchemes.white,
+                                                  child: CircleAvatar(
+                                                    radius: StyleConstants
+                                                        .circleSizeXXXS,
+                                                    backgroundColor:
+                                                        ColorSchemes.gray300,
+                                                    child: SvgPicture.asset(
+                                                        IconPath.plus,
+                                                        width: 11.r),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        Text(
+                                          '그룹 생성하기',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .smallHeadLine3
+                                              .copyWith(
+                                                  color: ColorSchemes.gray200),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 14.h,
+                            ),
+                            ValueListenableBuilder<List<Group>>(
+                                valueListenable: _filteredGroupsNotifier,
+                                builder: (context, filteredGroups, _) {
+                                  if (filteredGroups.isEmpty) {
+                                    return Column(
+                                      children: [
+                                        SizedBox(height: 132.h),
+                                        Text(
+                                          '검색결과가 없습니다',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bigHeadLine3
+                                              .copyWith(
+                                                  color:
+                                                      ColorSchemes.orange100),
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        Text(
+                                          '검색어를 다시 확인해 주세요',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .body2
+                                              .copyWith(
+                                                  color: ColorSchemes.gray300),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                  return ListView.builder(
+                                      itemCount: filteredGroups.length,
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        String groupName =
+                                            filteredGroups[index].name;
+                                        String groupId =
+                                            filteredGroups[index].id;
+                                        return GestureDetector(
+                                          onTap: () =>
+                                              _toggleSelectedGroup(groupId, groupName),
+                                          child: Column(
+                                            children: [
+                                              MyModakbulListTile(
+                                                title: groupName,
+                                                time: filteredGroups[index]
+                                                    .updatedAt,
+                                                profileLength:
+                                                    filteredGroups[index]
+                                                        .members
+                                                        .length,
+                                                profileImage1:
+                                                    filteredGroups[index]
+                                                        .members[0]
+                                                        .user
+                                                        .profileUrl,
+                                                profileImage2:
+                                                    filteredGroups[index]
+                                                        .members[1]
+                                                        .user
+                                                        .profileUrl,
+
+                                                ///프로필 1,2를 보내지말고 members변수 자체를 보내면 댐
+                                                isSelected: filteredGroups[index].id == selectedGroupId,
+                                              ),
+                                              SizedBox(
+                                                height: 12.h,
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                }),
+                          ],
+                        ),
+                        SizedBox(height: 88.h),
                       ],
                     );
                   }
                 }),
-                SizedBox(height: 88.h),
-              ],
-            ),
           ),
         ),
         Positioned(
@@ -350,7 +410,12 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                       height: 56.h,
                       child: CustomButton(
                           text: '그룹 선택',
-                          onPressed: selectedIndex != null ? () {} : null,
+                          onPressed: selectedGroupId != null ? () {
+                            meetingProvider.selectGroupName = selectedGroupName;
+                            meetingProvider.selectGroupId = selectedGroupId;
+                            meetingProvider.isGroup = true;
+                            Navigator.pop(context);
+                          } : null,
                           buttonColor: ColorSchemes.orange200,
                           textStyle: Theme.of(context).textTheme.smallHeadLine2,
                           textColor: ColorSchemes.white),
@@ -358,6 +423,57 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
               ],
             ))
       ],
+    );
+  }
+  Widget _buildFilterOption(String title, String filterKey, BuildContext context) {
+    bool isSelected = selectedFilter == filterKey;
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: ColorSchemes.white),
+        onPressed: () {
+          setState(() {
+            selectedFilter = isSelected ? '' : filterKey;
+            switch (filterKey) {
+              case 'latest':
+                filterText = '최신순';
+                _filteredGroupsNotifier.value = sortByRecent(groupList);
+                break;
+              case 'alphabetical':
+                filterText = '가나다순';
+                _filteredGroupsNotifier.value = sortByName(groupList);
+                break;
+              case 'frequent':
+                filterText = '자주 만나는 그룹';
+                _filteredGroupsNotifier.value = sortByCount(groupList);
+                break;
+            }
+          });
+          Navigator.pop(context);
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.body2.copyWith(
+                color: isSelected ? ColorSchemes.orange200 : ColorSchemes.gray300,
+              ),
+            ),
+            SizedBox(
+              height: 24.r,
+              width: 24.r,
+              child: isSelected
+                  ? SvgPicture.asset(
+                IconPath.check,
+                width: 20.r,
+                fit: BoxFit.scaleDown,
+              )
+                  : const SizedBox.shrink(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

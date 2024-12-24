@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/providers/meeting_provider.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/date_time_utils.dart';
+import 'package:provider/provider.dart';
 
 import 'custom_button.dart';
 
 class CustomTimePicker extends StatefulWidget {
   final DateTime selectedDate;
-  final Function(String, String) onTimeSelected;
 
-  CustomTimePicker({required this.selectedDate, required this.onTimeSelected});
+  CustomTimePicker({required this.selectedDate});
 
   @override
   _CustomTimePickerState createState() => _CustomTimePickerState();
@@ -24,6 +25,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
   late bool isPeriodDisabled;
   late bool isHourDisabled;
   late bool isMinuteDisabled;
+  late MeetingProvider meetingProvider;
 
   @override
   void initState() {
@@ -71,6 +73,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
 
   @override
   Widget build(BuildContext context) {
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     if (currentTime == null) return const SizedBox.shrink();
 
     final isAfternoon = currentTime!.hour >= 12;
@@ -216,7 +219,9 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
               text: '$selectedHour시 ${selectedMinute.toString().padLeft(
                   2, '0')}분 등록',
                onPressed: isMinuteSelectable(selectedMinute!) ? () {
-                 widget.onTimeSelected(selectedHour!.toString(), selectedMinute!.toString());
+                 //widget.onTimeSelected(selectedHour!.toString(), selectedMinute!.toString());
+                 meetingProvider.selectHour = selectedHour!.toString();
+                 meetingProvider.selectMinute = selectedMinute!.toString();
                   Navigator.pop(context);
               } : null,
               buttonColor: ColorSchemes.orange200,

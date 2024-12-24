@@ -3,16 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/providers/meeting_provider.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/date_time_utils.dart';
+import 'package:provider/provider.dart';
 
 import 'custom_button.dart';
 
 class CustomCalendarPicker extends StatefulWidget {
-  final Function(DateTime) onDateSelected;
 
-  const CustomCalendarPicker({required this.onDateSelected, Key? key})
+  const CustomCalendarPicker({Key? key})
       : super(key: key);
 
   @override
@@ -25,6 +26,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
   DateTime? _today;
   DateTime? _limitDate;
   List<String> weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+  late MeetingProvider meetingProvider;
 
   DateTime _dateOnly(DateTime date) {
     return DateTime(date.year, date.month, date.day);
@@ -97,6 +99,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
 
   @override
   Widget build(BuildContext context) {
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     if (_focusedDate == null && _selectedDate == null) {
       return const SizedBox.shrink();
     }
@@ -238,7 +241,8 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
             text: '${DateFormat('M월 d일').format(_selectedDate!)} 등록',
             onPressed: () {
               if (_isDateSelectable(_selectedDate!)) {
-                widget.onDateSelected(_selectedDate!);
+                //widget.onDateSelected(_selectedDate!);
+                meetingProvider.selectDate = _selectedDate;
                 Navigator.pop(context);
               }
             },
