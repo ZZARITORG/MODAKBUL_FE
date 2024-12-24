@@ -3,27 +3,26 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/my_host_modakbul.dart';
 import 'package:modakbul/themes/styles.dart';
 import '../themes/color_schemes.dart';
 
 class MyModakbulCard extends StatelessWidget {
-  final String? profileImage1;
-  final String? profileImage2;
-  final int profileLength;
+  final int participantLength;
   final String title;
-  final String group;
+  final String groupName;
   final String date;
-  final String location;
+  final String address;
+  final List<UserStatus> participantUsers;
 
   const MyModakbulCard({
     Key? key,
-    this.profileImage1,
-    this.profileImage2,
-    required this.profileLength,
+    required this.participantLength,
     required this.title,
-    required this.group,
+    required this.groupName,
     required this.date,
-    required this.location,
+    required this.address,
+    required this.participantUsers,
   }) : super(key: key);
 
   @override
@@ -32,7 +31,7 @@ class MyModakbulCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          group,
+          groupName,
           style: Theme.of(context)
               .textTheme
               .body3
@@ -93,7 +92,7 @@ class MyModakbulCard extends StatelessWidget {
               width: 4.w,
             ),
             Text(
-              location,
+              address,
               style: Theme.of(context)
                   .textTheme
                   .body3
@@ -125,7 +124,7 @@ class MyModakbulCard extends StatelessWidget {
               onTap: () {},
               child: Row(
                 children: [
-                  profileLength == 1
+                  participantLength == 1
                       ? Row(
                           children: [
                             Text(
@@ -141,12 +140,12 @@ class MyModakbulCard extends StatelessWidget {
                       : Row(
                           children: [
                             SizedBox(
-                              width: profileLength >= 4
+                              width: participantLength >= 4
                                   ? 84.w
-                                  : (profileLength == 3 ? 60.w : 36.w),
+                                  : (participantLength == 3 ? 60.w : 36.w),
                               child: Stack(
                                 children: [
-                                  if (profileLength >= 2)
+                                  if (participantLength >= 2)
                                     Positioned(
                                       child: CircleAvatar(
                                         radius: StyleConstants.circleSizeXXXXXS,
@@ -154,12 +153,11 @@ class MyModakbulCard extends StatelessWidget {
                                         child: CircleAvatar(
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
-                                          backgroundColor:
-                                              ColorSchemes.orange200,
+                                          backgroundImage: NetworkImage(participantUsers[0].profileUrl),
                                         ),
                                       ),
                                     ),
-                                  if (profileLength >= 3)
+                                  if (participantLength >= 3)
                                     Positioned(
                                       left: 24.w,
                                       child: CircleAvatar(
@@ -168,12 +166,11 @@ class MyModakbulCard extends StatelessWidget {
                                         child: CircleAvatar(
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
-                                          backgroundColor:
-                                              ColorSchemes.orange100,
+                                          backgroundImage: NetworkImage(participantUsers[1].profileUrl),
                                         ),
                                       ),
                                     ),
-                                  if (profileLength >= 4)
+                                  if (participantLength >= 4)
                                     Positioned(
                                       left: 48.w,
                                       child: CircleAvatar(
@@ -182,8 +179,7 @@ class MyModakbulCard extends StatelessWidget {
                                         child: CircleAvatar(
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
-                                          backgroundColor:
-                                              ColorSchemes.orange000,
+                                          backgroundImage: NetworkImage(participantUsers[2].profileUrl),
                                         ),
                                       ),
                                     ),
@@ -192,7 +188,7 @@ class MyModakbulCard extends StatelessWidget {
                             ),
                             SizedBox(width: 7.w),
                             Text(
-                              '${profileLength - 1}명',
+                              '${participantLength - 1}명',
                               style: Theme.of(context).textTheme.body3.copyWith(
                                   color: ColorSchemes.gray200),
                             ),

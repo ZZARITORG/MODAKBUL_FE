@@ -6,6 +6,7 @@ class ApiPath{
   static String baseUrl = dotenv.env['BASE_URL'] ?? '';
   static String s3Url = dotenv.env['S3_URL'] ?? '';
   static String kakaoRestApiUrl = dotenv.env['KAKAO_REST_API_URL'] ?? '';
+  static String appKey = dotenv.env['APP_KEY'] ?? '';
 
   //health check
   static String healthCheck = '/api/v0/health';
