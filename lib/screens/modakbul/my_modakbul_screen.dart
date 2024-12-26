@@ -26,45 +26,6 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
 
   MeetingService meetingService = MeetingService();
 
-  final List<Map<String, dynamic>> modakbuls = [
-    {
-      'title': '서현 모임',
-      'time': '2024.11.1 (월)',
-      'length': 3,
-    },
-    {
-      'title': '동국대 충무로 모임',
-      'time': '2024.11.1 (금)',
-      'length': 2,
-    },
-    {
-      'title': '이매고 모임',
-      'time': '2024.11.1 (목)',
-      'length': 6,
-    },
-    {
-      'title': '콩팥에 인생 바친 모임',
-      'time': '2024.1.1 (일)',
-      'length': 1,
-    },
-    {
-      'title': '모각코 모임',
-      'time': '2024.4.23 (화)',
-      'length': 0,
-    },
-    {
-      'title': '짜릿한 모임',
-      'time': '2024.12.1 (월)',
-      'length': 3,
-    },
-  ];
-
-  void _toggleSelectedCard(int index) {
-    setState(() {
-      modakbuls[index]['isSelected'] = !modakbuls[index]['isSelected'];
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,7 +97,7 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
                               return Column(
                                 children: [
                                   GestureDetector(
-                                    onTap: () => _toggleSelectedCard(index),
+                                    onTap: (){},
                                     child: MyModakbulListTile(
                                       title: title,
                                       time: date,
@@ -144,7 +105,7 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
                                       participantUsers: participantUsers,
                                     ),
                                   ),
-                                  if (index != modakbuls.length - 1)
+                                  if (index != acceptedModakbulList.length - 1)
                                     SizedBox(height: 14.h),
                                 ],
                               );

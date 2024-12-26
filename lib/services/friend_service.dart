@@ -24,8 +24,9 @@ class FriendService {
 
   Future<void> unblockedUser(UnblockedUser unblockedUser) async {
     await dio.post(
-      ApiPath.friendUnblock,
-      data: unblockedUser.toJson(),
+        ApiPath.friendUnblock,
+        data: unblockedUser.toJson());
+  }
       
   Future<List<FriendList>> getFriendList() async {
     Response response = await dio.get(

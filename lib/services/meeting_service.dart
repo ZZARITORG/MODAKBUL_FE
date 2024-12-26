@@ -25,7 +25,7 @@ class MeetingService {
   Future<void> createModakbulByGroupId(ModakbulByGroupId modakbul) async {
     await dio.post(ApiPath.meetingGroup, data: modakbul.toJson());
   }
-}
+
   Future<List<MyHostModakbul>> getMyHostModakbulList() async {
     Response response = await dio.get(ApiPath.meetingHost);
     return JsonUtils().parseMyHostModakbulList(response.data['data'] as List);

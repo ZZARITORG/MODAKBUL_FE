@@ -54,6 +54,9 @@ PODS:
   - Flutter (1.0.0)
   - flutter_secure_storage (6.0.0):
     - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
   - geolocator_apple (1.2.0):
     - Flutter
   - GoogleDataTransport (10.1.0):
@@ -104,6 +107,9 @@ PODS:
     - Flutter
     - FlutterMacOS
   - sqflite_darwin (0.0.4):
+    - Flutter
+    - FlutterMacOS
+  - Toast (4.1.1)
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -114,6 +120,7 @@ DEPENDENCIES:
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - kakao_map_plugin (from `.symlinks/plugins/kakao_map_plugin/ios`)
@@ -140,6 +147,7 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - RecaptchaInterop
+    - Toast
 
 EXTERNAL SOURCES:
   firebase_auth:
@@ -152,6 +160,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   image_picker_ios:
@@ -184,6 +194,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: f8a160d99c2c2e5babbbcc90c4a3e15db036aee2
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   geolocator_apple: 9bcea1918ff7f0062d98345d238ae12718acfbc1
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
@@ -197,6 +208,7 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   webview_flutter_wkwebview: 0982481e3d9c78fd5c6f62a002fcd24fc791f1e4
 
 PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
