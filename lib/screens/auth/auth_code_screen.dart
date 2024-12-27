@@ -15,7 +15,7 @@ import 'package:modakbul/models/login.dart';
 import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/providers/auth_provider.dart'
-    as modakbul_auth_provider;
+as modakbul_auth_provider;
 import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
@@ -62,7 +62,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
 
     try {
       await _firebaseAuthService.verifyVerificationCode(
-          _codeController.text, onSignInSuccess, onSignInFailure);
+          _codeController.text, onSignInSuccess as Function(String verificationId), onSignInFailure);
     } catch (e) {
       // 실패 시 오류 메시지 처리
       onSignInFailure('인증 실패');
@@ -127,8 +127,8 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       String? fcmToken;
       if (Platform.isIOS) {
         fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
-       // await Future.delayed(Duration(seconds: 2));
-       // fcmToken = await FirebaseMessaging.instance.getToken();
+        // await Future.delayed(Duration(seconds: 2));
+        // fcmToken = await FirebaseMessaging.instance.getToken();
         print('APNS Token: $fcmToken');
       } else if (Platform.isAndroid) {
         fcmToken = await FirebaseMessaging.instance.getToken();
@@ -158,7 +158,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       case 'invalid-verification-code':
         errorMessage = '인증번호가 일치하지 않습니다.';
         break;
-      /* case 'expired-action-code':
+    /* case 'expired-action-code':
         errorMessage = '인증번호가 만료 되었습니다.';
         break; */
       case 'user-disabled':
@@ -200,7 +200,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       body: SafeArea(
         child: Padding(
           padding:
-              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: Form(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -254,9 +254,9 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
                             .textTheme
                             .smallHeadLine3
                             .copyWith(
-                                color: _canResend
-                                    ? ColorSchemes.orange100
-                                    : ColorSchemes.gray200),
+                            color: _canResend
+                                ? ColorSchemes.orange100
+                                : ColorSchemes.gray200),
                       )),
                 ),
                 SizedBox(
@@ -283,3 +283,4 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
     );
   }
 }
+

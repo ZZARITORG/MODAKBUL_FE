@@ -64,7 +64,8 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     try {
       await _firebaseAuthService.verifyVerificationCode(
           _codeController.text,
-              () => _showChangePhoneBottomSheet(context),
+              (String verificationId) => _showChangePhoneBottomSheet(
+              context, verificationId, _codeController.text),
           onSignInFailure);
     } catch (e) {
       // 실패 시 오류 메시지 처리
@@ -196,18 +197,20 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     super.dispose();
   }
 
-  void _showChangePhoneBottomSheet(BuildContext context) {
+  void _showChangePhoneBottomSheet(BuildContext context, String verificationId, String smsCode) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.35,
+        maxHeight: MediaQuery.of(context).size.height * 0.4,
       ),
       builder: (BuildContext context) {
         return ChangePhoneBottomSheet(
+          verificationId: verificationId,
+          smsCode: _codeController.text,
+          newPhoneNumber: authProvider.phoneNumber!,
           onConfirm: () {
-            // 여기에 번호 변경 로직 추가 가능
             Navigator.pop(context);
           },
         );
@@ -305,3 +308,4 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     );
   }
 }
+

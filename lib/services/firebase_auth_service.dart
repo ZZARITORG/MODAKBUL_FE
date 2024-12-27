@@ -9,10 +9,10 @@ class FirebaseAuthService {
 
   ///전화번호로 인증번호(OTP)를 보내는 함수
   Future<void> sendVerificationCode(
-    String phoneNumber,
-    Function onSignInSuccess,
-    Function(String) onSignInFailure,
-  ) async {
+      String phoneNumber,
+      Function onSignInSuccess,
+      Function(String) onSignInFailure,
+      ) async {
 
     try {
       await firebaseAuth.verifyPhoneNumber(
@@ -49,10 +49,10 @@ class FirebaseAuthService {
 
   ///인증번호를 검증하는 함수
   Future<void> verifyVerificationCode(
-    String smsCode,
-    Function onSignInSuccess,
-    Function(String) onSignInFailure,
-  ) async {
+      String smsCode,
+      Function(String verificationId) onSignInSuccess,
+      Function(String) onSignInFailure,
+      ) async {
 
     /*if (isExpired) {
       onSignInFailure('expired-action-code');
@@ -64,10 +64,26 @@ class FirebaseAuthService {
 
     try {
       await firebaseAuth.signInWithCredential(credential).then((_) {
-        onSignInSuccess();
+        onSignInSuccess(_verificationId);
       });
     } on FirebaseAuthException catch (e) {
       onSignInFailure(e.code);
     }
   }
+
+  Future<void> updatePhoneNumber(String verificationId, String smsCode) async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      );
+
+      //폰 번호 업데이트
+      await FirebaseAuth.instance.currentUser?.updatePhoneNumber(credential);
+    } catch (e) {
+      throw Exception('Phone number update failed');
+    }
+  }
+
 }
+
