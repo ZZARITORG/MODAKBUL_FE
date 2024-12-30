@@ -58,6 +58,8 @@ dependencies:
   latlong2: ^0.9.1
   geolocator: ^13.0.2
   kakao_map_plugin: ^0.3.2
+  custom_refresh_indicator: ^4.0.1
+  lottie: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +86,7 @@ flutter:
     - assets/fonts/
     - assets/icons/
     - assets/images/
+    - assets/animations/
     - .env
 
   fonts:

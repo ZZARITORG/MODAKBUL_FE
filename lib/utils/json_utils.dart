@@ -10,6 +10,7 @@ import 'package:modakbul/models/my_host_modakbul.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
 
 import '../models/modakbul_detail.dart';
+import '../models/notification.dart';
 
 class JsonUtils {
   static List<Place> convertJsonToPlaceList(List jsonList) {
@@ -50,5 +51,9 @@ class JsonUtils {
 
   ModakbulDetail parseModakbulDetail(Map<String, dynamic> json) {
     return ModakbulDetail.fromJson(json);
+  }
+
+  List<Notification> parseNotificationList(List<dynamic> jsonList) {
+    return jsonList.map((json) => Notification.fromJson(json)).toList();
   }
 }

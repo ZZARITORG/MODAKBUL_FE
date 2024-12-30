@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
+import 'package:modakbul/models/blocked_user.dart';
 import 'package:modakbul/models/modakbul_detail.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -16,6 +17,7 @@ class ModakbulDetailCard extends StatelessWidget {
   final String hostProfileImage;
   final List<UserStatus> users;
   final List<UserStatus> participantUsers;
+  final List<BlockedUser> blockedUsers;
 
   const ModakbulDetailCard({
     super.key,
@@ -25,6 +27,7 @@ class ModakbulDetailCard extends StatelessWidget {
     required this.participantLength,
     required this.users,
     required this.participantUsers,
+    required this.blockedUsers,
   });
 
 
@@ -76,7 +79,7 @@ class ModakbulDetailCard extends StatelessWidget {
                     context: context,
                     isScrollControlled: true,
                     builder: (BuildContext bottomSheetContext) {
-                      return ParticipantBottomSheet(users: users, hostId: hostId);
+                      return ParticipantBottomSheet(users: users, hostId: hostId, blockedUsers: blockedUsers);
                     }
                 );
               }
