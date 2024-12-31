@@ -1,45 +1,54 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
+import 'package:modakbul/providers/auth_provider.dart' as modakbul_auth_provider;
 
-class ChangePhoneBottomSheet extends StatelessWidget {
-  final VoidCallback onConfirm;
-  final String verificationId;
-  final String smsCode;
-  final String newPhoneNumber;
+import 'log_out_dialog.dart';
 
-  const ChangePhoneBottomSheet({
-    Key? key,
-    required this.onConfirm,
-    required this.verificationId,
-    required this.smsCode,
-    required this.newPhoneNumber,
-  }) : super(key: key);
 
-  void _handleChangeNumber(BuildContext context) async {
+class DeleteUserBottomSheet extends StatelessWidget {
+  DeleteUserBottomSheet({Key? key}) : super(key: key);
+
+  UserService userService = UserService();
+  late modakbul_auth_provider.AuthProvider authProvider;
+
+  void _handleDeleteUser(BuildContext context) async {
     try {
-      final authService = AuthService();
-      await authService.changePhoneNumber(newPhoneNumber, verificationId, smsCode);
+      // 1. 서버에서 사용자 삭제
+      await userService.deleteUser();
 
-      if (!context.mounted) return;
+      // 2. Firebase Auth에서 현재 사용자 삭제
+      final firebaseUser = FirebaseAuth.instance.currentUser;
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        Routes.commonSettingScreen,
-            (route) => false,
-      );
+
+      // 3. Local Storage(Flutter Secure Storage) 데이터 삭제
+      final storage = FlutterSecureStorage();
+      await storage.deleteAll();
+
+      if (context.mounted) {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) => LogOutDialog(),
+          barrierDismissible: false,
+        );
+      }
+
     } catch (e) {
       if (!context.mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('번호 변경에 실패했습니다: ${e.toString()}')),
+        SnackBar(content: Text('탈퇴에 실패했습니다: ${e.toString()}')),
       );
     }
   }
@@ -65,7 +74,7 @@ class ChangePhoneBottomSheet extends StatelessWidget {
                 height: 38.h,
               ),
               Text(
-                '정말 번호를 변경하시겠습니까?',
+                '정말 탈퇴 하시겠습니까?',
                 style: Theme.of(context)
                     .textTheme
                     .bigHeadLine3
@@ -77,7 +86,7 @@ class ChangePhoneBottomSheet extends StatelessWidget {
               FittedBox(
                 fit: BoxFit.fitWidth,
                 child: Text(
-                  '번호를 변경하면 기존 번호로 로그인이 불가능하며\n변경 시 로그아웃 됩니다.',
+                  '탈퇴가 진행되면 기존의 데이터가 삭제되며 복구할 수 없습니다.',
                   style: Theme.of(context)
                       .textTheme
                       .body2
@@ -91,8 +100,8 @@ class ChangePhoneBottomSheet extends StatelessWidget {
                   width: double.infinity,
                   height: 56.h,
                   child: CustomButton(
-                      text: '변경완료',
-                      onPressed: () => _handleChangeNumber(context),
+                      text: '탈퇴하기',
+                      onPressed: () => _handleDeleteUser(context),
                       buttonColor: ColorSchemes.orange200,
                       textStyle: Theme.of(context).textTheme.smallHeadLine2,
                       textColor: ColorSchemes.white))

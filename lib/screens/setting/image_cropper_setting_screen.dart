@@ -9,19 +9,24 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
+import 'package:modakbul/services/aws_service.dart';
+import 'package:modakbul/services/user_service.dart';
+import 'package:modakbul/models/edit_my_profile.dart';
 
 ///TODO: 안드로이드, ios 권한설정 필요 시 dart.io import
-class ImageCropperScreen extends StatefulWidget {
-  const ImageCropperScreen({super.key});
+class ImageCropperSettingScreen extends StatefulWidget {
+  const ImageCropperSettingScreen({super.key});
 
   @override
-  State<ImageCropperScreen> createState() => _ImageCropperScreenState();
+  State<ImageCropperSettingScreen> createState() => _ImageCropperSettingScreenState();
 }
 
-class _ImageCropperScreenState extends State<ImageCropperScreen> {
+class _ImageCropperSettingScreenState extends State<ImageCropperSettingScreen> {
   final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
   final OverlayType _overlayType = OverlayType.circle;
   late AuthProvider authProvider;
+  AwsService awsService = AwsService();
+  UserService userService = UserService();
 
   @override
   Widget build(BuildContext context) {
@@ -57,19 +62,28 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
                 child: SizedBox(
                   height: 56.h,
                   child: CustomButton(
-                      text: '이미지 선택하기',
+                      text: '이미지 수정하기',
                       onPressed: () async {
+                        try {
                         Uint8List? imageBytes = await Cropper.crop(
                           cropperKey: _cropperKey,
                         );
                         if (imageBytes != null) {
-                          authProvider.profileImage = imageBytes;
-                          authProvider.isDefaultProfile = false;
+                          String imageUrl = await awsService.uploadProfileImage(imageBytes);
+
+                          await userService.updateMyProfile(EditMyProfile(profileUrl: imageUrl));
                           //마운트 체크
                           if (!context.mounted) return;
-                          Navigator.pop(context);
+                          Navigator.pop(context,true);
+                        }
+                      } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('이미지 업데이트 실패: ${e.toString()}')),
+                          );
                         }
                       },
+
                       buttonColor: ColorSchemes.orange200,
                       textStyle: Theme.of(context).textTheme.smallHeadLine2,
                       textColor: ColorSchemes.white),

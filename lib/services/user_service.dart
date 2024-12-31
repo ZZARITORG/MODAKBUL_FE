@@ -18,4 +18,11 @@ class UserService {
       data: editMyProfile.toJson()
     );
   }
+
+  Future<void> deleteUser() async {
+    await dio.delete(
+        ApiPath.user
+    );
+  }
+
 }

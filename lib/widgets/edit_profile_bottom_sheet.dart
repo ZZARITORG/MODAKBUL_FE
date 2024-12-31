@@ -13,9 +13,8 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/custom_button.dart';
-
-import '../models/edit_my_profile.dart';
-import '../services/user_service.dart';
+import 'package:modakbul/models/edit_my_profile.dart';
+import 'package:modakbul/services/user_service.dart';
 
 class EditProfileBottomSheet extends StatefulWidget {
   final String hintText;
@@ -147,7 +146,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                       validator: widget.isName
                           ? Validators().userNameValidator
                           : (value) =>
-                              Validators().codeValidator(value, _errorMessage),
+                              Validators().userIdValidator(value, _errorMessage),
                       textEditingController: _textEditingController,
                       maxLength: widget.isName
                           ? AppConstants.maxUserNameLength
