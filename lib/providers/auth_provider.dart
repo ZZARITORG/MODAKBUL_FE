@@ -17,6 +17,7 @@ class AuthProvider with ChangeNotifier {
   String? get profileUrl => _profileUrl;
   bool? get isDefaultProfile => _isDefaultProfile;
 
+
   set phoneNumber(String? phoneNumber) {
     _phoneNumber = phoneNumber;
     notifyListeners();
@@ -44,6 +45,16 @@ class AuthProvider with ChangeNotifier {
 
   set isDefaultProfile(bool? isDefaultProfile) {
     _isDefaultProfile = isDefaultProfile;
+    notifyListeners();
+  }
+
+  void clearUserData() {
+    _phoneNumber = null;
+    _userName = null;
+    _userId = null;
+    _profileImage = null;
+    _profileUrl = null;
+    _isDefaultProfile = null;
     notifyListeners();
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/screens/modakbul/map_select_screen.dart';
@@ -17,10 +20,14 @@ import 'package:modakbul/models/my_profile.dart';
 
 import 'package:modakbul/services/user_service.dart';
 
+import 'package:modakbul/utils/image_picker_utils.dart';
+
+import 'package:modakbul/routes/routes.dart';
+
+import 'image_cropper_setting_screen.dart';
+
 class EditMyProfileScreen extends StatefulWidget {
   EditMyProfileScreen({super.key});
-
-  UserService userService = UserService();
 
   @override
   State<EditMyProfileScreen> createState() => _EditMyProfileScreenState();
@@ -28,11 +35,14 @@ class EditMyProfileScreen extends StatefulWidget {
 
 class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
   late Future<MyProfile> _futureProfile;
+  UserService userService = UserService();
+  ImagePickerUtils imagePickerUtils = ImagePickerUtils();
+  XFile? _imageFile;
 
   @override
   void initState() {
     super.initState();
-    _futureProfile = widget.userService.getMyProfile();
+    _futureProfile = userService.getMyProfile();
   }
 
   @override
@@ -76,9 +86,36 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
                                 child: CircleAvatar(
                                   backgroundColor: ColorSchemes.orange100,
                                   radius: StyleConstants.circleSizeXS,
-                                  child: SvgPicture.asset(
+                                  child: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () async {
+                                        _imageFile = await imagePickerUtils.pickImage(
+                                          ImageSource.gallery,
+                                        );
+                                        if (_imageFile != null) {
+                                          Uint8List? imageBytes = await _imageFile!.readAsBytes();
+                                          //마운트 체크
+                                          if (!context.mounted) return;
+                                          final result = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ImageCropperSettingScreen(),
+                                              settings: RouteSettings(arguments: imageBytes),
+                                            ),
+                                          );
+
+                                          if (result == true) {
+                                            setState(() {
+                                              _futureProfile = userService.getMyProfile();
+                                            });
+
+                                          }
+                                        }
+                                      },
+                                       icon: SvgPicture.asset(
                                       IconPath.photoCameraOrange100,
-                                      width: 23.06.r),
+                                      width: 23.06.r))
                                 )),
                           ],
                         ),
@@ -103,7 +140,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
 
                           if (result == true) {
                             setState(() {
-                              _futureProfile = widget.userService.getMyProfile();
+                              _futureProfile = userService.getMyProfile();
                             });
                           }
                         },
@@ -161,7 +198,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
 
                           if (result == true) {
                             setState(() {
-                              _futureProfile = widget.userService.getMyProfile();
+                              _futureProfile = userService.getMyProfile();
                             });
                           }
                         },

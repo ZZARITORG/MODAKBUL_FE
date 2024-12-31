@@ -31,6 +31,7 @@ import 'package:modakbul/screens/setting/info_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/screens/setting/terms_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
+import 'package:modakbul/screens/setting/image_cropper_setting_screen.dart';
 
 class Routes {
   Routes._();
@@ -59,6 +60,7 @@ class Routes {
   static const String editCodeScreen = '/editCodeScreen';
   static const String editMyProfileScreen = '/editMyProfileScreen';
   static const String friendSettingScreen = '/friendSettingScreen';
+  static const String imageCropperSettingScreen = '/imageCropperSettingScreen';
   static const String infoScreen = '/infoScreen';
   static const String myProfileScreen = '/myProfileScreen';
   static const String termsScreen = '/termsScreen';
@@ -109,9 +111,10 @@ class Routes {
     editCodeScreen: (BuildContext context) => const EditCodeScreen(),
     editMyProfileScreen: (BuildContext context) => EditMyProfileScreen(),
     friendSettingScreen: (BuildContext context) => const FriendSettingScreen(),
+    imageCropperSettingScreen: (BuildContext context) => const ImageCropperSettingScreen(),
     infoScreen: (BuildContext context) => const InfoScreen(),
     myProfileScreen: (BuildContext context) => MyProfileScreen(),
-    termsScreen: (BuildContext context) => const TermsScreen(),
+    termsScreen: (BuildContext context) => TermsScreen(),
 
     ///splash
     splashScreen: (BuildContext context) => const SplashScreen(),

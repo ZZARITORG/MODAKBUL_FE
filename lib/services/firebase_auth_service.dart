@@ -50,7 +50,7 @@ class FirebaseAuthService {
   ///인증번호를 검증하는 함수
   Future<void> verifyVerificationCode(
       String smsCode,
-      Function(String verificationId) onSignInSuccess,
+      Function onSignInSuccess,
       Function(String) onSignInFailure,
       ) async {
 
@@ -64,7 +64,7 @@ class FirebaseAuthService {
 
     try {
       await firebaseAuth.signInWithCredential(credential).then((_) {
-        onSignInSuccess(_verificationId);
+        onSignInSuccess();
       });
     } on FirebaseAuthException catch (e) {
       onSignInFailure(e.code);
@@ -84,6 +84,4 @@ class FirebaseAuthService {
       throw Exception('Phone number update failed');
     }
   }
-
 }
-

@@ -62,7 +62,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
 
     try {
       await _firebaseAuthService.verifyVerificationCode(
-          _codeController.text, onSignInSuccess as Function(String verificationId), onSignInFailure);
+          _codeController.text, onSignInSuccess, onSignInFailure);
     } catch (e) {
       // 실패 시 오류 메시지 처리
       onSignInFailure('인증 실패');
@@ -283,4 +283,3 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
     );
   }
 }
-
