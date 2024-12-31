@@ -3,19 +3,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
-
 import 'package:modakbul/themes/color_schemes.dart';
 
 class SuggestedFriendProfile extends StatelessWidget {
   final String? profileImage;
   final String userName;
   final String mutualFriendCount;
+  final VoidCallback acceptOnPressed;
+  final VoidCallback rejectOnPressed;
+  final bool isPressed;
 
   const SuggestedFriendProfile({
     Key? key,
     this.profileImage,
     required this.userName,
     required this.mutualFriendCount,
+    required this.acceptOnPressed,
+    required this.rejectOnPressed,
+    required this.isPressed,
   }) : super(key: key);
 
   @override
@@ -25,6 +30,8 @@ class SuggestedFriendProfile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: StyleConstants.circleSizeL,
+          backgroundImage: NetworkImage(profileImage!),
+          backgroundColor: ColorSchemes.gray500,
         ),
         SizedBox(
           width: 12.w,
@@ -66,9 +73,9 @@ class SuggestedFriendProfile extends StatelessWidget {
                     child: SizedBox(
                       height: 40.h,
                       child: CustomButton(
-                          text: '친구추가',
-                          onPressed: () {},
-                          buttonColor: ColorSchemes.orange200,
+                          text: isPressed ? '친구추가' : '취소',
+                          onPressed: acceptOnPressed,
+                          buttonColor: isPressed ? ColorSchemes.orange200 : ColorSchemes.orange100,
                           textStyle: Theme.of(context).textTheme.body3,
                           textColor: ColorSchemes.white),
                     ),
@@ -81,7 +88,7 @@ class SuggestedFriendProfile extends StatelessWidget {
                       height: 40.h,
                       child: CustomButton(
                           text: '삭제',
-                          onPressed: () {},
+                          onPressed: rejectOnPressed,
                           buttonColor: ColorSchemes.gray100,
                           textStyle: Theme.of(context).textTheme.body3,
                           textColor: ColorSchemes.gray400),

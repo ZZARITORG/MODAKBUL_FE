@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/screens/friend/tab_screens/custom_friends_tab_screen.dart';
-import 'package:modakbul/services/friend_req_service.dart';
+import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/date_time_utils.dart';
@@ -27,7 +27,7 @@ class AddFreindScreen extends StatefulWidget {
 class _AddFreindScreenState extends State<AddFreindScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  FriendReqService friendReqService = FriendReqService();
+  FriendService friendService = FriendService();
   List<FriendReqList> friendRequests = [];
   late Future<List<FriendReqList>> getData;
   late DateTime currentTime;
@@ -35,7 +35,7 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
   @override
   void initState() {
     super.initState();
-    getData = friendReqService.getFriendReqList();
+    getData = friendService.getFriendReqList();
     _initializeCurrentTime();  // 비동기 메서드 호출
   }
 
@@ -122,6 +122,8 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                               userName: friend.name,
                               userId: friend.userId,
                               time: timeAgo(friend.createdAt, currentTime),
+                              acceptOnPressed: () {},
+                              rejectOnPressed: () {},
                             ),
                           );
                         },
