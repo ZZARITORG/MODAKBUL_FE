@@ -9,6 +9,14 @@
         <key>NSAllowsArbitraryLoadsInWebContent</key>
         <true/>
       </dict>
+
+
+
+      <key>NSCameraUsageDescription</key>
+      <string>$(PRODUCT_NAME) camera description.</string>
+      <key>NSPhotoLibraryUsageDescription</key>
+      <string>$(PRODUCT_NAME) photos description.</string>
+
     <key>io.flutter.embedded_views_preview</key>
     <true/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>

@@ -7,6 +7,9 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/models/my_profile.dart';
+import 'package:modakbul/services/user_service.dart';
+import 'package:modakbul/models/edit_my_profile.dart';
 
 class FriendSettingScreen extends StatefulWidget {
   const FriendSettingScreen({super.key});
@@ -17,6 +20,31 @@ class FriendSettingScreen extends StatefulWidget {
 
 class _FriendSettingScreenState extends State<FriendSettingScreen> {
   bool _isToggled = false;
+  UserService userService = UserService();
+  late Future<MyProfile> _futureProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureProfile = _loadProfile();
+  }
+
+  Future<MyProfile> _loadProfile() async {
+    final profile = await userService.getMyProfile();
+    setState(() {
+      _isToggled = profile.isFriendAlarm ?? false;
+    });
+    return profile;
+  }
+
+  Future<void> _updateFriendAgree(bool value) async {
+      await userService.updateMyProfile(
+          EditMyProfile(isFriendAlarm: value)
+      );
+      setState(() {
+        _isToggled = value;
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +53,29 @@ class _FriendSettingScreenState extends State<FriendSettingScreen> {
       appBar: BackButtonAppBar(
           backgroundColor: ColorSchemes.gray000
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+      body: FutureBuilder<MyProfile>(
+    future: _futureProfile,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (snapshot.hasError) {
+        return Center(child: Text('오류가 발생했습니다: ${snapshot.error}'));
+      }
+
+      final profile = snapshot.data;
+      return Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: StyleConstants.defaultPadding),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 26.h),
             Text(
               '친구설정',
-              style: Theme.of(context)
+              style: Theme
+                  .of(context)
                   .textTheme
                   .smallHeadLine3
                   .copyWith(color: ColorSchemes.orange200),
@@ -45,17 +87,20 @@ class _FriendSettingScreenState extends State<FriendSettingScreen> {
                 iconWidth: 18.r,
                 isToggled: _isToggled,
                 onToggleChanged: (value) {
-                  setState(() {
-                    _isToggled = value;
-                  });
+                  _updateFriendAgree(value);
                 }),
             SizedBox(height: 28.h),
-            SettingMenu.arrow(menu: '차단된 사용자', icon: IconPath.blockOrange100, iconWidth: 16.r, onPressed: (){
-              Routes.navigateTo(context, Routes.blockedUserScreen);
-            })
+            SettingMenu.arrow(menu: '차단된 사용자',
+                icon: IconPath.blockOrange100,
+                iconWidth: 16.r,
+                onPressed: () {
+                  Routes.navigateTo(context, Routes.blockedUserScreen);
+                })
           ],
-      ),
-      ),
+        ),
+      );
+    }
+    )
     );
   }
 }
