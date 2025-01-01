@@ -27,4 +27,10 @@ class AppConstants {
   static const String accessToken = 'ACCESS_TOKEN';
   static const String refreshToken = 'REFRESH_TOKEN';
   static const String phoneNumber = 'PHONE_NUMBER';
+  static const String userName = 'USER_NAME';
+  static const String userId = 'USER_ID';
+  static const String profileUrl = 'PROFILE_URL';
+  static const String isFriendAlarm = 'IS_FRIEND_ALARM';
+  static const String isContactAgree = 'IS_CONTACT_AGREE';
+
 }

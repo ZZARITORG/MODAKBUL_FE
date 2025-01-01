@@ -59,12 +59,15 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
     } else if (Platform.isAndroid) {
       fcmToken = await FirebaseMessaging.instance.getToken();
     }
+
     Tokens tokens = await authService.signUp(User(
         userId: authProvider.userId!,
         name: authProvider.userName!,
         phoneNo: authProvider.phoneNumber!,
         profileUrl: authProvider.profileUrl!,
-        fcmToken: [fcmToken!]));
+        fcmToken: [fcmToken!],
+        isFriendAlarm: true,
+        isContactAgree: true));
 
     if (tokens.accessToken.isNotEmpty && tokens.accessToken.isNotEmpty) {
       await Future.wait([
@@ -74,6 +77,16 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
             key: AppConstants.refreshToken, value: tokens.refreshToken),
         secureStorage.write(
             key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
+        secureStorage.write(
+            key: AppConstants.userName, value: authProvider.userName!),
+        secureStorage.write(
+            key: AppConstants.userId, value: authProvider.userId!),
+        secureStorage.write(
+            key: AppConstants.profileUrl, value: authProvider.profileUrl!),
+        secureStorage.write(
+            key: AppConstants.isFriendAlarm, value: true.toString()),
+        secureStorage.write(
+            key: AppConstants.isContactAgree, value: true.toString()),
       ]);
 
       if (!context.mounted) return;

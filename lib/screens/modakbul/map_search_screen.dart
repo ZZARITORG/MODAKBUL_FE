@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:latlong2/latlong.dart' as latlong;
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/main.dart';
@@ -20,6 +21,9 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/location_list_tile.dart';
 import 'package:provider/provider.dart';
+import 'package:modakbul/providers/location_provider.dart';
+
+import '../../widgets/custom_toast.dart';
 
 class MapSearchScreen extends StatefulWidget {
   const MapSearchScreen({super.key});
@@ -65,8 +69,13 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
 
   @override
   void initState() {
-    getGeoData();
+    ///getGeoData();
     super.initState();
+    Position? currentPosition = Provider.of<LocationProvider>(context, listen: false).currentPosition;
+    latitude = currentPosition?.latitude;
+    longitude = currentPosition?.longitude;
+    print('latitude: ${latitude.toString()}');
+    print('longitude: ${longitude.toString()}');
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -147,22 +156,27 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                             child: ElevatedButton(
                                 onPressed: () async {
                                   //현재 위치 없을때 토스트 띄우기
-                                  List<address_model.Address> address =
-                                      await kakaoService.getCoordToAddress(
-                                          latitude!.toString(),
-                                          longitude!.toString());
-                                  placeProvider.placeName =
-                                      address[0].roadAddress.addressName == ''
-                                          ? address[0]
-                                              .detailedAddress
-                                              .addressName
-                                          : address[0].roadAddress.addressName;
-                                  placeProvider.roadAddressName =
-                                      address[0].detailedAddress.addressName;
-                                  placeProvider.x = longitude!;
-                                  placeProvider.y = latitude!;
-                                  Routes.navigateTo(
-                                      context, Routes.mapSelectScreen);
+                                  if (latitude != null && longitude != null) {
+                                    List<address_model.Address> address =
+                                    await kakaoService.getCoordToAddress(
+                                        latitude!.toString(),
+                                        longitude!.toString());
+                                    placeProvider.placeName =
+                                    address[0].roadAddress?.addressName == ''
+                                        || address[0].roadAddress == null
+                                        ? address[0]
+                                        .detailedAddress
+                                        .addressName
+                                        : address[0].roadAddress?.addressName;
+                                    placeProvider.roadAddressName =
+                                        address[0].detailedAddress.addressName;
+                                    placeProvider.x = longitude!;
+                                    placeProvider.y = latitude!;
+                                    Routes.navigateTo(
+                                        context, Routes.mapSelectScreen);
+                                  } else {
+                                    CustomToast.showToast(context, '날짜를 먼저 선택해주세요.');
+                                  }
                                 },
                                 style: Theme.of(context)
                                     .elevatedButtonTheme
@@ -267,6 +281,13 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                           primary: false,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, int index) {
+                            final latlong.Distance distance = latlong.Distance();
+                            double distanceMeter = distance(
+                              latlong.LatLng(latitude!, longitude!),
+                              latlong.LatLng(recentSearchList[index]['y']!, recentSearchList[index]['x']!)
+                            );
+                            double kilometers =
+                                (distanceMeter / 1000 * 10).round() / 10;
                             return InkWell(
                               overlayColor: const WidgetStatePropertyAll(
                                   ColorSchemes.orange000),
@@ -289,7 +310,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                     ['roadAddressName']!,
                                 //이부분 현재위치에서 불러오게끔 바꾸기
                                 distance:
-                                    '${recentSearchList[index]['distance']} km',
+                                    '$kilometers km',
                                 onPressed: () {
                                   setState(() {
                                     LocationManager.removeLocation(index);

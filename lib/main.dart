@@ -6,6 +6,7 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/providers/auth_provider.dart';
+import 'package:modakbul/providers/location_provider.dart';
 import 'package:modakbul/providers/meeting_provider.dart';
 import 'package:modakbul/providers/place_provider.dart';
 import 'package:modakbul/routes/routes.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => PlaceProvider()),
         ChangeNotifierProvider(create: (_) => MeetingProvider()),
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
