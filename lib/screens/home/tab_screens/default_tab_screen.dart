@@ -1,9 +1,8 @@
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
+import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/routes/routes.dart';
@@ -53,36 +52,8 @@ class _State extends State<DefaultTabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomRefreshIndicator(
+    return RefreshIndicator(
       onRefresh: _refreshData,
-      builder: (
-        BuildContext context,
-        Widget child,
-        IndicatorController controller,
-      ) {
-        return Stack(
-          alignment: Alignment.topCenter,
-          children: <Widget>[
-            if (!controller.isIdle)
-              Positioned(
-                top: 14,
-                child: SizedBox(
-                  height: 32,
-                  width: 32,
-                  child: Lottie.asset(
-                    AnimationPath.loadingFeed,
-                    fit: BoxFit.contain,
-                    animate: !controller.isLoading,
-                  ),
-                ),
-              ),
-            Transform.translate(
-              offset: Offset(0, 100.0 * controller.value),
-              child: child,
-            ),
-          ],
-        );
-      },
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -221,20 +192,12 @@ class _State extends State<DefaultTabScreen> {
                                                     String date = DateFormat(
                                                             'MM.dd(E) a h시 m분')
                                                         .format(kstDate);
-                                                    String hostId =
-                                                        myHostModaktbulList[
-                                                                index]!
-                                                            .hostId;
+                                                    String hostId = myHostModaktbulList[index]!.hostId;
                                                     List<UserStatus> users =
                                                         myHostModaktbulList[
                                                                 index]!
                                                             .users;
-                                                    List<UserStatus>
-                                                        participantUsers = users
-                                                            .where((user) =>
-                                                                user.id !=
-                                                                hostId)
-                                                            .toList();
+                                                    List<UserStatus> participantUsers = users.where((user) => user.id != hostId).toList();
 
                                                     return Container(
                                                       padding:
@@ -278,17 +241,16 @@ class _State extends State<DefaultTabScreen> {
                                                             behavior:
                                                                 HitTestBehavior
                                                                     .opaque,
-                                                            child:
-                                                                MyModakbulCard(
-                                                              participantLength:
-                                                                  users.length,
-                                                              title: title,
-                                                              groupName:
-                                                                  groupName,
-                                                              date: date,
-                                                              address: address,
-                                                              participantUsers:
-                                                                  participantUsers,
+                                                            child: MyModakbulCard(
+                                                                participantLength:
+                                                                    users.length - 1,
+                                                                title: title,
+                                                                groupName:
+                                                                    groupName,
+                                                                date: date,
+                                                                address:
+                                                                    address,
+                                                                participantUsers: participantUsers,
                                                             ),
                                                           ),
                                                         ],
@@ -355,7 +317,7 @@ class _State extends State<DefaultTabScreen> {
                                         )
                                       : Container(
                                           width: double.infinity,
-                                          height: 238.h,
+                                    height: 238.h,
                                           decoration: BoxDecoration(
                                             color: ColorSchemes.white,
                                             borderRadius: BorderRadius.circular(
@@ -484,27 +446,25 @@ class _State extends State<DefaultTabScreen> {
                                 ),
                               )
                             : Padding(
-                                padding: EdgeInsets.only(top: 40.h),
-                                child: Column(
-                                  children: [
-                                    Text('더이상 모닥불이 없습니다.',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bigHeadLine3
-                                            .copyWith(
-                                                color: ColorSchemes.orange100)),
-                                    SizedBox(
-                                      height: 8.h,
-                                    ),
-                                    Text('모닥불을 참여해보세요',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .body2
-                                            .copyWith(
-                                                color: ColorSchemes.gray300)),
-                                  ],
-                                ),
-                              ),
+                          padding: EdgeInsets.only(top: 40.h),
+                          child: Column(
+                            children: [
+                              Text('더이상 모닥불이 없습니다.',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine3
+                                      .copyWith(
+                                      color: ColorSchemes.orange100)),
+                              SizedBox(height: 8.h,),
+                              Text('모닥불을 참여해보세요',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .body2
+                                      .copyWith(
+                                      color: ColorSchemes.gray300)),
+                            ],
+                          ),
+                        ),
                         SizedBox(height: 16.h),
                       ],
                     );

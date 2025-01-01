@@ -18,6 +18,7 @@ class FriendService {
 
   Future<List<BlockedUser>> getBlockedUser() async {
     Response response = await dio.get(ApiPath.friendBlockList);
+    logger.d(blockedUserListFromJson(response.data['data'] as List)[0].profileUrl);
     return blockedUserListFromJson(response.data['data'] as List);
   }
 

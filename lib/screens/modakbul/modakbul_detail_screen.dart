@@ -9,8 +9,6 @@ import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/accept_modakbul.dart';
-import 'package:modakbul/models/blocked_user.dart';
-import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
@@ -46,7 +44,6 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
   late KakaoMapController mapController;
 
   MeetingService meetingService = MeetingService();
-  FriendService friendService = FriendService();
 
   @override
   Widget build(BuildContext context) {
@@ -60,21 +57,15 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
         backgroundColor: ColorSchemes.gray000,
       ),
       body: SafeArea(
-        child: FutureBuilder<List>(
-            future: Future.wait([
-              meetingService.getModakbulDetail(id!),
-              friendService.getBlockedUser().catchError((error){
-                return <BlockedUser>[];
-              }),
-            ]),
+        child: FutureBuilder(
+            future: meetingService.getModakbulDetail(id!),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return ModakbulDetailScreenSkeleton();
               } else if (snapshot.hasError) {
                 return Text('에러');
               } else if (snapshot.hasData) {
-                final modakbulDetailData = snapshot.data![0];
-                List<BlockedUser> blockedUsersData = snapshot.data![1] ?? [];
+                final modakbulDetailData = snapshot.data!;
 
                 String hostId = modakbulDetailData!.hostId;
                 String title = modakbulDetailData!.title;
@@ -88,10 +79,10 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
 
                 List<UserStatus> users = modakbulDetailData!.users;
                 UserStatus host = users.firstWhere(
-                      (user) => user.id == hostId,
+                  (user) => user.id == hostId,
                 );
                 List<UserStatus> participantUsers =
-                users.where((user) => user.id != hostId).toList();
+                    users.where((user) => user.id != hostId).toList();
                 double lat = modakbulDetailData!.lat;
                 double lng = modakbulDetailData!.lng;
 
@@ -109,7 +100,6 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                             participantLength: users.length,
                             users: users,
                             participantUsers: participantUsers,
-                            blockedUsers: blockedUsersData,
                           ),
                           SizedBox(
                             height: 14.h,
@@ -120,7 +110,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -142,9 +132,9 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                                 .textTheme
                                                 .body2
                                                 .copyWith(
-                                                color:
-                                                ColorSchemes.orange200,
-                                                height: 1.5),
+                                                    color:
+                                                        ColorSchemes.orange200,
+                                                    height: 1.5),
                                           )
                                         ],
                                       ),
@@ -158,8 +148,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                             .textTheme
                                             .bigHeadLine3
                                             .copyWith(
-                                          color: ColorSchemes.gray500,
-                                        ),
+                                              color: ColorSchemes.gray500,
+                                            ),
                                       ),
                                       SizedBox(
                                         height: 8.h,
@@ -170,8 +160,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                             .textTheme
                                             .body2
                                             .copyWith(
-                                            color: ColorSchemes.gray400,
-                                            height: 26 / 16),
+                                                color: ColorSchemes.gray400,
+                                                height: 26 / 16),
                                       ),
                                     ],
                                   ),
@@ -185,7 +175,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                             horizontal: 4.w),
                                         child: Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '위치',
@@ -193,9 +183,9 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                                   .textTheme
                                                   .bigHeadLine4
                                                   .copyWith(
-                                                  color:
-                                                  ColorSchemes.gray400,
-                                                  height: 1.193),
+                                                      color:
+                                                          ColorSchemes.gray400,
+                                                      height: 1.193),
                                             ),
                                             GestureDetector(
                                               onTap: () => Routes.navigateTo(
@@ -216,9 +206,9 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                                         .textTheme
                                                         .body2
                                                         .copyWith(
-                                                        color: ColorSchemes
-                                                            .gray200,
-                                                        height: 1.5),
+                                                            color: ColorSchemes
+                                                                .gray200,
+                                                            height: 1.5),
                                                   ),
                                                   SizedBox(
                                                     width: 6.w,
@@ -259,26 +249,26 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                                 StyleConstants.radiusMedium),
                                             child: StatefulBuilder(
                                                 builder: (context, setInState) {
-                                                  return KakaoMap(
-                                                    onMapCreated:
+                                              return KakaoMap(
+                                                onMapCreated:
                                                     ((controller) async {
-                                                      mapController = controller;
-                                                      markers.add(Marker(
-                                                        markerId:
+                                                  mapController = controller;
+                                                  markers.add(Marker(
+                                                    markerId:
                                                         UniqueKey().toString(),
-                                                        latLng: await mapController
-                                                            .getCenter(),
-                                                        width: 18,
-                                                        height: 18,
-                                                        offsetX: 20,
-                                                        offsetY: 20,
-                                                      ));
-                                                      setInState(() {});
-                                                    }),
-                                                    markers: markers.toList(),
-                                                    center: LatLng(lat, lng),
-                                                  );
+                                                    latLng: await mapController
+                                                        .getCenter(),
+                                                    width: 18,
+                                                    height: 18,
+                                                    offsetX: 20,
+                                                    offsetY: 20,
+                                                  ));
+                                                  setInState(() {});
                                                 }),
+                                                markers: markers.toList(),
+                                                center: LatLng(lat, lng),
+                                              );
+                                            }),
                                           ),
                                         ),
                                       ),
@@ -287,7 +277,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                         children: [
                                           Flexible(
                                             child: FittedBox(
@@ -298,9 +288,9 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                                     .textTheme
                                                     .body3
                                                     .copyWith(
-                                                    color: ColorSchemes
-                                                        .gray300,
-                                                    height: 1.571),
+                                                        color: ColorSchemes
+                                                            .gray300,
+                                                        height: 1.571),
                                               ),
                                             ),
                                           ),
@@ -327,9 +317,9 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                                       .textTheme
                                                       .body3
                                                       .copyWith(
-                                                      color: ColorSchemes
-                                                          .orange100,
-                                                      height: 1.571),
+                                                          color: ColorSchemes
+                                                              .orange100,
+                                                          height: 1.571),
                                                 ),
                                               ],
                                             ),
@@ -394,8 +384,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
               } else {
                 return Text('머야 이거');
               }
-            }
-            ),
+            }),
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:logger/logger.dart';
-import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -52,23 +50,6 @@ class _State extends State<BrowseTabScreen> {
     });
   }
 
-  bool isLoading = true;
-
-  Future<void> _refreshData() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    await Future.wait([
-      meetingService.getMyHostModakbulList(),
-      meetingService.getAcceptedModakbulList(),
-    ]);
-
-    setState(() {
-      isLoading = false;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -81,119 +62,87 @@ class _State extends State<BrowseTabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomRefreshIndicator(
-      onRefresh: _refreshData,
-      builder: (
-        BuildContext context,
-        Widget child,
-        IndicatorController controller,
-      ) {
-        return Stack(
-          alignment: Alignment.topCenter,
-          children: <Widget>[
-            if (!controller.isIdle)
-              Positioned(
-                top: 14,
-                child: SizedBox(
-                  height: 32,
-                  width: 32,
-                  child: Lottie.asset(
-                    AnimationPath.loadingFeed,
-                    fit: BoxFit.contain,
-                    animate: !controller.isLoading,
-                  ),
-                ),
-              ),
-            Transform.translate(
-              offset: Offset(0, 100.0 * controller.value),
-              child: child,
-            ),
-          ],
-        );
-      },
-      child: Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: FutureBuilder(
-              future: meetingService.getPendingModakbulList(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return BrowseTabScreenSkeleton();
-                } else if (snapshot.hasError) {
-                  return Text('에러');
-                } else if (snapshot.hasData) {
-                  final pendingModakbulList = snapshot.data!;
-                  return SingleChildScrollView(
-                    child: Column(
-                      /*singlechildview -> expanded*/
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 14.h,
-                        ),
-                        GestureDetector(
-                          onTap: () => Routes.navigateTo(
-                              context, Routes.createModakbulScreen),
-                          behavior: HitTestBehavior.opaque,
-                          child: Container(
-                            padding:
-                                EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    StyleConstants.radiusMedium),
-                                color: ColorSchemes.white,
-                                boxShadow: const [
-                                  BoxShadow(
-                                      offset: Offset(0, 4),
-                                      blurRadius: 10,
-                                      color: Color(0x40F3F3F3))
-                                ]),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+        padding:
+            EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        child: FutureBuilder(
+            future: meetingService.getPendingModakbulList(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return BrowseTabScreenSkeleton();
+              } else if (snapshot.hasError) {
+                return Text('에러');
+              } else if (snapshot.hasData) {
+                final pendingModakbulList = snapshot.data!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 14.h,
+                    ),
+                    GestureDetector(
+                      onTap: () => Routes.navigateTo(
+                          context, Routes.createModakbulScreen),
+                      behavior: HitTestBehavior.opaque,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                StyleConstants.radiusMedium),
+                            color: ColorSchemes.white,
+                            boxShadow: const [
+                              BoxShadow(
+                                  offset: Offset(0, 4),
+                                  blurRadius: 10,
+                                  color: Color(0x40F3F3F3))
+                            ]),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Text('혼자는 너무 춥지 않아?',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bigHeadLine4
+                                        .copyWith(
+                                            color: ColorSchemes.orange200)),
+                                SizedBox(
+                                  height: 6.h,
+                                ),
+                                Row(
                                   children: [
-                                    Text('혼자는 너무 춥지 않아?',
+                                    Text('모닥불 피우러가기',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bigHeadLine4
+                                            .body2
                                             .copyWith(
-                                                color: ColorSchemes.orange200)),
+                                                color: ColorSchemes.orange100)),
                                     SizedBox(
-                                      height: 6.h,
+                                      width: 6.w,
                                     ),
-                                    Row(
-                                      children: [
-                                        Text('모닥불 피우러가기',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .body2
-                                                .copyWith(
-                                                    color: ColorSchemes
-                                                        .orange100)),
-                                        SizedBox(
-                                          width: 6.w,
-                                        ),
-                                        SvgPicture.asset(
-                                            IconPath.arrowForward15Orange100),
-                                      ],
-                                    ),
+                                    SvgPicture.asset(
+                                        IconPath.arrowForward15Orange100),
                                   ],
                                 ),
-                                SizedBox(
-                                  width: 75.w,
-                                  height: 75.h,
-                                  child: Image.asset(ImagePath.homeModakbul),
-                                )
                               ],
                             ),
-                          ),
+                            SizedBox(
+                              width: 75.w,
+                              height: 75.h,
+                              child: Image.asset(ImagePath.homeModakbul),
+                            )
+                          ],
                         ),
-                        SizedBox(
-                          height: 24.h,
-                        ),
-                        Column(
+                      ),
+                    ),
+                    SizedBox(
+                      height: 24.h,
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: [
                             ValueListenableBuilder<String>(
                               valueListenable: selectedFilter,
@@ -339,10 +288,9 @@ class _State extends State<BrowseTabScreen> {
                                                     context,
                                                     Routes.modakbulDetailScreen,
                                                     arguments: {
-                                                      'id':
-                                                          sortedPendingModakbulList[
-                                                                  index]
-                                                              .id
+                                                      'id': sortedPendingModakbulList[
+                                                              index]
+                                                          .id
                                                     }),
                                                 behavior:
                                                     HitTestBehavior.opaque,
@@ -402,14 +350,14 @@ class _State extends State<BrowseTabScreen> {
                               },
                             ),
                           ],
-                        )
-                      ],
-                    ),
-                  );
-                } else {
-                  return Text('머지이거');
-                }
-              })),
-    );
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              } else {
+                return Text('머지이거');
+              }
+            }));
   }
 }

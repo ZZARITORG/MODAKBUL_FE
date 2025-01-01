@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
-import 'package:modakbul/models/blocked_user.dart';
 import 'package:modakbul/models/modakbul_detail.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/participant_list_profile.dart';
@@ -15,10 +14,9 @@ import 'package:modakbul/themes/color_schemes.dart';
 class ParticipantBottomSheet extends StatefulWidget {
   final List<UserStatus> users;
   final String hostId;
-  final List<BlockedUser> blockedUsers;
 
   const ParticipantBottomSheet(
-      {super.key, required this.users, required this.hostId, required this.blockedUsers});
+      {super.key, required this.users, required this.hostId});
 
   @override
   State<ParticipantBottomSheet> createState() => _ParticipantBottomSheetState();
@@ -26,17 +24,20 @@ class ParticipantBottomSheet extends StatefulWidget {
 
 class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
   late List<UserStatus> sortedUsers;
-  late List<String> blockedUsersIds;
 
   void initState() {
     super.initState();
+    // 호스트를 첫 번째로 정렬
     sortedUsers = List<UserStatus>.from(widget.users);
     sortedUsers.sort((a, b) {
       if (a.userId == widget.hostId) return -1;
       if (b.userId == widget.hostId) return 1;
       return 0;
     });
-    blockedUsersIds = widget.blockedUsers.map((blockedUser) => blockedUser.id).toList();
+    Logger logger = Logger();
+    logger.i('참여자 유저들');
+    logger.i(widget.users.length);
+
   }
 
   @override
@@ -98,15 +99,11 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
                   itemCount: sortedUsers.length, // 예시로 10명
                   separatorBuilder: (context, index) => SizedBox(height: 18.h),
                   itemBuilder: (context, index) {
-                    final bool isPending = sortedUsers[index].status == 'PENDING' ? true : false;
-                    final bool isBlocked = blockedUsersIds.contains(sortedUsers[index].id);
                     return Participantlistprofile.icon(
                       profileImage: sortedUsers[index].profileUrl,
                       userName: sortedUsers[index].name,
                       userId: sortedUsers[index].userId,
                       users: sortedUsers,
-                      isPending: isPending,
-                      isBlocked: isBlocked,
                     );
                   },
                 ),

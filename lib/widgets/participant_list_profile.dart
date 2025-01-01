@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/modakbul_detail.dart';
@@ -13,16 +11,12 @@ class Participantlistprofile extends StatelessWidget {
   final String userName;
   final String userId;
   final List<UserStatus> users;
-  final bool isPending;
-  final bool isBlocked;
 
   const Participantlistprofile({
     Key? key,
     required this.profileImage,
     required this.userName,
     required this.userId,
-    this.isPending = false,
-    this.isBlocked = false,
     this.users = const [],
   }) : super(key: key);
 
@@ -30,25 +24,15 @@ class Participantlistprofile extends StatelessWidget {
           {required String profileImage,
           required String userName,
           required userId,
-            required isPending,
-            required isBlocked,
           required List<UserStatus> users}) =>
       Participantlistprofile(
-          profileImage: profileImage, userName: userName, userId: userId, users: users, isPending: isPending, isBlocked: isBlocked,);
+          profileImage: profileImage, userName: userName, userId: userId, users: users,);
 
   Widget _buildUserStatus() {
     if (users.isNotEmpty) {
-      if (users[0].userId == userId) {//호스트
+      if (users[0].userId == userId) { //호스트
         return SizedBox(width: 24.w, height: 24.h,
           child: Image.asset(ImagePath.hostBonfire, fit: BoxFit.contain,),
-        );
-      } else if(isBlocked) {
-        return SizedBox(
-          width: 24.r,
-          height: 24.r,
-          child: Center(
-            child: SvgPicture.asset(IconPath.warningRed, width: 18.r, height: 18.r,),
-          ),
         );
       }
     }
@@ -57,9 +41,6 @@ class Participantlistprofile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userNameColor = isPending ? ColorSchemes.gray300 : ColorSchemes.gray500;
-    final userIdColor = isPending ? ColorSchemes.gray200 : ColorSchemes.gray300;
-
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Row(
@@ -85,7 +66,7 @@ class Participantlistprofile extends StatelessWidget {
                         style: Theme.of(context)
                             .textTheme
                             .smallHeadLine3
-                            .copyWith(color: userNameColor),
+                            .copyWith(color: ColorSchemes.gray500),
                       ),
                       SizedBox(
                         height: 4.h,
@@ -98,7 +79,7 @@ class Participantlistprofile extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .body3
-                              .copyWith(color: userIdColor),
+                              .copyWith(color: ColorSchemes.gray300),
                         ),
                       ),
                     ],
