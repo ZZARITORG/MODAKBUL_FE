@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/services/notification_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/alert_list_tile.dart';
@@ -26,6 +28,8 @@ class _AlertScreenState extends State<AlertScreen> {
     {'type': 'friendRequest', 'sender': '배철현', 'time': '오늘 오후 6:09'},
   ];
 
+  NotificationService notificationService = NotificationService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,23 +40,39 @@ class _AlertScreenState extends State<AlertScreen> {
         body: SafeArea(
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-              child: /*Skeleton 들어갈 자리 */ Column(
-                children: [
-                  SizedBox(height: 24.h),
-                  Expanded(
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        buildAlertSection('오늘', todayAlerts),
-                        buildAlertSection('어제', yesterdayAlerts),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.h
-                  )
-                ],
-              )),
+              child: FutureBuilder(
+                  future: notificationService.getNotifications(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting){
+                      return AlertScreenSkeleton();
+                    } else if (snapshot.hasError) {
+                      return Text('에러');
+                    } else if (snapshot.hasData) {
+                      final notificationList = snapshot.data!;
+                      Logger().i('알림 $notificationList');
+                      return  Column(
+                        children: [
+                          SizedBox(height: 24.h),
+                          Expanded(
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                buildAlertSection('오늘', todayAlerts),
+                                buildAlertSection('어제', yesterdayAlerts),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                              height: 16.h
+                          )
+                        ],
+                      );
+                    } else {
+                      return Text('이거머야');
+                    }
+                  }
+              )
+          ),
         ));
   }
 

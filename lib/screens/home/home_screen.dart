@@ -5,6 +5,7 @@ import 'package:modakbul/screens/home/tab_screens/default_tab_screen.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
 
+import '../../routes/routes.dart';
 import '../../widgets/custom_tab_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,11 +31,18 @@ class _HomeScreenState extends State<HomeScreen>
     super.dispose();
   }
 
+  void _navigateToAlertScreen() {
+    Routes.navigateTo(context, Routes.alertScreen);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorSchemes.gray000,
-      appBar: LogoAppBar.actions(onActionPressed: (){}, backgroundColor: ColorSchemes.gray000,),
+      appBar: LogoAppBar.actions(
+        onActionPressed: _navigateToAlertScreen,
+        backgroundColor: ColorSchemes.gray000,
+      ),
       body: Column(
         children: [
           CustomTabBar(

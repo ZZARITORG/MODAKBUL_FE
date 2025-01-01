@@ -65,6 +65,7 @@ class IconPath {
   static const String verifiedUser = 'assets/icons/verified_user.svg';
   static const String warning = 'assets/icons/warning.svg';
   static const String powerSettingsNew = 'assets/icons/power_settings_new.svg';
+  static const String warningRed = 'assets/icons/warning_red.svg';
 }
 
 class ImagePath {
@@ -77,4 +78,10 @@ class ImagePath {
   static const String markerModakbul = 'assets/images/marker_modakbul.png';
   static const String offBonfire = 'assets/images/off_bonfire.png';
   static const String hostBonfire = 'assets/images/host_bonfire.png';
+}
+
+class AnimationPath {
+  AnimationPath._();
+
+  static const String loadingFeed = 'assets/animations/loading_feed.json';
 }
