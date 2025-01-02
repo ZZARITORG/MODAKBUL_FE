@@ -6,14 +6,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
-import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/browse_tab_screen_skeleton.dart';
-import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/invited_modakbul_card.dart';
 import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
@@ -249,14 +247,31 @@ class _State extends State<BrowseTabScreen> {
                                             backgroundColor: isSelected
                                                 ? ColorSchemes.orange200
                                                 : ColorSchemes.orange000,
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 7.h,
-                                                horizontal: 14.w),
+                                            padding: isSelected
+                                                ? EdgeInsets.symmetric(vertical: 7.h, horizontal: 14.w)
+                                                : EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         StyleConstants
                                                             .radiusMedium)),
+                                          ).copyWith(
+                                            backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                                              if (states.contains(WidgetState.pressed)) {
+                                                return ColorSchemes.orange100;
+                                              }
+                                              return isSelected
+                                                  ? ColorSchemes.orange200
+                                                  : ColorSchemes.orange000;
+                                            }),
+                                            foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                                              if (states.contains(WidgetState.pressed)) {
+                                                return ColorSchemes.orange000;
+                                              }
+                                              return isSelected
+                                                  ? ColorSchemes.white
+                                                  : ColorSchemes.orange100;
+                                            }),
                                           ),
                                           child: Row(
                                             children: [
@@ -265,12 +280,7 @@ class _State extends State<BrowseTabScreen> {
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .body3
-                                                    .copyWith(
-                                                      color: isSelected
-                                                          ? ColorSchemes.white
-                                                          : ColorSchemes
-                                                              .orange100,
-                                                    ),
+
                                               ),
                                               if (filter == value)
                                                 SizedBox(

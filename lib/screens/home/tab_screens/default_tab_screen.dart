@@ -60,10 +60,11 @@ class _State extends State<DefaultTabScreen> {
         Widget child,
         IndicatorController controller,
       ) {
+
         return Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[
-            if (!controller.isIdle)
+            if (controller.value > 0)
               Positioned(
                 top: 14,
                 child: SizedBox(
@@ -72,12 +73,13 @@ class _State extends State<DefaultTabScreen> {
                   child: Lottie.asset(
                     AnimationPath.loadingFeed,
                     fit: BoxFit.contain,
-                    animate: !controller.isLoading,
+                    repeat: true,
+                    animate: true,
                   ),
                 ),
               ),
             Transform.translate(
-              offset: Offset(0, 100.0 * controller.value),
+              offset: Offset(0, controller.value > 0.72 ? 72.0 : 100.0 * controller.value),
               child: child,
             ),
           ],
@@ -273,7 +275,8 @@ class _State extends State<DefaultTabScreen> {
                                                                     arguments: {
                                                                   'id': myHostModaktbulList[
                                                                           index]
-                                                                      .id
+                                                                      .id,
+                                                                      'isAccepted': true,
                                                                 }),
                                                             behavior:
                                                                 HitTestBehavior
@@ -469,7 +472,8 @@ class _State extends State<DefaultTabScreen> {
                                               arguments: {
                                                 'id':
                                                     acceptedModakbulList[index]
-                                                        .id
+                                                        .id,
+                                                'isAccepted' : true
                                               }),
                                           behavior: HitTestBehavior.opaque,
                                           child: FixedModakbulCard(
