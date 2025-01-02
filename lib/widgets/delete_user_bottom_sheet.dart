@@ -25,12 +25,12 @@ class DeleteUserBottomSheet extends StatelessWidget {
 
   void _handleDeleteUser(BuildContext context) async {
     try {
-      // 1. 서버에서 사용자 삭제
-      await userService.deleteUser();
 
-      // 2. Firebase Auth에서 현재 사용자 삭제
       final firebaseUser = FirebaseAuth.instance.currentUser;
+      final firebaseUid = firebaseUser!.uid;
 
+      // 1. 서버에서 사용자 삭제
+      await userService.deleteUser(firebaseUid);
 
       // 3. Local Storage(Flutter Secure Storage) 데이터 삭제
       final storage = FlutterSecureStorage();

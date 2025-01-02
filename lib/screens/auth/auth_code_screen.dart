@@ -12,6 +12,7 @@ import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/login.dart';
+import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/providers/auth_provider.dart'
@@ -20,6 +21,7 @@ import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/services/firebase_auth_service.dart';
+import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/string_utils.dart';
@@ -28,6 +30,8 @@ import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
+
+import '../../main.dart';
 
 class AuthCodeScreen extends StatefulWidget {
   const AuthCodeScreen({super.key});
@@ -43,6 +47,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
   final FocusNode _codeFocusNode = FocusNode();
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
   AuthService _authService = AuthService();
+  UserService _userService = UserService();
   String? _errorMessage;
   late modakbul_auth_provider.AuthProvider authProvider;
   Timer? _resendTimer;
@@ -145,6 +150,14 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
         secureStorage.write(
             key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
       ]);
+
+      MyProfile myProfile = await _userService.getMyProfile();
+      await prefs.setString(AppConstants.userId, myProfile.userId);
+      await prefs.setString(AppConstants.userName, myProfile.userName);
+      await prefs.setString(AppConstants.profileUrl, myProfile.profileUrl);
+      await prefs.setBool(AppConstants.isFriendAlarm, myProfile.isFriendAlarm!);
+      await prefs.setBool(AppConstants.isContactAgree, myProfile.isContactAgree!); // 서버에서 정보 갖고와야함
+
       Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
     } else {
       if (!context.mounted) return;

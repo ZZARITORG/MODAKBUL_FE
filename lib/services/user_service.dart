@@ -34,9 +34,9 @@ Future<void> updateMyProfile(EditMyProfile editMyProfile) async {
     );
   }
 
-  Future<void> deleteUser() async {
+  Future<void> deleteUser(String firebaseUid) async {
     await dio.delete(
-        ApiPath.user
+      ApiPath.userCheck(firebaseUid)
     );
   }
 

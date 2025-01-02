@@ -11,6 +11,9 @@ import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
 
+import '../../constants/app_constants.dart';
+import '../../main.dart';
+
 class FriendSettingScreen extends StatefulWidget {
   const FriendSettingScreen({super.key});
 
@@ -21,16 +24,18 @@ class FriendSettingScreen extends StatefulWidget {
 class _FriendSettingScreenState extends State<FriendSettingScreen> {
   bool _isToggled = false;
   UserService userService = UserService();
-  late Future<MyProfile> _futureProfile;
+  ///late Future<MyProfile> _futureProfile;
 
   @override
   void initState() {
     super.initState();
-    _futureProfile = _loadProfile();
+   /// _futureProfile = _loadProfile();
+    _isToggled = prefs.getBool(AppConstants.isFriendAlarm)!;
   }
 
   Future<MyProfile> _loadProfile() async {
     final profile = await userService.getMyProfile();
+    print(profile.isFriendAlarm);
     setState(() {
       _isToggled = profile.isFriendAlarm ?? false;
     });
@@ -41,6 +46,7 @@ class _FriendSettingScreenState extends State<FriendSettingScreen> {
       await userService.updateMyProfile(
           EditMyProfile(isFriendAlarm: value)
       );
+      await prefs.setBool(AppConstants.isFriendAlarm, value);
       setState(() {
         _isToggled = value;
       });
@@ -53,19 +59,7 @@ class _FriendSettingScreenState extends State<FriendSettingScreen> {
       appBar: BackButtonAppBar(
           backgroundColor: ColorSchemes.gray000
       ),
-      body: FutureBuilder<MyProfile>(
-    future: _futureProfile,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      }
-
-      if (snapshot.hasError) {
-        return Center(child: Text('오류가 발생했습니다: ${snapshot.error}'));
-      }
-
-      final profile = snapshot.data;
-      return Padding(
+      body: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: StyleConstants.defaultPadding),
         child: Column(
@@ -98,9 +92,7 @@ class _FriendSettingScreenState extends State<FriendSettingScreen> {
                 })
           ],
         ),
-      );
-    }
-    )
+      ),
     );
   }
 }
