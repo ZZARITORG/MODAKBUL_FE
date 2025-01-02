@@ -16,7 +16,9 @@ import 'package:modakbul/widgets/invited_modakbul_card.dart';
 import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 
+import '../../../providers/location_provider.dart';
 import '../../../routes/routes.dart';
 
 class BrowseTabScreen extends StatefulWidget {
@@ -33,22 +35,6 @@ class _State extends State<BrowseTabScreen> {
   double? myLng;
   final Location _location = Location();
   Distance distance = Distance();
-
-  Future<void> getGeoData() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('permissions are denied');
-      }
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
-    setState(() {
-      myLat = position.latitude;
-      myLng = position.longitude;
-    });
-  }
 
   bool isLoading = true;
 
@@ -71,7 +57,10 @@ class _State extends State<BrowseTabScreen> {
   void initState() {
     super.initState();
     initializeDateFormatting();
-    getGeoData();
+    // getGeoData();
+    Position? currentPosition = Provider.of<LocationProvider>(context, listen: false).currentPosition;
+    myLat = currentPosition?.latitude;
+    myLng = currentPosition?.longitude;
   }
 
   final List<String> filters = ['최신순', '마감 임박', '거리순'];
