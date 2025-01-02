@@ -22,6 +22,7 @@ import 'package:modakbul/widgets/search_screen_skeleton.dart';
 import 'package:modakbul/widgets/select_user_list_profile.dart';
 import 'package:modakbul/widgets/suggested_friend_profile.dart';
 import 'package:modakbul/widgets/tab_bar_delegate.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/assets_path.dart';
 import '../../constants/style_constants.dart';
 import '../../widgets/custom_search_bar.dart';
@@ -46,6 +47,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
   List<FriendSuggested> friendSuggested = [];
   List<FriendReqList> friendRequests = [];
   List<bool> isPressedList = [];
+  List<String> filteredData = [];
   late Future<List<UserList>> getUser;
   late Future<UserCheck> getUserCheck;
   late Future<List<FriendSuggested>> getSug;
@@ -497,13 +499,13 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
               }
             },
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 4.h),
           Divider(
             thickness: 2.h,
             height: 2.h,
             color: ColorSchemes.gray100,
           ),
-          SizedBox(height: 32.h),
+          SizedBox(height: 10.h),
           Row(
             children: [
               SizedBox(width: 4.w),
@@ -518,18 +520,17 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
           ),
           SizedBox(height: 24.h),
           FutureBuilder<List<FriendSuggested>>(
-            future: getSug, // 비동기 데이터를 가져오는 Future
+            future: getSug.then((friendList) async {
+              final prefs = await SharedPreferences.getInstance();
+              List<String> delSugList = prefs.getStringList('delSugList') ?? [];
+              return friendList.where((friend) => !delSugList.contains(friend.id)).toList();
+            }),
             builder: (context, snapshot) {
-              if (snapshot.connectionState ==
-                  ConnectionState.waiting) {
-                return const Center(
-                    child: CircularProgressIndicator()); // 로딩 중
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Center(
-                    child: Text(
-                        'Error: ${snapshot.error}')); // 에러 발생 시 표시
-              } else if (!snapshot.hasData ||
-                  snapshot.data!.isEmpty) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return Center(
                   child: Text(
                     '추천된 친구가 없습니다.',
@@ -537,9 +538,10 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                         .textTheme
                         .body2
                         .copyWith(color: ColorSchemes.gray300),
-                  ),);
+                  ),
+                );
               } else {
-                friendSuggested = snapshot.data!;
+                List<FriendSuggested> friendSuggested = snapshot.data!;
                 isPressedList = List<bool>.filled(friendSuggested.length, true);
                 return ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
@@ -549,9 +551,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                     final friend = friendSuggested[index];
                     return Padding(
                       padding: EdgeInsets.only(
-                        bottom: index == friendSuggested.length - 1
-                            ? 0
-                            : 20.h,
+                        bottom: index == friendSuggested.length - 1 ? 0 : 24.h,
                       ),
                       child: SuggestedFriendProfile(
                         profileImage: friend.profileUrl,
@@ -569,7 +569,10 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                           });
                         },
                         rejectOnPressed: () async {
-                          await friendService.deleteFriend(Uuid(targetId: friend.id));
+                          final prefs = await SharedPreferences.getInstance();
+                          List<String> delSugList = prefs.getStringList('delSugList') ?? [];
+                          delSugList.add(friend.id);
+                          await prefs.setStringList('delSugList', delSugList);
                           setState(() {
                             friendSuggested.removeWhere((request) => request.id == friend.id);
                           });

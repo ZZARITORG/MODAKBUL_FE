@@ -14,8 +14,10 @@ class GroupService {
     Response response = await dio.get(
       ApiPath.group,
     );
+    print('aaa${response.data['data']}');
     return JsonUtils().parseGroupList(response.data['data'] as List);
   }
+
   Future<Response> createGroup(String groupName, List<String> friendIds) async {
     try {
       Response response = await dio.post(
@@ -31,6 +33,7 @@ class GroupService {
       rethrow; // 오류를 호출자에게 다시 던짐
     }
   }
+
   Future<Response> updateGroup(String groupId, String groupName, List<String> friendIds) async {
     try {
       final String url = '${ApiPath.group}/$groupId';

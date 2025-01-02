@@ -35,7 +35,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   Logger logger = Logger(printer: PrettyPrinter());
 
   // ValueNotifier로 _filteredGroups 관리
-  ValueNotifier<List<Group>> _filteredGroupsNotifier = ValueNotifier([]);
+  final ValueNotifier<List<Group>> _filteredGroupsNotifier = ValueNotifier([]);
 
   @override
   void initState() {
@@ -342,6 +342,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                             profileLength: filteredGroups[index].members.length,  // 멤버 수
                                             profileImage1: members[0].user.profileUrl,  // 첫 번째 멤버의 프로필 이미지
                                             profileImage2: profileImage2.isEmpty ? null : profileImage2,  // 두 번째 멤버의 프로필 이미지
+                                            participantUsers: [], // 다르다달라
                                             isSelected: false,  // 선택된 그룹 여부
                                           ),
                                           SizedBox(height: 12.h),

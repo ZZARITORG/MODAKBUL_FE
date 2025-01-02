@@ -26,6 +26,7 @@ import 'package:modakbul/utils/string_utils.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProfileScreen extends StatefulWidget {
   const AuthProfileScreen({super.key});
@@ -75,6 +76,9 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
         secureStorage.write(
             key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
       ]);
+
+      final SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setStringList('delSugList', []);
 
       if (!context.mounted) return;
       Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
