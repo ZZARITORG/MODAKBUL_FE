@@ -8,6 +8,9 @@ import 'package:modakbul/models/place.dart';
 import 'package:modakbul/models/accepted_modakbul.dart';
 import 'package:modakbul/models/my_host_modakbul.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
+import 'package:modakbul/models/user_check.dart';
+import 'package:modakbul/models/user_list.dart';
+
 
 import '../models/modakbul_detail.dart';
 import '../models/notification.dart';
@@ -23,6 +26,14 @@ class JsonUtils {
 
   List<FriendSuggested> parseFriendSuggested(List jsonList) {
     return jsonList.map((json) => FriendSuggested.fromJson(json)).toList();
+  }
+
+  List<UserList> parseUserList(List jsonList) {
+    return jsonList.map((json) => UserList.fromJson(json)).toList();
+  }
+
+  List<UserCheck> parseUserCheck(List jsonList) {
+    return jsonList.map((json) => UserCheck.fromJson(json)).toList();
   }
   
   List<FriendList> parseFriendList(List jsonList) {

@@ -50,6 +50,9 @@ class ApiPath{
   //user
   static const String user = '/api/v0/user';
   static const String userMe = '/api/v0/user/me';
+  static String userCheck(String id) => '/api/v0/user/$id';
+
+
 
   //AWS
   static String getPresignedUrl(String userId) => '/api/v0/aws/presigned/$userId';

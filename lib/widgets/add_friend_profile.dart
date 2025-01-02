@@ -11,6 +11,8 @@ class AddFriendProfile extends StatelessWidget {
   final String userName;
   final String userId;
   final String time;
+  final VoidCallback acceptOnPressed;
+  final VoidCallback rejectOnPressed;
 
   const AddFriendProfile({
     Key? key,
@@ -18,6 +20,8 @@ class AddFriendProfile extends StatelessWidget {
     required this.userName,
     required this.userId,
     required this.time,
+    required this.acceptOnPressed,
+    required this.rejectOnPressed,
   }) : super(key: key);
 
   @override
@@ -27,6 +31,8 @@ class AddFriendProfile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: StyleConstants.circleSizeL,
+          backgroundImage: NetworkImage(profileImage!),
+          backgroundColor: ColorSchemes.gray500,
         ),
         SizedBox(width: 12.w,),
         Expanded(
@@ -57,7 +63,7 @@ class AddFriendProfile extends StatelessWidget {
                       height: 40.h,
                       child: CustomButton(
                           text: '확인',
-                          onPressed: () {},
+                          onPressed: acceptOnPressed,
                           buttonColor: ColorSchemes.orange200,
                           textStyle: Theme.of(context).textTheme.body3,
                           textColor: ColorSchemes.white
@@ -70,7 +76,7 @@ class AddFriendProfile extends StatelessWidget {
                       height: 40.h,
                       child: CustomButton(
                           text: '삭제',
-                          onPressed: () {},
+                          onPressed: rejectOnPressed,
                           buttonColor: ColorSchemes.gray100,
                           textStyle: Theme.of(context).textTheme.body3,
                           textColor: ColorSchemes.gray400

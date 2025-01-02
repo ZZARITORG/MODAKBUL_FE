@@ -38,7 +38,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
   late Future<List<FriendList>> getData;
   final GroupService _groupService = GroupService();
   final FocusNode _searchFocusNode = FocusNode();
-  String updateGroupname = '';
+  String updateGroupName = '';
 
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
 
@@ -153,7 +153,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
       return;
     }
     // updateGroupname이 있으면 그 값을, 없으면 groupName을 보냄
-    final String finalGroupName = updateGroupname.isNotEmpty ? updateGroupname : groupName;
+    final String finalGroupName = updateGroupName.isNotEmpty ? updateGroupName : groupName;
     try {
       final response = await _groupService.updateGroup(groupId, finalGroupName, friendIds);
       print('그룹 수정 성공: ${response.data}');
@@ -207,7 +207,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                             TextField(
                               onChanged: (value) {
                                 setState(() {
-                                  updateGroupname = value;
+                                  updateGroupName = value;
                                 });
                               },
                               style: Theme.of(context)
