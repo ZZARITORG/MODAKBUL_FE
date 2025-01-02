@@ -6,6 +6,7 @@ import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
+import 'package:modakbul/widgets/group_list_tile.dart';
 import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 import 'package:modakbul/widgets/my_modakbul_screen_skeleton.dart';
 
@@ -98,11 +99,10 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
                                 children: [
                                   GestureDetector(
                                     onTap: (){},
-                                    child: MyModakbulListTile(
+                                    child: GroupListTile(
                                       title: title,
                                       time: date,
                                       profileLength: users.length - 1,
-                                      participantUsers: participantUsers,
                                     ),
                                   ),
                                   if (index != acceptedModakbulList.length - 1)

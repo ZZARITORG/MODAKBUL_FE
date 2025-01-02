@@ -11,6 +11,7 @@ import 'package:modakbul/services/group_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/group_list_tile.dart';
 import 'package:modakbul/widgets/group_screen_skeleton.dart';
 import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 import '../create_group_screen.dart';
@@ -336,13 +337,12 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                       },
                                       child: Column(
                                         children: [
-                                          MyModakbulListTile(
+                                          GroupListTile(
                                             title: groupName,  // 그룹 이름
                                             time: filteredGroups[index].createdAt,  // 그룹의 마지막 업데이트 시간
                                             profileLength: filteredGroups[index].members.length,  // 멤버 수
                                             profileImage1: members[0].user.profileUrl,  // 첫 번째 멤버의 프로필 이미지
                                             profileImage2: profileImage2.isEmpty ? null : profileImage2,  // 두 번째 멤버의 프로필 이미지
-                                            participantUsers: [], // 다르다달라
                                             isSelected: false,  // 선택된 그룹 여부
                                           ),
                                           SizedBox(height: 12.h),

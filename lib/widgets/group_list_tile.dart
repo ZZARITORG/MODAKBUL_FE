@@ -14,7 +14,6 @@ class GroupListTile extends StatelessWidget {
   final String? profileImage2;
   final int profileLength;
   final bool isSelected;
-  final List<UserStatus> participantUsers;
 
   const GroupListTile(
       {Key? key,
@@ -23,7 +22,6 @@ class GroupListTile extends StatelessWidget {
         this.profileImage1,
         this.profileImage2,
         required this.profileLength,
-        this.participantUsers = const [],
         this.isSelected = false,})
       : super(key: key);
 
@@ -99,7 +97,7 @@ class GroupListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange200,
-                                backgroundImage: NetworkImage(participantUsers[0].profileUrl!),
+                                backgroundImage: NetworkImage(profileImage1!),
                               ),
                             )),
                       if (profileLength >= 2)
@@ -111,7 +109,7 @@ class GroupListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange100,
-                                backgroundImage: NetworkImage(participantUsers[1].profileUrl!),
+                                backgroundImage: NetworkImage(profileImage2!),
                               ),
                             )),
                       if (profileLength >= 3)
