@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
+import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/group_list.dart';
@@ -27,11 +28,13 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   String selectedFilter = 'latest';
   String filterText = '최신순';
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  late final ScrollController _scrollController = ScrollController();
   GroupService groupService = GroupService();
   List<Group> groupList = [];
   final FocusNode _searchFocusNode = FocusNode();
   late Future<List<Group>> getData;
+  late DateTime currentTime;
+  bool _showLottie = false;
   Timer? _debounce;
   Logger logger = Logger(printer: PrettyPrinter());
 
@@ -43,13 +46,26 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     super.initState();
     getData = groupService.getGroupList();
     _searchController.addListener(_onSearchChanged);
-  }
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        setState(() {
+          _showLottie = true;
+        });
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            _showLottie = false;
+          });
+        });
+      }
+    });
+}
 
   @override
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
     _debounce?.cancel();
+    _scrollController.dispose();
     _filteredGroupsNotifier.dispose();
     super.dispose();
   }
@@ -70,6 +86,20 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     _reloadGroups(); // 새로운 데이터를 로드
     Navigator.pop(context); // 이전 화면으로 돌아감
   }
+
+  /*void _onScroll() {
+    if (_scrollController.position.atEdge) {
+      bool isBottom = _scrollController.position.pixels == _scrollController.position.maxScrollExtent;
+      setState(() {
+        _showLottie = isBottom;
+      });
+    } else {
+      setState(() {
+        _showLottie = false;
+      });
+    }
+  }*/
+
   // 최신순 정렬 함수 (최신 날짜가 먼저)
   List<Group> sortByRecent(List<Group> data) {
     data.sort((a, b) {
@@ -104,6 +134,24 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
           group.id.toLowerCase().contains(searchQuery);
     }).toList();
     _filteredGroupsNotifier.value = filtered;
+  }
+
+  static String timeAgo(DateTime dateTime, DateTime currentTime) {
+    Duration difference = currentTime.difference(dateTime); // 시간 차이 계산
+
+    if (difference.inDays > 0) {
+      // 하루 이상 차이 나면 "몇 일 전" 형태로 출력
+      return '${difference.inDays}일 전 모닥불을 피웠습니다!';
+    } else if (difference.inHours > 0) {
+      // 한 시간 이상 차이 나면 "몇 시간 전" 형태로 출력
+      return '${difference.inHours}시간 전';
+    } else if (difference.inMinutes > 0) {
+      // 1분 이상 차이 나면 "몇 분 전" 형태로 출력
+      return '${difference.inMinutes}분 전';
+    } else {
+      // 1분 이내로 차이가 나면 "방금 전" 형태로 출력
+      return '방금 전';
+    }
   }
 
   @override
@@ -339,7 +387,10 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                         children: [
                                           GroupListTile(
                                             title: groupName,  // 그룹 이름
-                                            time: filteredGroups[index].createdAt,  // 그룹의 마지막 업데이트 시간
+                                            time: timeAgo(
+                                              DateTime.parse(filteredGroups[index].createdAt), //
+                                              DateTime.now(), //
+                                            ),
                                             profileLength: filteredGroups[index].members.length,  // 멤버 수
                                             profileImage1: members[0].user.profileUrl,  // 첫 번째 멤버의 프로필 이미지
                                             profileImage2: profileImage2.isEmpty ? null : profileImage2,  // 두 번째 멤버의 프로필 이미지
@@ -353,6 +404,28 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                 );
                               },
                             ),
+                            SizedBox(height: 4.h),
+                            if (_showLottie)
+                              SizedBox(
+                                height: 72.h,
+                                child: Positioned(
+                                    bottom: 20,
+                                    left: 0,
+                                    right: 0,
+                                    child: Center(
+                                      child: SizedBox(
+                                        height: 32,
+                                        width: 32,
+                                        child: Lottie.asset(
+                                          AnimationPath.loadingFeed,
+                                          fit: BoxFit.contain,
+                                          repeat: true,
+                                          animate: true,
+                                        ),
+                                      ),
+                                    )
+                                ),
+                              ),
                           ],
                         );
                       }

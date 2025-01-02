@@ -79,7 +79,7 @@ class GroupListTile extends StatelessWidget {
                         style: Theme.of(context)
                             .textTheme
                             .caption
-                            .copyWith(color: ColorSchemes.orange100),
+                            .copyWith(color: ColorSchemes.orange200),
                       ),
                     ],
                   ),
