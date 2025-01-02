@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/providers/location_provider.dart';
 import 'package:modakbul/screens/friend/friend_screen.dart';
 import 'package:modakbul/screens/friend/friend_search_screen.dart';
 import 'package:modakbul/screens/home/home_screen.dart';
 import 'package:modakbul/screens/modakbul/create_modakbul_screen.dart';
 import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/themes/color_schemes.dart';
+import 'package:modakbul/utils/handler_utils.dart';
+import 'package:modakbul/utils/location_utils.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -54,6 +59,15 @@ class _MainScreenState extends State<MainScreen> {
     const FriendSearchScreen(),
     MyProfileScreen(),
   ];
+  HandlerUtils handlerUtils = HandlerUtils();
+  LocationUtils locationUtils = LocationUtils();
+
+
+  @override
+  void initState() {
+    super.initState();
+    Position? currentPosition = Provider.of<LocationProvider>(context, listen: false).currentPosition;
+  }
 
   @override
   Widget build(BuildContext context) {

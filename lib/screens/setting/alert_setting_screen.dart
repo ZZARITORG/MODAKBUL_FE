@@ -16,9 +16,9 @@ class AlertSettingScreen extends StatefulWidget {
 }
 
 class _AlertSettingScreenState extends State<AlertSettingScreen> {
-  bool _isAllAlertToggled = false;
-  bool _isModakbulAlertToggled = false;
-  bool _isAdAlertToggled = false;
+  bool _isAllAlertToggled = true;
+  bool _isModakbulAlertToggled = true;
+  bool _isAdAlertToggled = true;
 
   final String _allAlertTopic = 'all_alerts';
   final String _modakbulAlertTopic = 'modakbul_alerts';

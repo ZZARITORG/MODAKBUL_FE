@@ -1,12 +1,14 @@
 class Address {
-  final RoadAddress roadAddress;
+  final RoadAddress? roadAddress;
   final DetailedAddress detailedAddress;
 
   Address({required this.roadAddress, required this.detailedAddress});
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
-      roadAddress: RoadAddress.fromJson(json['road_address']),
+      roadAddress: json['road_address'] != null
+          ? RoadAddress.fromJson(json['road_address'])
+          : null, // Handle null for road_address,
       detailedAddress: DetailedAddress.fromJson(json['address']),
     );
   }
