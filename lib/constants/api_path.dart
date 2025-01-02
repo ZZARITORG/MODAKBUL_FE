@@ -27,6 +27,7 @@ class ApiPath{
   static const String meetingFriend = '/api/v0/meeting/friendId';
   static const String meetingGroup = '/api/v0/meeting/groupId';
   static const String meetingReject = '/api/v0/meeting/reject';
+  static const String meetingCancel = '/api/v0/meeting/cancel';
 
   //notification
   static const String notification = '/api/v0/notification/notification-list';

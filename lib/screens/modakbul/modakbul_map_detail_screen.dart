@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:modakbul/constants/style_constants.dart';
@@ -7,6 +8,7 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/modakbul_map_screen_skeleton.dart';
 import '../../themes/color_schemes.dart';
+import '../../widgets/custom_toast.dart';
 
 class ModakbulMapDetailScreen extends StatefulWidget {
   const ModakbulMapDetailScreen({Key? key}) : super(key: key);
@@ -39,13 +41,12 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
       appBar: BackButtonAppBar(backgroundColor: ColorSchemes.gray000),
       body: FutureBuilder(
           future: Future.delayed(
-            Duration(seconds: 0),
+              Duration(seconds: 0),
               () => {
-                'adderss': address,
-                'lat': lat,
-                'lng': lng,
-              }
-          ),
+                    'adderss': address,
+                    'lat': lat,
+                    'lng': lng,
+                  }),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return ModakbulMapScreenSkeleton();
@@ -70,7 +71,9 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .bigHeadLine2
-                                    .copyWith(color: ColorSchemes.gray500, height: 1.5),
+                                    .copyWith(
+                                        color: ColorSchemes.gray500,
+                                        height: 1.5),
                               ),
                               SizedBox(
                                 height: 6.h,
@@ -123,7 +126,10 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
                       height: 56.h,
                       child: CustomButton(
                           text: '주소 복사하기',
-                          onPressed: () {},
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: address));
+                            CustomToast.showToast(context, '주소가 복사되었습니다.');
+                          },
                           buttonColor: ColorSchemes.orange200,
                           textStyle: Theme.of(context).textTheme.smallHeadLine2,
                           textColor: ColorSchemes.white),
@@ -134,8 +140,7 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
             } else {
               return Text('머지 이거머야');
             }
-          }
-      ),
+          }),
     );
   }
 }

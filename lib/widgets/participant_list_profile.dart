@@ -30,24 +30,40 @@ class Participantlistprofile extends StatelessWidget {
           {required String profileImage,
           required String userName,
           required userId,
-            required isPending,
-            required isBlocked,
+          required isPending,
+          required isBlocked,
           required List<UserStatus> users}) =>
       Participantlistprofile(
-          profileImage: profileImage, userName: userName, userId: userId, users: users, isPending: isPending, isBlocked: isBlocked,);
+        profileImage: profileImage,
+        userName: userName,
+        userId: userId,
+        users: users,
+        isPending: isPending,
+        isBlocked: isBlocked,
+      );
 
   Widget _buildUserStatus() {
     if (users.isNotEmpty) {
-      if (users[0].userId == userId) {//호스트
-        return SizedBox(width: 24.w, height: 24.h,
-          child: Image.asset(ImagePath.hostBonfire, fit: BoxFit.contain,),
+      if (users[0].userId == userId) {
+        //호스트
+        return SizedBox(
+          width: 24.w,
+          height: 24.h,
+          child: Image.asset(
+            ImagePath.hostBonfire,
+            fit: BoxFit.contain,
+          ),
         );
-      } else if(isBlocked) {
+      } else if (isBlocked) {
         return SizedBox(
           width: 24.r,
           height: 24.r,
           child: Center(
-            child: SvgPicture.asset(IconPath.warningRed, width: 18.r, height: 18.r,),
+            child: SvgPicture.asset(
+              IconPath.warningRed,
+              width: 18.r,
+              height: 18.r,
+            ),
           ),
         );
       }
@@ -57,7 +73,8 @@ class Participantlistprofile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userNameColor = isPending ? ColorSchemes.gray300 : ColorSchemes.gray500;
+    final userNameColor =
+        isPending ? ColorSchemes.gray300 : ColorSchemes.gray500;
     final userIdColor = isPending ? ColorSchemes.gray200 : ColorSchemes.gray300;
 
     return Padding(
@@ -68,10 +85,15 @@ class Participantlistprofile extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: StyleConstants.circleSizeS,
-                  backgroundImage: NetworkImage(profileImage),
-                ),
+                isBlocked
+                    ? CircleAvatar(
+                        radius: StyleConstants.circleSizeS,
+                        backgroundImage: NetworkImage('https://s3.ap-northeast-2.amazonaws.com/zzarit-madakbul-bucket/profile/default'),
+                      )
+                    : CircleAvatar(
+                        radius: StyleConstants.circleSizeS,
+                        backgroundImage: NetworkImage(profileImage),
+                      ),
                 SizedBox(
                   width: 8.w,
                 ),

@@ -84,4 +84,5 @@ class AnimationPath {
   AnimationPath._();
 
   static const String loadingFeed = 'assets/animations/loading_feed.json';
+  static const String loadingFeed2 = 'assets/animations/loading_feed2.json';
 }

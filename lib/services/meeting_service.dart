@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/core/dio_client.dart';
+import 'package:modakbul/models/cancel_modakbul.dart';
 import 'package:modakbul/models/modakbul_by_group_id.dart';
 import 'package:modakbul/models/modakbul_by_user_id.dart';
 import 'package:logger/logger.dart';
@@ -51,9 +52,15 @@ class MeetingService {
       ApiPath.meetingAccept,
       data: request.toJson(),
     );
-    Logger logger = Logger();
-    logger.i(response.data);
-
     return AcceptModakbulResponse.fromJson(response.data['data']);
   }
+
+  Future<void> cancelModakbul(String id) async {
+    await dio.post('${ApiPath.meetingCancel}/$id');
+  }
+
+  Future<void> deleteModakbul(String id) async {
+    await dio.delete('${ApiPath.meeting}/$id');
+  }
 }
+
