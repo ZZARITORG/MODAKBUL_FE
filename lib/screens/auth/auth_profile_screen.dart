@@ -28,6 +28,8 @@ import 'package:modakbul/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../main.dart';
+
 class AuthProfileScreen extends StatefulWidget {
   const AuthProfileScreen({super.key});
 
@@ -80,13 +82,19 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
             key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
       ]);
 
-      final SharedPreferences pref = await SharedPreferences.getInstance();
-      await pref.setStringList('delSugList', []);
-      await pref.setString(AppConstants.userName, authProvider.userName!);
-      await pref.setString(AppConstants.userId, authProvider.userId!);
-      await pref.setString(AppConstants.profileUrl, authProvider.profileUrl!);
-      await pref.setBool(AppConstants.isFriendAlarm, true);
-      await pref.setBool(AppConstants.isContactAgree, true);
+      await Future.wait([
+        FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic),
+        FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic),
+        prefs.setStringList('delSugList', []),
+        prefs.setString(AppConstants.userName, authProvider.userName!),
+        prefs.setString(AppConstants.userId, authProvider.userId!),
+        prefs.setString(AppConstants.profileUrl, authProvider.profileUrl!),
+        prefs.setBool(AppConstants.isFriendAlarm, true),
+        prefs.setBool(AppConstants.isContactAgree, true),
+        prefs.setBool(AppConstants.isAllAlertToggled, true),
+        prefs.setBool(AppConstants.isModakbulAlertToggled, true),
+        prefs.setBool(AppConstants.isAdAlertToggled, true),
+      ]);
 
       if (!context.mounted) return;
       Routes.navigateAndRemoveUntil(context, Routes.mainScreen);

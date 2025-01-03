@@ -8,6 +8,9 @@ import 'package:modakbul/widgets/setting_menu.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 
+import '../../constants/app_constants.dart';
+import '../../main.dart';
+
 class AlertSettingScreen extends StatefulWidget {
   const AlertSettingScreen({super.key});
 
@@ -16,13 +19,17 @@ class AlertSettingScreen extends StatefulWidget {
 }
 
 class _AlertSettingScreenState extends State<AlertSettingScreen> {
-  bool _isAllAlertToggled = true;
-  bool _isModakbulAlertToggled = true;
-  bool _isAdAlertToggled = true;
+  bool? _isAllAlertToggled;
+  bool? _isModakbulAlertToggled;
+  bool? _isAdAlertToggled;
 
-  final String _allAlertTopic = 'all_alerts';
-  final String _modakbulAlertTopic = 'modakbul_alerts';
-  final String _adAlertTopic = 'ad_alerts';
+  @override
+  void initState() {
+    super.initState();
+       _isAllAlertToggled = prefs.getBool(AppConstants.isAllAlertToggled);
+       _isModakbulAlertToggled = prefs.getBool(AppConstants.isModakbulAlertToggled);
+       _isAdAlertToggled = prefs.getBool(AppConstants.isAdAlertToggled);
+  } // value 불러오기
 
   Future<void> _updateAllAlerts(bool value) async {
     setState(() {
@@ -33,45 +40,54 @@ class _AlertSettingScreenState extends State<AlertSettingScreen> {
 
     if (value) {
       await Future.wait([
-        FirebaseMessaging.instance.subscribeToTopic(_allAlertTopic),
-        FirebaseMessaging.instance.subscribeToTopic(_modakbulAlertTopic),
-        FirebaseMessaging.instance.subscribeToTopic(_adAlertTopic),
+        FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic),
+        FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic),
       ]);
     } else {
       await Future.wait([
-        FirebaseMessaging.instance.unsubscribeFromTopic(_allAlertTopic),
-        FirebaseMessaging.instance.unsubscribeFromTopic(_modakbulAlertTopic),
-        FirebaseMessaging.instance.unsubscribeFromTopic(_adAlertTopic),
+        FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.modakbulAlertTopic),
+        FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.adAlertTopic),
       ]);
     }
+    await Future.wait([
+      prefs.setBool(AppConstants.isAllAlertToggled, value),
+      prefs.setBool(AppConstants.isModakbulAlertToggled, value),
+      prefs.setBool(AppConstants.isAdAlertToggled, value),
+    ]);
   }
 
   Future<void> _updateModakbulAlert(bool value) async {
     setState(() {
       _isModakbulAlertToggled = value;
-      _isAllAlertToggled = _isModakbulAlertToggled && _isAdAlertToggled;
+      _isAllAlertToggled = _isModakbulAlertToggled! && _isAdAlertToggled!;
     });
 
     if (value) {
-      await FirebaseMessaging.instance.subscribeToTopic(_modakbulAlertTopic);
+      await FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic);
     } else {
-      await FirebaseMessaging.instance.unsubscribeFromTopic(_modakbulAlertTopic);
-      await FirebaseMessaging.instance.unsubscribeFromTopic(_allAlertTopic);
+      await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.modakbulAlertTopic);
     }
+    await Future.wait([
+      prefs.setBool(AppConstants.isAllAlertToggled, _isAllAlertToggled!),
+      prefs.setBool(AppConstants.isModakbulAlertToggled, value),
+    ]);
   }
 
   Future<void> _updateAdAlert(bool value) async {
     setState(() {
       _isAdAlertToggled = value;
-      _isAllAlertToggled = _isModakbulAlertToggled && _isAdAlertToggled;
+      _isAllAlertToggled = _isModakbulAlertToggled! && _isAdAlertToggled!;
     });
 
     if (value) {
-      await FirebaseMessaging.instance.subscribeToTopic(_adAlertTopic);
+      await FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic);
     } else {
-      await FirebaseMessaging.instance.unsubscribeFromTopic(_adAlertTopic);
-      await FirebaseMessaging.instance.unsubscribeFromTopic(_allAlertTopic);
+      await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.adAlertTopic);
     }
+    await Future.wait([
+      prefs.setBool(AppConstants.isAllAlertToggled, _isAllAlertToggled!),
+      prefs.setBool(AppConstants.isAdAlertToggled, value),
+    ]);
   }
 
   @override
@@ -95,21 +111,21 @@ class _AlertSettingScreenState extends State<AlertSettingScreen> {
                 menu: '전체 알림 끄기',
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
-                isToggled: _isAllAlertToggled,
+                isToggled: _isAllAlertToggled!,
                 onToggleChanged: _updateAllAlerts),
             SizedBox(height: 28.h),
             SettingMenu.toggle(
                 menu: '모닥불 초대 알림 끄기',
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
-                isToggled: _isModakbulAlertToggled,
+                isToggled: _isModakbulAlertToggled!,
                 onToggleChanged: _updateModakbulAlert),
             SizedBox(height: 28.h),
             SettingMenu.toggle(
                 menu: '광고성 알림 끄기',
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
-                isToggled: _isAdAlertToggled,
+                isToggled: _isAdAlertToggled!,
                 onToggleChanged: _updateAdAlert),
           ],
         ),
