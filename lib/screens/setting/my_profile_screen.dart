@@ -52,11 +52,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     initSharedPreferences();
   }
 
-  void initSharedPreferences() async {
-    ///pref = await SharedPreferences.getInstance();
-    userName = prefs.getString(AppConstants.userName)!;
-    userId = prefs.getString(AppConstants.userId)!;
-    profileUrl = prefs.getString(AppConstants.profileUrl)!;
+  Future<void> initSharedPreferences() async {
+    setState(() {
+      userName = prefs.getString(AppConstants.userName) ?? '';
+      userId = prefs.getString(AppConstants.userId) ?? '';
+      profileUrl = prefs.getString(AppConstants.profileUrl) ?? '';
+    });
   }
 
   @override
@@ -152,7 +153,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             onTap: () async {
                               final result = await Routes.navigateAndReturn(context, Routes.editMyProfileScreen);
                               if (result == true) {
-                                initSharedPreferences();
+                                await initSharedPreferences();
                               }
                             },
                             child: Text(

@@ -24,14 +24,63 @@ class _AlertSettingScreenState extends State<AlertSettingScreen> {
   final String _modakbulAlertTopic = 'modakbul_alerts';
   final String _adAlertTopic = 'ad_alerts';
 
+  Future<void> _updateAllAlerts(bool value) async {
+    setState(() {
+      _isAllAlertToggled = value;
+      _isModakbulAlertToggled = value;
+      _isAdAlertToggled = value;
+    });
+
+    if (value) {
+      await Future.wait([
+        FirebaseMessaging.instance.subscribeToTopic(_allAlertTopic),
+        FirebaseMessaging.instance.subscribeToTopic(_modakbulAlertTopic),
+        FirebaseMessaging.instance.subscribeToTopic(_adAlertTopic),
+      ]);
+    } else {
+      await Future.wait([
+        FirebaseMessaging.instance.unsubscribeFromTopic(_allAlertTopic),
+        FirebaseMessaging.instance.unsubscribeFromTopic(_modakbulAlertTopic),
+        FirebaseMessaging.instance.unsubscribeFromTopic(_adAlertTopic),
+      ]);
+    }
+  }
+
+  Future<void> _updateModakbulAlert(bool value) async {
+    setState(() {
+      _isModakbulAlertToggled = value;
+      _isAllAlertToggled = _isModakbulAlertToggled && _isAdAlertToggled;
+    });
+
+    if (value) {
+      await FirebaseMessaging.instance.subscribeToTopic(_modakbulAlertTopic);
+    } else {
+      await FirebaseMessaging.instance.unsubscribeFromTopic(_modakbulAlertTopic);
+      await FirebaseMessaging.instance.unsubscribeFromTopic(_allAlertTopic);
+    }
+  }
+
+  Future<void> _updateAdAlert(bool value) async {
+    setState(() {
+      _isAdAlertToggled = value;
+      _isAllAlertToggled = _isModakbulAlertToggled && _isAdAlertToggled;
+    });
+
+    if (value) {
+      await FirebaseMessaging.instance.subscribeToTopic(_adAlertTopic);
+    } else {
+      await FirebaseMessaging.instance.unsubscribeFromTopic(_adAlertTopic);
+      await FirebaseMessaging.instance.unsubscribeFromTopic(_allAlertTopic);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorSchemes.gray000,
       appBar: BackButtonAppBar(backgroundColor: ColorSchemes.gray000),
       body: Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -47,48 +96,21 @@ class _AlertSettingScreenState extends State<AlertSettingScreen> {
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
                 isToggled: _isAllAlertToggled,
-                onToggleChanged: (value) async {
-                  setState(() {
-                    _isAllAlertToggled = value;
-                  });
-                  if (value) {
-                    await FirebaseMessaging.instance.subscribeToTopic(_allAlertTopic);
-                  } else {
-                    await FirebaseMessaging.instance.unsubscribeFromTopic(_allAlertTopic);
-                  }
-                }),
+                onToggleChanged: _updateAllAlerts),
             SizedBox(height: 28.h),
             SettingMenu.toggle(
                 menu: '모닥불 초대 알림 끄기',
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
                 isToggled: _isModakbulAlertToggled,
-                onToggleChanged: (value) async {
-                  setState(() {
-                    _isModakbulAlertToggled = value;
-                  });
-                  if (value) {
-                    await FirebaseMessaging.instance.subscribeToTopic(_modakbulAlertTopic);
-                  } else {
-                    await FirebaseMessaging.instance.unsubscribeFromTopic(_modakbulAlertTopic);
-                  }
-                }),
+                onToggleChanged: _updateModakbulAlert),
             SizedBox(height: 28.h),
             SettingMenu.toggle(
                 menu: '광고성 알림 끄기',
                 icon: IconPath.notificationsOff,
                 iconWidth: 14.r,
                 isToggled: _isAdAlertToggled,
-                onToggleChanged: (value) async {
-                  setState(() {
-                    _isAdAlertToggled = value;
-                  });
-                  if (value) {
-                    await FirebaseMessaging.instance.subscribeToTopic(_adAlertTopic);
-                  } else {
-                    await FirebaseMessaging.instance.unsubscribeFromTopic(_adAlertTopic);
-                  }
-                }),
+                onToggleChanged: _updateAdAlert),
           ],
         ),
       ),

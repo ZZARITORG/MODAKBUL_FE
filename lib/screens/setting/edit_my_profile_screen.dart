@@ -50,7 +50,8 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorSchemes.gray000,
-      appBar: BackButtonAppBar(backgroundColor: ColorSchemes.gray000),
+      appBar: const BackButtonAppBar(backgroundColor: ColorSchemes.gray000,
+      returnResult: true),
       body: SafeArea(
         child: Padding(
           padding:
