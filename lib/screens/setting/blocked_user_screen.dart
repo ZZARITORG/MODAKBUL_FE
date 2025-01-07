@@ -150,13 +150,21 @@ class BlockedUserScreen extends StatelessWidget {
                         Center(
                           child: Column(
                             children: [
-                              SizedBox(height: 80.h),
+                              SizedBox(height: 202.h),
                               Text(
                                 '차단된 친구가 없습니다.',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bigHeadLine3
                                     .copyWith(color: ColorSchemes.orange100),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                '친구를 추가하고 모닥불을 피워보세요.',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body2
+                                    .copyWith(color: ColorSchemes.gray300),
                               ),
                             ],
                           ),
