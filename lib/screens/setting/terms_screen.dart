@@ -11,7 +11,7 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/log_out_dialog.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
 import 'package:modakbul/services/user_service.dart';
-import 'package:modakbul/widgets/custom_webview.dart';
+import 'package:modakbul/widgets/launch_custom_tab.dart';
 import 'package:provider/provider.dart';
 import 'package:modakbul/widgets/delete_user_bottom_sheet.dart';
 
@@ -50,16 +50,12 @@ class TermsScreen extends StatelessWidget {
                 menu: '개인정보 처리 방침',
                 icon: IconPath.description,
                 iconWidth: 16.r,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CustomWebview(
-                        url: 'https://www.naver.com/',
-                        title: '모닥불 개인정보 처리방침',
-                      ),
-                    ),
-                  );
+                onPressed: () async {
+                    await launchCustomTab(
+                      context,
+                      url: 'https://www.notion.so/f95a41a147a6413bb1bc5dacc21c65b4',
+                      title: '모닥불 개인정보 처리방침',
+                    );
                 }),
             SizedBox(height: 28.h),
             InkWell(
