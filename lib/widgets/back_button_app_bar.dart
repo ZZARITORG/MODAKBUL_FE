@@ -8,9 +8,10 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isActionButton;
   final VoidCallback? onActionPressed;
   final Color? backgroundColor;
+  final bool returnResult;
 
   const BackButtonAppBar(
-      {Key? key, this.backgroundColor, this.isActionButton = false, this.onActionPressed})
+      {Key? key, this.backgroundColor, this.isActionButton = false, this.onActionPressed, this.returnResult = false})
       : super(key: key);
 
   factory BackButtonAppBar.actions({required VoidCallback onActionPressed, required Color backgroundColor}) =>
@@ -33,7 +34,13 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
           IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (returnResult) {
+                  Navigator.pop(context, true);
+                } else {
+                  Navigator.pop(context);
+                }
+              },
               icon: SvgPicture.asset(
                 IconPath.arrowBack,
                 height: 22.r, // 반응형 높이

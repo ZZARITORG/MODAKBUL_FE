@@ -26,6 +26,7 @@ class IconPath {
   static const String checkCircleDisabledAll = 'assets/icons/check_circle_disabled_all.svg';
   static const String checkCircleLineBlank = 'assets/icons/check_circle_line_blank.svg';
   static const String close = 'assets/icons/close.svg';
+  static const String closeWebview = 'assets/icons/close_webview.svg';
   static const String copy = 'assets/icons/copy.svg';
   static const String dateArrowBack = 'assets/icons/date_arrow_back.svg';
   static const String dateArrowForward = 'assets/icons/date_arrow_forward.svg';
@@ -41,6 +42,7 @@ class IconPath {
   static const String homeBottomDisable = 'assets/icons/home_bottom_disabled.svg';
   static const String locationSearching = 'assets/icons/location_searching.svg';
   static const String lock = 'assets/icons/lock.svg';
+  static const String lockWebview = 'assets/icons/lock_webview.svg';
   static const String mail = 'assets/icons/mail.svg';
   static const String modakbulBottomActivate = 'assets/icons/modakbul_bottom_activate.svg';
   static const String modakbulBottomDisable = 'assets/icons/modakbul_bottom_disabled.svg';

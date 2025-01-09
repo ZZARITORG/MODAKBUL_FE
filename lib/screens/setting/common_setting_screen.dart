@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -12,6 +13,8 @@ import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
 
+import '../../main.dart';
+
 class CommonSettingScreen extends StatefulWidget {
   const CommonSettingScreen({super.key});
 
@@ -22,12 +25,13 @@ class CommonSettingScreen extends StatefulWidget {
 class _CommonSettingScreenState extends State<CommonSettingScreen> {
   bool _isToggled = false;
   UserService userService = UserService();
-  late Future<MyProfile> _futureProfile;
+  ///late Future<MyProfile> _futureProfile;
 
   @override
   void initState() {
     super.initState();
-    _futureProfile = _loadProfile();
+    ///_futureProfile = _loadProfile();
+    _isToggled = prefs.getBool(AppConstants.isContactAgree)!;
   }
 
   Future<MyProfile> _loadProfile() async {
@@ -40,6 +44,7 @@ class _CommonSettingScreenState extends State<CommonSettingScreen> {
 
   Future<void> _updateContactAgree(bool value) async {
     await userService.updateMyProfile(EditMyProfile(isContactAgree: value));
+    await prefs.setBool(AppConstants.isContactAgree, value);
     setState(() {
       _isToggled = value;
     });
@@ -50,19 +55,7 @@ class _CommonSettingScreenState extends State<CommonSettingScreen> {
     return Scaffold(
         backgroundColor: ColorSchemes.gray000,
         appBar: BackButtonAppBar(backgroundColor: ColorSchemes.gray000),
-        body: FutureBuilder<MyProfile>(
-            future: _futureProfile,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (snapshot.hasError) {
-                return Center(child: Text('오류가 발생했습니다: ${snapshot.error}'));
-              }
-
-              final profile = snapshot.data;
-              return Padding(
+        body: Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: StyleConstants.defaultPadding),
                 child: Column(
@@ -145,7 +138,7 @@ class _CommonSettingScreenState extends State<CommonSettingScreen> {
                         })
                   ],
                 ),
-              );
-            }));
+              ),
+            );
   }
 }

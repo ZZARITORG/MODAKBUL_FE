@@ -16,6 +16,9 @@ import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
 
+import '../main.dart';
+import 'custom_toast.dart';
+
 class EditProfileBottomSheet extends StatefulWidget {
   final String hintText;
   final bool isName;
@@ -168,11 +171,15 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
 
                             final userService = UserService();
                             await userService.updateMyProfile(editProfile);
-
+                            if (widget.isName) {
+                              await prefs.setString(AppConstants.userName,
+                                  _textEditingController.text);
+                            } else {
+                              await prefs.setString(AppConstants.userId,
+                                  _textEditingController.text);
+                            }
                             Navigator.pop(context, true);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('프로필이 수정되었습니다')),
-                            );
+                            CustomToast.showToast(context, '프로필이 변경되었습니다.');
                           } on DioException catch (e) {
                             String errorMessage = '프로필 수정에 실패했습니다';
                             if (e.response?.statusCode == 404) {
