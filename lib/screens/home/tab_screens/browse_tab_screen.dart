@@ -1,5 +1,6 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
@@ -225,6 +226,7 @@ class _State extends State<BrowseTabScreen> {
                                         padding: EdgeInsets.only(right: 8.w),
                                         child: ElevatedButton(
                                           onPressed: () async {
+                                            HapticFeedback.lightImpact();
                                             if (filter == '거리순' &&
                                                 (myLat == null ||
                                                     myLng == null)) {

@@ -128,7 +128,7 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
                           text: '주소 복사하기',
                           onPressed: () {
                             Clipboard.setData(ClipboardData(text: address));
-                            CustomToast.showToast(context, '주소가 복사되었습니다.');
+                            CustomToast.showToast(context, '주소가 복사되었습니다.', false);
                           },
                           buttonColor: ColorSchemes.orange200,
                           textStyle: Theme.of(context).textTheme.smallHeadLine2,

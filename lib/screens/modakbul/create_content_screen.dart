@@ -303,7 +303,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                               isButtonDisabled = false;
                             });
                           } else {
-                            CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.');
+                            CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.', false);
                           }
                         }
                       : null,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:logger/logger.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/services/notification_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -8,6 +7,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/alert_list_tile.dart';
 import 'package:modakbul/widgets/alert_screen_skeleton.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
+import 'package:modakbul/models/notifications.dart';
 
 class AlertScreen extends StatefulWidget {
   const AlertScreen({Key? key}) : super(key: key);
@@ -17,67 +17,117 @@ class AlertScreen extends StatefulWidget {
 }
 
 class _AlertScreenState extends State<AlertScreen> {
-  final List<Map<String, dynamic>> todayAlerts = [
-    {'type': 'inviteModakbul', 'sender': '김태현', 'time': '오늘 오후 6:09'},
-    {'type': 'friendRequest', 'sender': '이태수', 'time': '오늘 오후 6:09'},
-    {'type': 'friendRequest', 'sender': '배철현', 'time': '오늘 오후 6:09'},
-  ];
-  final List<Map<String, dynamic>> yesterdayAlerts = [
-    {'type': 'inviteModakbul', 'sender': '이태수', 'time': '어제 오후 6:09'},
-    {'type': 'inviteModakbul', 'sender': '김지호', 'time': '어제 오후 6:09'},
-    {'type': 'friendRequest', 'sender': '배철현', 'time': '오늘 오후 6:09'},
-  ];
-
   NotificationService notificationService = NotificationService();
+
+  Map<String, List<Notifications>> categorizeNotifications(List<Notifications> notifications) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final weekAgo = today.subtract(const Duration(days: 7));
+
+    return {
+      '오늘': notifications.where((notification) {
+        final date = DateTime(
+          notification.createdAt.year,
+          notification.createdAt.month,
+          notification.createdAt.day,
+        );
+        return date.isAtSameMomentAs(today);
+      }).toList(),
+
+      '어제': notifications.where((notification) {
+        final date = DateTime(
+          notification.createdAt.year,
+          notification.createdAt.month,
+          notification.createdAt.day,
+        );
+        return date.isAtSameMomentAs(yesterday);
+      }).toList(),
+
+      '최근 7일': notifications.where((notification) {
+        final date = DateTime(
+          notification.createdAt.year,
+          notification.createdAt.month,
+          notification.createdAt.day,
+        );
+        return date.isBefore(yesterday) && date.isAfter(weekAgo);
+      }).toList(),
+
+      '이전 활동': notifications.where((notification) {
+        final date = DateTime(
+          notification.createdAt.year,
+          notification.createdAt.month,
+          notification.createdAt.day,
+        );
+        return date.isBefore(weekAgo);
+      }).toList(),
+    };
+  }
+
+  String formatTime(DateTime time) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final createdDate = DateTime(time.year, time.month, time.day);
+
+    if (createdDate.isAtSameMomentAs(today)) {
+      return '오늘 ${time.hour > 12 ? '오후' : '오전'} ${time.hour > 12 ? time.hour - 12 : time.hour}:${time.minute.toString().padLeft(2, '0')}';
+    } else if (createdDate.isAtSameMomentAs(yesterday)) {
+      return '어제 ${time.hour > 12 ? '오후' : '오전'} ${time.hour > 12 ? time.hour - 12 : time.hour}:${time.minute.toString().padLeft(2, '0')}';
+    }
+
+    return '${time.month}월 ${time.day}일 ${time.hour > 12 ? '오후' : '오전'} ${time.hour > 12 ? time.hour - 12 : time.hour}:${time.minute.toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorSchemes.gray000,
+      appBar: BackButtonAppBar(
         backgroundColor: ColorSchemes.gray000,
-        appBar: BackButtonAppBar(
-          backgroundColor: ColorSchemes.gray000,
-        ),
-        body: SafeArea(
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-              child: FutureBuilder(
-                  future: notificationService.getNotifications(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting){
-                      return AlertScreenSkeleton();
-                    } else if (snapshot.hasError) {
-                      return Text('에러');
-                    } else if (snapshot.hasData) {
-                      final notificationList = snapshot.data!;
-                      Logger().i('알림 $notificationList');
-                      return  Column(
-                        children: [
-                          SizedBox(height: 24.h),
-                          Expanded(
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: [
-                                buildAlertSection('오늘', todayAlerts),
-                                buildAlertSection('어제', yesterdayAlerts),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                              height: 16.h
-                          )
-                        ],
-                      );
-                    } else {
-                      return Text('이거머야');
-                    }
-                  }
-              )
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          child: FutureBuilder<List<Notifications>>(
+            future: notificationService.getNotifications(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return AlertScreenSkeleton();
+              } else if (snapshot.hasError) {
+                return Text('에러');
+              } else if (snapshot.hasData) {
+                final notificationList = snapshot.data!;
+                final categorizedNotifications = categorizeNotifications(notificationList);
+
+                return Column(
+                  children: [
+                    SizedBox(height: 24.h),
+                    Expanded(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: categorizedNotifications.entries
+                            .where((entry) => entry.value.isNotEmpty)
+                            .map((entry) => buildAlertSection(
+                          entry.key,
+                          entry.value,
+                        ))
+                            .toList(),
+                      ),
+                    ),
+                    SizedBox(height: 16.h)
+                  ],
+                );
+              }
+              return Text('이거머야');
+            },
           ),
-        ));
+        ),
+      ),
+    );
   }
 
-  //알림 날짜별 섹션 분류 + 알림 타입 분류
-  Widget buildAlertSection(String date, List<Map<String, dynamic>> alerts) {
+  Widget buildAlertSection(String date, List<Notifications> notifications) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -90,38 +140,21 @@ class _AlertScreenState extends State<AlertScreen> {
         ),
         SizedBox(height: 18.h),
         Column(
-          children: alerts.map((alert) {
-            final String title;
-            final String content;
-
-            switch (alert['type']) {
-              case 'inviteModakbul':
-                title = '회원님에게 모닥불이 도착했어요!';
-                content = '${alert['sender']}님이 회원님을 모임에 초대하였습니다.';
-                break;
-              case 'friendRequest':
-                title = '회원님에게 친구 요청이 도착했어요!';
-                content = '${alert['sender']}님이 회원님과 친구가 되고 싶어해요!';
-                break;
-              default:
-                title = '알림';
-                content = '알림 내용을 확인하라이말라이.';
-            }
-
+          children: notifications.map((notification) {
             return Column(
               children: [
                 AlertListTile(
-                  title: title,
-                  content: content,
-                  alertType: alert['type'],
-                  time: alert['time'],
+                  title: notification.getTitle(),
+                  content: notification.getContent(),
+                  alertType: notification.type,
+                  time: formatTime(notification.createdAt),
                 ),
-                if (alerts.indexOf(alert) != alert.length - 1)
-                  SizedBox(height: 12.h),
+                SizedBox(height: 12.h),
               ],
             );
           }).toList(),
         ),
+        SizedBox(height: 24.h,)
       ],
     );
   }

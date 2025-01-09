@@ -78,7 +78,7 @@ class Participantlistprofile extends StatelessWidget {
     final userIdColor = isPending ? ColorSchemes.gray200 : ColorSchemes.gray300;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
