@@ -24,6 +24,7 @@ import 'package:modakbul/utils/image_picker_utils.dart';
 
 import 'package:modakbul/routes/routes.dart';
 
+import '../../main.dart';
 import 'image_cropper_setting_screen.dart';
 
 class EditMyProfileScreen extends StatefulWidget {
@@ -38,11 +39,16 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
   UserService userService = UserService();
   ImagePickerUtils imagePickerUtils = ImagePickerUtils();
   XFile? _imageFile;
+  String? userId;
+  String? userName;
+  String? profileUrl;
 
   @override
   void initState() {
     super.initState();
-    _futureProfile = userService.getMyProfile();
+    userId = prefs.getString(AppConstants.userId);
+    userName = prefs.getString(AppConstants.userName);
+    profileUrl = prefs.getString(AppConstants.profileUrl);
   }
 
   @override
@@ -50,27 +56,13 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorSchemes.gray000,
-      appBar: BackButtonAppBar(backgroundColor: ColorSchemes.gray000),
+      appBar: const BackButtonAppBar(backgroundColor: ColorSchemes.gray000,
+      returnResult: true),
       body: SafeArea(
         child: Padding(
           padding:
               EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: FutureBuilder<MyProfile>(
-              future: _futureProfile,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator(); // 스켈레톤 만들어야함?
-                } else if (snapshot.hasError) {
-                  return Text('오류 발생: ${snapshot.error}');
-                } else if (!snapshot.hasData || snapshot.data == null) {
-                  return Text('데이터가 없습니다.');
-                }
-                else if (snapshot.hasData){
-                  String? profileUrl =
-                      snapshot.data?.profileUrl;
-                  String? userId = snapshot.data?.userId;
-                  String? userName = snapshot.data?.userName;
-                  return Column(
+          child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 42.h),
@@ -107,7 +99,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
 
                                           if (result == true) {
                                             setState(() {
-                                              _futureProfile = userService.getMyProfile();
+                                              profileUrl = prefs.getString(AppConstants.profileUrl);
                                             });
 
                                           }
@@ -140,7 +132,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
 
                           if (result == true) {
                             setState(() {
-                              _futureProfile = userService.getMyProfile();
+                              userName = prefs.getString(AppConstants.userName);
                             });
                           }
                         },
@@ -198,7 +190,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
 
                           if (result == true) {
                             setState(() {
-                              _futureProfile = userService.getMyProfile();
+                              userId = prefs.getString(AppConstants.userId);
                             });
                           }
                         },
@@ -238,14 +230,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
                       ),
 
                     ],
-                  );
-
-                }
-                else {
-                  return Text('error');
-                }
-              }
-          ),
+                  ),
         ),
       ),
     );

@@ -11,9 +11,9 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/log_out_dialog.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
 import 'package:modakbul/services/user_service.dart';
+import 'package:modakbul/widgets/launch_custom_tab.dart';
 import 'package:provider/provider.dart';
 import 'package:modakbul/widgets/delete_user_bottom_sheet.dart';
-
 
 class TermsScreen extends StatelessWidget {
   TermsScreen({super.key});
@@ -50,60 +50,68 @@ class TermsScreen extends StatelessWidget {
                 menu: '개인정보 처리 방침',
                 icon: IconPath.description,
                 iconWidth: 16.r,
-                onPressed: () {}),
+                onPressed: () async {
+                    await launchCustomTab(
+                      context,
+                      url: 'https://www.notion.so/f95a41a147a6413bb1bc5dacc21c65b4',
+                      title: '모닥불 개인정보 처리방침',
+                    );
+                }),
             SizedBox(height: 28.h),
-        InkWell(
-          overlayColor: WidgetStateProperty.all(ColorSchemes.orange000),
-          onTap: () async{
-            await showModalBottomSheet(
-              context: context,
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              builder: (BuildContext context) => SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
-                child: DeleteUserBottomSheet(),
-              ),
-            );
-          },
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-                border: Border(
+            InkWell(
+              overlayColor: WidgetStateProperty.all(ColorSchemes.orange000),
+              onTap: () async {
+                await showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  builder: (BuildContext context) => SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: DeleteUserBottomSheet(),
+                  ),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    border: Border(
                   bottom: BorderSide(color: ColorSchemes.gray100, width: 1.w),
                 )),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                          width: 24.r,
-                          height: 24.r,
-                          child: Center(
-                              child: SvgPicture.asset(IconPath.blockGray200,
-                                  width: 16.r, ))),
-                      SizedBox(width: 2.w),
-                      Text('탈퇴하기',
-                          style: Theme.of(context)
-                              .textTheme
-                              .body2
-                              .copyWith(color: ColorSchemes.gray200)),
+                      Row(
+                        children: [
+                          SizedBox(
+                              width: 24.r,
+                              height: 24.r,
+                              child: Center(
+                                  child: SvgPicture.asset(
+                                IconPath.blockGray200,
+                                width: 16.r,
+                              ))),
+                          SizedBox(width: 2.w),
+                          Text('탈퇴하기',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body2
+                                  .copyWith(color: ColorSchemes.gray200)),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: 2.w),
+                        child: SvgPicture.asset(
+                          IconPath.arrowForward15Gray200,
+                          width: 8.r,
+                        ),
+                      ),
                     ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 2.w),
-                    child: SvgPicture.asset(
-                      IconPath.arrowForward15Gray200,
-                      width: 8.r,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
           ],
         ),
       ),

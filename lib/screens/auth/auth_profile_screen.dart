@@ -28,6 +28,8 @@ import 'package:modakbul/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../main.dart';
+
 class AuthProfileScreen extends StatefulWidget {
   const AuthProfileScreen({super.key});
 
@@ -78,20 +80,21 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
             key: AppConstants.refreshToken, value: tokens.refreshToken),
         secureStorage.write(
             key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
-        secureStorage.write(
-            key: AppConstants.userName, value: authProvider.userName!),
-        secureStorage.write(
-            key: AppConstants.userId, value: authProvider.userId!),
-        secureStorage.write(
-            key: AppConstants.profileUrl, value: authProvider.profileUrl!),
-        secureStorage.write(
-            key: AppConstants.isFriendAlarm, value: true.toString()),
-        secureStorage.write(
-            key: AppConstants.isContactAgree, value: true.toString()),
       ]);
 
-      final SharedPreferences pref = await SharedPreferences.getInstance();
-      pref.setStringList('delSugList', []);
+      await Future.wait([
+        FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic),
+        FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic),
+        prefs.setStringList('delSugList', []),
+        prefs.setString(AppConstants.userName, authProvider.userName!),
+        prefs.setString(AppConstants.userId, authProvider.userId!),
+        prefs.setString(AppConstants.profileUrl, authProvider.profileUrl!),
+        prefs.setBool(AppConstants.isFriendAlarm, true),
+        prefs.setBool(AppConstants.isContactAgree, true),
+        prefs.setBool(AppConstants.isAllAlertToggled, true),
+        prefs.setBool(AppConstants.isModakbulAlertToggled, true),
+        prefs.setBool(AppConstants.isAdAlertToggled, true),
+      ]);
 
       if (!context.mounted) return;
       Routes.navigateAndRemoveUntil(context, Routes.mainScreen);

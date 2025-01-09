@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cropperx/cropperx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -12,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:modakbul/services/aws_service.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
+
+import '../../main.dart';
 
 ///TODO: 안드로이드, ios 권한설정 필요 시 dart.io import
 class ImageCropperSettingScreen extends StatefulWidget {
@@ -72,6 +75,7 @@ class _ImageCropperSettingScreenState extends State<ImageCropperSettingScreen> {
                           String imageUrl = await awsService.uploadProfileImage(imageBytes);
 
                           await userService.updateMyProfile(EditMyProfile(profileUrl: imageUrl));
+                          await prefs.setString(AppConstants.profileUrl, imageUrl);
                           //마운트 체크
                           if (!context.mounted) return;
                           Navigator.pop(context,true);
