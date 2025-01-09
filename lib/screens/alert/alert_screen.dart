@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/services/notification_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';

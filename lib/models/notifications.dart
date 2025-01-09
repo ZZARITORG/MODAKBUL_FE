@@ -58,4 +58,9 @@ class Notifications {
         return '알림 내용을 확인해주세요.';
     }
   }
+
+  @override
+  String toString() {
+    return 'Notifications(type: $type, sourceUserId: $sourceUserId, sourceUserName: $sourceUserName, createdAt: $createdAt)';
+  }
 }
