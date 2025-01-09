@@ -101,7 +101,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
   Widget build(BuildContext context) {
     final Map<String, dynamic>? arguments =
     ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final bool isAccepted = arguments?['isAccepted'];
+    final bool isAccepted = arguments?['isAccepted'] ?? false;
 
     if (isLoading || modakbulDetailData == null) {
       return Scaffold(
