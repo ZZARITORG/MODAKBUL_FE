@@ -13,7 +13,7 @@ import 'package:modakbul/models/user_list.dart';
 
 
 import '../models/modakbul_detail.dart';
-import '../models/notification.dart';
+import '../models/notifications.dart';
 
 class JsonUtils {
   static List<Place> convertJsonToPlaceList(List jsonList) {
@@ -64,7 +64,7 @@ class JsonUtils {
     return ModakbulDetail.fromJson(json);
   }
 
-  List<Notification> parseNotificationList(List<dynamic> jsonList) {
-    return jsonList.map((json) => Notification.fromJson(json)).toList();
+  List<Notifications> parseNotificationList(List<dynamic> jsonList) {
+    return jsonList.map((json) => Notifications.fromJson(json)).toList();
   }
 }

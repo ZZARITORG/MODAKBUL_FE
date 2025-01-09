@@ -68,6 +68,7 @@ class IconPath {
   static const String warning = 'assets/icons/warning.svg';
   static const String powerSettingsNew = 'assets/icons/power_settings_new.svg';
   static const String warningRed = 'assets/icons/warning_red.svg';
+  static const String notificationDot = 'assets/icons/notification_dot.svg';
 }
 
 class ImagePath {

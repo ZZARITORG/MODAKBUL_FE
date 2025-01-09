@@ -31,6 +31,7 @@ class ApiPath{
 
   //notification
   static const String notification = '/api/v0/notification/notification-list';
+  static const String seeNotification = '/api/v0/notification/sse';
 
   //friend
   static const String friend = '/api/v0/friend';

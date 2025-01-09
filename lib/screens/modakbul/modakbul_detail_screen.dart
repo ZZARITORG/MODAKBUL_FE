@@ -70,7 +70,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
         userService.getMyProfile(),
       ]);
 
-      setState(() {
+      setState(() { 
         modakbulDetailData = responses[0] as ModakbulDetail;
         blockedUsersData = (responses[1] as List<dynamic>?)?.cast<BlockedUser>() ?? [];
         myUserId = (responses[2] as dynamic).userId as String;
@@ -88,7 +88,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
       );
 
       if (hasBlockedParticipant) {
-        CustomToast.showToast(context, '차단된 사용자가 있습니다!');
+        CustomToast.showToast(context, '차단된 사용자가 있습니다!', false);
       }
     } catch (e) {
       setState(() {
@@ -318,7 +318,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                   GestureDetector(
                                     onTap: () {
                                       Clipboard.setData(ClipboardData(text: address));
-                                      CustomToast.showToast(context, '주소가 복사되었습니다.');
+                                      CustomToast.showToast(context, '주소가 복사되었습니다.', false);
                                     },
                                     child: Row(
                                       children: [

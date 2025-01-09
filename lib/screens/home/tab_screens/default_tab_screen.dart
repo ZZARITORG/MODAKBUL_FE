@@ -70,7 +70,7 @@ class _State extends State<DefaultTabScreen> {
                 child: SizedBox(
                   height: 32,
                   width: 32,
-                  child: Lottie.asset(
+                  child: Lottie.network(
                     AnimationPath.loadingFeed,
                     fit: BoxFit.contain,
                     repeat: true,
@@ -215,14 +215,11 @@ class _State extends State<DefaultTabScreen> {
                                                         myHostModaktbulList[
                                                                 index]!
                                                             .date;
-                                                    DateTime kstDate =
-                                                        utcDate.add(
-                                                            Duration(hours: 9));
                                                     Intl.defaultLocale =
                                                         'ko_KR';
                                                     String date = DateFormat(
                                                             'MM.dd(E) a h시 m분')
-                                                        .format(kstDate);
+                                                        .format(utcDate);
                                                     String hostId =
                                                         myHostModaktbulList[
                                                                 index]!
