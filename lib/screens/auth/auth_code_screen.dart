@@ -131,9 +131,8 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       // 개발자 권한 받으면 변경 예정
       String? fcmToken;
       if (Platform.isIOS) {
-        fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
         // await Future.delayed(Duration(seconds: 2));
-        // fcmToken = await FirebaseMessaging.instance.getToken();
+        fcmToken = await FirebaseMessaging.instance.getToken();
         print('APNS Token: $fcmToken');
       } else if (Platform.isAndroid) {
         fcmToken = await FirebaseMessaging.instance.getToken();

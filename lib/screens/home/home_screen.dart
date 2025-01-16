@@ -29,10 +29,6 @@ class _HomeScreenState extends State<HomeScreen>
     _tabController = TabController(length: 2, vsync: this);
     notificationService.notificationStream.listen((hasNotification) {
       _hasNotification.value = hasNotification;
-      if(hasNotification) {
-        Logger().i('홈스크린에 데이터는 $hasNotification');
-        Logger().i('홈스크린에 알림이 왔습니다.');
-      }
     });
     notificationService.subscribeToNotifications();
   }
@@ -61,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen>
         child: ValueListenableBuilder<bool>(
             valueListenable: _hasNotification,
             builder: (context, hasNotification, _) {
-              Logger().i('시발시발 $hasNotification');
               return LogoAppBar.actions(
                 onActionPressed: () => _navigateToAlertScreen(hasNotification),
                 backgroundColor: ColorSchemes.gray000,
