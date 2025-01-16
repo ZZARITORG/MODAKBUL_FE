@@ -15,19 +15,22 @@ class UserService {
     return MyProfile.fromJson(response.data['data']);
   }
 
-  Future<List<UserList>> getUserList(String searchQuery) async {
+  Future<List<UserList>> getUserList(String searchQuery, {required int page}) async {
     Response response = await dio.get(ApiPath.user, queryParameters: {
       'search': searchQuery,
+      'page': page
     });
+    print('유저리스트: ${response.data['data']}');
     return JsonUtils().parseUserList(response.data['data'] as List);
   }
 
   Future<UserCheck> getUserCheck(String id) async {
     Response response = await dio.get(ApiPath.userCheck(id));
+    print('data: ${response.data['data']}');
     return UserCheck.fromJson(response.data['data']);
   }
 
-Future<void> updateMyProfile(EditMyProfile editMyProfile) async {
+  Future<void> updateMyProfile(EditMyProfile editMyProfile) async {
     await dio.patch(
       ApiPath.user,
       data: editMyProfile.toJson()
@@ -39,5 +42,4 @@ Future<void> updateMyProfile(EditMyProfile editMyProfile) async {
         ApiPath.user
     );
   }
-
 }

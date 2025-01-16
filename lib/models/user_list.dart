@@ -30,4 +30,10 @@ class UserList {
       'profileUrl': profileUrl,
     };
   }
+
+  @override
+  String toString() {
+    return 'UserList{id: $id, userId: $userId, name: $name, profileUrl: $profileUrl}';
+  }
 }
+

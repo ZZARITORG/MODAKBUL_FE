@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:modakbul/core/dio_client.dart';
 import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/models/blocked_user.dart';
+import 'package:modakbul/models/contacts.dart';
 import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/models/friend_suggested.dart';
 import 'package:modakbul/models/my_profile.dart';
@@ -38,13 +39,14 @@ class FriendService {
   }
 
   Future<List<FriendReqList>> getFriendReqList() async {
-    // API 요청
     Response response = await dio.get(ApiPath.friendReqList);
     return JsonUtils().parseFriendReqList(response.data['data'] as List);
   }
 
-  Future<List<FriendSuggested>> getFriendSuggested() async {
-    Response response = await dio.get(ApiPath.friendSuggested);
+  Future<List<FriendSuggested>> getFriendSuggested(Contacts contacts) async {
+    Response response = await dio.post(ApiPath.friendSuggested,
+      data: contacts.toJson()
+    );
     return JsonUtils().parseFriendSuggested(response.data['data'] as List);
   }
 

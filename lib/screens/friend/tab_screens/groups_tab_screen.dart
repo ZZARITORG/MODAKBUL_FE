@@ -35,6 +35,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   late Future<List<Group>> getData;
   late DateTime currentTime;
   bool _showLottie = false;
+  bool _isRefreshing = false;
   Timer? _debounce;
   Logger logger = Logger(printer: PrettyPrinter());
 
@@ -46,18 +47,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     super.initState();
     getData = groupService.getGroupList();
     _searchController.addListener(_onSearchChanged);
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        setState(() {
-          _showLottie = true;
-        });
-        Future.delayed(Duration(seconds: 2), () {
-          setState(() {
-            _showLottie = false;
-          });
-        });
-      }
-    });
+    _scrollController.addListener(_scrollListener);
 }
 
   @override
@@ -152,6 +142,26 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
       // 1분 이내로 차이가 나면 "방금 전" 형태로 출력
       return '방금 전';
     }
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (!_isRefreshing) {
+        setState(() {
+          _isRefreshing = true;
+          _showLottie = true; // 로티 애니메이션 표시
+        });
+        _refreshData();
+      }
+    }
+  }
+
+  Future<void> _refreshData() async {
+    await Future.delayed(const Duration(seconds: 2)); // 데이터 새로고침 로직
+    setState(() {
+      _isRefreshing = false;
+      _showLottie = false; // 로딩 애니메이션 종료
+    });
   }
 
   @override

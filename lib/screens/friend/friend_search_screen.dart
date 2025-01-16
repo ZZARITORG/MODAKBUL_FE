@@ -1,14 +1,16 @@
 import 'dart:async';
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
+import 'package:modakbul/models/contacts.dart';
 import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/models/friend_suggested.dart';
 import 'package:modakbul/models/user_check.dart';
 import 'package:modakbul/models/user_list.dart';
 import 'package:modakbul/models/uuid.dart';
 import 'package:modakbul/screens/friend/add_freind_screen.dart';
-import 'package:modakbul/screens/search/search_screen.dart';
 import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -28,6 +30,7 @@ import '../../constants/style_constants.dart';
 import '../../widgets/custom_search_bar.dart';
 import '../../widgets/logo_app_bar.dart';
 import 'create_group_screen.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 
 class FriendSearchScreen extends StatefulWidget {
   const FriendSearchScreen({super.key});
@@ -36,116 +39,144 @@ class FriendSearchScreen extends StatefulWidget {
   State<FriendSearchScreen> createState() => _FriendSearchScreenState();
 }
 
-class _FriendSearchScreenState extends State<FriendSearchScreen> {
+class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _searchFocusNode = FocusNode();
+  final paginationThrottle = Throttle(Duration(milliseconds: 300), initialValue: 1, checkEquality: false);
   UserService userService = UserService();
   FriendService friendService = FriendService();
   List<UserList> userList = [];
   List<Map<String, String>> selectedFriends = [];
   List<FriendSuggested> friendSuggested = [];
   List<FriendReqList> friendRequests = [];
-  List<bool> isPressedList = [];
+  late List<bool> isPressedList = [];
   List<String> filteredData = [];
   late Future<List<UserList>> getUser;
   late Future<UserCheck> getUserCheck;
   late Future<List<FriendSuggested>> getSug;
   late Future<List<FriendReqList>> getReq;
   late DateTime currentTime;
-  bool isSearching = false;
-  bool isPressed = true;
+  late AnimationController _lottieController;
   Timer? _debounce;
+  bool isLoading = false;
+  bool isSearching = false;
+  bool showLottie = false;
+  int page = 1;
 
-  List<UserList> displayedUsers = []; // 화면에 표시할 데이터
-  int _currentPage = 0; // 현재 페이지
-  final int _pageSize = 20; // 한 페이지에 표시할 데이터 수
-  bool _isLoadingMore = false; // 추가 데이터를 로드 중인지 여부
+  Future<void> getContacts() async {
+    List<String> contactNumbers = [];
+    if (await FlutterContacts.requestPermission()) {
+      List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
+      setState(() {
+        contactNumbers = contacts
+            .where((contact) => contact.phones.isNotEmpty)
+            .map((contact) => contact.phones[0].number)
+            .toList();
+      });
+    } else {
+      print('Permission denied');
+    }
+    getSug = friendService.getFriendSuggested(Contacts(contacts: contactNumbers));
+  }
 
   @override
   void initState() {
     super.initState();
     getReq = friendService.getFriendReqList();
-    getSug = friendService.getFriendSuggested();
+    getContacts();
     _initializeCurrentTime();
-    _searchController.addListener(_onSearchChanged);
+    _lottieController = AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _lottieController.repeat();
+    _searchController.addListener(onSearchChanged);
+    _scrollController.addListener(onScroll);
   }
 
   Future<void> _initializeCurrentTime() async {
     currentTime = await DateTimeUtils.getKoreaTime();
-    setState(() {}); // currentTime을 업데이트하고 화면을 리빌드
+    setState(() {});
   }
 
-  Future<void> _fetchAllUsers(String query) async {
-    setState(() {
-      _isLoadingMore = true; // 로딩 상태 표시
-    });
+  Future<void> fetchAllUsers(String query) async {
     try {
-      final users = await userService.getUserList(query); // 전체 데이터 받아오기
+      final users = await userService.getUserList(query, page: 1);
       setState(() {
-        userList = users; // 전체 데이터를 저장
-        _currentPage = 0; // 페이지 초기화
-        displayedUsers = userList.take(_pageSize).toList(); // 첫 페이지 데이터만 표시
+        userList = users;
+        page ++;
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('데이터를 불러오는 중 오류가 발생했습니다: $error')),
       );
-    } finally {
-      setState(() {
-        _isLoadingMore = false; // 로딩 상태 종료
-      });
-    }
+    } 
   }
 
   @override
   void dispose() {
-    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     _scrollController.dispose();
     _searchFocusNode.dispose();
-    _debounce?.cancel();
+    _lottieController.dispose();
     super.dispose();
   }
 
-  void _onSearchChanged() {
+  void onScroll() async {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (!isLoading) {
+        setState(() {
+          isLoading = true;
+          showLottie = true;
+        });
+        _lottieController.repeat();
+        final newUsers = await userService.getUserList(_searchController.text.trim(), page: page);
+        print('page: $page, users: ${newUsers.toString()}');
+        await Future.delayed(const Duration(seconds: 2));
+        setState(() {
+          userList.addAll(newUsers);
+          page++;
+          isLoading = false;
+          showLottie = false;
+        });
+        _lottieController.stop();
+      }
+    }
+  }
+
+  void onSearchChanged () {
     final query = _searchController.text.trim();
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 200), () {
+    _debounce = Timer(const Duration(milliseconds: 500), () {
       if (query.isNotEmpty) {
         setState(() {
           isSearching = true;
-          getUser = userService.getUserList(query);
-          userList.clear();
-          displayedUsers.clear();
-          _currentPage = 0;
+          getUser = userService.getUserList(query, page: 1);
+          page = 1;
         });
-        _fetchAllUsers(query);
+        fetchAllUsers(query);
       } else {
         setState(() {
           isSearching = false;
-          userList.clear();
-          displayedUsers.clear();
-          _currentPage = 0;
         });
       }
     });
   }
 
+  void initializeIsPressedList(int length) {
+    if (isPressedList.isEmpty) {
+      isPressedList = List<bool>.filled(length, true);
+    }
+  }
+
   static String timeAgo(DateTime dateTime, DateTime currentTime) {
-    Duration difference = currentTime.difference(dateTime); // 시간 차이 계산
+    Duration difference = currentTime.difference(dateTime);
 
     if (difference.inDays > 0) {
-      // 하루 이상 차이 나면 "몇 일 전" 형태로 출력
       return '${difference.inDays}일 전';
     } else if (difference.inHours > 0) {
-      // 한 시간 이상 차이 나면 "몇 시간 전" 형태로 출력
       return '${difference.inHours}시간 전';
     } else if (difference.inMinutes > 0) {
-      // 1분 이상 차이 나면 "몇 분 전" 형태로 출력
       return '${difference.inMinutes}분 전';
     } else {
-      // 1분 이내로 차이가 나면 "방금 전" 형태로 출력
       return '방금 전';
     }
   }
@@ -158,35 +189,35 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
         backgroundColor: ColorSchemes.gray000,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                child: Column(
-                  children: [
-                    SizedBox(height: 32.h),
-                    CustomSearchBar(
-                      hintText: '사용자를 검색해보세요.',
-                      controller: _searchController,
-                      focusNode: _searchFocusNode,
-                    ),
-                  ],
-                ),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+              child: Column(
+                children: [
+                  SizedBox(height: 32.h),
+                  CustomSearchBar(
+                    hintText: '사용자를 검색해보세요.',
+                    controller: _searchController,
+                    focusNode: _searchFocusNode,
+                  ),
+                  SizedBox(height: 24.h),
+                ],
               ),
-              isSearching
+            ),
+            Expanded(
+              child: isSearching
                   ? _buildSearchResults()
                   : _buildFriendRequests(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildSearchResults() {
-    if (displayedUsers.isEmpty || !isSearching) {
+    if (userList.isEmpty) {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
         child: Column(
@@ -215,7 +246,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
       padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
       child: Column(
         children: [
-          SizedBox(height: 24.h),
           Padding(
             padding: EdgeInsets.only(left: 4.w),
             child: Row(
@@ -231,169 +261,210 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
             ),
           ),
           SizedBox(height: 14.h),
-          ListView.builder(
-            controller: _scrollController,
-            shrinkWrap: true,
-            primary: false,
-            itemCount: displayedUsers.length + 1,
-            itemBuilder: (context, index) {
-              if (index < displayedUsers.length) {
-                final user = displayedUsers[index];
-                return GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () async {
-                    final selectedUser = displayedUsers[index];
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return FutureBuilder<UserCheck>(
-                          future: userService.getUserCheck(displayedUsers[index].id),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return Center(child: Text('Error: ${snapshot.error}'));
-                            } else {
-                              UserCheck userCheckData = snapshot.data!;
-                              print('aaa${userCheckData.status}');
-                              if (userCheckData.status == 'BLOCKED') {
-                                return SizedBox.shrink();
-                              }
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(24),
-                                    topRight: Radius.circular(24),
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(height: 24.h),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 24.w, right: 24.w),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          IconButton(
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {},
-                                            icon: SvgPicture.asset(
-                                              IconPath.moreHorizontal,
-                                              width: 20.w,
-                                              fit: BoxFit.scaleDown,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {},
-                                            icon: SvgPicture.asset(
-                                              IconPath.arrowDown,
-                                              width: 18.w,
-                                              fit: BoxFit.scaleDown,
-                                            ),
-                                          ),
-                                        ],
+          Expanded(
+            child: Stack(
+              children: [
+                ListView.builder(
+                  controller: _scrollController,
+                  itemCount: userList.length + (showLottie ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index < userList.length) {
+                      final user = userList[index];
+                      return GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () async {
+                          final selectedUser = userList[index];
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return FutureBuilder<UserCheck>(
+                                future: userService.getUserCheck(userList[index].id),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Center(child: Text('Error: ${snapshot.error}'));
+                                  } else {
+                                    UserCheck userCheckData = snapshot.data!;
+                                    if (userCheckData.status == 'BLOCKED') {
+                                      return SizedBox.shrink();
+                                    }
+                                    return Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(24),
+                                          topRight: Radius.circular(24),
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 18.h),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 20.h, right: 24.h),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                          SizedBox(height: 24.h),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 24.w, right: 24.w),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                Text(
-                                                  selectedUser.name,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bigHeadLine2
-                                                      .copyWith(color: ColorSchemes.gray500),
-                                                  overflow: TextOverflow.ellipsis,
-                                                  maxLines: 1,
+                                                IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  constraints: const BoxConstraints(),
+                                                  onPressed: () {},
+                                                  icon: SvgPicture.asset(
+                                                    IconPath.moreHorizontal,
+                                                    width: 20.w,
+                                                    fit: BoxFit.scaleDown,
+                                                  ),
                                                 ),
-                                                SizedBox(height: 2.h),
-                                                Text(
-                                                  selectedUser.userId,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .body2
-                                                      .copyWith(color: ColorSchemes.gray300),
-                                                ),
-                                                SizedBox(height: 6.h),
-                                                Text(
-                                                  '함께하는 친구가 10명 있습니다!',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .body3
-                                                      .copyWith(color: ColorSchemes.gray200),
+                                                IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  constraints: const BoxConstraints(),
+                                                  onPressed: () {},
+                                                  icon: SvgPicture.asset(
+                                                    IconPath.arrowDown,
+                                                    width: 18.w,
+                                                    fit: BoxFit.scaleDown,
+                                                  ),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                          SizedBox(width: 37.w), // 고정 간격 추가
-                                          CircleAvatar(
-                                            radius: StyleConstants.circleSizeL,
-                                            backgroundImage: NetworkImage(selectedUser.profileUrl),
+                                          SizedBox(height: 18.h),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 20.h, right: 24.h),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        userCheckData.name,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bigHeadLine2
+                                                            .copyWith(color: ColorSchemes.gray500),
+                                                        overflow: TextOverflow.ellipsis,
+                                                        maxLines: 1,
+                                                      ),
+                                                      SizedBox(height: 2.h),
+                                                      Text(
+                                                        userCheckData.userId,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .body2
+                                                            .copyWith(color: ColorSchemes.gray300),
+                                                      ),
+                                                      SizedBox(height: 6.h),
+                                                      Text(
+                                                        '함께하는 친구가 ${userCheckData.mutualCount}명 있습니다!',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .body3
+                                                            .copyWith(color: ColorSchemes.gray200),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(width: 37.w),
+                                                CircleAvatar(
+                                                  radius: StyleConstants.circleSizeL,
+                                                  backgroundImage: NetworkImage(userCheckData.profileUrl),
+                                                ),
+                                              ],
+                                            ),
                                           ),
+                                          SizedBox(height: 24.h),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              height: 56.h,
+                                              child: CustomButton(
+                                                text: userCheckData.status == 'ACCEPTED'
+                                                    ? '친구 삭제'
+                                                    : userCheckData.status == 'PENDING'
+                                                    ? (userCheckData.sourceId == selectedUser.id ? '친구 수락' : '취소')
+                                                    : '친구 요청',
+                                                onPressed: () {
+                                                  switch (userCheckData.status) {
+                                                    case 'ACCEPTED':
+                                                      friendService.deleteFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                        Navigator.pop(context);
+                                                      });
+                                                      break;
+                                                    case 'REJECTED':
+                                                      friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                        Navigator.pop(context);
+                                                      });
+                                                      break;
+                                                    case 'NONE':
+                                                      friendService.requestFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                        Navigator.pop(context);
+                                                      });
+                                                      break;
+                                                    case 'PENDING':
+                                                      if (userCheckData.sourceId == selectedUser.id) {
+                                                        friendService.acceptFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                          Navigator.pop(context);
+                                                        });
+                                                      } else if (userCheckData.targetId == selectedUser.id) {
+                                                        friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                          Navigator.pop(context);
+                                                        });
+                                                      }
+                                                      break;
+                                                  }
+                                                },
+                                                buttonColor: ColorSchemes.orange200,
+                                                textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                                                textColor: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 56.h),
                                         ],
                                       ),
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        height: 56.h,
-                                        child: CustomButton(
-                                          text: userCheckData.status == 'ACCEPTED' ? '친구 삭제' : '친구 요청',
-                                          onPressed: () {
-                                            switch (userCheckData.status) {
-                                              case 'ACCEPTED' :
-                                                friendService.deleteFriend(Uuid(targetId: selectedUser.id));
-                                                break;
-                                              case 'REJECTED' :
-                                                friendService.rejectFriend(Uuid(targetId: selectedUser.id));
-                                                break;
-                                              case 'NONE' :
-                                                friendService.requestFriend(Uuid(targetId: selectedUser.id));
-                                                break;
-                                            }
-                                          },
-                                          buttonColor: ColorSchemes.orange200,
-                                          textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                                          textColor: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 56.h),
-                                  ],
-                                ),
+                                    );
+                                  }
+                                },
                               );
-                            }
-                          },
-                        );
-                      },
-                    );
+                            },
+                          );
+                        },
+                        child: Participantlistprofile(
+                          userName: user.name,
+                          userId: user.userId,
+                          profileImage: user.profileUrl,
+                        ),
+                      );
+                    } else if (index == userList.length && showLottie) {
+                      return SizedBox(
+                        height: 72.h,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 14.h, bottom: 26.h), // 위쪽 14, 아래쪽 26 간격
+                          child: Center(
+                            child: SizedBox(
+                              height: 32,
+                              width: 32,
+                              child: Lottie.asset(
+                                controller: _lottieController,
+                                AnimationPath.loadingFeed,
+                                fit: BoxFit.contain,
+                                repeat: true,
+                                animate: true,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return SizedBox.shrink();
                   },
-                  child: Participantlistprofile(
-                    userName: user.name,
-                    userId: user.userId,
-                    profileImage: user.profileUrl,
-                  ),
-                );
-              } else if (_isLoadingMore) {
-                return Center(child: CircularProgressIndicator());
-              } else {
-                return SizedBox.shrink();
-              }
-            },
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -401,29 +472,28 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
   }
 
   Widget _buildFriendRequests() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-      child: Column(
-        children: [
-          SizedBox(height: 24.h),
-          Row(
-            children: [
-              SizedBox(width: 4.w),
-              Text(
-                '친구요청',
-                style: Theme.of(context)
-                    .textTheme
-                    .bigHeadLine4
-                    .copyWith(color: ColorSchemes.gray500),
-              ),
-              Spacer(),
-              TextButton(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                SizedBox(width: 4.w),
+                Text(
+                  '친구요청',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bigHeadLine4
+                      .copyWith(color: ColorSchemes.gray500),
+                ),
+                Spacer(),
+                TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              AddFreindScreen()),
+                      MaterialPageRoute(builder: (context) => AddFreindScreen()),
                     );
                   },
                   child: Text(
@@ -432,160 +502,152 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                         .textTheme
                         .body3
                         .copyWith(color: ColorSchemes.orange200),
-                  )),
-              SizedBox(width: 4.w),
-            ],
-          ),
-          SizedBox(height: 24.h),
-          FutureBuilder<List<FriendReqList>>(
-            future: getReq,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState ==
-                  ConnectionState.waiting) {
-                return const Center(
-                    child: CircularProgressIndicator()); // 로딩 중일 때 표시
-              } else if (snapshot.hasError) {
-                return Center(
+                  ),
+                ),
+                SizedBox(width: 4.w),
+              ],
+            ),
+            SizedBox(height: 24.h),
+            FutureBuilder<List<FriendReqList>>(
+              future: getReq,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: SizedBox(
+                      height: 268.h,
+                      child: Text(
+                        '친구요청이 없습니다.',
+                        style: Theme.of(context)
+                            .textTheme
+                            .body2
+                            .copyWith(color: ColorSchemes.gray300),
+                      ),
+                    ),
+                  );
+                } else {
+                  friendRequests = snapshot.data!;
+                  return Column(
+                    children: List.generate(
+                      friendRequests.length >= 2 ? 2 : friendRequests.length,
+                          (index) {
+                        final friend = friendRequests[index];
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 24.h),
+                          child: AddFriendProfile(
+                            profileImage: friend.profileUrl,
+                            userName: friend.name,
+                            userId: friend.userId,
+                            time: timeAgo(friend.createdAt, currentTime),
+                            acceptOnPressed: () async {
+                              await friendService.acceptFriend(Uuid(targetId: friend.id));
+                              setState(() {
+                                friendRequests.removeWhere((request) => request.id == friend.id);
+                                friendSuggested.removeWhere((suggested) => suggested.id == friend.id);
+                              });
+                            },
+                            rejectOnPressed: () async {
+                              await friendService.rejectFriend(Uuid(targetId: friend.id));
+                              setState(() {
+                                friendRequests.removeWhere((request) => request.id == friend.id);
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+            Divider(
+              thickness: 2.h,
+              height: 2.h,
+              color: ColorSchemes.gray100,
+            ),
+            SizedBox(height: 28.h),
+            Row(
+              children: [
+                SizedBox(width: 4.w),
+                Text(
+                  '알 수도 있는 사람',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bigHeadLine4
+                      .copyWith(color: ColorSchemes.gray500),
+                ),
+              ],
+            ),
+            SizedBox(height: 24.h),
+            FutureBuilder<List<FriendSuggested>>(
+              future: getSug,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
                     child: Text(
-                        'Error: ${snapshot.error}')); // 에러 발생 시 표시
-              } else if (!snapshot.hasData ||
-                  snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text(
-                    '친구요청이 없습니다.',
-                    style: Theme.of(context)
-                        .textTheme
-                        .body2
-                        .copyWith(color: ColorSchemes.gray300),
-                  ),
-                ); // 데이터가 없을 때 표시
-              } else {
-                friendRequests = snapshot.data!;
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: friendRequests.length >= 2
-                      ? 2
-                      : friendRequests.length,
-                  itemBuilder: (context, index) {
-                    final friend = friendRequests[index];
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 24.h),
-                      child: AddFriendProfile(
-                        profileImage: friend.profileUrl,
-                        userName: friend.name,
-                        userId: friend.userId,
-                        time: timeAgo(friend.createdAt, currentTime),
-                        acceptOnPressed: () async {
-                          await friendService.acceptFriend(
-                              Uuid(targetId: friend.id));
-                          setState(() {
-                            friendRequests.removeWhere(
-                                    (request) => request.id == friend.id);
-                          });
-                        },
-                        rejectOnPressed: () async {
-                          await friendService.rejectFriend(
-                              Uuid(targetId: friend.id));
-                          setState(() {
-                            friendRequests.removeWhere(
-                                    (request) => request.id == friend.id);
-                          });
-                        },
-                      ),
-                    );
-                  },
-                );
-              }
-            },
-          ),
-          SizedBox(height: 4.h),
-          Divider(
-            thickness: 2.h,
-            height: 2.h,
-            color: ColorSchemes.gray100,
-          ),
-          SizedBox(height: 10.h),
-          Row(
-            children: [
-              SizedBox(width: 4.w),
-              Text(
-                '알 수도 있는 사람',
-                style: Theme.of(context)
-                    .textTheme
-                    .bigHeadLine4
-                    .copyWith(color: ColorSchemes.gray500),
-              ),
-            ],
-          ),
-          SizedBox(height: 24.h),
-          FutureBuilder<List<FriendSuggested>>(
-            future: getSug.then((friendList) async {
-              final prefs = await SharedPreferences.getInstance();
-              List<String> delSugList = prefs.getStringList('delSugList') ?? [];
-              return friendList.where((friend) => !delSugList.contains(friend.id)).toList();
-            }),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text(
-                    '추천된 친구가 없습니다.',
-                    style: Theme.of(context)
-                        .textTheme
-                        .body2
-                        .copyWith(color: ColorSchemes.gray300),
-                  ),
-                );
-              } else {
-                List<FriendSuggested> friendSuggested = snapshot.data!;
-                isPressedList = List<bool>.filled(friendSuggested.length, true);
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: friendSuggested.length,
-                  itemBuilder: (context, index) {
-                    final friend = friendSuggested[index];
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: index == friendSuggested.length - 1 ? 0 : 24.h,
-                      ),
-                      child: SuggestedFriendProfile(
-                        profileImage: friend.profileUrl,
-                        userName: friend.name,
-                        isPressed: isPressedList[index],
-                        mutualFriendCount: friend.mutualFriendCount.toString(),
-                        acceptOnPressed: () async {
-                          if (isPressedList[index]) {
-                            await friendService.requestFriend(Uuid(targetId: friend.id));
-                          } else {
-                            await friendService.deleteFriend(Uuid(targetId: friend.id));
-                          }
-                          setState(() {
-                            isPressedList[index] = !isPressedList[index];
-                          });
-                        },
-                        rejectOnPressed: () async {
-                          final prefs = await SharedPreferences.getInstance();
-                          List<String> delSugList = prefs.getStringList('delSugList') ?? [];
-                          delSugList.add(friend.id);
-                          await prefs.setStringList('delSugList', delSugList);
-                          setState(() {
-                            friendSuggested.removeWhere((request) => request.id == friend.id);
-                          });
-                        },
-                      ),
-                    );
-                  },
-                );
-              }
-            },
-          ),
-          SizedBox(height: 84.h),
-        ],
+                      '추천된 친구가 없습니다.',
+                      style: Theme.of(context).textTheme.body2.copyWith(color: ColorSchemes.gray300),
+                    ),
+                  );
+                } else {
+                  List<FriendSuggested> friendSuggested = snapshot.data!;
+                  List<String> requestedUserIds = friendRequests.map((request) => request.id).toList();
+                  List<FriendSuggested> filteredSuggestedFriends = friendSuggested
+                      .where((friend) => !requestedUserIds.contains(friend.id))
+                      .toList();
+                  initializeIsPressedList(filteredSuggestedFriends.length);
+                  return Column(
+                    children: List.generate(
+                      filteredSuggestedFriends.length,
+                          (index) {
+                        final friend = filteredSuggestedFriends[index];
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: index == filteredSuggestedFriends.length - 1 ? 0 : 24.h,
+                          ),
+                          child: SuggestedFriendProfile(
+                            profileImage: friend.profileUrl,
+                            userName: friend.name,
+                            isPressed: isPressedList[index],
+                            mutualFriendCount: friend.mutualFriendCount.toString(),
+                            acceptOnPressed: () async {
+                              if (isPressedList[index]) {
+                                await friendService.requestFriend(Uuid(targetId: friend.id));
+                              } else {
+                                await friendService.deleteFriend(Uuid(targetId: friend.id));
+                              }
+                              setState(() {
+                                isPressedList[index] = !isPressedList[index];
+                              });
+                              debugPrint('isPressedList 전체 상태: $isPressedList');
+                            },
+                            rejectOnPressed: () async {
+                              final prefs = await SharedPreferences.getInstance();
+                              List<String> delSugList = prefs.getStringList('delSugList') ?? [];
+                              delSugList.add(friend.id);
+                              await prefs.setStringList('delSugList', delSugList);
+                              setState(() {
+                                filteredSuggestedFriends.removeWhere((request) => request.id == friend.id);
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+            SizedBox(height: 24.h)
+          ],
+        ),
       ),
     );
   }
