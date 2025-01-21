@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location/location.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
@@ -34,10 +33,36 @@ class _State extends State<BrowseTabScreen> {
 
   double? myLat;
   double? myLng;
-  final Location _location = Location();
   Distance distance = Distance();
 
+  static const double _maxDragOffset = 36;
   bool isLoading = true;
+
+  String _getLoadingAsset(double offset) {
+    int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
+    segment = segment.clamp(1, 8);
+
+    switch (segment) {
+      case 1:
+        return AnimationPath.loading1;
+      case 2:
+        return AnimationPath.loading2;
+      case 3:
+        return AnimationPath.loading3;
+      case 4:
+        return AnimationPath.loading4;
+      case 5:
+        return AnimationPath.loading5;
+      case 6:
+        return AnimationPath.loading6;
+      case 7:
+        return AnimationPath.loading7;
+      case 8:
+        return AnimationPath.loading8;
+      default:
+        return AnimationPath.loading1;
+    }
+  }
 
   Future<void> _refreshData() async {
     setState(() {
@@ -58,8 +83,9 @@ class _State extends State<BrowseTabScreen> {
   void initState() {
     super.initState();
     initializeDateFormatting();
-    // getGeoData();
-    Position? currentPosition = Provider.of<LocationProvider>(context, listen: false).currentPosition;
+
+    Position? currentPosition =
+        Provider.of<LocationProvider>(context, listen: false).currentPosition;
     myLat = currentPosition?.latitude;
     myLng = currentPosition?.longitude;
   }
@@ -70,6 +96,7 @@ class _State extends State<BrowseTabScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomRefreshIndicator(
+      offsetToArmed: _maxDragOffset,
       onRefresh: _refreshData,
       builder: (
         BuildContext context,
@@ -81,19 +108,37 @@ class _State extends State<BrowseTabScreen> {
           children: <Widget>[
             if (!controller.isIdle)
               Positioned(
-                top: 14,
                 child: SizedBox(
                   height: 32,
                   width: 32,
-                  child: Lottie.asset(
-                    AnimationPath.loadingFeed,
-                    fit: BoxFit.contain,
-                    animate: !controller.isLoading,
+                  child: Center(
+                    child: controller.isLoading
+                        ? Lottie.asset(
+                            width: 25.r,
+                            height: 25.r,
+                            AnimationPath.loadingFeed,
+                            animate: controller.isLoading,
+                          )
+                        : AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) {
+                              return child;
+                            },
+                            child: SvgPicture.asset(
+                              _getLoadingAsset(
+                                  controller.value * _maxDragOffset),
+                              width: 25.r,
+                              height: 25.r,
+                              key: ValueKey<String>(_getLoadingAsset(
+                                  controller.value * _maxDragOffset)),
+                            ),
+                          ),
                   ),
                 ),
               ),
             Transform.translate(
-              offset: Offset(0, 100.0 * controller.value),
+              offset: Offset(0, _maxDragOffset * controller.value),
               child: child,
             ),
           ],
@@ -112,8 +157,8 @@ class _State extends State<BrowseTabScreen> {
                 } else if (snapshot.hasData) {
                   final pendingModakbulList = snapshot.data!;
                   return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     child: Column(
-                      /*singlechildview -> expanded*/
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
@@ -239,24 +284,32 @@ class _State extends State<BrowseTabScreen> {
                                                 ? ColorSchemes.orange200
                                                 : ColorSchemes.orange000,
                                             padding: isSelected
-                                                ? EdgeInsets.symmetric(vertical: 7.h, horizontal: 14.w)
-                                                : EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
+                                                ? EdgeInsets.symmetric(
+                                                    vertical: 7.h,
+                                                    horizontal: 14.w)
+                                                : EdgeInsets.symmetric(
+                                                    vertical: 6.h,
+                                                    horizontal: 12.w),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         StyleConstants
                                                             .radiusMedium)),
                                           ).copyWith(
-                                            backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-                                              if (states.contains(WidgetState.pressed)) {
+                                            backgroundColor: WidgetStateProperty
+                                                .resolveWith<Color>((states) {
+                                              if (states.contains(
+                                                  WidgetState.pressed)) {
                                                 return ColorSchemes.orange100;
                                               }
                                               return isSelected
                                                   ? ColorSchemes.orange200
                                                   : ColorSchemes.orange000;
                                             }),
-                                            foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-                                              if (states.contains(WidgetState.pressed)) {
+                                            foregroundColor: WidgetStateProperty
+                                                .resolveWith<Color>((states) {
+                                              if (states.contains(
+                                                  WidgetState.pressed)) {
                                                 return ColorSchemes.orange000;
                                               }
                                               return isSelected
@@ -266,13 +319,10 @@ class _State extends State<BrowseTabScreen> {
                                           ),
                                           child: Row(
                                             children: [
-                                              Text(
-                                                filter,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .body3
-
-                                              ),
+                                              Text(filter,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .body3),
                                               if (filter == value)
                                                 SizedBox(
                                                     width: 18.w,

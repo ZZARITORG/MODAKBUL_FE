@@ -87,5 +87,13 @@ class AnimationPath {
   AnimationPath._();
 
   static const String loadingFeed = 'assets/animations/loading_feed.json';
-  static const String loadingFeed2 = 'assets/animations/loading_feed2.json';
+  static const String loading1 = 'assets/animations/loading_1.svg';
+  static const String loading2 = 'assets/animations/loading_2.svg';
+  static const String loading3 = 'assets/animations/loading_3.svg';
+  static const String loading4 = 'assets/animations/loading_4.svg';
+  static const String loading5 = 'assets/animations/loading_5.svg';
+  static const String loading6 = 'assets/animations/loading_6.svg';
+  static const String loading7 = 'assets/animations/loading_7.svg';
+  static const String loading8 = 'assets/animations/loading_8.svg';
+
 }

@@ -1,6 +1,8 @@
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:logger/logger.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/services/notification_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -9,6 +11,8 @@ import 'package:modakbul/widgets/alert_list_tile.dart';
 import 'package:modakbul/widgets/alert_screen_skeleton.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/models/notifications.dart';
+
+import '../../constants/assets_path.dart';
 
 class AlertScreen extends StatefulWidget {
   const AlertScreen({Key? key}) : super(key: key);
@@ -19,6 +23,47 @@ class AlertScreen extends StatefulWidget {
 
 class _AlertScreenState extends State<AlertScreen> {
   NotificationService notificationService = NotificationService();
+
+  static const double _maxDragOffset = 36;
+  bool isLoading = true;
+
+  String _getLoadingAsset(double offset) {
+    int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
+    segment = segment.clamp(1, 8);
+
+    switch (segment) {
+      case 1:
+        return AnimationPath.loading1;
+      case 2:
+        return AnimationPath.loading2;
+      case 3:
+        return AnimationPath.loading3;
+      case 4:
+        return AnimationPath.loading4;
+      case 5:
+        return AnimationPath.loading5;
+      case 6:
+        return AnimationPath.loading6;
+      case 7:
+        return AnimationPath.loading7;
+      case 8:
+        return AnimationPath.loading8;
+      default:
+        return AnimationPath.loading1;
+    }
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await notificationService.getNotifications();
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   Map<String, List<Notifications>> categorizeNotifications(List<Notifications> notifications) {
     final now = DateTime.now();
@@ -88,40 +133,90 @@ class _AlertScreenState extends State<AlertScreen> {
         backgroundColor: ColorSchemes.gray000,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: FutureBuilder<List<Notifications>>(
-            future: notificationService.getNotifications(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return AlertScreenSkeleton();
-              } else if (snapshot.hasError) {
-                return Text('에러');
-              } else if (snapshot.hasData) {
-                final notificationList = snapshot.data!;
-                final categorizedNotifications = categorizeNotifications(notificationList);
-
-                return Column(
-                  children: [
-                    SizedBox(height: 24.h),
-                    Expanded(
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: categorizedNotifications.entries
-                            .where((entry) => entry.value.isNotEmpty)
-                            .map((entry) => buildAlertSection(
-                          entry.key,
-                          entry.value,
-                        ))
-                            .toList(),
+        child: CustomRefreshIndicator(
+          onRefresh: _refreshData,
+          builder: (
+              BuildContext context,
+              Widget child,
+              IndicatorController controller,
+              ) {
+            return Stack(
+              alignment: Alignment.topCenter,
+              children: <Widget>[
+                if (!controller.isIdle)
+                  Positioned(
+                    child: SizedBox(
+                      height: 32,
+                      width: 32,
+                      child: Center(
+                        child: controller.isLoading
+                            ? Lottie.asset(
+                          width: 25.r,
+                          height: 25.r,
+                          AnimationPath.loadingFeed,
+                          animate: controller.isLoading,
+                        )
+                            : AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) {
+                            return child;
+                          },
+                          child: SvgPicture.asset(
+                            _getLoadingAsset(
+                                controller.value * _maxDragOffset),
+                            width: 25.r,
+                            height: 25.r,
+                            key: ValueKey<String>(_getLoadingAsset(
+                                controller.value * _maxDragOffset)),
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(height: 16.h)
-                  ],
-                );
-              }
-              return Text('이거머야');
-            },
+                  ),
+                Transform.translate(
+                  offset: Offset(0, _maxDragOffset * controller.value),
+                  child: child,
+                ),
+              ],
+            );
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+            child: FutureBuilder<List<Notifications>>(
+              future: notificationService.getNotifications(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting && isLoading == true) {
+                  return AlertScreenSkeleton();
+                } else if (snapshot.hasError) {
+                  return Text('에러');
+                } else if (snapshot.hasData) {
+                  isLoading = false;
+                  final notificationList = snapshot.data!;
+                  final categorizedNotifications = categorizeNotifications(notificationList);
+
+                  return Column(
+                    children: [
+                      SizedBox(height: 24.h),
+                      Expanded(
+                        child: ListView(
+                          // shrinkWrap: true,
+                          children: categorizedNotifications.entries
+                              .where((entry) => entry.value.isNotEmpty)
+                              .map((entry) => buildAlertSection(
+                            entry.key,
+                            entry.value,
+                          ))
+                              .toList(),
+                        ),
+                      ),
+                      SizedBox(height: 16.h)
+                    ],
+                  );
+                }
+                return Text('이거머야');
+              },
+            ),
           ),
         ),
       ),

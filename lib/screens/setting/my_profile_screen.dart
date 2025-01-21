@@ -4,16 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/logout.dart';
 import 'package:modakbul/models/my_profile.dart';
-import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/services/user_service.dart';
@@ -236,9 +233,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     // FCM 토큰 가져오기
                     String? fcmToken;
                     if (Platform.isIOS) {
-                      fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
                       // await Future.delayed(Duration(seconds: 2));
-                      // fcmToken = await FirebaseMessaging.instance.getToken();
+                      fcmToken = await FirebaseMessaging.instance.getAPNSToken();
                       print('APNS Token: $fcmToken');
                     } else if (Platform.isAndroid) {
                       fcmToken = await FirebaseMessaging.instance.getToken();
