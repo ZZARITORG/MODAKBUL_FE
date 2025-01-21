@@ -12,14 +12,16 @@ import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/login.dart';
+import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/providers/auth_provider.dart'
-as modakbul_auth_provider;
+    as modakbul_auth_provider;
 import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/services/firebase_auth_service.dart';
+import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/string_utils.dart';
@@ -28,6 +30,8 @@ import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
+
+import '../../main.dart';
 
 class AuthCodeScreen extends StatefulWidget {
   const AuthCodeScreen({super.key});
@@ -43,6 +47,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
   final FocusNode _codeFocusNode = FocusNode();
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
   AuthService _authService = AuthService();
+  UserService _userService = UserService();
   String? _errorMessage;
   late modakbul_auth_provider.AuthProvider authProvider;
   Timer? _resendTimer;
@@ -126,9 +131,8 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       // 개발자 권한 받으면 변경 예정
       String? fcmToken;
       if (Platform.isIOS) {
-        fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
         // await Future.delayed(Duration(seconds: 2));
-        // fcmToken = await FirebaseMessaging.instance.getToken();
+        fcmToken = await FirebaseMessaging.instance.getToken();
         print('APNS Token: $fcmToken');
       } else if (Platform.isAndroid) {
         fcmToken = await FirebaseMessaging.instance.getToken();
@@ -145,6 +149,28 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
         secureStorage.write(
             key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
       ]);
+
+      MyProfile myProfile = await _userService.getMyProfile();
+      await Future.wait([
+        prefs.setStringList('delSugList', []),
+        prefs.setString(AppConstants.userName, myProfile.userName!),
+        prefs.setString(AppConstants.userId, myProfile.userId!),
+        prefs.setString(AppConstants.profileUrl, myProfile.profileUrl!),
+        prefs.setBool(AppConstants.isFriendAlarm, true),
+        prefs.setBool(AppConstants.isContactAgree, true),
+      ]);
+
+      if (prefs.getBool(AppConstants.isAllAlertToggled) == null ||
+          prefs.getBool(AppConstants.isModakbulAlertToggled) == null ||
+          prefs.getBool(AppConstants.isAdAlertToggled) == null) {
+        await Future.wait([
+          FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic),
+          FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic),
+          prefs.setBool(AppConstants.isAllAlertToggled, true),
+          prefs.setBool(AppConstants.isModakbulAlertToggled, true),
+          prefs.setBool(AppConstants.isAdAlertToggled, true),
+        ]);
+      }
       Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
     } else {
       if (!context.mounted) return;
@@ -158,7 +184,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       case 'invalid-verification-code':
         errorMessage = '인증번호가 일치하지 않습니다.';
         break;
-    /* case 'expired-action-code':
+      /* case 'expired-action-code':
         errorMessage = '인증번호가 만료 되었습니다.';
         break; */
       case 'user-disabled':
@@ -200,7 +226,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       body: SafeArea(
         child: Padding(
           padding:
-          EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: Form(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -254,9 +280,9 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
                             .textTheme
                             .smallHeadLine3
                             .copyWith(
-                            color: _canResend
-                                ? ColorSchemes.orange100
-                                : ColorSchemes.gray200),
+                                color: _canResend
+                                    ? ColorSchemes.orange100
+                                    : ColorSchemes.gray200),
                       )),
                 ),
                 SizedBox(

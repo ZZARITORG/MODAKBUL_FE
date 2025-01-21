@@ -37,9 +37,9 @@ class UserService {
     );
   }
 
-  Future<void> deleteUser() async {
+  Future<void> deleteUser(String firebaseUid) async {
     await dio.delete(
-        ApiPath.user
+      ApiPath.userCheck(firebaseUid)
     );
   }
 }

@@ -129,51 +129,79 @@ class BlockedUserScreen extends StatelessWidget {
           padding:
               EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: FutureBuilder<List<BlockedUser>>(
-            future: friendService.getBlockedUser(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return BlockedUserScreenSkeleton();
-              } else if (snapshot.hasError) {
-                return Text('오류 발생: ${snapshot.error}');
-              } else if (!snapshot.hasData || snapshot.data == null) {
-                return Text('데이터가 없습니다.');
-              } else if (snapshot.data!.isEmpty) {
-                return Center(child: Text('차단된 사용자가 없습니다.'));
-              }
-              else {
-                List<BlockedUser> blockedUserList = snapshot.data!;
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 26.h),
-                      Text('차단된 사용자',
-                          style: Theme.of(context)
-                              .textTheme
-                              .body2
-                              .copyWith(color: ColorSchemes.orange200)),
-                      SizedBox(height: 24.h),
-                      ListView.builder(
-                          primary: false,
-                          shrinkWrap: true,
-                          itemCount: blockedUserList.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: UserListProfile.icon(
-                                  userName: blockedUserList[index].name,
-                                  userId: blockedUserList[index].userId,
-                              profileImage: blockedUserList[index].profileUrl,
-                              id: blockedUserList[index].id)
-                            );
-                          })
-                    ],
-                  ),
-                );
-              }
-
-            }
-          ),
+              future: friendService.getBlockedUser(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return BlockedUserScreenSkeleton();
+                } else if (snapshot.hasError) {
+                  return Text('오류 발생: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return Text('데이터가 없습니다.');
+                } else if (snapshot.data!.isEmpty) {
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 26.h),
+                        Text('차단된 사용자',
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .copyWith(color: ColorSchemes.orange200)),
+                        Center(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 202.h),
+                              Text(
+                                '차단된 친구가 없습니다.',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bigHeadLine3
+                                    .copyWith(color: ColorSchemes.orange100),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                '친구를 추가하고 모닥불을 피워보세요.',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body2
+                                    .copyWith(color: ColorSchemes.gray300),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ]);
+                } else {
+                  List<BlockedUser> blockedUserList = snapshot.data!;
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 26.h),
+                        Text('차단된 사용자',
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .copyWith(color: ColorSchemes.orange200)),
+                        SizedBox(height: 24.h),
+                        ListView.builder(
+                            primary: false,
+                            shrinkWrap: true,
+                            itemCount: blockedUserList.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: UserListProfile.icon(
+                                      userName: blockedUserList[index].name,
+                                      userId: blockedUserList[index].userId,
+                                      profileImage:
+                                          blockedUserList[index].profileUrl,
+                                      id: blockedUserList[index].id));
+                            })
+                      ],
+                    ),
+                  );
+                }
+              }),
         ),
       ),
     );

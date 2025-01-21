@@ -1,22 +1,19 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:modakbul/constants/app_constants.dart';
-import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/login.dart';
 import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/providers/auth_provider.dart'
 as modakbul_auth_provider;
-import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/services/firebase_auth_service.dart';
@@ -130,9 +127,8 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
       // 개발자 권한 받으면 변경 예정
       String? fcmToken;
       if (Platform.isIOS) {
-        fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
         // await Future.delayed(Duration(seconds: 2));
-        // fcmToken = await FirebaseMessaging.instance.getToken();
+        fcmToken = await FirebaseMessaging.instance.getAPNSToken();
         print('APNS Token: $fcmToken');
       } else if (Platform.isAndroid) {
         fcmToken = await FirebaseMessaging.instance.getToken();

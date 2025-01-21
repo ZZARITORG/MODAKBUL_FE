@@ -32,5 +32,10 @@ class AppConstants {
   static const String profileUrl = 'PROFILE_URL';
   static const String isFriendAlarm = 'IS_FRIEND_ALARM';
   static const String isContactAgree = 'IS_CONTACT_AGREE';
+  static const String isAllAlertToggled = 'IS_ALL_ALERT_TOGGLED';
+  static const String isModakbulAlertToggled = 'IS_MODAKBUL_ALERT_TOGGLED';
+  static const String isAdAlertToggled = 'IS_AD_ALERT_TOGGLED';
+  static const String modakbulAlertTopic = 'modakbul_alerts';
+  static const String adAlertTopic = 'ad_alerts';
 
 }

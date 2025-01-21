@@ -14,7 +14,6 @@ class GroupService {
     Response response = await dio.get(
       ApiPath.group,
     );
-    print('aaa${response.data['data']}');
     return JsonUtils().parseGroupList(response.data['data'] as List);
   }
 

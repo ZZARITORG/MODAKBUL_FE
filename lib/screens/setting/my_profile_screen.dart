@@ -4,15 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:modakbul/constants/api_path.dart';
+import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/logout.dart';
 import 'package:modakbul/models/my_profile.dart';
-import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/services/user_service.dart';
@@ -24,6 +22,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../main.dart';
 
 class MyProfileScreen extends StatefulWidget {
   MyProfileScreen({super.key});
@@ -37,16 +38,22 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   UserService userService = UserService();
   AuthService authService = AuthService();
+  ///late SharedPreferences pref;
+  late String userName;
+  late String userId;
+  late String profileUrl;
 
   @override
   void initState() {
     super.initState();
-    _futureProfile = userService.getMyProfile();
+    initSharedPreferences();
   }
 
-  void _refreshProfile() {
+  Future<void> initSharedPreferences() async {
     setState(() {
-      _futureProfile = userService.getMyProfile();
+      userName = prefs.getString(AppConstants.userName) ?? '';
+      userId = prefs.getString(AppConstants.userId) ?? '';
+      profileUrl = prefs.getString(AppConstants.profileUrl) ?? '';
     });
   }
 
@@ -82,22 +89,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          FutureBuilder<MyProfile>(
-                              future: _futureProfile,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return CircularProgressIndicator(); // 스켈레톤 만들어야함?
-                                } else if (snapshot.hasError) {
-                                  return Text('오류 발생: ${snapshot.error}');
-                                } else if (!snapshot.hasData || snapshot.data == null) {
-                                  return Text('데이터가 없습니다.');
-                                }
-                                else if (snapshot.hasData){
-                                  String? profileUrl =
-                                      snapshot.data?.profileUrl;
-                                  String? userId = snapshot.data?.userId;
-                                  String? userName = snapshot.data?.userName;
-                                  return Expanded(
+                           Expanded(
                                     child: Row(
                                       children: [
                                         Stack(children: [
@@ -105,7 +97,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                             radius:
                                             StyleConstants.circleSizeS,
                                             backgroundImage:
-                                            NetworkImage(profileUrl!),
+                                            NetworkImage(profileUrl),
                                           ),
                                           Positioned(
                                               right: 0,
@@ -128,7 +120,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                             CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                userName!,
+                                                userName,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bigHeadLine4
@@ -138,7 +130,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                               ),
                                               SizedBox(height: 2.h),
                                               Text(
-                                                userId!,
+                                                userId,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .body3
@@ -151,20 +143,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                         )
                                       ],
                                     ),
-                                  );
-                                }
-                                else {
-                                  return Text('error');
-                                }
-                            }
-                          ),
+                                  ),
+
                           SizedBox(width: 32.w),
                           InkWell(
                             onTap: () async {
                               final result = await Routes.navigateAndReturn(context, Routes.editMyProfileScreen);
-                              print('myprofilescreen 반환값: $result');
                               if (result == true) {
-                                _refreshProfile();
+                                await initSharedPreferences();
                               }
                             },
                             child: Text(
@@ -247,9 +233,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     // FCM 토큰 가져오기
                     String? fcmToken;
                     if (Platform.isIOS) {
-                      fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
                       // await Future.delayed(Duration(seconds: 2));
-                      // fcmToken = await FirebaseMessaging.instance.getToken();
+                      fcmToken = await FirebaseMessaging.instance.getAPNSToken();
                       print('APNS Token: $fcmToken');
                     } else if (Platform.isAndroid) {
                       fcmToken = await FirebaseMessaging.instance.getToken();

@@ -34,7 +34,34 @@ class _State extends State<DefaultTabScreen> {
   int _currentPage = 0;
 
   final MeetingService meetingService = MeetingService();
+  static const double _maxDragOffset = 36;
   bool isLoading = true;
+
+  String _getLoadingAsset(double offset) {
+    int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
+    segment = segment.clamp(1, 8);
+
+    switch (segment) {
+      case 1:
+        return AnimationPath.loading1;
+      case 2:
+        return AnimationPath.loading2;
+      case 3:
+        return AnimationPath.loading3;
+      case 4:
+        return AnimationPath.loading4;
+      case 5:
+        return AnimationPath.loading5;
+      case 6:
+        return AnimationPath.loading6;
+      case 7:
+        return AnimationPath.loading7;
+      case 8:
+        return AnimationPath.loading8;
+      default:
+        return AnimationPath.loading1;
+    }
+  }
 
   Future<void> _refreshData() async {
     setState(() {
@@ -64,31 +91,48 @@ class _State extends State<DefaultTabScreen> {
         return Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[
-            if (controller.value > 0)
+            if (!controller.isIdle)
               Positioned(
-                top: 14,
                 child: SizedBox(
                   height: 32,
                   width: 32,
-                  child: Lottie.asset(
-                    AnimationPath.loadingFeed,
-                    fit: BoxFit.contain,
-                    repeat: true,
-                    animate: true,
+                  child: Center(
+                    child: controller.isLoading
+                        ? Lottie.asset(
+                      width: 25.r,
+                      height: 25.r,
+                      AnimationPath.loadingFeed,
+                      animate: controller.isLoading,
+                    )
+                        : AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        return child;
+                      },
+                      child: SvgPicture.asset(
+                        _getLoadingAsset(
+                            controller.value * _maxDragOffset),
+                        width: 25.r,
+                        height: 25.r,
+                        key: ValueKey<String>(_getLoadingAsset(
+                            controller.value * _maxDragOffset)),
+                      ),
+                    ),
                   ),
                 ),
               ),
             Transform.translate(
-              offset: Offset(0, controller.value > 0.72 ? 72.0 : 100.0 * controller.value),
+              offset: Offset(0, _maxDragOffset * controller.value),
               child: child,
             ),
           ],
         );
       },
       child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           children: [
-            /* 스켈레톤 조건문 들어갈 영역 */
             FutureBuilder<List>(
                 future: Future.wait([
                   meetingService.getMyHostModakbulList(),
@@ -215,14 +259,11 @@ class _State extends State<DefaultTabScreen> {
                                                         myHostModaktbulList[
                                                                 index]!
                                                             .date;
-                                                    DateTime kstDate =
-                                                        utcDate.add(
-                                                            Duration(hours: 9));
                                                     Intl.defaultLocale =
                                                         'ko_KR';
                                                     String date = DateFormat(
                                                             'MM.dd(E) a h시 m분')
-                                                        .format(kstDate);
+                                                        .format(utcDate);
                                                     String hostId =
                                                         myHostModaktbulList[
                                                                 index]!

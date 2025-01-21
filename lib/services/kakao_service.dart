@@ -13,7 +13,7 @@ class KakaoService {
     options: Options(
       extra: {'skipToken': true, 'isKakao': true},
     ),
-    queryParameters: {'query': query, 'y': lat, 'x': long, 'page': 1, 'size': 20},);
+    queryParameters: {'query': query, 'y': lat, 'x': long, 'page': 1, 'size': 15},);
 
     print(response.data['documents']);
     return JsonUtils.convertJsonToPlaceList(response.data['documents'] as List);

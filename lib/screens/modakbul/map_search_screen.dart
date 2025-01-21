@@ -175,7 +175,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                                     Routes.navigateTo(
                                         context, Routes.mapSelectScreen);
                                   } else {
-                                    CustomToast.showToast(context, '날짜를 먼저 선택해주세요.');
+                                    CustomToast.showToast(context, '날짜를 먼저 선택해주세요.', false);
                                   }
                                 },
                                 style: Theme.of(context)
