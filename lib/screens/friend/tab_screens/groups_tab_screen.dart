@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/core/dio_client.dart';
 import 'package:modakbul/models/group_list.dart';
 import 'package:modakbul/screens/friend/group_edit_screen.dart';
 import 'package:modakbul/services/group_service.dart';
@@ -30,6 +31,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   final TextEditingController _searchController = TextEditingController();
   late final ScrollController _scrollController = ScrollController();
   GroupService groupService = GroupService();
+  DioClient _dioClient = DioClient();
   List<Group> groupList = [];
   final FocusNode _searchFocusNode = FocusNode();
   late Future<List<Group>> getData;
@@ -45,7 +47,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   @override
   void initState() {
     super.initState();
-    getData = groupService.getGroupList();
+    //getData = groupService.getGroupList();
+    getData = _dioClient.handleRequest<List<Group>>(requestFunction: () => groupService.getGroupList());
     _searchController.addListener(_onSearchChanged);
     _scrollController.addListener(_scrollListener);
 }
@@ -182,6 +185,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const GroupScreenSkeleton();
                       } else if (snapshot.hasError) {
+                        print('error: ${snapshot.error}');
                         return Text('에러 발생');
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Text('데이터 없음');
