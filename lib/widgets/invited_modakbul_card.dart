@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,7 +59,8 @@ class InvitedModakbulCard extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: StyleConstants.circleSizeXS,
-                            backgroundImage: NetworkImage(hostProfileImage),
+                            child: ClipOval(
+                                child: CachedNetworkImage(imageUrl: hostProfileImage)),
                           ),
                           SizedBox(width: 4.w),
                           Flexible(
@@ -133,7 +135,8 @@ class InvitedModakbulCard extends StatelessWidget {
                                                 child: CircleAvatar(
                                                   radius: StyleConstants
                                                       .circleSizeXXXXXXS,
-                                                  backgroundImage: NetworkImage(participantUsers[0].profileUrl),
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(imageUrl: participantUsers[0].profileUrl)),
                                                 ),
                                               ),
                                             ),
@@ -148,7 +151,8 @@ class InvitedModakbulCard extends StatelessWidget {
                                                 child: CircleAvatar(
                                                   radius: StyleConstants
                                                       .circleSizeXXXXXXS,
-                                                  backgroundImage: NetworkImage(participantUsers[1].profileUrl),
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(imageUrl: participantUsers[1].profileUrl)),
                                                 ),
                                               ),
                                             ),
@@ -163,7 +167,8 @@ class InvitedModakbulCard extends StatelessWidget {
                                                 child: CircleAvatar(
                                                   radius: StyleConstants
                                                       .circleSizeXXXXXXS,
-                                                  backgroundImage: NetworkImage(participantUsers[2].profileUrl),
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(imageUrl: participantUsers[2].profileUrl)),
                                                 ),
                                               ),
                                             ),

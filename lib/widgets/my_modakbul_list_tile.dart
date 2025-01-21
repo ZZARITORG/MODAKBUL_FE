@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -99,7 +100,8 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange200,
-                                backgroundImage: NetworkImage(participantUsers[0].profileUrl!),
+                                  child: ClipOval(
+                                      child: CachedNetworkImage(imageUrl: participantUsers[0].profileUrl!)),
                               ),
                             )),
                       if (profileLength >= 2)
@@ -111,7 +113,8 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange100,
-                                backgroundImage: NetworkImage(participantUsers[1].profileUrl!),
+                                child: ClipOval(
+                                    child: CachedNetworkImage(imageUrl: participantUsers[1].profileUrl!)),
                               ),
                             )),
                       if (profileLength >= 3)

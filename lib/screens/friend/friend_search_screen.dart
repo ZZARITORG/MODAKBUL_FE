@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -378,7 +379,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                                 SizedBox(width: 37.w),
                                                 CircleAvatar(
                                                   radius: StyleConstants.circleSizeL,
-                                                  backgroundImage: NetworkImage(userCheckData.profileUrl),
+                                                    child: ClipOval(
+                                                        child: CachedNetworkImage(imageUrl: userCheckData.profileUrl)),
                                                 ),
                                               ],
                                             ),

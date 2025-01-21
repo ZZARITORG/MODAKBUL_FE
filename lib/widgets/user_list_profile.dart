@@ -53,7 +53,8 @@ class UserListProfile extends StatelessWidget {
                 CircleAvatar(
                   radius: StyleConstants.circleSizeS,
                   backgroundColor: ColorSchemes.gray500,
-                  backgroundImage: NetworkImage(profileImage!)
+                  child: ClipOval(
+                      child: CachedNetworkImage(imageUrl: profileImage!)),
                 ),
                 SizedBox(
                   width: 8.w,

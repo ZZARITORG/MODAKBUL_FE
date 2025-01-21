@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
@@ -30,7 +31,8 @@ class SuggestedFriendProfile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: StyleConstants.circleSizeL,
-          backgroundImage: NetworkImage(profileImage!),
+          child: ClipOval(
+              child: CachedNetworkImage(imageUrl: profileImage!)),
           backgroundColor: ColorSchemes.gray500,
         ),
         SizedBox(

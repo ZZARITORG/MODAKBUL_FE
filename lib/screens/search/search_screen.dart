@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -226,7 +227,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 SizedBox(width: 37.w), // 고정 간격 추가
                                                 CircleAvatar(
                                                   radius: StyleConstants.circleSizeL,
-                                                  backgroundImage: NetworkImage(selectedUser.profileUrl),
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(imageUrl: selectedUser.profileUrl)),
                                                   backgroundColor: ColorSchemes.gray500,
                                                 ),
                                               ],
