@@ -34,7 +34,6 @@ class FriendService {
     Response response = await dio.get(
       ApiPath.friendList,
     );
-    print(response.data['data']);
     return JsonUtils().parseFriendList(response.data['data'] as List);
   }
 
@@ -47,6 +46,7 @@ class FriendService {
     Response response = await dio.post(ApiPath.friendSuggested,
       data: contacts.toJson()
     );
+    print('데이터2${response.data['data']}');
     return JsonUtils().parseFriendSuggested(response.data['data'] as List);
   }
 

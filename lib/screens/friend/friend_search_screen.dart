@@ -71,6 +71,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
       setState(() {
         contactNumbers = contacts
             .where((contact) => contact.phones.isNotEmpty)
+            .where((contact) => contact.phones.isNotEmpty)
             .map((contact) => contact.phones[0].number)
             .toList();
       });
@@ -108,7 +109,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('데이터를 불러오는 중 오류가 발생했습니다: $error')),
       );
-    } 
+    }
   }
 
   @override
@@ -339,6 +340,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
+                                                      if (userCheckData.mutualCount == 0)
+                                                        SizedBox(height: 14.h),
                                                       Text(
                                                         userCheckData.name,
                                                         style: Theme.of(context)
@@ -357,13 +360,14 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                                             .copyWith(color: ColorSchemes.gray300),
                                                       ),
                                                       SizedBox(height: 6.h),
-                                                      Text(
-                                                        '함께하는 친구가 ${userCheckData.mutualCount}명 있습니다!',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .body3
-                                                            .copyWith(color: ColorSchemes.gray200),
-                                                      ),
+                                                      if (userCheckData.mutualCount > 0)
+                                                        Text(
+                                                          '함께하는 친구가 ${userCheckData.mutualCount}명 있습니다!',
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .body3
+                                                              .copyWith(color: ColorSchemes.gray200),
+                                                        ),
                                                     ],
                                                   ),
                                                 ),
@@ -380,46 +384,102 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                             padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
                                             child: SizedBox(
                                               width: double.infinity,
-                                              height: 56.h,
-                                              child: CustomButton(
-                                                text: userCheckData.status == 'ACCEPTED'
-                                                    ? '친구 삭제'
-                                                    : userCheckData.status == 'PENDING'
-                                                    ? (userCheckData.sourceId == selectedUser.id ? '친구 수락' : '취소')
-                                                    : '친구 요청',
-                                                onPressed: () {
-                                                  switch (userCheckData.status) {
-                                                    case 'ACCEPTED':
-                                                      friendService.deleteFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                        Navigator.pop(context);
-                                                      });
-                                                      break;
-                                                    case 'REJECTED':
-                                                      friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                        Navigator.pop(context);
-                                                      });
-                                                      break;
-                                                    case 'NONE':
-                                                      friendService.requestFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                        Navigator.pop(context);
-                                                      });
-                                                      break;
-                                                    case 'PENDING':
-                                                      if (userCheckData.sourceId == selectedUser.id) {
-                                                        friendService.acceptFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                              child: userCheckData.status == 'PENDING'
+                                                  ? userCheckData.sourceId == selectedUser.id
+                                                  ? Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: SizedBox(
+                                                      height: 56.h,
+                                                      child: CustomButton(
+                                                        text: '친구 수락',
+                                                        onPressed: () {
+                                                          friendService.acceptFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                            Navigator.pop(context);
+                                                          });
+                                                        },
+                                                        buttonColor: ColorSchemes.orange200,
+                                                        textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                                                        textColor: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 10.w),
+                                                  Expanded(
+                                                    child: SizedBox(
+                                                      height: 56.h,
+                                                      child: CustomButton(
+                                                        text: '삭제',
+                                                        onPressed: () {
+                                                          friendService.deleteFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                            Navigator.pop(context);
+                                                          });
+                                                        },
+                                                        buttonColor: ColorSchemes.gray100,
+                                                        textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                                                        textColor: ColorSchemes.gray400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                                  : SizedBox(
+                                                height: 56.h,
+                                                child: CustomButton(
+                                                  text: '요청 취소',
+                                                  onPressed: () {
+                                                    friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                      Navigator.pop(context);
+                                                    });
+                                                  },
+                                                  buttonColor: ColorSchemes.orange100,
+                                                  textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                                                  textColor: Colors.white,
+                                                ),
+                                              )
+                                                  : SizedBox(
+                                                height: 56.h,
+                                                child: CustomButton(
+                                                  text: userCheckData.status == 'ACCEPTED'
+                                                      ? '친구 삭제'
+                                                      : userCheckData.status == 'PENDING'
+                                                      ? (userCheckData.sourceId == selectedUser.id ? '친구 수락' : '삭제')
+                                                      : '친구 요청',
+                                                  onPressed: () {
+                                                    switch (userCheckData.status) {
+                                                      case 'ACCEPTED':
+                                                        friendService.deleteFriend(Uuid(targetId: selectedUser.id)).then((_) {
                                                           Navigator.pop(context);
                                                         });
-                                                      } else if (userCheckData.targetId == selectedUser.id) {
+                                                        break;
+                                                      case 'REJECTED':
                                                         friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
                                                           Navigator.pop(context);
                                                         });
-                                                      }
-                                                      break;
-                                                  }
-                                                },
-                                                buttonColor: ColorSchemes.orange200,
-                                                textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                                                textColor: Colors.white,
+                                                        break;
+                                                      case 'NONE':
+                                                        friendService.requestFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                          Navigator.pop(context);
+                                                        });
+                                                        break;
+                                                      case 'PENDING':
+                                                        if (userCheckData.sourceId == selectedUser.id) {
+                                                          friendService.acceptFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                            Navigator.pop(context);
+                                                          });
+                                                        } else if (userCheckData.targetId == selectedUser.id) {
+                                                          friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
+                                                            Navigator.pop(context);
+                                                          });
+                                                        }
+                                                        break;
+                                                    }
+                                                  },
+                                                  buttonColor: ColorSchemes.orange200,
+                                                  textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                                                  textColor: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -518,7 +578,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(
                     child: SizedBox(
-                      height: 268.h,
+                      height: 244.h,
                       child: Text(
                         '친구요청이 없습니다.',
                         style: Theme.of(context)
@@ -585,6 +645,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
             FutureBuilder<List<FriendSuggested>>(
               future: getSug,
               builder: (context, snapshot) {
+                print('Snapshot data: ${snapshot.data}');
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
@@ -626,7 +687,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                               setState(() {
                                 isPressedList[index] = !isPressedList[index];
                               });
-                              debugPrint('isPressedList 전체 상태: $isPressedList');
                             },
                             rejectOnPressed: () async {
                               final prefs = await SharedPreferences.getInstance();
