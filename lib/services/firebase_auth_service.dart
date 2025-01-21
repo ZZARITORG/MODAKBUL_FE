@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 ///TODO: 열거형으로 상태관리 생각해보기
 class FirebaseAuthService {

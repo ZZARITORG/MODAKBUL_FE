@@ -11,8 +11,7 @@ import 'package:modakbul/widgets/alert_list_tile.dart';
 import 'package:modakbul/widgets/alert_screen_skeleton.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/models/notifications.dart';
-
-import '../../constants/assets_path.dart';
+import 'package:modakbul/constants/assets_path.dart';
 
 class AlertScreen extends StatefulWidget {
   const AlertScreen({Key? key}) : super(key: key);

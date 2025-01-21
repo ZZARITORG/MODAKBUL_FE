@@ -14,8 +14,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/group_list_tile.dart';
 import 'package:modakbul/widgets/group_screen_skeleton.dart';
-import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
-import '../create_group_screen.dart';
+import 'package:modakbul/screens/friend/create_group_screen.dart';
 
 class GroupsTabScreen extends StatefulWidget {
   const GroupsTabScreen({super.key});

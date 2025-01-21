@@ -6,9 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/participate_bottom_sheet.dart';
 
-import '../constants/assets_path.dart';
-import '../constants/style_constants.dart';
-import '../themes/color_schemes.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/themes/color_schemes.dart';
 
 class DetailScreenBottomSheet extends StatelessWidget {
   final bool isHost;

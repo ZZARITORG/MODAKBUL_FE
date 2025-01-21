@@ -7,9 +7,9 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 
-import '../models/accept_modakbul.dart';
-import '../routes/routes.dart';
-import '../services/meeting_service.dart';
+import 'package:modakbul/models/accept_modakbul.dart';
+import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/services/meeting_service.dart';
 
 class ParticipateBottomSheet extends StatelessWidget {
   final String meetingId;

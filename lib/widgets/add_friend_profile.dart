@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
-
 import 'package:modakbul/themes/color_schemes.dart';
 
 class AddFriendProfile extends StatelessWidget {

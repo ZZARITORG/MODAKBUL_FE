@@ -7,8 +7,8 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/modakbul_map_screen_skeleton.dart';
-import '../../themes/color_schemes.dart';
-import '../../widgets/custom_toast.dart';
+import 'package:modakbul/themes/color_schemes.dart';
+import 'package:modakbul/widgets/custom_toast.dart';
 
 class ModakbulMapDetailScreen extends StatefulWidget {
   const ModakbulMapDetailScreen({Key? key}) : super(key: key);

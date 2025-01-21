@@ -17,19 +17,14 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/date_time_utils.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
-import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/participant_list_profile.dart';
-import 'package:modakbul/widgets/search_screen_skeleton.dart';
-import 'package:modakbul/widgets/select_user_list_profile.dart';
 import 'package:modakbul/widgets/suggested_friend_profile.dart';
-import 'package:modakbul/widgets/tab_bar_delegate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../constants/assets_path.dart';
-import '../../constants/style_constants.dart';
-import '../../widgets/custom_search_bar.dart';
-import '../../widgets/logo_app_bar.dart';
-import 'create_group_screen.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/logo_app_bar.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
 class FriendSearchScreen extends StatefulWidget {

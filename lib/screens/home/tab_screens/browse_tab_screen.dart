@@ -17,9 +17,8 @@ import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
-
-import '../../../providers/location_provider.dart';
-import '../../../routes/routes.dart';
+import 'package:modakbul/providers/location_provider.dart';
+import 'package:modakbul/routes/routes.dart';
 
 class BrowseTabScreen extends StatefulWidget {
   const BrowseTabScreen({super.key});
