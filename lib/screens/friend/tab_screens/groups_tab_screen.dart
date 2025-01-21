@@ -414,28 +414,6 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                 );
                               },
                             ),
-                            SizedBox(height: 4.h),
-                            if (_showLottie)
-                              SizedBox(
-                                height: 72.h,
-                                child: Positioned(
-                                    bottom: 20,
-                                    left: 0,
-                                    right: 0,
-                                    child: Center(
-                                      child: SizedBox(
-                                        height: 32,
-                                        width: 32,
-                                        child: Lottie.asset(
-                                          AnimationPath.loadingFeed,
-                                          fit: BoxFit.contain,
-                                          repeat: true,
-                                          animate: true,
-                                        ),
-                                      ),
-                                    )
-                                ),
-                              ),
                           ],
                         );
                       }
