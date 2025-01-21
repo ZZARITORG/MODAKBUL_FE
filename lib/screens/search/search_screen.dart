@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/user_list.dart';
-import 'package:modakbul/screens/friend/tab_screens/custom_friends_tab_screen.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/add_friend_profile.dart';
-import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/logo_app_bar.dart';
 import 'package:modakbul/widgets/participant_list_profile.dart';
-import 'package:modakbul/widgets/select_user_list_profile.dart';
-import 'package:modakbul/widgets/tab_bar_delegate.dart';
-import '../../constants/assets_path.dart';
-import '../../constants/style_constants.dart';
-import '../../widgets/custom_search_bar.dart';
-import '../../widgets/logo_app_bar.dart';
 
 
 class SearchScreen extends StatefulWidget {
