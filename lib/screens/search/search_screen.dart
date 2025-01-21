@@ -38,8 +38,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    getData = userService.getUserList('');
-    _searchController.addListener(_filterFriends);
   }
 
   @override
@@ -64,14 +62,6 @@ class _SearchScreenState extends State<SearchScreen> {
       } else {
         selectedFriends.add(friend);
       }
-    });
-  }
-
-  ///TODO 디바운딩 추가, TODO 검색방식 정하기
-  void _filterFriends() {
-    final searchQuery = _searchController.text.trim();
-    setState(() {
-      getData = userService.getUserList(searchQuery); // 검색어에 따라 갱신
     });
   }
 

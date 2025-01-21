@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
+import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/group_list.dart';
@@ -11,6 +12,7 @@ import 'package:modakbul/services/group_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/group_list_tile.dart';
 import 'package:modakbul/widgets/group_screen_skeleton.dart';
 import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 import '../create_group_screen.dart';
@@ -26,11 +28,14 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   String selectedFilter = 'latest';
   String filterText = '최신순';
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  late final ScrollController _scrollController = ScrollController();
   GroupService groupService = GroupService();
   List<Group> groupList = [];
   final FocusNode _searchFocusNode = FocusNode();
   late Future<List<Group>> getData;
+  late DateTime currentTime;
+  bool _showLottie = false;
+  bool _isRefreshing = false;
   Timer? _debounce;
   Logger logger = Logger(printer: PrettyPrinter());
 
@@ -42,13 +47,15 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     super.initState();
     getData = groupService.getGroupList();
     _searchController.addListener(_onSearchChanged);
-  }
+    _scrollController.addListener(_scrollListener);
+}
 
   @override
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
     _debounce?.cancel();
+    _scrollController.dispose();
     _filteredGroupsNotifier.dispose();
     super.dispose();
   }
@@ -69,6 +76,20 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     _reloadGroups(); // 새로운 데이터를 로드
     Navigator.pop(context); // 이전 화면으로 돌아감
   }
+
+  /*void _onScroll() {
+    if (_scrollController.position.atEdge) {
+      bool isBottom = _scrollController.position.pixels == _scrollController.position.maxScrollExtent;
+      setState(() {
+        _showLottie = isBottom;
+      });
+    } else {
+      setState(() {
+        _showLottie = false;
+      });
+    }
+  }*/
+
   // 최신순 정렬 함수 (최신 날짜가 먼저)
   List<Group> sortByRecent(List<Group> data) {
     data.sort((a, b) {
@@ -103,6 +124,44 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
           group.id.toLowerCase().contains(searchQuery);
     }).toList();
     _filteredGroupsNotifier.value = filtered;
+  }
+
+  static String timeAgo(DateTime dateTime, DateTime currentTime) {
+    Duration difference = currentTime.difference(dateTime); // 시간 차이 계산
+
+    if (difference.inDays > 0) {
+      // 하루 이상 차이 나면 "몇 일 전" 형태로 출력
+      return '${difference.inDays}일 전 모닥불을 피웠습니다!';
+    } else if (difference.inHours > 0) {
+      // 한 시간 이상 차이 나면 "몇 시간 전" 형태로 출력
+      return '${difference.inHours}시간 전';
+    } else if (difference.inMinutes > 0) {
+      // 1분 이상 차이 나면 "몇 분 전" 형태로 출력
+      return '${difference.inMinutes}분 전';
+    } else {
+      // 1분 이내로 차이가 나면 "방금 전" 형태로 출력
+      return '방금 전';
+    }
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (!_isRefreshing) {
+        setState(() {
+          _isRefreshing = true;
+          _showLottie = true; // 로티 애니메이션 표시
+        });
+        _refreshData();
+      }
+    }
+  }
+
+  Future<void> _refreshData() async {
+    await Future.delayed(const Duration(seconds: 2)); // 데이터 새로고침 로직
+    setState(() {
+      _isRefreshing = false;
+      _showLottie = false; // 로딩 애니메이션 종료
+    });
   }
 
   @override
@@ -336,13 +395,15 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                       },
                                       child: Column(
                                         children: [
-                                          MyModakbulListTile(
+                                          GroupListTile(
                                             title: groupName,  // 그룹 이름
-                                            time: filteredGroups[index].createdAt,  // 그룹의 마지막 업데이트 시간
+                                            time: timeAgo(
+                                              DateTime.parse(filteredGroups[index].createdAt), //
+                                              DateTime.now(), //
+                                            ),
                                             profileLength: filteredGroups[index].members.length,  // 멤버 수
                                             profileImage1: members[0].user.profileUrl,  // 첫 번째 멤버의 프로필 이미지
                                             profileImage2: profileImage2.isEmpty ? null : profileImage2,  // 두 번째 멤버의 프로필 이미지
-                                            participantUsers: [], // 다르다달라
                                             isSelected: false,  // 선택된 그룹 여부
                                           ),
                                           SizedBox(height: 12.h),
@@ -353,6 +414,28 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                 );
                               },
                             ),
+                            SizedBox(height: 4.h),
+                            if (_showLottie)
+                              SizedBox(
+                                height: 72.h,
+                                child: Positioned(
+                                    bottom: 20,
+                                    left: 0,
+                                    right: 0,
+                                    child: Center(
+                                      child: SizedBox(
+                                        height: 32,
+                                        width: 32,
+                                        child: Lottie.asset(
+                                          AnimationPath.loadingFeed,
+                                          fit: BoxFit.contain,
+                                          repeat: true,
+                                          animate: true,
+                                        ),
+                                      ),
+                                    )
+                                ),
+                              ),
                           ],
                         );
                       }
