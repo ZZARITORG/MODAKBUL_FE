@@ -157,6 +157,7 @@ class _State extends State<BrowseTabScreen> {
                 } else if (snapshot.hasData) {
                   final pendingModakbulList = snapshot.data!;
                   return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
