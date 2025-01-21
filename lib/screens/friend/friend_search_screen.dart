@@ -28,6 +28,11 @@ import 'package:modakbul/widgets/participant_list_profile.dart';
 import 'package:modakbul/widgets/profile_bottom_sheet.dart';
 import 'package:modakbul/widgets/suggested_friend_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/logo_app_bar.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 
 class FriendSearchScreen extends StatefulWidget {
   const FriendSearchScreen({super.key});

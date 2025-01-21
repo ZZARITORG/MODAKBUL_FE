@@ -18,10 +18,10 @@ import 'package:modakbul/widgets/detail_screen_bottom_sheet.dart';
 import 'package:modakbul/widgets/modakbul_detail_card.dart';
 import 'package:modakbul/widgets/modakbul_detail_screen_skeleton.dart';
 import 'package:modakbul/widgets/participate_bottom_sheet.dart';
-import '../../models/modakbul_detail.dart';
-import '../../routes/routes.dart';
-import '../../themes/color_schemes.dart';
-import '../../themes/styles.dart';
+import 'package:modakbul/models/modakbul_detail.dart';
+import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/themes/color_schemes.dart';
+import 'package:modakbul/themes/styles.dart';
 
 class ModakbulDetailScreen extends StatefulWidget {
   const ModakbulDetailScreen({super.key});

@@ -5,7 +5,7 @@ import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
 import 'package:modakbul/themes/styles.dart';
-import '../themes/color_schemes.dart';
+import 'package:modakbul/themes/color_schemes.dart';
 
 class InvitedModakbulCard extends StatelessWidget {
   final String hostProfileImage;

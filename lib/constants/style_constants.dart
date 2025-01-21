@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 ///버튼 사이즈, 아이콘 사이즈, 듀레이션, 마진, 패딩 등

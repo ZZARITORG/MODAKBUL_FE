@@ -1,5 +1,3 @@
-
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/core/dio_client.dart';
@@ -8,7 +6,6 @@ import 'package:modakbul/models/blocked_user.dart';
 import 'package:modakbul/models/contacts.dart';
 import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/models/friend_suggested.dart';
-import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/models/unblocked_user.dart';
 import 'package:modakbul/models/friend_list.dart';
 import 'package:modakbul/models/uuid.dart';

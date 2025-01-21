@@ -5,9 +5,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:modakbul/screens/alert/alert_screen.dart';
-
-import '../firebase_options.dart';
-import '../utils/global_variable.dart';
+import 'package:modakbul/firebase_options.dart';
+import 'package:modakbul/utils/global_variable.dart';
 
 class FirebaseMessagingService {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;

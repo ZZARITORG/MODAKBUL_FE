@@ -7,10 +7,8 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/group_list_tile.dart';
-import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 import 'package:modakbul/widgets/my_modakbul_screen_skeleton.dart';
-
-import '../../models/accepted_modakbul.dart';
+import 'package:modakbul/models/accepted_modakbul.dart';
 
 class MyModakbulScreen extends StatefulWidget {
   const MyModakbulScreen({super.key});
