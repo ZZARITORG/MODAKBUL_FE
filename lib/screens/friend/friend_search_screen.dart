@@ -74,17 +74,21 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
             .where((contact) => contact.phones.isNotEmpty)
             .map((contact) => contact.phones[0].number)
             .toList();
+        setState(() {
+          getSug = friendService.getFriendSuggested(Contacts(contacts: contactNumbers));
+        });
       });
     } else {
       print('Permission denied');
     }
-    getSug = friendService.getFriendSuggested(Contacts(contacts: contactNumbers));
+
   }
 
   @override
   void initState() {
     super.initState();
     getReq = friendService.getFriendReqList();
+    getSug = friendService.getFriendSuggested(Contacts(contacts: []));
     getContacts();
     _initializeCurrentTime();
     _lottieController = AnimationController(vsync: this, duration: const Duration(seconds: 2));
