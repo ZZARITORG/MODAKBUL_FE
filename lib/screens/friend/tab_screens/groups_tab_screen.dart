@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +8,7 @@ import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/group_list.dart';
+import 'package:modakbul/screens/friend/create_group_screen.dart';
 import 'package:modakbul/screens/friend/group_edit_screen.dart';
 import 'package:modakbul/services/group_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -14,7 +16,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/group_list_tile.dart';
 import 'package:modakbul/widgets/group_screen_skeleton.dart';
-import 'package:modakbul/screens/friend/create_group_screen.dart';
+
 
 class GroupsTabScreen extends StatefulWidget {
   const GroupsTabScreen({super.key});
@@ -413,28 +415,6 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                 );
                               },
                             ),
-                            SizedBox(height: 4.h),
-                            if (_showLottie)
-                              SizedBox(
-                                height: 72.h,
-                                child: Positioned(
-                                    bottom: 20,
-                                    left: 0,
-                                    right: 0,
-                                    child: Center(
-                                      child: SizedBox(
-                                        height: 32,
-                                        width: 32,
-                                        child: Lottie.asset(
-                                          AnimationPath.loadingFeed,
-                                          fit: BoxFit.contain,
-                                          repeat: true,
-                                          animate: true,
-                                        ),
-                                      ),
-                                    )
-                                ),
-                              ),
                           ],
                         );
                       }

@@ -8,7 +8,6 @@ import 'package:modakbul/utils/date_time_utils.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 
-
 class AddFreindScreen extends StatefulWidget {
   const AddFreindScreen({super.key});
 

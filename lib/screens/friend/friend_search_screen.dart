@@ -1,9 +1,13 @@
 import 'dart:async';
+
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/contacts.dart';
 import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/models/friend_suggested.dart';
@@ -18,7 +22,10 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/date_time_utils.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/logo_app_bar.dart';
 import 'package:modakbul/widgets/participant_list_profile.dart';
+import 'package:modakbul/widgets/profile_bottom_sheet.dart';
 import 'package:modakbul/widgets/suggested_friend_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:modakbul/constants/assets_path.dart';
@@ -289,202 +296,10 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                     if (userCheckData.status == 'BLOCKED') {
                                       return SizedBox.shrink();
                                     }
-                                    return Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(24),
-                                          topRight: Radius.circular(24),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SizedBox(height: 24.h),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 24.w, right: 24.w),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                IconButton(
-                                                  padding: EdgeInsets.zero,
-                                                  constraints: const BoxConstraints(),
-                                                  onPressed: () {},
-                                                  icon: SvgPicture.asset(
-                                                    IconPath.moreHorizontal,
-                                                    width: 20.w,
-                                                    fit: BoxFit.scaleDown,
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  padding: EdgeInsets.zero,
-                                                  constraints: const BoxConstraints(),
-                                                  onPressed: () {},
-                                                  icon: SvgPicture.asset(
-                                                    IconPath.arrowDown,
-                                                    width: 18.w,
-                                                    fit: BoxFit.scaleDown,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(height: 18.h),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 20.h, right: 24.h),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      if (userCheckData.mutualCount == 0)
-                                                        SizedBox(height: 14.h),
-                                                      Text(
-                                                        userCheckData.name,
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bigHeadLine2
-                                                            .copyWith(color: ColorSchemes.gray500),
-                                                        overflow: TextOverflow.ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                      SizedBox(height: 2.h),
-                                                      Text(
-                                                        userCheckData.userId,
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .body2
-                                                            .copyWith(color: ColorSchemes.gray300),
-                                                      ),
-                                                      SizedBox(height: 6.h),
-                                                      if (userCheckData.mutualCount > 0)
-                                                        Text(
-                                                          '함께하는 친구가 ${userCheckData.mutualCount}명 있습니다!',
-                                                          style: Theme.of(context)
-                                                              .textTheme
-                                                              .body3
-                                                              .copyWith(color: ColorSchemes.gray200),
-                                                        ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(width: 37.w),
-                                                CircleAvatar(
-                                                  radius: StyleConstants.circleSizeL,
-                                                  backgroundImage: NetworkImage(userCheckData.profileUrl),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                                            child: SizedBox(
-                                              width: double.infinity,
-                                              child: userCheckData.status == 'PENDING'
-                                                  ? userCheckData.sourceId == selectedUser.id
-                                                  ? Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: SizedBox(
-                                                      height: 56.h,
-                                                      child: CustomButton(
-                                                        text: '친구 수락',
-                                                        onPressed: () {
-                                                          friendService.acceptFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                            Navigator.pop(context);
-                                                          });
-                                                        },
-                                                        buttonColor: ColorSchemes.orange200,
-                                                        textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                                                        textColor: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 10.w),
-                                                  Expanded(
-                                                    child: SizedBox(
-                                                      height: 56.h,
-                                                      child: CustomButton(
-                                                        text: '삭제',
-                                                        onPressed: () {
-                                                          friendService.deleteFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                            Navigator.pop(context);
-                                                          });
-                                                        },
-                                                        buttonColor: ColorSchemes.gray100,
-                                                        textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                                                        textColor: ColorSchemes.gray400,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                                  : SizedBox(
-                                                height: 56.h,
-                                                child: CustomButton(
-                                                  text: '요청 취소',
-                                                  onPressed: () {
-                                                    friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                      Navigator.pop(context);
-                                                    });
-                                                  },
-                                                  buttonColor: ColorSchemes.orange100,
-                                                  textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                                                  textColor: Colors.white,
-                                                ),
-                                              )
-                                                  : SizedBox(
-                                                height: 56.h,
-                                                child: CustomButton(
-                                                  text: userCheckData.status == 'ACCEPTED'
-                                                      ? '친구 삭제'
-                                                      : userCheckData.status == 'PENDING'
-                                                      ? (userCheckData.sourceId == selectedUser.id ? '친구 수락' : '삭제')
-                                                      : '친구 요청',
-                                                  onPressed: () {
-                                                    switch (userCheckData.status) {
-                                                      case 'ACCEPTED':
-                                                        friendService.deleteFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                          Navigator.pop(context);
-                                                        });
-                                                        break;
-                                                      case 'REJECTED':
-                                                        friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                          Navigator.pop(context);
-                                                        });
-                                                        break;
-                                                      case 'NONE':
-                                                        friendService.requestFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                          Navigator.pop(context);
-                                                        });
-                                                        break;
-                                                      case 'PENDING':
-                                                        if (userCheckData.sourceId == selectedUser.id) {
-                                                          friendService.acceptFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                            Navigator.pop(context);
-                                                          });
-                                                        } else if (userCheckData.targetId == selectedUser.id) {
-                                                          friendService.rejectFriend(Uuid(targetId: selectedUser.id)).then((_) {
-                                                            Navigator.pop(context);
-                                                          });
-                                                        }
-                                                        break;
-                                                    }
-                                                  },
-                                                  buttonColor: ColorSchemes.orange200,
-                                                  textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                                                  textColor: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 56.h),
-                                        ],
-                                      ),
+                                    return ProfileBottomSheet(
+                                        userCheckData: userCheckData,
+                                        selectedUser: selectedUser,
+                                        friendService: friendService
                                     );
                                   }
                                 },
