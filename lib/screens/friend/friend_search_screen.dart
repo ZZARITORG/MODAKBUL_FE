@@ -298,7 +298,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                     }
                                     return ProfileBottomSheet(
                                         userCheckData: userCheckData,
-                                        selectedUser: selectedUser,
+                                        selectedUserId: selectedUser.id,
                                         friendService: friendService
                                     );
                                   }
