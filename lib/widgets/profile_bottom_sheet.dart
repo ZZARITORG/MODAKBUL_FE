@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/user_check.dart';
-import 'package:modakbul/models/user_list.dart';
 import 'package:modakbul/models/uuid.dart';
 import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -13,24 +12,24 @@ import 'package:modakbul/widgets/custom_button.dart';
 
 class ProfileBottomSheet extends StatelessWidget {
   final UserCheck userCheckData;
-  final UserList selectedUser;
+  final String selectedUserId;
   final FriendService friendService;
 
   const ProfileBottomSheet({
     Key? key,
     required this.userCheckData,
-    required this.selectedUser,
+    required this.selectedUserId,
     required this.friendService,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(StyleConstants.radiusLarge),
+          topRight: Radius.circular(StyleConstants.radiusLarge),
         ),
       ),
       child: Column(
@@ -121,7 +120,7 @@ class ProfileBottomSheet extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: userCheckData.status == 'PENDING'
-                  ? userCheckData.sourceId == selectedUser.id
+                  ? userCheckData.sourceId == selectedUserId
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -133,7 +132,7 @@ class ProfileBottomSheet extends StatelessWidget {
                                   onPressed: () {
                                     friendService
                                         .acceptFriend(
-                                            Uuid(targetId: selectedUser.id))
+                                            Uuid(targetId: selectedUserId))
                                         .then((_) {
                                       Navigator.pop(context);
                                     });
@@ -155,7 +154,7 @@ class ProfileBottomSheet extends StatelessWidget {
                                   onPressed: () {
                                     friendService
                                         .deleteFriend(
-                                            Uuid(targetId: selectedUser.id))
+                                            Uuid(targetId: selectedUserId))
                                         .then((_) {
                                       Navigator.pop(context);
                                     });
@@ -176,7 +175,7 @@ class ProfileBottomSheet extends StatelessWidget {
                             text: '요청 취소',
                             onPressed: () {
                               friendService
-                                  .rejectFriend(Uuid(targetId: selectedUser.id))
+                                  .rejectFriend(Uuid(targetId: selectedUserId))
                                   .then((_) {
                                 Navigator.pop(context);
                               });
@@ -193,7 +192,7 @@ class ProfileBottomSheet extends StatelessWidget {
                         text: userCheckData.status == 'ACCEPTED'
                             ? '친구 삭제'
                             : userCheckData.status == 'PENDING'
-                                ? (userCheckData.sourceId == selectedUser.id
+                                ? (userCheckData.sourceId == selectedUserId
                                     ? '친구 수락'
                                     : '삭제')
                                 : '친구 요청',
@@ -201,14 +200,14 @@ class ProfileBottomSheet extends StatelessWidget {
                           switch (userCheckData.status) {
                             case 'ACCEPTED':
                               friendService
-                                  .deleteFriend(Uuid(targetId: selectedUser.id))
+                                  .deleteFriend(Uuid(targetId: selectedUserId))
                                   .then((_) {
                                 Navigator.pop(context);
                               });
                               break;
                             case 'REJECTED':
                               friendService
-                                  .rejectFriend(Uuid(targetId: selectedUser.id))
+                                  .rejectFriend(Uuid(targetId: selectedUserId))
                                   .then((_) {
                                 Navigator.pop(context);
                               });
@@ -216,24 +215,24 @@ class ProfileBottomSheet extends StatelessWidget {
                             case 'NONE':
                               friendService
                                   .requestFriend(
-                                      Uuid(targetId: selectedUser.id))
+                                      Uuid(targetId: selectedUserId))
                                   .then((_) {
                                 Navigator.pop(context);
                               });
                               break;
                             case 'PENDING':
-                              if (userCheckData.sourceId == selectedUser.id) {
+                              if (userCheckData.sourceId == selectedUserId) {
                                 friendService
                                     .acceptFriend(
-                                        Uuid(targetId: selectedUser.id))
+                                        Uuid(targetId: selectedUserId))
                                     .then((_) {
                                   Navigator.pop(context);
                                 });
                               } else if (userCheckData.targetId ==
-                                  selectedUser.id) {
+                                  selectedUserId) {
                                 friendService
                                     .rejectFriend(
-                                        Uuid(targetId: selectedUser.id))
+                                        Uuid(targetId: selectedUserId))
                                     .then((_) {
                                   Navigator.pop(context);
                                 });

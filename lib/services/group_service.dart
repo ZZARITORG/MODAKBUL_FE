@@ -13,6 +13,7 @@ class GroupService {
     Response response = await dio.get(
       ApiPath.group,
     );
+    print('그룹리스트: ${response.data['data']}');
     return JsonUtils().parseGroupList(response.data['data'] as List);
   }
 
@@ -47,6 +48,16 @@ class GroupService {
     } catch (e) {
       print('Error updating group: $e');
       rethrow; // 에러가 발생하면 다시 던짐
+    }
+  }
+
+  Future<void> deleteGroup(String groupId) async {
+    try {
+      final String url = '${ApiPath.group}/$groupId'; // 삭제할 그룹의 API URL
+      Response response = await dio.delete(url); // DELETE 요청 보내기
+    } catch (e) {
+      print('Error deleting group: $e');
+      rethrow;
     }
   }
 }

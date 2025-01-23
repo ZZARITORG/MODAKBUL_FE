@@ -53,7 +53,7 @@ class TermsScreen extends StatelessWidget {
                 onPressed: () async {
                     await launchCustomTab(
                       context,
-                      url: 'https://www.notion.so/f95a41a147a6413bb1bc5dacc21c65b4',
+                      url: 'https://zzarit.notion.site/bf6e1538e9b54eafae9f11f94dd63a7e',
                       title: '모닥불 개인정보 처리방침',
                     );
                 }),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -118,6 +119,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     }).toList();
     _filteredFriendsNotifier.value = filtered;
   }
+
   void _createGroup() async {
     if (groupName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -141,7 +143,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('모임이 성공적으로 생성되었습니다!')),
       );
-      Navigator.of(context).pop(true);
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } catch (e) {
       print('그룹 생성 실패: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -207,7 +210,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                       children: [
                                         CircleAvatar(
                                           radius: StyleConstants.circleSizeM,
-                                          backgroundImage: NetworkImage(friend['profilePicture']!),
+                                            child: ClipOval(
+                                                child: CachedNetworkImage(imageUrl: friend['profilePicture']!)),
                                         ),
                                         Positioned(
                                           top: 0,
@@ -272,7 +276,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 10.h),
                       Expanded(
                         child: Padding(
                           padding: EdgeInsets.symmetric(
@@ -281,6 +285,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             controller: _scrollController,
                             child: Column(
                               children: [
+                                SizedBox(height: 14.h),
                                 ValueListenableBuilder<List<FriendList>>(
                                     valueListenable: _filteredFriendsNotifier,
                                     builder: (context, filteredFriends, _) {
@@ -295,7 +300,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                             CrossAxisAlignment.center,
                                             // Horizontally center content
                                             children: [
-                                              SizedBox(height: 132.h),
+                                              SizedBox(height: 144.h),
                                               Text(
                                                 '검색결과가 없습니다',
                                                 style: Theme.of(context)
