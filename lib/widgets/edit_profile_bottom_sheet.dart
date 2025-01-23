@@ -130,7 +130,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                     ],
                   ),
                   Text(
-                    '수정할 ${widget.isName ? '이름을' : '아이디를'} 입력해주세요.',
+                    '수정할 ${widget.isName ? '이름을' : '아이디를'} 입력해주세요',
                     style: Theme.of(context)
                         .textTheme
                         .bigHeadLine3
@@ -169,7 +169,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                               bool isDuplicate = await _authService.checkIdDuplication(_textEditingController.text);
                               if (!isDuplicate) {
                                 setState(() {
-                                  _errorMessage = '사용할 수 없는 아이디입니다.';
+                                  _errorMessage = '사용중인 아이디입니다.';
                                   _validateForm();
                                 });
                                 return;
