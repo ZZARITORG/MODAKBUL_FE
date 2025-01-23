@@ -10,7 +10,7 @@ import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 import 'package:modakbul/widgets/my_modakbul_screen_skeleton.dart';
 import 'package:modakbul/models/accepted_modakbul.dart';
 
-import '../../routes/routes.dart';
+import 'package:modakbul/routes/routes.dart';
 
 class MyModakbulScreen extends StatefulWidget {
   const MyModakbulScreen({super.key});
