@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/core/dio_client.dart';
 import 'package:modakbul/models/group_list.dart';
 import 'package:modakbul/screens/friend/create_group_screen.dart';
 import 'package:modakbul/screens/friend/group_edit_screen.dart';
@@ -30,6 +31,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   final TextEditingController _searchController = TextEditingController();
   late final ScrollController _scrollController = ScrollController();
   GroupService groupService = GroupService();
+  DioClient _dioClient = DioClient();
   List<Group> groupList = [];
   final FocusNode _searchFocusNode = FocusNode();
   late Future<List<Group>> getData;
@@ -44,7 +46,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   @override
   void initState() {
     super.initState();
-    getData = groupService.getGroupList();
+    //getData = groupService.getGroupList();
+    getData = _dioClient.handleRequest<List<Group>>(requestFunction: () => groupService.getGroupList());
     _searchController.addListener(_onSearchChanged);
     _scrollController.addListener(_scrollListener);
   }
