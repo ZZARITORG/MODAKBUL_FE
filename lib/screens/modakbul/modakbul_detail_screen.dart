@@ -123,6 +123,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
     String title = modakbulDetailData!.title;
     String content = modakbulDetailData!.content;
     String address = modakbulDetailData!.address;
+    String detailAddress = modakbulDetailData!.detailAddress;
+    String location = modakbulDetailData!.location;
 
     DateTime utcDate = modakbulDetailData!.date;
     DateTime kstDate = utcDate.add(const Duration(hours: 9));
@@ -243,6 +245,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                             'address': address,
                                             'lat': lat,
                                             'lng': lng,
+                                            'detailAddress': detailAddress,
+                                            'location' : location,
                                           }),
                                       behavior: HitTestBehavior.opaque,
                                       child: Row(
@@ -315,7 +319,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                     child: FittedBox(
                                       fit: BoxFit.fitWidth,
                                       child: Text(
-                                        address,
+                                        location,
                                         style: Theme.of(context).textTheme.body3.copyWith(
                                             color: ColorSchemes.gray300,
                                             height: 1.571),
