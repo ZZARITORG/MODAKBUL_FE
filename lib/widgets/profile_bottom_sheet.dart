@@ -25,11 +25,11 @@ class ProfileBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(StyleConstants.radiusLarge),
+          topRight: Radius.circular(StyleConstants.radiusLarge),
         ),
       ),
       child: Column(

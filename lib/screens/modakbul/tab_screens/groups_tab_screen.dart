@@ -348,7 +348,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                               MyModakbulListTile(
                                                 title: groupName,
                                                 time: filteredGroups[index]
-                                                    .updatedAt,
+                                                    .updatedAt!,
                                                 profileLength:
                                                     filteredGroups[index]
                                                         .members

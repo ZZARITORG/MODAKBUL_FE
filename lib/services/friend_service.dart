@@ -43,7 +43,7 @@ class FriendService {
     Response response = await dio.post(ApiPath.friendSuggested,
       data: contacts.toJson()
     );
-    print('데이터2${response.data['data']}');
+    print('알수도잇는사람${response.data['data']}');
     return JsonUtils().parseFriendSuggested(response.data['data'] as List);
   }
 

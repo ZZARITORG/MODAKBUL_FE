@@ -97,7 +97,33 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}')); // 에러 발생 시 표시
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No friend requests available.')); // 데이터가 없을 때 표시
+                      return Column(
+                        children: [
+                          SizedBox(height: 144.h),
+                          Center(
+                            child: Text(
+                              '아직 친구가 없습니다.',
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .bigHeadLine3
+                                  .copyWith(color: ColorSchemes.orange100),
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          Center(
+                            child: Text(
+                              '친구를 추가하고 모닥불을 피워보세요',
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .body2
+                                  .copyWith(color: ColorSchemes.gray300),
+                            ),
+                          ),
+                          SizedBox(height: 28.h),
+                        ],
+                      ); // 데이터가 없을 때 표시
                     } else {
                       friendRequests = snapshot.data!;
                       return ListView.builder(

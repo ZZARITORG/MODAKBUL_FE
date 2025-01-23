@@ -20,13 +20,11 @@ class UserService {
       'search': searchQuery,
       'page': page
     });
-    print('유저리스트: ${response.data['data']}');
     return JsonUtils().parseUserList(response.data['data'] as List);
   }
 
   Future<UserCheck> getUserCheck(String id) async {
     Response response = await dio.get(ApiPath.userCheck(id));
-    print('data: ${response.data['data']}');
     return UserCheck.fromJson(response.data['data']);
   }
 
