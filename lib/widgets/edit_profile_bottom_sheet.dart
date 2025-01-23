@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
@@ -14,15 +15,15 @@ import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
-
-import '../main.dart';
+import 'package:modakbul/main.dart';
+import 'package:modakbul/services/auth_service.dart';
 import 'custom_toast.dart';
 
 class EditProfileBottomSheet extends StatefulWidget {
   final String hintText;
   final bool isName;
 
-  const EditProfileBottomSheet(
+  EditProfileBottomSheet(
       {Key? key, required this.hintText, this.isName = true})
       : super(key: key);
 
@@ -52,16 +53,17 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
   bool _isButtonEnabled = false;
   final FocusNode _focusNode = FocusNode();
   String? _errorMessage;
+  final AuthService _authService = AuthService();
 
   void _validateForm() {
     setState(() {
       if (widget.isName) {
         _isButtonEnabled = _textEditingController.text.length >=
-                AppConstants.minUserNameLength &&
+            AppConstants.minUserNameLength &&
             _formKey.currentState?.validate() == true;
       } else {
         _isButtonEnabled = _textEditingController.text.length >=
-                AppConstants.minUserIdLength &&
+            AppConstants.minUserIdLength &&
             _formKey.currentState?.validate() == true;
       }
     });
@@ -89,7 +91,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
       child: Padding(
         padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
           decoration: BoxDecoration(
             color: ColorSchemes.white,
@@ -128,7 +130,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                     ],
                   ),
                   Text(
-                    '수정할 ${widget.isName ? '이름을' : '아이디를'} 입력해주세요.',
+                    '수정할 ${widget.isName ? '이름을' : '아이디를'} 입력해주세요',
                     style: Theme.of(context)
                         .textTheme
                         .bigHeadLine3
@@ -146,9 +148,9 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                       hintText: widget.hintText,
                       onChanged: (value) => _validateForm(),
                       validator: widget.isName
-                          ? Validators().userNameValidator
+                          ? (value) => Validators().userNameValidator(value, widget.hintText)
                           : (value) =>
-                              Validators().userIdValidator(value, _errorMessage),
+                          Validators().userIdValidator(value, _errorMessage, widget.hintText),
                       textEditingController: _textEditingController,
                       maxLength: widget.isName
                           ? AppConstants.maxUserNameLength
@@ -163,6 +165,16 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                         onPressed: _isButtonEnabled
                             ? () async {
                           try {
+                            if (!widget.isName) {
+                              bool isDuplicate = await _authService.checkIdDuplication(_textEditingController.text);
+                              if (!isDuplicate) {
+                                setState(() {
+                                  _errorMessage = '사용중인 아이디입니다.';
+                                  _validateForm();
+                                });
+                                return;
+                              }
+                            }
                             final EditMyProfile editProfile = EditMyProfile(
                               name: widget.isName ? _textEditingController.text : null,
                               userId: !widget.isName ? _textEditingController.text : null,
@@ -205,3 +217,4 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
     );
   }
 }
+

@@ -35,9 +35,13 @@ class Validators {
     return null;
   }
 
-  String? userNameValidator(String? value) {
+  String? userNameValidator(String? value, [String? hintText]) {
     if (value == null || value.isEmpty) {
       return null;
+    }
+
+    if (value == hintText) {
+      return '현재 이름과 동일합니다.';
     }
 
     final userNamePattern = RegExp(r'^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]+$');
@@ -62,9 +66,13 @@ class Validators {
     return null;
   }
 
-  String? userIdValidator(String? value, String? errorMessage) {
+  String? userIdValidator(String? value, String? errorMessage, [String? hintText]) {
     if (value == null || value.isEmpty) {
       return null; //
+    }
+
+    if (value == hintText) {
+      return '현재 아이디와 동일합니다.';
     }
 
     /// 숫자, 영어 알파벳, 언더스코어(_) 또는 점(.)만 허용하는 정규식

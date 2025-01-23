@@ -152,7 +152,7 @@ class BlockedUserScreen extends StatelessWidget {
                             children: [
                               SizedBox(height: 202.h),
                               Text(
-                                '차단된 친구가 없습니다.',
+                                '차단된 친구가 없어요',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bigHeadLine3
