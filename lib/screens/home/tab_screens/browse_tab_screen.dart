@@ -12,6 +12,7 @@ import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/browse_tab_screen_skeleton.dart';
+import 'package:modakbul/widgets/global_error_widget.dart';
 import 'package:modakbul/widgets/invited_modakbul_card.dart';
 import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
@@ -152,7 +153,7 @@ class _State extends State<BrowseTabScreen> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return BrowseTabScreenSkeleton();
                 } else if (snapshot.hasError) {
-                  return Text('에러');
+                  return GlobalErrorWidget();
                 } else if (snapshot.hasData) {
                   final pendingModakbulList = snapshot.data!;
                   return SingleChildScrollView(
