@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,9 +14,7 @@ class GroupListTile extends StatelessWidget {
   final String? profileImage2;
   final int profileLength;
   final bool isSelected;
-  final VoidCallback recreateGroup;
-  final VoidCallback updateGroup;
-  final VoidCallback deleteGroup;
+  final VoidCallback onPressed;
 
   const GroupListTile(
       {Key? key,
@@ -27,9 +24,7 @@ class GroupListTile extends StatelessWidget {
         this.profileImage2,
         required this.profileLength,
         this.isSelected = false,
-        required this.recreateGroup,
-        required this.updateGroup,
-        required this.deleteGroup,
+        required this.onPressed,
       })
       : super(key: key);
 
@@ -58,100 +53,7 @@ class GroupListTile extends StatelessWidget {
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(StyleConstants.radiusLarge),
-                              topRight: Radius.circular(StyleConstants.radiusLarge),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(height: 38.h),
-                                Text(title, style: Theme.of(context).textTheme.bigHeadLine3.copyWith(color: ColorSchemes.gray500)),
-                                SizedBox(height: 24.h),
-                                InkWell(
-                                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                                  onTap: recreateGroup,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('이 그룹으로 모닥불 피우기', style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
-                                      SizedBox(
-                                        width: 24.r,
-                                        height: 24.r,
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            IconPath.arrowForwardGray200,
-                                            width: 9.r,
-                                            height: 16.r,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 24.h),
-                                InkWell(
-                                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                                  onTap: updateGroup,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('그룹 수정하기', style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
-                                      SizedBox(
-                                        width: 24.r,
-                                        height: 24.r,
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            IconPath.arrowForwardGray200,
-                                            width: 9.r,
-                                            height: 16.r,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 24.h),
-                                InkWell(
-                                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                                  onTap: deleteGroup,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('그룹 삭제하기', style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
-                                      SizedBox(
-                                        width: 24.r,
-                                        height: 24.r,
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            IconPath.arrowForwardGray200,
-                                            width: 9.r,
-                                            height: 16.r,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 56.h),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                  onPressed: onPressed,
                   icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
             ),
             SizedBox(
@@ -198,8 +100,7 @@ class GroupListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange200,
-                                child: ClipOval(
-                                    child: CachedNetworkImage(imageUrl: profileImage1!)),
+                                backgroundImage: NetworkImage(profileImage1!),
                               ),
                             )),
                       if (profileLength >= 2)
@@ -211,8 +112,7 @@ class GroupListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange100,
-                                child: ClipOval(
-                                    child: CachedNetworkImage(imageUrl: profileImage2!)),
+                                backgroundImage: NetworkImage(profileImage2!),
                               ),
                             )),
                       if (profileLength >= 3)
