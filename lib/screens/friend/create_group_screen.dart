@@ -155,6 +155,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final String buttonText;
+    if (selectedFriends.length >= 3) {
+      buttonText = '${selectedFriends.first['userName']} 외 ${selectedFriends.length - 1}인 그룹 만들기';
+    }  else {
+      buttonText = '그룹 만들기';
+    }
     return Scaffold(
       backgroundColor: ColorSchemes.gray000,
       appBar: BackButtonAppBar.actions(
@@ -269,7 +275,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         child: Column(
                           children: [
                             CustomSearchBar(
-                              hintText: '친구를 검색해보세요.',
+                              hintText: '친구를 검색해 보세요.',
                               controller: _searchController,
                               focusNode: _searchFocusNode,
                             ),
@@ -516,8 +522,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     child: SizedBox(
                       height: 56.h,
                       child: CustomButton(
-                        text: '그룹 생성하기',
-                        onPressed: selectedFriends.isNotEmpty
+                        text: buttonText,
+                        onPressed: selectedFriends.length >= 3
                             ? () {
                           showModalBottomSheet(
                             context: context,
@@ -614,7 +620,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                         width: double.infinity,
                                         height: 56.h,
                                         child: CustomButton(
-                                            text: '모임 생성',
+                                            text: '모임 생성 하기',
                                             onPressed:_createGroup,
                                             buttonColor:
                                             ColorSchemes.orange200,

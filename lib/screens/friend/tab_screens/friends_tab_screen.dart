@@ -137,35 +137,6 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                             return Column(
                               children: [
-                                SizedBox(height: 134.h),
-                                Center(
-                                  child: Text(
-                                    '아직 친구가 없습니다.',
-                                    style: Theme
-                                        .of(context)
-                                        .textTheme
-                                        .bigHeadLine3
-                                        .copyWith(color: ColorSchemes.orange100),
-                                  ),
-                                ),
-                                SizedBox(height: 8.h),
-                                Center(
-                                  child: Text(
-                                    '친구를 추가하고 모닥불을 피워보세요',
-                                    style: Theme
-                                        .of(context)
-                                        .textTheme
-                                        .body2
-                                        .copyWith(color: ColorSchemes.gray300),
-                                  ),
-                                ),
-                              ],
-                            ); // 데이터가 없을 때 표시
-                          } else {
-                            friendList = snapshot.data!;
-                            _filteredFriendsNotifier.value = friendList;
-                            return Column(
-                              children: [
                                 SizedBox(height: 14.h),
                                 Row(
                                   children: [
@@ -199,7 +170,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                     Row(
                                                       children: [
                                                         Text(
-                                                          '필터',
+                                                          '정렬',
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .bigHeadLine3
@@ -212,7 +183,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                     SizedBox(height: 24.h),
                                                     _buildFilterOption('최신순', 'latest', context),
                                                     SizedBox(height: 24.h),
-                                                    _buildFilterOption('자주 만나는 친구', 'frequent', context),
+                                                    _buildFilterOption('자주 만나는 그룹', 'frequent', context),
                                                     SizedBox(height: 56.h),
                                                   ],
                                                 ),
@@ -228,21 +199,129 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 14.h),
+                                SizedBox(
+                                  height: 144.h,
+                                ),
+                                Text(
+                                  '아직 친구가 없습니다',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine3
+                                      .copyWith(color: ColorSchemes.orange100),
+                                ),
+                                SizedBox(height: 8.h,),
+                                Text(
+                                  '친구를 추가하고 모닥불을 피워보세요.',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .body2
+                                      .copyWith(color: ColorSchemes.gray300),
+                                )
+                              ],
+                            ); // 데이터가 없을 때 표시
+                          } else {
+                            friendList = snapshot.data!;
+                            _filteredFriendsNotifier.value = friendList;
+                            return Column(
+                              children: [
+                                Column(
+                                  children: [
+                                    SizedBox(height: 14.h),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          filterText,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bigHeadLine4
+                                              .copyWith(color: ColorSchemes.gray500),
+                                        ),
+                                        Spacer(),
+                                        TextButton(
+                                          onPressed: () {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(StyleConstants.radiusLarge),
+                                                      topRight: Radius.circular(StyleConstants.radiusLarge),
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        SizedBox(height: 38.h),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              '필터',
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .bigHeadLine3
+                                                                  .copyWith(color: ColorSchemes.gray500),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 24.h),
+                                                        _buildFilterOption('가나다순', 'alphabetical', context),
+                                                        SizedBox(height: 24.h),
+                                                        _buildFilterOption('최신순', 'latest', context),
+                                                        SizedBox(height: 24.h),
+                                                        _buildFilterOption('자주 만나는 친구', 'frequent', context),
+                                                        SizedBox(height: 56.h),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Text(
+                                            '필터',
+                                            style: Theme.of(context).textTheme.body3.copyWith(color: ColorSchemes.gray300),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 144.h,
+                                    ),
+                                    Text(
+                                      '아직 친구가 없습니다',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bigHeadLine3
+                                          .copyWith(color: ColorSchemes.orange100),
+                                    ),
+                                    SizedBox(height: 8.h,),
+                                    Text(
+                                      '친구를 추가하고 모닥불을 피워보세요.',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body2
+                                          .copyWith(color: ColorSchemes.gray300),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: 14),
                                 ValueListenableBuilder<List<FriendList>>(
                                   valueListenable: _filteredFriendsNotifier,
                                   builder: (context, filteredFriends, _) {
                                     if (filteredFriends.isEmpty) {
                                       return Column(
                                         children: [
-                                          SizedBox(height: 144.h),
                                           Text(
-                                            '검색결과가 없습니다',
+                                            '검색 결과가 없습니다',
                                             style: Theme.of(context).textTheme.bigHeadLine3.copyWith(color: ColorSchemes.orange100),
                                           ),
                                           SizedBox(height: 8.h),
                                           Text(
-                                            '검색어를 다시 확인해 주세요',
+                                            '검색어를 다시 확인해 주세요.',
                                             style: Theme.of(context).textTheme.body2.copyWith(color: ColorSchemes.gray300),
                                           ),
                                         ],
