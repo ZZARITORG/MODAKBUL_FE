@@ -144,6 +144,7 @@ class _AlertScreenState extends State<AlertScreen> {
               children: <Widget>[
                 if (!controller.isIdle)
                   Positioned(
+                    top: 14.h,
                     child: SizedBox(
                       height: 32,
                       width: 32,
@@ -199,7 +200,6 @@ class _AlertScreenState extends State<AlertScreen> {
                       SizedBox(height: 24.h),
                       Expanded(
                         child: ListView(
-                          // shrinkWrap: true,
                           children: categorizedNotifications.entries
                               .where((entry) => entry.value.isNotEmpty)
                               .map((entry) => buildAlertSection(
@@ -213,7 +213,38 @@ class _AlertScreenState extends State<AlertScreen> {
                     ],
                   );
                 }
-                return Text('이거머야');
+                return SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height -
+                      kToolbarHeight -
+                      MediaQuery.of(context).padding.top,
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 132.w,
+                          height: 146.h,
+                          child: Image.asset(ImagePath.emptyAlert),
+                        ),
+                        SizedBox(height: 32.h,),
+                        Text(
+                          '아직 알림이 없습니다.',
+                          style: Theme.of(context).textTheme.bigHeadLine3.copyWith(
+                            color: ColorSchemes.orange100,
+                          ),
+                        ),
+                        SizedBox(height: 8.h,),
+                        Text(
+                          '알림이 추가되면 알려드리겠습니다.',
+                          style: Theme.of(context).textTheme.body2.copyWith(
+                            color: ColorSchemes.gray300,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
             ),
           ),

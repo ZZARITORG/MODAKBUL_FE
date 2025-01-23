@@ -13,8 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:modakbul/services/aws_service.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
-
-import '../../main.dart';
+import 'package:modakbul/main.dart';
+import 'package:modakbul/widgets/custom_toast.dart';
 
 ///TODO: 안드로이드, ios 권한설정 필요 시 dart.io import
 class ImageCropperSettingScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class _ImageCropperSettingScreenState extends State<ImageCropperSettingScreen> {
   late AuthProvider authProvider;
   AwsService awsService = AwsService();
   UserService userService = UserService();
+  bool _isButtonEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,10 @@ class _ImageCropperSettingScreenState extends State<ImageCropperSettingScreen> {
                   height: 56.h,
                   child: CustomButton(
                       text: '이미지 수정하기',
-                      onPressed: () async {
+                      onPressed: _isButtonEnabled ? () async {
+                        setState(() {
+                          _isButtonEnabled = false;
+                        });
                         try {
                         Uint8List? imageBytes = await Cropper.crop(
                           cropperKey: _cropperKey,
@@ -79,14 +83,18 @@ class _ImageCropperSettingScreenState extends State<ImageCropperSettingScreen> {
                           //마운트 체크
                           if (!context.mounted) return;
                           Navigator.pop(context,true);
+                          CustomToast.showToast(context, '프로필 이미지가 변경되었습니다.', false);
                         }
                       } catch (e) {
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('이미지 업데이트 실패: ${e.toString()}')),
                           );
+                          setState(() {
+                            _isButtonEnabled = true;
+                          });
                         }
-                      },
+                      } : null,
 
                       buttonColor: ColorSchemes.orange200,
                       textStyle: Theme.of(context).textTheme.smallHeadLine2,
