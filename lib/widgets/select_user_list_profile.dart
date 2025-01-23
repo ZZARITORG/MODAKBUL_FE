@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -33,7 +34,8 @@ class SelectUserListProfile extends StatelessWidget {
                 CircleAvatar(
                   radius: StyleConstants.circleSizeS,
                   backgroundColor: ColorSchemes.gray500,
-                  backgroundImage: NetworkImage(profileImage!),
+                  child: ClipOval(
+                      child: CachedNetworkImage(imageUrl: profileImage!)),
                 ),
                 SizedBox(
                   width: 8.w,

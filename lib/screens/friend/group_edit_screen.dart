@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -281,7 +282,8 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                       children: [
                                         CircleAvatar(
                                           radius: StyleConstants.circleSizeM,
-                                          backgroundImage: NetworkImage(friend['profilePicture']!),
+                                            child: ClipOval(
+                                                child: CachedNetworkImage(imageUrl: friend['profilePicture']!)),
                                         ),
                                         Positioned(
                                           top: 0,

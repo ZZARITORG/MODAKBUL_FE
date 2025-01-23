@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
@@ -30,10 +31,14 @@ class AddFriendProfile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: StyleConstants.circleSizeL,
-          backgroundImage: NetworkImage(profileImage!),
+          child: ClipOval(
+            child: CachedNetworkImage(imageUrl: profileImage!),
+          ),
           backgroundColor: ColorSchemes.gray500,
         ),
-        SizedBox(width: 12.w,),
+        SizedBox(
+          width: 12.w,
+        ),
         Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -44,17 +49,39 @@ class AddFriendProfile extends StatelessWidget {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(left: 4.w),
-                    child: Text(userName, style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray500),),
+                    child: Text(
+                      userName,
+                      style: Theme.of(context)
+                          .textTheme
+                          .smallHeadLine3
+                          .copyWith(color: ColorSchemes.gray500),
+                    ),
                   ),
-                  Text(time, style: Theme.of(context).textTheme.caption.copyWith(color: ColorSchemes.gray200),),
+                  Text(
+                    time,
+                    style: Theme.of(context)
+                        .textTheme
+                        .caption
+                        .copyWith(color: ColorSchemes.gray200),
+                  ),
                 ],
               ),
-              SizedBox(height: 2.h,),
+              SizedBox(
+                height: 2.h,
+              ),
               Padding(
                 padding: EdgeInsets.only(left: 4.w),
-                child: Text(userId, style: Theme.of(context).textTheme.body3.copyWith(color: ColorSchemes.gray300),),
+                child: Text(
+                  userId,
+                  style: Theme.of(context)
+                      .textTheme
+                      .body3
+                      .copyWith(color: ColorSchemes.gray300),
+                ),
               ),
-              SizedBox(height: 9.h,),
+              SizedBox(
+                height: 9.h,
+              ),
               Row(
                 children: [
                   Expanded(
@@ -65,11 +92,12 @@ class AddFriendProfile extends StatelessWidget {
                           onPressed: acceptOnPressed,
                           buttonColor: ColorSchemes.orange200,
                           textStyle: Theme.of(context).textTheme.body3,
-                          textColor: ColorSchemes.white
-                      ),
+                          textColor: ColorSchemes.white),
                     ),
                   ),
-                  SizedBox(width: 7.w,),
+                  SizedBox(
+                    width: 7.w,
+                  ),
                   Expanded(
                     child: SizedBox(
                       height: 40.h,
@@ -78,8 +106,7 @@ class AddFriendProfile extends StatelessWidget {
                           onPressed: rejectOnPressed,
                           buttonColor: ColorSchemes.gray100,
                           textStyle: Theme.of(context).textTheme.body3,
-                          textColor: ColorSchemes.gray400
-                      ),
+                          textColor: ColorSchemes.gray400),
                     ),
                   ),
                 ],

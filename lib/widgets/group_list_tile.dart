@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -96,7 +97,8 @@ class GroupListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange200,
-                                backgroundImage: NetworkImage(profileImage1!),
+                                child: ClipOval(
+                                    child: CachedNetworkImage(imageUrl: profileImage1!)),
                               ),
                             )),
                       if (profileLength >= 2)
@@ -108,7 +110,8 @@ class GroupListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange100,
-                                backgroundImage: NetworkImage(profileImage2!),
+                                child: ClipOval(
+                                    child: CachedNetworkImage(imageUrl: profileImage2!)),
                               ),
                             )),
                       if (profileLength >= 3)
