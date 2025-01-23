@@ -2,33 +2,43 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:modakbul/models/blocked_user.dart';
 import 'package:modakbul/models/modakbul_detail.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/participant_bottom_sheet.dart';
-import '../constants/assets_path.dart';
-import '../constants/style_constants.dart';
+import 'package:modakbul/widgets/profile_bottom_sheet.dart';
+import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/user_check.dart';
+import 'package:modakbul/services/friend_service.dart';
 
 class ModakbulDetailCard extends StatelessWidget {
   final String hostName;
+  final String hostUserId;
   final String hostId;
   final int participantLength;
   final String hostProfileImage;
   final List<UserStatus> users;
   final List<UserStatus> participantUsers;
   final List<BlockedUser> blockedUsers;
+  final FriendService friendService;
+  final UserCheck userCheckData;
+  final String myUserId;
 
   const ModakbulDetailCard({
     super.key,
     required this.hostName,
+    required this.hostUserId,
     required this.hostId,
     required this.hostProfileImage,
     required this.participantLength,
     required this.users,
     required this.participantUsers,
     required this.blockedUsers,
+    required this.friendService,
+    required this.userCheckData,
+    required this.myUserId,
   });
 
 
@@ -42,36 +52,52 @@ class ModakbulDetailCard extends StatelessWidget {
         children: [
           SizedBox(
             width: 232.w,
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: StyleConstants.circleSizeXS,
-                  child: ClipOval(
-                      child: CachedNetworkImage(imageUrl: hostProfileImage)),
-                ),
-                SizedBox(
-                  width: 8.w,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      hostName,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine5
-                          .copyWith(color: ColorSchemes.gray500, height: 1.193),
-                    ),
-                    Text(
-                      hostId,
-                      style: Theme.of(context)
-                          .textTheme
-                          .caption
-                          .copyWith(color: ColorSchemes.gray300, height: 1.193),
-                    ),
-                  ],
-                )
-              ],
+            child: GestureDetector(
+              onTap: () {
+                if(myUserId == hostUserId) {
+                  return;
+                }
+                showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext bottomSheetContext) {
+                      return ProfileBottomSheet(
+                          userCheckData: userCheckData,
+                          selectedUserId: hostId,
+                          friendService: friendService
+                      );
+                    }
+                );
+              },
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: StyleConstants.circleSizeXS,
+                    backgroundImage: NetworkImage(hostProfileImage),
+                  ),
+                  SizedBox(
+                    width: 8.w,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        hostName,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bigHeadLine5
+                            .copyWith(color: ColorSchemes.gray500, height: 1.193),
+                      ),
+                      Text(
+                        hostUserId,
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            .copyWith(color: ColorSchemes.gray300, height: 1.193),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
           GestureDetector(
@@ -81,7 +107,8 @@ class ModakbulDetailCard extends StatelessWidget {
                     context: context,
                     isScrollControlled: true,
                     builder: (BuildContext bottomSheetContext) {
-                      return ParticipantBottomSheet(users: users, hostId: hostId, blockedUsers: blockedUsers);
+                      return ParticipantBottomSheet(users: users, hostUserId: hostUserId, blockedUsers: blockedUsers,
+                        friendService: friendService, );
                     }
                 );
               }

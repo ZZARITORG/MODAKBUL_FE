@@ -10,8 +10,6 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 
-import 'package:modakbul/routes/routes.dart';
-import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/providers/auth_provider.dart' as modakbul_auth_provider;
 
 import 'log_out_dialog.dart';

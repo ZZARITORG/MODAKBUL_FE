@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:modakbul/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationManager {
   static const String _locationsKey = 'locations';

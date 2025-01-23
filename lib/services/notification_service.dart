@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-
-import '../constants/api_path.dart';
-import '../core/dio_client.dart';
-import '../models/notifications.dart';
-import '../utils/json_utils.dart';
+import 'package:modakbul/constants/api_path.dart';
+import 'package:modakbul/core/dio_client.dart';
+import 'package:modakbul/models/notifications.dart';
+import 'package:modakbul/utils/json_utils.dart';
 
 class NotificationService {
   Dio dio = DioClient().dio;

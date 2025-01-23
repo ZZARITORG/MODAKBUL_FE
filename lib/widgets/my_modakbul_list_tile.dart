@@ -8,6 +8,8 @@ import 'package:modakbul/models/accepted_modakbul.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 
+import 'detail_screen_bottom_sheet.dart';
+
 class MyModakbulListTile extends StatelessWidget {
   final String title;
   final String time;
@@ -53,7 +55,17 @@ class MyModakbulListTile extends StatelessWidget {
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  onPressed: (){},
+                  onPressed: (){
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DetailScreenBottomSheet(
+                          isHost: false,
+                          title: title,
+                        );
+                      },
+                    );
+                  },
                   icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
             ),
             SizedBox(
