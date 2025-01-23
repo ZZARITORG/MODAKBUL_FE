@@ -12,6 +12,7 @@ import 'package:modakbul/widgets/alert_screen_skeleton.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/models/notifications.dart';
 import 'package:modakbul/constants/assets_path.dart';
+import 'package:modakbul/widgets/global_error_widget.dart';
 
 class AlertScreen extends StatefulWidget {
   const AlertScreen({Key? key}) : super(key: key);
@@ -189,7 +190,7 @@ class _AlertScreenState extends State<AlertScreen> {
                 if (snapshot.connectionState == ConnectionState.waiting && isLoading == true) {
                   return AlertScreenSkeleton();
                 } else if (snapshot.hasError) {
-                  return Text('에러');
+                  return GlobalErrorWidget();
                 } else if (snapshot.hasData) {
                   isLoading = false;
                   final notificationList = snapshot.data!;

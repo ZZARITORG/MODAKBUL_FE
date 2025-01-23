@@ -24,6 +24,8 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/models/user_check.dart';
 
+import '../../widgets/global_error_widget.dart';
+
 class ModakbulDetailScreen extends StatefulWidget {
   const ModakbulDetailScreen({super.key});
 
@@ -107,7 +109,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
     ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final bool isAccepted = arguments?['isAccepted'] ?? false;
 
-    if (isLoading || modakbulDetailData == null || hostUserCheck == null) {
+    if (isLoading) {
       return Scaffold(
         backgroundColor: ColorSchemes.gray000,
         appBar: BackButtonAppBar.actions(
@@ -115,6 +117,17 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
           onActionPressed: () {},
         ),
         body: ModakbulDetailScreenSkeleton(),
+      );
+    }
+
+    if (modakbulDetailData == null || hostUserCheck == null) {
+      return Scaffold(
+        backgroundColor: ColorSchemes.gray000,
+        appBar: BackButtonAppBar.actions(
+          backgroundColor: ColorSchemes.gray000,
+          onActionPressed: () {},
+        ),
+        body: GlobalErrorWidget(),
       );
     }
 
