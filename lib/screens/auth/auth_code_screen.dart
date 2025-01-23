@@ -243,7 +243,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
                         SizedBox(
                           height: 6.h,
                         ),
-                        Text('${authProvider.phoneNumber}으로 인증번호를 발송했습니다.',
+                        Text('${authProvider.phoneNumber}으로 인증번호를 발송했어요.',
                             style: Theme.of(context)
                                 .textTheme
                                 .body2

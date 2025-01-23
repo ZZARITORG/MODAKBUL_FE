@@ -95,7 +95,7 @@ class _AuthPhoneScreenState extends State<AuthPhoneScreen> {
                         SizedBox(
                           height: 42.h,
                         ),
-                        Text('전화번호를 입력해주세요.',
+                        Text('전화번호를 입력해주세요',
                             style: Theme.of(context)
                                 .textTheme
                                 .bigHeadLine3

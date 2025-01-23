@@ -89,7 +89,7 @@ class _AuthNameScreenState extends State<AuthNameScreen> {
                         SizedBox(
                           height: 6.h,
                         ),
-                        Text('이름은 공개되며 변경할 수 없습니다.',
+                        Text('이름은 공개되며 변경할 수 있어요.',
                             style: Theme.of(context)
                                 .textTheme
                                 .body2
