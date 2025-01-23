@@ -121,7 +121,7 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
               SizedBox(
                 height: 6.h,
               ),
-              Text('사용자님의 멋진 모습을 보여주세요.',
+              Text('사용자님의 모습을 표현해 보세요.',
                   style: Theme.of(context)
                       .textTheme
                       .body2

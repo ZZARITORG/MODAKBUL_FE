@@ -82,7 +82,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Text(
-                    '원활한 모닥불을 위해\n아래 내용을 선택해주세요.',
+                    '모닥불을 피우기 전\n상세정보를 선택해 주세요',
                     maxLines: 2,
                     style: Theme.of(context)
                         .textTheme
@@ -94,7 +94,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
               height: 8.h,
             ),
             Text(
-              '그룹을 선택하면 자동으로 알림이 전송됩니다.',
+              '다음으로 넘어가기 전 아래 항목을 선택해 주세요.',
               style: Theme.of(context)
                   .textTheme
                   .body2

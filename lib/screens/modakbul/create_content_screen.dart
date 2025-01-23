@@ -114,7 +114,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                     ),
                                 decoration: InputDecoration(
                                   counterText: '',
-                                  hintText: '제목을 입력해주세요.',
+                                  hintText: '제목을 입력해 주세요',
                                   hintStyle: Theme.of(context)
                                       .textTheme
                                       .bigHeadLine2
