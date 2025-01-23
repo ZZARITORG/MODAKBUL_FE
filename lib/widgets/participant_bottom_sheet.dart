@@ -20,6 +20,7 @@ class ParticipantBottomSheet extends StatefulWidget {
   final String hostUserId;
   final List<BlockedUser> blockedUsers;
   final FriendService friendService;
+  final String myUserId;
 
   const ParticipantBottomSheet({
     super.key,
@@ -27,6 +28,7 @@ class ParticipantBottomSheet extends StatefulWidget {
     required this.hostUserId,
     required this.blockedUsers,
     required this.friendService,
+    required this.myUserId,
   });
 
   @override
@@ -116,7 +118,7 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
                     return GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () async {
-                        if (user.userId == widget.hostUserId) {
+                        if (user.userId == widget.hostUserId || user.userId == widget.myUserId) {
                           return;
                         }
                         Navigator.pop(context);

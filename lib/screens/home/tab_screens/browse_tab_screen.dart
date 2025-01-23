@@ -20,6 +20,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:modakbul/providers/location_provider.dart';
 import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/screens/main_screen.dart';
 
 class BrowseTabScreen extends StatefulWidget {
   const BrowseTabScreen({super.key});
@@ -165,8 +166,16 @@ class _State extends State<BrowseTabScreen> {
                           height: 14.h,
                         ),
                         GestureDetector(
-                          onTap: () => Routes.navigateTo(
-                              context, Routes.createModakbulScreen),
+                          onTap: () {
+                            if (mounted) {
+                              setState(() {
+                                final mainScreenState = context.findAncestorStateOfType<MainScreenState>();
+                                mainScreenState?.setState(() {
+                                  mainScreenState.selectedIndex = 2;
+                                });
+                              });
+                            }
+                          },
                           behavior: HitTestBehavior.opaque,
                           child: Container(
                             padding:

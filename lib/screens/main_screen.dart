@@ -18,11 +18,11 @@ class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainScreen> createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
+class MainScreenState extends State<MainScreen> {
+  int selectedIndex = 0;
 
   final List<Map<String, dynamic>> _icons = [
     {
@@ -73,7 +73,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
-        index: _selectedIndex,
+        index: selectedIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomAppBar(
@@ -91,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
                     overlayColor: WidgetStateProperty.all(Colors.transparent),
                     onTap: () {
                       setState(() {
-                        _selectedIndex = index;
+                        selectedIndex = index;
                       });
                     },
                     child: SizedBox(
@@ -106,7 +106,7 @@ class _MainScreenState extends State<MainScreen> {
                               child: Center(
                                 child:
                                     SvgPicture.asset(
-                                      _selectedIndex == index
+                                      selectedIndex == index
                                           ? _icons[index]['activate']!
                                           : _icons[index]['disable']!,
                                       width: _icons[index]['width'],
@@ -114,7 +114,7 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                             ),
                             SizedBox(height: 2.h,),
-                            if (_selectedIndex == index)
+                            if (selectedIndex == index)
                               Container(
                                 width: 4.r, // 원의 크기
                                 height: 4.r,
