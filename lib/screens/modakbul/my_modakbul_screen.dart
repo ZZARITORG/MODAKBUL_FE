@@ -10,6 +10,8 @@ import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 import 'package:modakbul/widgets/my_modakbul_screen_skeleton.dart';
 import 'package:modakbul/models/accepted_modakbul.dart';
 
+import 'package:modakbul/routes/routes.dart';
+
 class MyModakbulScreen extends StatefulWidget {
   const MyModakbulScreen({super.key});
 
@@ -53,7 +55,7 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
                             ),
                             SizedBox(
                               width: 205.w,
-                              child: Text('약속된 모닥불이\n$acceptedModakbulCount개 있습니다',
+                              child: Text('약속된 모닥불이\n$acceptedModakbulCount개 있어요',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bigHeadLine2
@@ -64,7 +66,7 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
                             ),
                             FittedBox(
                               fit: BoxFit.fitWidth,
-                              child: Text('그룹을 선택하면 자동으로 알림이 전송됩니다.',
+                              child: Text('약속에 참석하기 전 상세내용을 확인해 주세요.',
                                   style: Theme.of(context)
                                       .textTheme
                                       .body2
@@ -96,7 +98,17 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
                               return Column(
                                 children: [
                                   GestureDetector(
-                                    onTap: (){},
+                                    onTap: () => Routes
+                                        .navigateTo(
+                                        context,
+                                        Routes
+                                            .modakbulDetailScreen,
+                                        arguments: {
+                                          'id': acceptedModakbulList[
+                                          index]
+                                              .id,
+                                          'isAccepted': true,
+                                        }),
                                     child: MyModakbulListTile(
                                       title: title!,
                                       time: date!,

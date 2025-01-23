@@ -33,6 +33,8 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
     final Map<String, dynamic>? arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final String address = arguments?['address'];
+    final String detailAddress = arguments?['detailAddress'];
+    final String location = arguments?['location'];
     final double? lat = arguments?['lat'];
     final double? lng = arguments?['lng'];
 
@@ -76,16 +78,35 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
                                         height: 1.5),
                               ),
                               SizedBox(
-                                height: 6.h,
+                                height: 24.h,
                               ),
                               FittedBox(
                                 fit: BoxFit.fitWidth,
-                                child: Text(
-                                  address,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .body2
-                                      .copyWith(color: ColorSchemes.orange200),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      detailAddress.isNotEmpty
+                                          ? detailAddress
+                                          : location.isNotEmpty
+                                          ? location
+                                          : '',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .smallHeadLine2
+                                          .copyWith(color: ColorSchemes.orange200),
+                                    ),
+                                    SizedBox(
+                                      height: 4.h,
+                                    ),
+                                    Text(
+                                      address,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body2
+                                          .copyWith(color: ColorSchemes.orange200),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -93,7 +114,7 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: 32.h,
+                        height: 12.h,
                       ),
                       Expanded(
                         child: StatefulBuilder(builder: (context, setInState) {

@@ -94,7 +94,7 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
                       ],
                     ),
                     Text(
-                      '참여자 정보를 확인하세요.',
+                      '참여자 정보를 확인해 주세요',
                       style: Theme.of(context)
                           .textTheme
                           .bigHeadLine3

@@ -13,7 +13,7 @@ class MyModakbulCard extends StatelessWidget {
   final String title;
   final String groupName;
   final String date;
-  final String address;
+  final String location;
   final List<UserStatus> participantUsers;
 
   const MyModakbulCard({
@@ -22,7 +22,7 @@ class MyModakbulCard extends StatelessWidget {
     required this.title,
     required this.groupName,
     required this.date,
-    required this.address,
+    required this.location,
     required this.participantUsers,
   }) : super(key: key);
 
@@ -93,7 +93,7 @@ class MyModakbulCard extends StatelessWidget {
               width: 4.w,
             ),
             Text(
-              address,
+              location,
               style: Theme.of(context)
                   .textTheme
                   .body3
