@@ -208,7 +208,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                 children: [
                   SizedBox(height: 32.h),
                   CustomSearchBar(
-                    hintText: '사용자를 검색해보세요.',
+                    hintText: '사용자를 검색해 보세요.',
                     controller: _searchController,
                     focusNode: _searchFocusNode,
                   ),
@@ -236,7 +236,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
           children: [
             SizedBox(height: 144.h),
             Text(
-              '검색 결과가 없습니다.',
+              '검색 결과가 없습니다',
               style: Theme
                   .of(context)
                   .textTheme
@@ -245,7 +245,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
             ),
             SizedBox(height: 8.h),
             Text(
-              '검색어를 다시 확인해 주세요',
+              '검색어를 다시 확인해 주세요.',
               style: Theme
                   .of(context)
                   .textTheme
@@ -260,7 +260,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
       padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
       child: Column(
         children: [
-          SizedBox(height: 14.h),
+          SizedBox(height: 4.h),
           Padding(
             padding: EdgeInsets.only(left: 4.w),
             child: Row(
@@ -276,7 +276,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
               ],
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 14.h),
           Expanded(
             child: Stack(
               children: [
@@ -367,7 +367,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 14.h),
+            SizedBox(height: 4.h),
             Row(
               children: [
                 SizedBox(width: 4.w),
@@ -400,7 +400,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                 SizedBox(width: 4.w),
               ],
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 14.h),
             FutureBuilder<List<FriendReqList>>(
               future: getReq,
               builder: (context, snapshot) {
@@ -413,7 +413,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                     children: [
                       Center(
                         child: Text(
-                          '아직 친구가 없습니다.',
+                          '아직 친구가 없어요',
                           style: Theme
                               .of(context)
                               .textTheme
@@ -424,7 +424,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                       SizedBox(height: 8.h),
                       Center(
                         child: Text(
-                          '친구를 추가하고 모닥불을 피워보세요',
+                          '친구를 추가하고 모닥불을 피워보세요.',
                           style: Theme
                               .of(context)
                               .textTheme
@@ -541,7 +541,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                     children: [
                       Center(
                         child: Text(
-                          '추천 친구가 없습니다.',
+                          '추천 친구가 없어요',
                           style: Theme
                               .of(context)
                               .textTheme
@@ -552,7 +552,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                       SizedBox(height: 8.h),
                       Center(
                         child: Text(
-                          '친구를 추가하고 모닥불을 피워보세요',
+                          '친구를 추가하고 모닥불을 피워보세요.',
                           style: Theme
                               .of(context)
                               .textTheme
@@ -565,7 +565,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                   );
                 } else {
                   List<FriendSuggested> friendSuggested = snapshot.data!;
-                  print('Filtered Friend Suggested: $friendSuggested');
                   List<String> requestedUserIds = friendRequests.map((request) => request.id).toList();
                   initializeIsPressedList(friendSuggested.length);
                   return Column(
