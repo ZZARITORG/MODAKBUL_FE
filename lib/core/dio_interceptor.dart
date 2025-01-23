@@ -26,7 +26,7 @@ class DioInterceptor extends InterceptorsWrapper {
   onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // 요청 전 처리
     if (options.extra['skipToken'] != true) {
-      String? token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ2MTViZDk4LTFkOTAtNGE4MS1hMmRhLTg4OGVlYTlmYjIxZSIsImlhdCI6MTczNzQ0NjM3OSwiZXhwIjoxNzM3NDQ2Mzg0fQ.-dr33OUzXeAHYqXkSS5QWYQ0S4kS0s4g5epG7vcytk0';
+      String? token = await secureStorage.read(key: AppConstants.accessToken);
       options.headers['Authorization'] = 'Bearer $token';
     }
     if (options.extra['isKakao'] == true) {
@@ -70,7 +70,7 @@ class DioInterceptor extends InterceptorsWrapper {
             logger.e('$statusCode 인증 오류');
 
             try {
-              String? refreshToken = await secureStorage.read(key: 'REFRESH_TOKEN');
+              String? refreshToken = await secureStorage.read(key: AppConstants.refreshToken);
               if (refreshToken == null) {
                 return originalHandler.resolve(
                   Response(
@@ -124,13 +124,45 @@ class DioInterceptor extends InterceptorsWrapper {
               }
             } catch (e) {
               logger.e('토큰 갱신 실패: $e');
-              return originalHandler.resolve(
-                Response(
-                  requestOptions: originalException.requestOptions,
-                  data: {'data': []},
-                  statusCode: 200,
-                ),
+              String? phoneNumber =
+              await secureStorage.read(key: AppConstants.phoneNumber);
+              // 개발자 권한 받으면 변경 예정
+              String? fcmToken;
+              if (Platform.isIOS) {
+                // await Future.delayed(Duration(seconds: 2));
+                fcmToken = await FirebaseMessaging.instance.getToken();
+                print('APNS Token: $fcmToken');
+              } else if (Platform.isAndroid) {
+                fcmToken = await FirebaseMessaging.instance.getToken();
+              }
+              final refreshDio = Dio(BaseOptions(
+                baseUrl: ApiPath.baseUrl,
+                connectTimeout: const Duration(seconds: 10),
+                receiveTimeout: const Duration(seconds: 10),
+              ));
+              Response response = await refreshDio.post(
+                ApiPath.login,
+                data: Login(phoneNo: phoneNumber!, fcmToken: fcmToken!).toJson(),
               );
+              Tokens tokens = Tokens.fromJson(response.data['data']);
+              await Future.wait([
+                secureStorage.write(
+                    key: AppConstants.accessToken, value: tokens.accessToken),
+                secureStorage.write(
+                    key: AppConstants.refreshToken,
+                    value: tokens.refreshToken),
+              ]);
+              final newDio = Dio(BaseOptions(
+                baseUrl: ApiPath.baseUrl,
+                connectTimeout: const Duration(seconds: 10),
+                receiveTimeout: const Duration(seconds: 10),
+              ));
+
+              originalException.requestOptions.headers['Authorization'] =
+              'Bearer ${tokens.accessToken}';
+              Response clonedRequest = await newDio.fetch(originalException.requestOptions);
+
+              return originalHandler.resolve(clonedRequest);
             }
 
           case 404:
