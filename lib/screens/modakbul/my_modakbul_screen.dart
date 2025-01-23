@@ -101,6 +101,9 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
                                       title: title,
                                       time: date,
                                       profileLength: users.length - 1,
+                                      recreateGroup: () {},
+                                      updateGroup: () {},
+                                      deleteGroup: () {},
                                     ),
                                   ),
                                   if (index != acceptedModakbulList.length - 1)

@@ -53,18 +53,13 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
         // 이미 그룹 멤버인 친구들에 대해 _toggleSelectGroup 호출하여 선택 상태로 만듦
         final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         final List<Member> members = args['members'];
-        print('Members List: ${members[0].user.id}');
+        print('Members List: ${members}');
         for (var member in members) {
-          // members 목록의 유저 아이디가 friendList에 존재하는지 확인
-          final friend = friendList.firstWhere(
-                (friend) => friend.id == member.user.id,
-          );
-
-          if (friend != null) {
-            // 이미 친구 목록에 있으면 _toggleSelectGroup을 호출하여 선택 상태로 만들기
-            _toggleSelectGroup(friend.id, friend.userName, friend.profileUrl);
+          final userId = member.user.id;
+          final userName = member.user.name;
+          final profileUrl = member.user.profileUrl;
+            _toggleSelectGroup(userId, userName, profileUrl);
           }
-        }
       });
     });
   }
@@ -110,7 +105,6 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
         'userName': userName,
         'profilePicture': profilePicture,
       };
-
       /// 이미 선택된 친구인지 확인하여 추가 또는 제거
       if (selectedFriends.any((friend) => friend['userId'] == userId)) {
         selectedFriends.removeWhere((friend) => friend['userId'] == userId);
@@ -164,6 +158,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     // `arguments`로 전달된 데이터 받기
@@ -369,7 +364,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                             CrossAxisAlignment.center,
                                             // Horizontally center content
                                             children: [
-                                              SizedBox(height: 132.h),
+                                              SizedBox(height: 144.h),
                                               Text(
                                                 '검색결과가 없습니다',
                                                 style: Theme.of(context)
@@ -455,30 +450,22 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                SizedBox(
-                                                                    height:
-                                                                    24.h),
+                                                                SizedBox(height: 24.h),
                                                                 _buildFilterOption(
                                                                     '최신순',
                                                                     'latest',
                                                                     context),
-                                                                SizedBox(
-                                                                    height:
-                                                                    24.h),
+                                                                SizedBox(height: 24.h),
                                                                 _buildFilterOption(
                                                                     '가나다순',
                                                                     'alphabetical',
                                                                     context),
-                                                                SizedBox(
-                                                                    height:
-                                                                    24.h),
+                                                                SizedBox(height: 24.h),
                                                                 _buildFilterOption(
                                                                     '자주 만나는 친구',
                                                                     'frequent',
                                                                     context),
-                                                                SizedBox(
-                                                                    height:
-                                                                    56.h),
+                                                                SizedBox(height: 56.h),
                                                               ],
                                                             ),
                                                           ),
@@ -486,8 +473,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                                       },
                                                     );
                                                   },
-                                                  child: Text(
-                                                    '정렬',
+                                                  child: Text('정렬',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .body3
@@ -499,8 +485,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                               ],
                                             ),
                                             SizedBox(height: 14.h),
-                                            ValueListenableBuilder<
-                                                List<FriendList>>(
+                                            ValueListenableBuilder<List<FriendList>>(
                                               valueListenable:
                                               _filteredFriendsNotifier,
                                               builder: (context,
@@ -513,14 +498,10 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                                   itemBuilder:
                                                       (BuildContext context,
                                                       int index) {
-                                                    final friend =
-                                                    filteredFriends[index];
-                                                    final isChecked =
-                                                    selectedFriends.any(
+                                                    final friend = filteredFriends[index];
+                                                    final isChecked = selectedFriends.any(
                                                           (selectedFriend) =>
-                                                      selectedFriend[
-                                                      'userId'] ==
-                                                          friend.id,
+                                                      selectedFriend['userId'] == friend.id,
                                                     );
                                                     return GestureDetector(
                                                       behavior: HitTestBehavior
@@ -530,8 +511,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                                             friend.id,
                                                             friend.userName,
                                                             friend.profileUrl);
-                                                        _searchController.text =
-                                                        ''; // 검색어 초기화
+                                                        _searchController.text = ''; // 검색어 초기화
                                                       },
                                                       child:
                                                       SelectUserListProfile(
