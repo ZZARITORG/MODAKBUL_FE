@@ -15,15 +15,15 @@ import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
-
-import '../main.dart';
+import 'package:modakbul/main.dart';
+import 'package:modakbul/services/auth_service.dart';
 import 'custom_toast.dart';
 
 class EditProfileBottomSheet extends StatefulWidget {
   final String hintText;
   final bool isName;
 
-  const EditProfileBottomSheet(
+  EditProfileBottomSheet(
       {Key? key, required this.hintText, this.isName = true})
       : super(key: key);
 
@@ -53,6 +53,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
   bool _isButtonEnabled = false;
   final FocusNode _focusNode = FocusNode();
   String? _errorMessage;
+  final AuthService _authService = AuthService();
 
   void _validateForm() {
     setState(() {
@@ -164,6 +165,16 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                         onPressed: _isButtonEnabled
                             ? () async {
                           try {
+                            if (!widget.isName) {
+                              bool isDuplicate = await _authService.checkIdDuplication(_textEditingController.text);
+                              if (!isDuplicate) {
+                                setState(() {
+                                  _errorMessage = '사용할 수 없는 아이디입니다.';
+                                  _validateForm();
+                                });
+                                return;
+                              }
+                            }
                             final EditMyProfile editProfile = EditMyProfile(
                               name: widget.isName ? _textEditingController.text : null,
                               userId: !widget.isName ? _textEditingController.text : null,
