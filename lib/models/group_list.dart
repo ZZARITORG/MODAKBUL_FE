@@ -3,7 +3,7 @@ class Group {
   final String name;
   final List<Member> members;
   final int count;
-  final String updatedAt;
+  final String? updatedAt;
   final String createdAt;
 
   Group({

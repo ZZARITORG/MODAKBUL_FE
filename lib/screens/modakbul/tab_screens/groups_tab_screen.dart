@@ -6,16 +6,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
-import 'package:modakbul/main.dart';
 import 'package:modakbul/models/group_list.dart';
 import 'package:modakbul/providers/meeting_provider.dart';
+import 'package:modakbul/screens/friend/create_group_screen.dart';
+import 'package:modakbul/screens/friend/group_edit_screen.dart';
 import 'package:modakbul/services/group_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/group_list_tile.dart';
 import 'package:modakbul/widgets/group_screen_skeleton.dart';
-import 'package:modakbul/widgets/my_modakbul_list_tile.dart';
 import 'package:provider/provider.dart';
 
 class GroupsTabScreen extends StatefulWidget {
@@ -59,6 +60,13 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     super.dispose();
   }
 
+  void _reloadGroups() {
+    setState(() {
+      // 그룹 목록을 다시 가져옵니다.
+      getData = groupService.getGroupList(); // 새로운 데이터 로드
+    });
+  }
+
   // 가나다순 정렬 함수
   List<Group> sortByName(List<Group> data) {
     data.sort((a, b) => a.name.compareTo(b.name));
@@ -68,8 +76,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   // 최신순 정렬 함수 (최신 날짜가 먼저)
   List<Group> sortByRecent(List<Group> data) {
     data.sort((a, b) {
-      DateTime dateA = DateTime.parse(a.updatedAt!);
-      DateTime dateB = DateTime.parse(b.updatedAt!);
+      DateTime dateA = DateTime.parse(a.createdAt);
+      DateTime dateB = DateTime.parse(b.createdAt);
       return dateB.compareTo(dateA); // 최신순 정렬
     });
     return data;
@@ -112,6 +120,25 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
       }
     });
   }
+
+  static String timeAgo(DateTime dateTime, DateTime currentTime) {
+    Duration difference = currentTime.difference(dateTime); // 시간 차이 계산
+
+    if (difference.inDays > 0) {
+      // 하루 이상 차이 나면 "몇 일 전" 형태로 출력
+      return '${difference.inDays}일 전 모닥불을 피웠습니다!';
+    } else if (difference.inHours > 0) {
+      // 한 시간 이상 차이 나면 "몇 시간 전" 형태로 출력
+      return '${difference.inHours}시간 전';
+    } else if (difference.inMinutes > 0) {
+      // 1분 이상 차이 나면 "몇 분 전" 형태로 출력
+      return '${difference.inMinutes}분 전';
+    } else {
+      // 1분 이내로 차이가 나면 "방금 전" 형태로 출력
+      return '방금 전';
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -215,7 +242,14 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => CreateGroupScreen()),
+                                  ).then((_) {
+                                    _reloadGroups();
+                                  });
+                                },
                                 behavior: HitTestBehavior.opaque,
                                 child: Card(
                                   shape: RoundedRectangleBorder(
@@ -340,38 +374,124 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                             filteredGroups[index].name;
                                         String groupId =
                                             filteredGroups[index].id;
-                                        return GestureDetector(
-                                          onTap: () =>
-                                              _toggleSelectedGroup(groupId, groupName),
-                                          child: Column(
-                                            children: [
-                                              MyModakbulListTile(
-                                                title: groupName,
-                                                time: filteredGroups[index]
-                                                    .updatedAt,
-                                                profileLength:
-                                                    filteredGroups[index]
-                                                        .members
-                                                        .length,
-                                                profileImage1:
-                                                    filteredGroups[index]
-                                                        .members[0]
-                                                        .user
-                                                        .profileUrl,
-                                                profileImage2:
-                                                    filteredGroups[index]
-                                                        .members[1]
-                                                        .user
-                                                        .profileUrl,
-
-                                                ///프로필 1,2를 보내지말고 members변수 자체를 보내면 댐
+                                        var members = filteredGroups[index].members;
+                                        String profileImage2 = members.length > 1 ? members[1].user.profileUrl : '';
+                                        return Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () =>
+                                                  _toggleSelectedGroup(groupId, groupName),
+                                              child: GroupListTile(
+                                                title: groupName,  // 그룹 이름
+                                                time: timeAgo(
+                                                  DateTime.parse(filteredGroups[index].createdAt), //
+                                                  DateTime.now(), //
+                                                ),
+                                                profileLength: filteredGroups[index].members.length,  // 멤버 수
+                                                profileImage1: members[0].user.profileUrl,  // 첫 번째 멤버의 프로필 이미지
+                                                profileImage2: profileImage2.isEmpty ? null : profileImage2,  // 두 번째 멤버의 프로필 이미지
                                                 isSelected: filteredGroups[index].id == selectedGroupId,
+                                                onPressed: () {
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return Container(
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.only(
+                                                            topLeft: Radius.circular(StyleConstants.radiusLarge),
+                                                            topRight: Radius.circular(StyleConstants.radiusLarge),
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              SizedBox(height: 38.h),
+                                                              Text(groupName, style: Theme.of(context).textTheme.bigHeadLine3.copyWith(color: ColorSchemes.gray500)),
+                                                              SizedBox(height: 24.h),
+                                                              InkWell(
+                                                                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder: (context) => GroupEditScreen(),
+                                                                      settings: RouteSettings(
+                                                                        arguments: {
+                                                                          'groupId': filteredGroups[index].id,
+                                                                          'groupName': filteredGroups[index].name,
+                                                                          'members': filteredGroups[index].members,
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ).then((_) {
+                                                                    _reloadGroups();
+                                                                  });
+                                                                },
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text('그룹 수정하기', style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
+                                                                    SizedBox(
+                                                                      width: 24.r,
+                                                                      height: 24.r,
+                                                                      child: Center(
+                                                                        child: SvgPicture.asset(
+                                                                          IconPath.arrowForwardGray200,
+                                                                          width: 9.r,
+                                                                          height: 16.r,
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(height: 24.h),
+                                                              InkWell(
+                                                                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                                                onTap: () async {
+                                                                  await groupService.deleteGroup(groupId);
+                                                                  setState(() {
+                                                                    filteredGroups.removeWhere((group) => group.id == groupId);
+                                                                    _filteredGroupsNotifier.value = List<Group>.from(groupList);
+                                                                  });
+                                                                  Navigator.pop(context);
+                                                                },
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text('그룹 삭제하기', style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
+                                                                    SizedBox(
+                                                                      width: 24.r,
+                                                                      height: 24.r,
+                                                                      child: Center(
+                                                                        child: SvgPicture.asset(
+                                                                          IconPath.arrowForwardGray200,
+                                                                          width: 9.r,
+                                                                          height: 16.r,
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(height: 56.h),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },// 선택된 그룹 여부
                                               ),
-                                              SizedBox(
-                                                height: 12.h,
-                                              )
-                                            ],
-                                          ),
+                                            ),
+                                            SizedBox(
+                                              height: 12.h,
+                                            )
+                                          ],
                                         );
                                       });
                                 }),

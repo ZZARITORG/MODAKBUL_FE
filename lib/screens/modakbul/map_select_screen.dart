@@ -36,7 +36,7 @@ class MapSelectScreen extends StatelessWidget {
           children: [
             KakaoMap(
               onMapCreated: ((controller) {
-                kakaoMapController = controller;
+                kakaoMapController = controller.setDraggable(false);
               }),
               markers: markers.toList(),
               center: LatLng(placeProvider.y!, placeProvider.x!),
