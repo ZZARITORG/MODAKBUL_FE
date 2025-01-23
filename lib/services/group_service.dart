@@ -13,7 +13,6 @@ class GroupService {
     Response response = await dio.get(
       ApiPath.group,
     );
-    print('그룹리스트: ${response.data['data']}');
     return JsonUtils().parseGroupList(response.data['data'] as List);
   }
 

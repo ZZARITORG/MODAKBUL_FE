@@ -68,7 +68,6 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
           child: Column(
             children: [
               Container(
-                height: 72.h,
                 padding: EdgeInsets.fromLTRB(0, 10.h, 0, 8.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
