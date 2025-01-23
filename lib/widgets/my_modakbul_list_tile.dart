@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -6,6 +7,8 @@ import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/accepted_modakbul.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
+
+import 'detail_screen_bottom_sheet.dart';
 
 class MyModakbulListTile extends StatelessWidget {
   final String title;
@@ -52,7 +55,17 @@ class MyModakbulListTile extends StatelessWidget {
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  onPressed: (){},
+                  onPressed: (){
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DetailScreenBottomSheet(
+                          isHost: false,
+                          title: title,
+                        );
+                      },
+                    );
+                  },
                   icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
             ),
             SizedBox(
@@ -99,7 +112,8 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange200,
-                                backgroundImage: NetworkImage(participantUsers[0].profileUrl!),
+                                  child: ClipOval(
+                                      child: CachedNetworkImage(imageUrl: participantUsers[0].profileUrl!)),
                               ),
                             )),
                       if (profileLength >= 2)
@@ -111,7 +125,8 @@ class MyModakbulListTile extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
                                 backgroundColor: ColorSchemes.orange100,
-                                backgroundImage: NetworkImage(participantUsers[1].profileUrl!),
+                                child: ClipOval(
+                                    child: CachedNetworkImage(imageUrl: participantUsers[1].profileUrl!)),
                               ),
                             )),
                       if (profileLength >= 3)

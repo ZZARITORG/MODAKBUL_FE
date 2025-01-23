@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:logger/logger.dart';
 import 'package:modakbul/screens/home/tab_screens/browse_tab_screen.dart';
 import 'package:modakbul/screens/home/tab_screens/default_tab_screen.dart';
 import 'package:modakbul/services/notification_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
 
-import '../../routes/routes.dart';
-import '../../widgets/custom_tab_bar.dart';
+import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/widgets/custom_tab_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

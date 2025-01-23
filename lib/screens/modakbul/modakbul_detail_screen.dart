@@ -18,10 +18,11 @@ import 'package:modakbul/widgets/detail_screen_bottom_sheet.dart';
 import 'package:modakbul/widgets/modakbul_detail_card.dart';
 import 'package:modakbul/widgets/modakbul_detail_screen_skeleton.dart';
 import 'package:modakbul/widgets/participate_bottom_sheet.dart';
-import '../../models/modakbul_detail.dart';
-import '../../routes/routes.dart';
-import '../../themes/color_schemes.dart';
-import '../../themes/styles.dart';
+import 'package:modakbul/models/modakbul_detail.dart';
+import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/themes/color_schemes.dart';
+import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/models/user_check.dart';
 
 class ModakbulDetailScreen extends StatefulWidget {
   const ModakbulDetailScreen({super.key});
@@ -35,6 +36,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
   Set<Marker> markers = {};
   late KakaoMapController mapController;
   ModakbulDetail? modakbulDetailData;
+  UserCheck? hostUserCheck;
   List<BlockedUser> blockedUsersData = [];
   String? myUserId;
   bool isLoading = true;
@@ -64,16 +66,18 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
     final String? id = arguments?['id'];
 
     try {
+      final modakbulDetail = await meetingService.getModakbulDetail(id!);
       final responses = await Future.wait([
-        meetingService.getModakbulDetail(id!),
         friendService.getBlockedUser(),
         userService.getMyProfile(),
+        userService.getUserCheck(modakbulDetail.hostId),
       ]);
 
-      setState(() { 
-        modakbulDetailData = responses[0] as ModakbulDetail;
-        blockedUsersData = (responses[1] as List<dynamic>?)?.cast<BlockedUser>() ?? [];
-        myUserId = (responses[2] as dynamic).userId as String;
+      setState(() {
+        modakbulDetailData = modakbulDetail;
+        blockedUsersData = (responses[0] as List<dynamic>?)?.cast<BlockedUser>() ?? [];
+        myUserId = (responses[1] as dynamic).userId as String;
+        hostUserCheck = responses[2] as UserCheck;
         isLoading = false;
       });
 
@@ -103,7 +107,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
     ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final bool isAccepted = arguments?['isAccepted'] ?? false;
 
-    if (isLoading || modakbulDetailData == null) {
+    if (isLoading || modakbulDetailData == null || hostUserCheck == null) {
       return Scaffold(
         backgroundColor: ColorSchemes.gray000,
         appBar: BackButtonAppBar.actions(
@@ -161,12 +165,16 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                 children: [
                   ModakbulDetailCard(
                     hostName: host.name,
-                    hostId: host.userId,
+                    hostId: host.id,
+                    hostUserId: host.userId,
                     hostProfileImage: host.profileUrl,
                     participantLength: users.length,
                     users: users,
                     participantUsers: participantUsers,
                     blockedUsers: blockedUsersData,
+                    friendService: friendService,
+                    userCheckData: hostUserCheck!,
+                    myUserId: myUserId!,
                   ),
                   SizedBox(height: 14.h),
                   Expanded(

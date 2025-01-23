@@ -1,16 +1,20 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/logout.dart';
 import 'package:modakbul/models/my_profile.dart';
+import 'package:modakbul/models/tokens.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
 import 'package:modakbul/services/user_service.dart';
@@ -66,7 +70,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       ),
       body: Padding(
         padding:
-            EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -81,7 +85,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     margin: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.circular(StyleConstants.radiusMedium),
+                      BorderRadius.circular(StyleConstants.radiusMedium),
                     ),
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(14.w, 23.h, 14.w, 25.h),
@@ -89,61 +93,61 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                           Expanded(
-                                    child: Row(
-                                      children: [
-                                        Stack(children: [
-                                          CircleAvatar(
-                                            radius:
-                                            StyleConstants.circleSizeS,
-                                            backgroundImage:
-                                            NetworkImage(profileUrl),
-                                          ),
-                                          Positioned(
-                                              right: 0,
-                                              bottom: 0,
-                                              child: CircleAvatar(
-                                                backgroundColor:
-                                                ColorSchemes.orange200,
-                                                radius: StyleConstants
-                                                    .circleSizeXXXXXXXS,
-                                                child: SvgPicture.asset(
-                                                    IconPath
-                                                        .photoCameraOrange100,
-                                                    width: 13.83.r),
-                                              )),
-                                        ]),
-                                        SizedBox(width: 8.w),
-                                        Flexible(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                userName,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bigHeadLine4
-                                                    .copyWith(
-                                                    color: ColorSchemes
-                                                        .gray500),
-                                              ),
-                                              SizedBox(height: 2.h),
-                                              Text(
-                                                userId,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .body3
-                                                    .copyWith(
-                                                    color: ColorSchemes
-                                                        .gray400),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Stack(children: [
+                                  CircleAvatar(
+                                    radius:
+                                    StyleConstants.circleSizeS,
+                                    child: ClipOval(
+                                        child: CachedNetworkImage(imageUrl: profileUrl)),
                                   ),
+                                  Positioned(
+                                      right: 0,
+                                      bottom: 0,
+                                      child: CircleAvatar(
+                                        backgroundColor:
+                                        ColorSchemes.orange200,
+                                        radius: StyleConstants
+                                            .circleSizeXXXXXXXS,
+                                        child: SvgPicture.asset(
+                                            IconPath
+                                                .photoCameraOrange100,
+                                            width: 13.83.r),
+                                      )),
+                                ]),
+                                SizedBox(width: 8.w),
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        userName,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bigHeadLine4
+                                            .copyWith(
+                                            color: ColorSchemes
+                                                .gray500),
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        userId,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .body3
+                                            .copyWith(
+                                            color: ColorSchemes
+                                                .gray400),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
 
                           SizedBox(width: 32.w),
                           InkWell(
@@ -233,8 +237,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     // FCM 토큰 가져오기
                     String? fcmToken;
                     if (Platform.isIOS) {
+                      fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
                       // await Future.delayed(Duration(seconds: 2));
-                      fcmToken = await FirebaseMessaging.instance.getAPNSToken();
+                      // fcmToken = await FirebaseMessaging.instance.getToken();
                       print('APNS Token: $fcmToken');
                     } else if (Platform.isAndroid) {
                       fcmToken = await FirebaseMessaging.instance.getToken();

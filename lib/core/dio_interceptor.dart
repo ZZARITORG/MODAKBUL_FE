@@ -8,7 +8,6 @@ import 'package:logger/logger.dart';
 import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/models/login.dart';
-import 'package:modakbul/models/phone_number.dart';
 import 'package:modakbul/models/refresh_token_request.dart';
 import 'package:modakbul/models/refresh_token_response.dart';
 import 'package:modakbul/models/tokens.dart';

@@ -14,8 +14,7 @@ import 'package:modakbul/widgets/fixed_modakbul_card.dart';
 import 'package:modakbul/widgets/default_tab_screen_skeleton.dart';
 import 'package:modakbul/widgets/my_modakbul_card.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
-import '../../../models/my_host_modakbul.dart';
+import 'package:modakbul/models/my_host_modakbul.dart';
 
 class DefaultTabScreen extends StatefulWidget {
   const DefaultTabScreen({super.key});

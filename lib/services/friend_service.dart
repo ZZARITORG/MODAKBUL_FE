@@ -1,5 +1,3 @@
-
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:modakbul/core/dio_client.dart';
@@ -8,7 +6,6 @@ import 'package:modakbul/models/blocked_user.dart';
 import 'package:modakbul/models/contacts.dart';
 import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/models/friend_suggested.dart';
-import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/models/unblocked_user.dart';
 import 'package:modakbul/models/friend_list.dart';
 import 'package:modakbul/models/uuid.dart';
@@ -46,7 +43,7 @@ class FriendService {
     Response response = await dio.post(ApiPath.friendSuggested,
       data: contacts.toJson()
     );
-    print('데이터2${response.data['data']}');
+    print('알수도잇는사람${response.data['data']}');
     return JsonUtils().parseFriendSuggested(response.data['data'] as List);
   }
 

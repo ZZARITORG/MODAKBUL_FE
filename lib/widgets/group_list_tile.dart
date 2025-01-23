@@ -14,6 +14,7 @@ class GroupListTile extends StatelessWidget {
   final String? profileImage2;
   final int profileLength;
   final bool isSelected;
+  final VoidCallback onPressed;
 
   const GroupListTile(
       {Key? key,
@@ -22,7 +23,9 @@ class GroupListTile extends StatelessWidget {
         this.profileImage1,
         this.profileImage2,
         required this.profileLength,
-        this.isSelected = false,})
+        this.isSelected = false,
+        required this.onPressed,
+      })
       : super(key: key);
 
   @override
@@ -50,7 +53,7 @@ class GroupListTile extends StatelessWidget {
               child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  onPressed: (){},
+                  onPressed: onPressed,
                   icon: SvgPicture.asset(IconPath.moreHorizontal, fit: BoxFit.scaleDown,)),
             ),
             SizedBox(
@@ -87,10 +90,12 @@ class GroupListTile extends StatelessWidget {
                 SizedBox(width: 8.w,),
                 SizedBox(
                   width: 98.r,
+                  height: StyleConstants.circleSizeXS * 2,
                   child: Stack(
                     children: [
                       if (profileLength >= 1)
                         Positioned(
+                            left: profileLength == 1 ? 56.r : profileLength == 2 ? 28.r : 0.r,
                             child: CircleAvatar(
                               radius: StyleConstants.circleSizeXS,
                               backgroundColor: ColorSchemes.white,
@@ -102,7 +107,8 @@ class GroupListTile extends StatelessWidget {
                             )),
                       if (profileLength >= 2)
                         Positioned(
-                            left: 28.r,
+                          left: profileLength == 2 ? 56.r : 28.r,
+                            right: 28.r,
                             child: CircleAvatar(
                               radius: StyleConstants.circleSizeXS,
                               backgroundColor: ColorSchemes.white,

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modakbul/constants/app_constants.dart';
@@ -70,8 +71,8 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
                         child: Stack(
                           children: [
                             CircleAvatar(radius: StyleConstants.circleSizeXXL,
-                                backgroundImage:
-                                NetworkImage(profileUrl!)),
+                              child: ClipOval(
+                                  child: CachedNetworkImage(imageUrl: profileUrl!))),
                             Positioned(
                                 right: 0,
                                 bottom: 0,

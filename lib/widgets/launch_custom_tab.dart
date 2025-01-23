@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
-import 'package:modakbul/themes/color_schemes.dart';
 
 Future<void> launchCustomTab(BuildContext context, {
   required String url,

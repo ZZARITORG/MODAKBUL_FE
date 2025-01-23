@@ -1,4 +1,3 @@
-
 import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/models/friend_suggested.dart';
 import 'package:modakbul/models/friend_list.dart';
@@ -10,10 +9,8 @@ import 'package:modakbul/models/my_host_modakbul.dart';
 import 'package:modakbul/models/pending_modakbul.dart';
 import 'package:modakbul/models/user_check.dart';
 import 'package:modakbul/models/user_list.dart';
-
-
-import '../models/modakbul_detail.dart';
-import '../models/notifications.dart';
+import 'package:modakbul/models/modakbul_detail.dart';
+import 'package:modakbul/models/notifications.dart';
 
 class JsonUtils {
   static List<Place> convertJsonToPlaceList(List jsonList) {

@@ -1,7 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:logger/logger.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/modakbul_detail.dart';
@@ -88,11 +88,15 @@ class Participantlistprofile extends StatelessWidget {
                 isBlocked
                     ? CircleAvatar(
                         radius: StyleConstants.circleSizeS,
-                        backgroundImage: NetworkImage('https://s3.ap-northeast-2.amazonaws.com/zzarit-madakbul-bucket/profile/default'),
+                        child: ClipOval(
+                            child: CachedNetworkImage(
+                                imageUrl:
+                                    'https://s3.ap-northeast-2.amazonaws.com/zzarit-madakbul-bucket/profile/default')),
                       )
                     : CircleAvatar(
                         radius: StyleConstants.circleSizeS,
-                        backgroundImage: NetworkImage(profileImage),
+                        child: ClipOval(
+                            child: CachedNetworkImage(imageUrl: profileImage)),
                       ),
                 SizedBox(
                   width: 8.w,
