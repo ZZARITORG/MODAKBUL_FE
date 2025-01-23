@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
@@ -57,11 +58,11 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
     setState(() {
       if (widget.isName) {
         _isButtonEnabled = _textEditingController.text.length >=
-                AppConstants.minUserNameLength &&
+            AppConstants.minUserNameLength &&
             _formKey.currentState?.validate() == true;
       } else {
         _isButtonEnabled = _textEditingController.text.length >=
-                AppConstants.minUserIdLength &&
+            AppConstants.minUserIdLength &&
             _formKey.currentState?.validate() == true;
       }
     });
@@ -89,7 +90,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
       child: Padding(
         padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
           decoration: BoxDecoration(
             color: ColorSchemes.white,
@@ -146,9 +147,9 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                       hintText: widget.hintText,
                       onChanged: (value) => _validateForm(),
                       validator: widget.isName
-                          ? Validators().userNameValidator
+                          ? (value) => Validators().userNameValidator(value, widget.hintText)
                           : (value) =>
-                              Validators().userIdValidator(value, _errorMessage),
+                          Validators().userIdValidator(value, _errorMessage, widget.hintText),
                       textEditingController: _textEditingController,
                       maxLength: widget.isName
                           ? AppConstants.maxUserNameLength
@@ -205,3 +206,4 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
     );
   }
 }
+
