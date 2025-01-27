@@ -34,9 +34,9 @@ class EditPhoneBottomSheet extends StatelessWidget {
       await UserService().updateMyProfile(EditMyProfile(phoneNo: newPhoneNumber));
       if (!context.mounted) return;
 
-      Navigator.of(context).pop(); // 바텀시트 닫기
-      Navigator.of(context).pop(); // ChangeNumberCodeScreen 닫기
-      Navigator.of(context).pop(); // ChangeNumberScreen 닫기
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } catch (e) {
       CustomToast.showToast(context, '현재 휴대폰 번호와 동일합니다!', false);
     }
