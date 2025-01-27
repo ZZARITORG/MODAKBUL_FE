@@ -24,7 +24,6 @@ import 'package:modakbul/screens/setting/blocked_user_screen.dart';
 import 'package:modakbul/screens/setting/change_number_code_screen.dart';
 import 'package:modakbul/screens/setting/change_number_screen.dart';
 import 'package:modakbul/screens/setting/common_setting_screen.dart';
-import 'package:modakbul/screens/setting/edit_code_screen.dart';
 import 'package:modakbul/screens/setting/edit_my_profile_screen.dart';
 import 'package:modakbul/screens/setting/friend_setting_screen.dart';
 import 'package:modakbul/screens/setting/info_screen.dart';
@@ -108,7 +107,6 @@ class Routes {
     changeNumberCodeScreen: (BuildContext context) => const ChangeNumberCodeScreen(),
     changeNumberScreen: (BuildContext context) => const ChangeNumberScreen(),
     commonSettingScreen: (BuildContext context) => const CommonSettingScreen(),
-    editCodeScreen: (BuildContext context) => const EditCodeScreen(),
     editMyProfileScreen: (BuildContext context) => EditMyProfileScreen(),
     friendSettingScreen: (BuildContext context) => const FriendSettingScreen(),
     imageCropperSettingScreen: (BuildContext context) => const ImageCropperSettingScreen(),

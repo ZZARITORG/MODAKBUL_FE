@@ -1,14 +1,46 @@
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/routes/routes.dart';
+import 'package:modakbul/services/firebase_auth_service.dart';
+import 'package:modakbul/models/edit_my_profile.dart';
+import 'package:modakbul/services/user_service.dart';
+
+import 'custom_toast.dart';
 
 class EditPhoneBottomSheet extends StatelessWidget {
-  const EditPhoneBottomSheet({super.key});
+  final String verificationId;
+  final String smsCode;
+  final String newPhoneNumber;
+  final VoidCallback onConfirm;
+
+  const EditPhoneBottomSheet({
+    super.key,
+    required this.verificationId,
+    required this.smsCode,
+    required this.newPhoneNumber,
+    required this.onConfirm,
+  });
+
+  Future<void> _updatePhoneNumber(BuildContext context) async {
+    try {
+      await FirebaseAuthService().updatePhoneNumber(verificationId, smsCode);
+      await UserService().updateMyProfile(EditMyProfile(phoneNo: newPhoneNumber));
+      if (!context.mounted) return;
+
+      Navigator.of(context).pop(); // 바텀시트 닫기
+      Navigator.of(context).pop(); // ChangeNumberCodeScreen 닫기
+      Navigator.of(context).pop(); // ChangeNumberScreen 닫기
+    } catch (e) {
+      CustomToast.showToast(context, '현재 휴대폰 번호와 동일합니다!', false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +80,7 @@ class EditPhoneBottomSheet extends StatelessWidget {
                   width: double.infinity,
                   child: CustomButton(
                       text: '변경 완료',
-                      onPressed: (){},
+                      onPressed: () => _updatePhoneNumber(context),
                       buttonColor: ColorSchemes.orange200,
                       textStyle: Theme.of(context).textTheme.smallHeadLine2,
                       textColor: ColorSchemes.white),

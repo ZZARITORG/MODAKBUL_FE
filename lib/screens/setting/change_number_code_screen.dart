@@ -24,6 +24,7 @@ import 'package:modakbul/utils/validators.dart';
 import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/edit_phone_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:modakbul/widgets/change_phone_bottom_sheet.dart';
 
@@ -40,20 +41,17 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
   bool _isButtonEnabled = false;
   final FocusNode _codeFocusNode = FocusNode();
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
-  AuthService _authService = AuthService();
   String? _errorMessage;
   late modakbul_auth_provider.AuthProvider authProvider;
   Timer? _resendTimer;
-  int _resendTime = 30; // 타이머 시간을 초 단위로 설정합니다.
+  int _resendTime = 30;
   bool _canResend = false;
-  FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
   _handleButtonPress() async {
     if (_codeController.text.isEmpty) {
       return;
     }
 
-    // 버튼 비활성화
     setState(() {
       _isButtonEnabled = false;
     });
@@ -61,26 +59,27 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     try {
       await _firebaseAuthService.verifyVerificationCode(
           _codeController.text,
-              (String verificationId) => _showChangePhoneBottomSheet(
-              context, verificationId, _codeController.text),
-          onSignInFailure);
+              () => _showChangePhoneBottomSheet(
+              context,
+              _firebaseAuthService.getVerificationId(),
+              _codeController.text
+          ),
+          onSignInFailure
+      );
     } catch (e) {
-      // 실패 시 오류 메시지 처리
       onSignInFailure('인증 실패');
     } finally {
-      // 비동기 작업이 끝난 후 버튼을 활성화
       setState(() {
         _isButtonEnabled = true;
       });
     }
-    //마운트 체크
+
     if (!context.mounted) return;
     FocusScope.of(context).requestFocus(_codeFocusNode);
   }
 
   void _validateForm() {
     setState(() {
-      /// 버튼 활성화 여부 설정
       _isButtonEnabled =
           _codeController.text.length >= AppConstants.verificationCodeLength &&
               _formKey.currentState?.validate() == true;
@@ -91,7 +90,7 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
   void _startResendTimer() {
     setState(() {
       _canResend = false;
-      _resendTime = 30; // 초기화
+      _resendTime = 30;
     });
 
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -109,47 +108,12 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
   }
 
   _resendCode() {
-    FirebaseAuthService().sendVerificationCode(
+    _firebaseAuthService.sendVerificationCode(
         StringUtils().removeHyphens(authProvider.phoneNumber)!,
-        onSignInSuccess,
-        onSignInFailure);
-    _startResendTimer(); // 타이머를 다시 시작합니다.
-  }
-
-  void onSignInSuccess() async {
-    ///하이픈(-) 제거 후 갱신
-    authProvider.phoneNumber =
-        StringUtils().removeHyphens(authProvider.phoneNumber);
-
-    bool isExists = await _authService
-        .checkUserExists(PhoneNumber(phoneNumber: authProvider.phoneNumber!));
-    if (isExists) {
-      // 개발자 권한 받으면 변경 예정
-      String? fcmToken;
-      if (Platform.isIOS) {
-        // await Future.delayed(Duration(seconds: 2));
-        fcmToken = await FirebaseMessaging.instance.getAPNSToken();
-        print('APNS Token: $fcmToken');
-      } else if (Platform.isAndroid) {
-        fcmToken = await FirebaseMessaging.instance.getToken();
-      }
-      Tokens tokens = await _authService.login(
-          Login(phoneNo: authProvider.phoneNumber!, fcmToken: fcmToken!));
-
-      ///secureStorage에 토큰 저장
-      await Future.wait([
-        secureStorage.write(
-            key: AppConstants.accessToken, value: tokens.accessToken),
-        secureStorage.write(
-            key: AppConstants.refreshToken, value: tokens.refreshToken),
-        secureStorage.write(
-            key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
-      ]);
-      Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
-    } else {
-      if (!context.mounted) return;
-      Routes.navigateAndRemoveUntil(context, Routes.authNameScreen);
-    }
+            () {}, // 빈 콜백 (번호변경은 바텀시트에서 처리)
+        onSignInFailure
+    );
+    _startResendTimer();
   }
 
   void onSignInFailure(String errorCode) {
@@ -158,9 +122,6 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
       case 'invalid-verification-code':
         errorMessage = '인증번호가 일치하지 않습니다.';
         break;
-    /* case 'expired-action-code':
-        errorMessage = '인증번호가 만료 되었습니다.';
-        break; */
       case 'user-disabled':
         errorMessage = '사용자 계정이 비활성화 되었습니다.';
         break;
@@ -176,13 +137,13 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
   @override
   void initState() {
     super.initState();
-    authProvider = Provider.of<modakbul_auth_provider.AuthProvider>(context,
-        listen: false);
+    authProvider = Provider.of<modakbul_auth_provider.AuthProvider>(context, listen: false);
     _codeController.addListener(_validateForm);
     _firebaseAuthService.sendVerificationCode(
         StringUtils().removeHyphens(authProvider.phoneNumber)!,
-        onSignInSuccess,
-        onSignInFailure);
+            () {}, // 빈 콜백
+        onSignInFailure
+    );
     _startResendTimer();
   }
 
@@ -199,16 +160,14 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.4,
+        maxHeight: MediaQuery.of(context).size.height * 0.35,
       ),
       builder: (BuildContext context) {
-        return ChangePhoneBottomSheet(
+        return EditPhoneBottomSheet(
           verificationId: verificationId,
-          smsCode: _codeController.text,
+          smsCode: smsCode,
           newPhoneNumber: authProvider.phoneNumber!,
-          onConfirm: () {
-            Navigator.pop(context);
-          },
+          onConfirm: () {},
         );
       },
     );
@@ -220,8 +179,7 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
       appBar: const BackButtonAppBar(),
       body: SafeArea(
         child: Padding(
-          padding:
-          EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: Form(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -232,25 +190,15 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          height: 42.h,
-                        ),
+                        SizedBox(height: 42.h),
                         Text('인증번호를 입력해주세요',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bigHeadLine3
+                            style: Theme.of(context).textTheme.bigHeadLine3
                                 .copyWith(color: ColorSchemes.gray500)),
-                        SizedBox(
-                          height: 6.h,
-                        ),
+                        SizedBox(height: 6.h),
                         Text('${authProvider.phoneNumber}으로 인증번호를 발송했습니다.',
-                            style: Theme.of(context)
-                                .textTheme
-                                .body2
+                            style: Theme.of(context).textTheme.body2
                                 .copyWith(color: ColorSchemes.gray200)),
-                        SizedBox(
-                          height: 78.h,
-                        ),
+                        SizedBox(height: 78.h),
                         AuthTextFormField(
                           textInputType: TextInputType.number,
                           hintText: '인증번호',
@@ -271,18 +219,13 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
                       onPressed: _canResend ? _resendCode : null,
                       child: Text(
                         _canResend ? '재전송' : '$_resendTime초 후 재전송',
-                        style: Theme.of(context)
-                            .textTheme
-                            .smallHeadLine3
-                            .copyWith(
-                            color: _canResend
-                                ? ColorSchemes.orange100
-                                : ColorSchemes.gray200),
-                      )),
+                        style: Theme.of(context).textTheme.smallHeadLine3.copyWith(
+                            color: _canResend ? ColorSchemes.orange100 : ColorSchemes.gray200
+                        ),
+                      )
+                  ),
                 ),
-                SizedBox(
-                  height: 14.h,
-                ),
+                SizedBox(height: 14.h),
                 SizedBox(
                   height: 56.h,
                   width: double.infinity,
@@ -291,11 +234,10 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
                       onPressed: _isButtonEnabled ? _handleButtonPress : null,
                       buttonColor: ColorSchemes.orange200,
                       textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                      textColor: ColorSchemes.white),
+                      textColor: ColorSchemes.white
+                  ),
                 ),
-                SizedBox(
-                  height: 16.h,
-                )
+                SizedBox(height: 16.h)
               ],
             ),
           ),
@@ -304,4 +246,3 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     );
   }
 }
-
