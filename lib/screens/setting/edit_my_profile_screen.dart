@@ -1,31 +1,20 @@
 import 'dart:typed_data';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/style_constants.dart';
-import 'package:modakbul/screens/modakbul/map_select_screen.dart';
 import 'package:modakbul/themes/color_schemes.dart';
-import 'package:modakbul/utils/validators.dart';
-import 'package:modakbul/widgets/auth_text_form_field.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/themes/styles.dart';
-import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/edit_profile_bottom_sheet.dart';
-
 import 'package:modakbul/models/my_profile.dart';
-
 import 'package:modakbul/services/user_service.dart';
-
 import 'package:modakbul/utils/image_picker_utils.dart';
-
-import 'package:modakbul/routes/routes.dart';
-
-import '../../main.dart';
+import 'package:modakbul/main.dart';
 import 'image_cropper_setting_screen.dart';
 
 class EditMyProfileScreen extends StatefulWidget {

@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:cropperx/cropperx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,17 +1,13 @@
 import 'dart:ui';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
-import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/firebase_auth_service.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
-
 import 'custom_toast.dart';
 
 class EditPhoneBottomSheet extends StatelessWidget {
@@ -34,9 +30,9 @@ class EditPhoneBottomSheet extends StatelessWidget {
       await UserService().updateMyProfile(EditMyProfile(phoneNo: newPhoneNumber));
       if (!context.mounted) return;
 
-      Navigator.of(context).pop(); // 바텀시트 닫기
-      Navigator.of(context).pop(); // ChangeNumberCodeScreen 닫기
-      Navigator.of(context).pop(); // ChangeNumberScreen 닫기
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } catch (e) {
       CustomToast.showToast(context, '현재 휴대폰 번호와 동일합니다!', false);
     }

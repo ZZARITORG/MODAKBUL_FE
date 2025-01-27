@@ -1,18 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
-import 'package:modakbul/widgets/log_out_dialog.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/widgets/launch_custom_tab.dart';
-import 'package:provider/provider.dart';
 import 'package:modakbul/widgets/delete_user_bottom_sheet.dart';
 
 class TermsScreen extends StatelessWidget {
