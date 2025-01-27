@@ -77,10 +77,16 @@ class FirebaseAuthService {
         smsCode: smsCode,
       );
 
-      //폰 번호 업데이트
-      await FirebaseAuth.instance.currentUser?.updatePhoneNumber(credential);
+      final user = FirebaseAuth.instance.currentUser;
+
+      await user?.updatePhoneNumber(credential);
     } catch (e) {
-      throw Exception('Phone number update failed');
+      throw Exception('Phone number update failed: $e');
     }
   }
+
+  String getVerificationId() {
+    return _verificationId;
+  }
+
 }

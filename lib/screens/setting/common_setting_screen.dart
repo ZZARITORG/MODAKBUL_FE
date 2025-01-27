@@ -12,8 +12,7 @@ import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
-
-import '../../main.dart';
+import 'package:modakbul/main.dart';
 
 class CommonSettingScreen extends StatefulWidget {
   const CommonSettingScreen({super.key});
