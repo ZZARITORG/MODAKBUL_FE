@@ -7,9 +7,8 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/setting_menu.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
-
-import '../../constants/app_constants.dart';
-import '../../main.dart';
+import 'package:modakbul/constants/app_constants.dart';
+import 'package:modakbul/main.dart';
 
 class AlertSettingScreen extends StatefulWidget {
   const AlertSettingScreen({super.key});

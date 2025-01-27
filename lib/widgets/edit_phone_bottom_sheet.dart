@@ -1,17 +1,13 @@
 import 'dart:ui';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
-import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/firebase_auth_service.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
-
 import 'custom_toast.dart';
 
 class EditPhoneBottomSheet extends StatelessWidget {
