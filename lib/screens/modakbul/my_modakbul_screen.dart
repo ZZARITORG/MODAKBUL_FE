@@ -31,7 +31,7 @@ class _MyModakbulScreenState extends State<MyModakbulScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: ColorSchemes.gray000,
-        appBar: BackButtonAppBar.actions(
+        appBar: BackButtonAppBar(
             onActionPressed: () {}, backgroundColor: ColorSchemes.gray000),
         body: SafeArea(
           child: Padding(
