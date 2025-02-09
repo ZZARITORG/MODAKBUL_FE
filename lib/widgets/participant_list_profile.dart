@@ -73,9 +73,15 @@ class Participantlistprofile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userNameColor =
-        isPending ? ColorSchemes.gray300 : ColorSchemes.gray500;
-    final userIdColor = isPending ? ColorSchemes.gray200 : ColorSchemes.gray300;
+    final isHost = users.isNotEmpty && users[0].userId == userId;
+    final userNameColor = isHost
+        ? ColorSchemes.gray500
+        : (isPending ? ColorSchemes.gray300 : ColorSchemes.gray500);
+
+    final userIdColor = isHost
+        ? ColorSchemes.gray300
+        : (isPending ? ColorSchemes.gray200 : ColorSchemes.gray300);
+
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),

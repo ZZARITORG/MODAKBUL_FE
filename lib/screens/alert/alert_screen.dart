@@ -65,48 +65,51 @@ class _AlertScreenState extends State<AlertScreen> {
     });
   }
 
-  Map<String, List<Notifications>> categorizeNotifications(List<Notifications> notifications) {
+  Map<String, List<Notifications>> categorizeNotifications(
+      List<Notifications> notifications) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
     final weekAgo = today.subtract(const Duration(days: 7));
 
+    List<Notifications> sortNotifications(List<Notifications> notifications) {
+      return notifications
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt)); // 내림차순 정렬 (최신순)
+    }
+
     return {
-      '오늘': notifications.where((notification) {
+      '오늘': sortNotifications(notifications.where((notification) {
         final date = DateTime(
           notification.createdAt.year,
           notification.createdAt.month,
           notification.createdAt.day,
         );
         return date.isAtSameMomentAs(today);
-      }).toList(),
-
-      '어제': notifications.where((notification) {
+      }).toList()),
+      '어제': sortNotifications(notifications.where((notification) {
         final date = DateTime(
           notification.createdAt.year,
           notification.createdAt.month,
           notification.createdAt.day,
         );
         return date.isAtSameMomentAs(yesterday);
-      }).toList(),
-
-      '최근 7일': notifications.where((notification) {
+      }).toList()),
+      '최근 7일': sortNotifications(notifications.where((notification) {
         final date = DateTime(
           notification.createdAt.year,
           notification.createdAt.month,
           notification.createdAt.day,
         );
         return date.isBefore(yesterday) && date.isAfter(weekAgo);
-      }).toList(),
-
-      '이전 활동': notifications.where((notification) {
+      }).toList()),
+      '이전 활동': sortNotifications(notifications.where((notification) {
         final date = DateTime(
           notification.createdAt.year,
           notification.createdAt.month,
           notification.createdAt.day,
         );
         return date.isBefore(weekAgo);
-      }).toList(),
+      }).toList()),
     };
   }
 
@@ -136,10 +139,10 @@ class _AlertScreenState extends State<AlertScreen> {
         child: CustomRefreshIndicator(
           onRefresh: _refreshData,
           builder: (
-              BuildContext context,
-              Widget child,
-              IndicatorController controller,
-              ) {
+            BuildContext context,
+            Widget child,
+            IndicatorController controller,
+          ) {
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
@@ -152,26 +155,26 @@ class _AlertScreenState extends State<AlertScreen> {
                       child: Center(
                         child: controller.isLoading
                             ? Lottie.asset(
-                          width: 25.r,
-                          height: 25.r,
-                          AnimationPath.loadingFeed,
-                          animate: controller.isLoading,
-                        )
+                                width: 25.r,
+                                height: 25.r,
+                                AnimationPath.loadingFeed,
+                                animate: controller.isLoading,
+                              )
                             : AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) {
-                            return child;
-                          },
-                          child: SvgPicture.asset(
-                            _getLoadingAsset(
-                                controller.value * _maxDragOffset),
-                            width: 25.r,
-                            height: 25.r,
-                            key: ValueKey<String>(_getLoadingAsset(
-                                controller.value * _maxDragOffset)),
-                          ),
-                        ),
+                                duration: const Duration(milliseconds: 200),
+                                transitionBuilder: (Widget child,
+                                    Animation<double> animation) {
+                                  return child;
+                                },
+                                child: SvgPicture.asset(
+                                  _getLoadingAsset(
+                                      controller.value * _maxDragOffset),
+                                  width: 25.r,
+                                  height: 25.r,
+                                  key: ValueKey<String>(_getLoadingAsset(
+                                      controller.value * _maxDragOffset)),
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -183,18 +186,21 @@ class _AlertScreenState extends State<AlertScreen> {
             );
           },
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+            padding:
+                EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
             child: FutureBuilder<List<Notifications>>(
               future: notificationService.getNotifications(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting && isLoading == true) {
+                if (snapshot.connectionState == ConnectionState.waiting &&
+                    isLoading == true) {
                   return AlertScreenSkeleton();
                 } else if (snapshot.hasError) {
                   return GlobalErrorWidget();
-                } else if (snapshot.hasData) {
+                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   isLoading = false;
                   final notificationList = snapshot.data!;
-                  final categorizedNotifications = categorizeNotifications(notificationList);
+                  final categorizedNotifications =
+                      categorizeNotifications(notificationList);
 
                   return Column(
                     children: [
@@ -204,48 +210,56 @@ class _AlertScreenState extends State<AlertScreen> {
                           children: categorizedNotifications.entries
                               .where((entry) => entry.value.isNotEmpty)
                               .map((entry) => buildAlertSection(
-                            entry.key,
-                            entry.value,
-                          ))
+                                    entry.key,
+                                    entry.value,
+                                  ))
                               .toList(),
                         ),
                       ),
                       SizedBox(height: 16.h)
                     ],
                   );
-                }
-                return SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height -
-                      kToolbarHeight -
-                      MediaQuery.of(context).padding.top,
-                  child: Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 132.w,
-                          height: 146.h,
-                          child: Image.asset(ImagePath.emptyAlert),
-                        ),
-                        SizedBox(height: 32.h,),
-                        Text(
-                          '아직 알림이 없습니다.',
-                          style: Theme.of(context).textTheme.bigHeadLine3.copyWith(
-                            color: ColorSchemes.orange100,
+                } else {
+                  return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    padding: EdgeInsets.only(bottom: (Scaffold.of(context).appBarMaxHeight!).toDouble()),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 132.w,
+                            height: 146.h,
+                            child: Image.asset(ImagePath.emptyAlert),
                           ),
-                        ),
-                        SizedBox(height: 8.h,),
-                        Text(
-                          '알림이 추가되면 알려드리겠습니다.',
-                          style: Theme.of(context).textTheme.body2.copyWith(
-                            color: ColorSchemes.gray300,
+                          SizedBox(
+                            height: 32.h,
                           ),
-                        ),
-                      ],
+                          Text(
+                            '아직 알림이 없습니다.',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bigHeadLine3
+                                .copyWith(
+                                  color: ColorSchemes.orange100,
+                                ),
+                          ),
+                          SizedBox(
+                            height: 8.h,
+                          ),
+                          Text(
+                            '알림이 추가되면 알려드리겠습니다.',
+                            style: Theme.of(context).textTheme.body2.copyWith(
+                                  color: ColorSchemes.gray300,
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               },
             ),
           ),
@@ -281,7 +295,9 @@ class _AlertScreenState extends State<AlertScreen> {
             );
           }).toList(),
         ),
-        SizedBox(height: 24.h,)
+        SizedBox(
+          height: 24.h,
+        )
       ],
     );
   }
