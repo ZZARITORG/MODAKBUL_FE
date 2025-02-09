@@ -11,7 +11,6 @@ class CustomToast {
     late OverlayEntry overlayEntry;
     bool isVisible = true;
 
-
     overlayEntry = OverlayEntry(
       builder: (context) => Positioned.fill(
         bottom: hasBottomAppBar ? 140.h : 84.h,

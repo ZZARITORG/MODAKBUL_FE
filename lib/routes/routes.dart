@@ -151,6 +151,14 @@ class Routes {
     );
   }
 
+  static Future<void> navigateAndRemoveUntilFirst(BuildContext context, String routeName, {Object? arguments}) {
+    return Navigator.pushAndRemoveUntil(
+      context,
+      _fadePage(routes[routeName]!(context), arguments), // Arguments 전달
+          (route) => route.isFirst, // 모든 이전 페이지를 제거
+    );
+  }
+
   static Future<void> navigateReplacement(BuildContext context, String routeName, {Object? arguments}) {
     return Navigator.pushReplacement(
       context,
