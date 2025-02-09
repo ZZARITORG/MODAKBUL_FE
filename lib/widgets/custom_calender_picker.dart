@@ -67,6 +67,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
   }
 
   Future<void> _initializeFocusedDate() async {
+    MeetingProvider meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     _today = await DateTimeUtils.getKoreaTime();
     DateTime todayEnd = DateTime(_today!.year, _today!.month, _today!.day, 23, 0);
     final lastHourStart = todayEnd.subtract(const Duration(hours: 1));
@@ -76,8 +77,8 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
     }
 
     _limitDate = _today!.add(const Duration(days: 30));
-    _focusedDate = _today;
-    _selectedDate = _today;
+    _focusedDate = meetingProvider.selectDate ?? _today;
+    _selectedDate = meetingProvider.selectDate ?? _today;
     setState(() {});
   }
 
@@ -243,6 +244,8 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
               if (_isDateSelectable(_selectedDate!)) {
                 //widget.onDateSelected(_selectedDate!);
                 meetingProvider.selectDate = _selectedDate;
+                meetingProvider.selectHour = null;
+                meetingProvider.selectMinute = null;
                 Navigator.pop(context);
               }
             },

@@ -259,49 +259,53 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                   text: '게시하기',
                   onPressed: isActivated && !isButtonDisabled
                       ? () async {
-                          setState(() {
-                            isButtonDisabled = true;
-                          });
-                          DateTime now = await DateTimeUtils.getKoreaTime();
-                          DateTime selectDateTime = combineTimeWithDate(
-                              meetingProvider.selectDate!,
-                              meetingProvider.selectHour!,
-                              meetingProvider.selectMinute!);
-                          if(selectDateTime.isAfter(now)) {
-                            if (meetingProvider.isGroup!) {
-                              await meetingService.createModakbulByGroupId(
-                                  ModakbulByGroupId(
-                                      title: _titleController.text,
-                                      content: _contentController.text,
-                                      location: meetingProvider.selectPlace!,
-                                      address: meetingProvider.selectAddress!,
-                                      detailAddress:
-                                      meetingProvider.selectDetailAddress!,
-                                      date: selectDateTime,
-                                      lat: meetingProvider.selectLat!,
-                                      lng: meetingProvider.selectLng!,
-                                      groupId: meetingProvider.selectGroupId!));
-                            } else {
-                              await meetingService.createModakbulByUserId(
-                                  ModakbulByUserId(
-                                      title: _titleController.text,
-                                      content: _contentController.text,
-                                      location: meetingProvider.selectPlace!,
-                                      address: meetingProvider.selectAddress!,
-                                      detailAddress:
-                                      meetingProvider.selectDetailAddress!,
-                                      date: selectDateTime,
-                                      lat: meetingProvider.selectLat!,
-                                      lng: meetingProvider.selectLng!,
-                                      friendIds: meetingProvider.selectFriends!));
-                            }
-                            Navigator.pop(context);
-                            meetingProvider.reset();
+                          try {
                             setState(() {
-                              isButtonDisabled = false;
+                              isButtonDisabled = true;
                             });
-                          } else {
-                            CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.', false);
+                            DateTime now = await DateTimeUtils.getKoreaTime();
+                            DateTime selectDateTime = combineTimeWithDate(
+                                meetingProvider.selectDate!,
+                                meetingProvider.selectHour!,
+                                meetingProvider.selectMinute!);
+                            if(selectDateTime.isAfter(now)) {
+                              if (meetingProvider.isGroup!) {
+                                await meetingService.createModakbulByGroupId(
+                                    ModakbulByGroupId(
+                                        title: _titleController.text,
+                                        content: _contentController.text,
+                                        location: meetingProvider.selectPlace!,
+                                        address: meetingProvider.selectAddress!,
+                                        detailAddress:
+                                        meetingProvider.selectDetailAddress!,
+                                        date: selectDateTime,
+                                        lat: meetingProvider.selectLat!,
+                                        lng: meetingProvider.selectLng!,
+                                        groupId: meetingProvider.selectGroupId!));
+                              } else {
+                                await meetingService.createModakbulByUserId(
+                                    ModakbulByUserId(
+                                        title: _titleController.text,
+                                        content: _contentController.text,
+                                        location: meetingProvider.selectPlace!,
+                                        address: meetingProvider.selectAddress!,
+                                        detailAddress:
+                                        meetingProvider.selectDetailAddress!,
+                                        date: selectDateTime,
+                                        lat: meetingProvider.selectLat!,
+                                        lng: meetingProvider.selectLng!,
+                                        friendIds: meetingProvider.selectFriends!));
+                              }
+                              Navigator.pop(context);
+                              meetingProvider.reset();
+                              setState(() {
+                                isButtonDisabled = false;
+                              });
+                            } else {
+                              CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.', false);
+                            }
+                          } catch (e) {
+                            CustomToast.showToast(context, '모닥불 생성을 실패했습니다.', true);
                           }
                         }
                       : null,

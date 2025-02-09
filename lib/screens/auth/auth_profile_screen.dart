@@ -23,6 +23,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/image_picker_utils.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -41,59 +42,69 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
   AwsService awsService = AwsService();
   AuthService authService = AuthService();
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  bool _isButtonEnabled = true;
 
   _handleButtonPress() async {
-    if (authProvider.isDefaultProfile!) {
-      authProvider.profileUrl = '${ApiPath.s3Url}/default';
-    } else {
-      authProvider.profileUrl =
-          await awsService.uploadProfileImage(authProvider.profileImage!);
-    }
-    // 개발자 권한 받으면 변경 예정
-    String? fcmToken;
-    if (Platform.isIOS) {
-      // await Future.delayed(Duration(seconds: 2));
-      fcmToken = await FirebaseMessaging.instance.getAPNSToken();
-      print('APNS Token: $fcmToken');
-    } else if (Platform.isAndroid) {
-      fcmToken = await FirebaseMessaging.instance.getToken();
-    }
+    try {
+      _isButtonEnabled = false;
+      if (authProvider.isDefaultProfile!) {
+        authProvider.profileUrl = '${ApiPath.s3Url}/default';
+      } else {
+        authProvider.profileUrl =
+        await awsService.uploadProfileImage(authProvider.profileImage!);
+      }
+      // 개발자 권한 받으면 변경 예정
+      String? fcmToken;
+      if (Platform.isIOS) {
+        // await Future.delayed(Duration(seconds: 2));
+        fcmToken = await FirebaseMessaging.instance.getAPNSToken();
+        print('APNS Token: $fcmToken');
+      } else if (Platform.isAndroid) {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+      }
+      Tokens tokens = await authService.signUp(User(
+          userId: authProvider.userId!,
+          name: authProvider.userName!,
+          phoneNo: authProvider.phoneNumber!,
+          profileUrl: authProvider.profileUrl!,
+          fcmToken: [fcmToken!],
+          isFriendAlarm: true,
+          isContactAgree: true));
 
-    Tokens tokens = await authService.signUp(User(
-        userId: authProvider.userId!,
-        name: authProvider.userName!,
-        phoneNo: authProvider.phoneNumber!,
-        profileUrl: authProvider.profileUrl!,
-        fcmToken: [fcmToken!],
-        isFriendAlarm: true,
-        isContactAgree: true));
+      if (tokens.accessToken.isNotEmpty && tokens.accessToken.isNotEmpty) {
+        await Future.wait([
+          secureStorage.write(
+              key: AppConstants.accessToken, value: tokens.accessToken),
+          secureStorage.write(
+              key: AppConstants.refreshToken, value: tokens.refreshToken),
+          secureStorage.write(
+              key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
+        ]);
 
-    if (tokens.accessToken.isNotEmpty && tokens.accessToken.isNotEmpty) {
-      await Future.wait([
-        secureStorage.write(
-            key: AppConstants.accessToken, value: tokens.accessToken),
-        secureStorage.write(
-            key: AppConstants.refreshToken, value: tokens.refreshToken),
-        secureStorage.write(
-            key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
-      ]);
+        await Future.wait([
+          FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic),
+          FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic),
+          prefs.setStringList('delSugList', []),
+          prefs.setString(AppConstants.userName, authProvider.userName!),
+          prefs.setString(AppConstants.userId, authProvider.userId!),
+          prefs.setString(AppConstants.profileUrl, authProvider.profileUrl!),
+          prefs.setBool(AppConstants.isFriendAlarm, true),
+          prefs.setBool(AppConstants.isContactAgree, true),
+          prefs.setBool(AppConstants.isAllAlertToggled, true),
+          prefs.setBool(AppConstants.isModakbulAlertToggled, true),
+          prefs.setBool(AppConstants.isAdAlertToggled, true),
+        ]);
 
-      await Future.wait([
-        FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic),
-        FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic),
-        prefs.setStringList('delSugList', []),
-        prefs.setString(AppConstants.userName, authProvider.userName!),
-        prefs.setString(AppConstants.userId, authProvider.userId!),
-        prefs.setString(AppConstants.profileUrl, authProvider.profileUrl!),
-        prefs.setBool(AppConstants.isFriendAlarm, true),
-        prefs.setBool(AppConstants.isContactAgree, true),
-        prefs.setBool(AppConstants.isAllAlertToggled, true),
-        prefs.setBool(AppConstants.isModakbulAlertToggled, true),
-        prefs.setBool(AppConstants.isAdAlertToggled, true),
-      ]);
-
-      if (!context.mounted) return;
-      Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
+        if (!context.mounted) return;
+        Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
+      }
+    } catch (e) {
+      CustomToast.showToast(context, '회원가입에 실패하였습니다', true);
+    } finally {
+      // 비동기 작업이 끝난 후 버튼을 활성화
+      setState(() {
+        _isButtonEnabled = true;
+      });
     }
   }
 
@@ -212,7 +223,7 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
                 width: double.infinity,
                 child: CustomButton(
                   text: '회원가입 완료',
-                  onPressed: authProvider.profileImage != null
+                  onPressed: authProvider.profileImage != null && _isButtonEnabled
                       ? _handleButtonPress
                       : null,
                   buttonColor: ColorSchemes.orange200,
