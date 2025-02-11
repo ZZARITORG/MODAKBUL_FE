@@ -6,14 +6,14 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 
 class CustomToast {
-  static void showToast(BuildContext context, String message, bool hasBottomAppBar) {
+  static void showToast(BuildContext context, String message, bool hasBottomAppBar, {double? customBottom}) {
     final overlay = Overlay.of(context);
     late OverlayEntry overlayEntry;
     bool isVisible = true;
 
     overlayEntry = OverlayEntry(
       builder: (context) => Positioned.fill(
-        bottom: hasBottomAppBar ? 140.h : 84.h,
+        bottom: customBottom ?? (hasBottomAppBar ? 140.h : 84.h),
         child: SafeArea(
           child: Align(
             alignment: Alignment.bottomCenter,

@@ -12,7 +12,9 @@ import 'package:modakbul/models/user.dart';
 
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
+import 'package:modakbul/providers/auth_provider.dart';
 import 'package:modakbul/services/user_service.dart';
+import '../main.dart';
 import 'firebase_auth_service.dart';
 
 class AuthService {
@@ -48,7 +50,17 @@ class AuthService {
         extra: {'skipToken': true},
       ),
     );
-    return Tokens.fromJson(response.data['data']);
+    final tokens = Tokens.fromJson(response.data['data']);
+
+    final profile = await _userService.getMyProfile();
+
+    const storage = FlutterSecureStorage();
+    await Future.wait([
+      storage.write(key: AppConstants.phoneNumber, value: profile.phoneNumber),
+      prefs.setString(AppConstants.phoneNumber, profile.phoneNumber!)
+    ]);
+
+    return tokens;
   }
 
   Future<void> logout(Logout logout) async {
@@ -89,7 +101,10 @@ class AuthService {
       );
 
       const storage = FlutterSecureStorage();
-      await storage.write(key: AppConstants.phoneNumber, value: newPhoneNumber);
+      await Future.wait([
+        storage.write(key: AppConstants.phoneNumber, value: newPhoneNumber),
+        prefs.setString(AppConstants.phoneNumber, newPhoneNumber)
+      ]);
     } catch (e) {
       throw Exception('Phone number change failed: ${e.toString()}');
     }

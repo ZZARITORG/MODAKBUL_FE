@@ -52,6 +52,7 @@ class ApiPath{
   static const String user = '/api/v0/user';
   static const String userMe = '/api/v0/user/me';
   static String userCheck(String id) => '/api/v0/user/$id';
+  static String userDelete(String uid) => '/api/v0/user/$uid';
 
 
 

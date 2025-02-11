@@ -71,29 +71,31 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
           isFriendAlarm: true,
           isContactAgree: true));
 
-      if (tokens.accessToken.isNotEmpty && tokens.accessToken.isNotEmpty) {
-        await Future.wait([
-          secureStorage.write(
-              key: AppConstants.accessToken, value: tokens.accessToken),
-          secureStorage.write(
-              key: AppConstants.refreshToken, value: tokens.refreshToken),
-          secureStorage.write(
-              key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
-        ]);
+    if (tokens.accessToken.isNotEmpty && tokens.accessToken.isNotEmpty) {
+      print('회원가입 시 저장되는 전화번호: ${authProvider.phoneNumber}');
+      await Future.wait([
+        secureStorage.write(
+            key: AppConstants.accessToken, value: tokens.accessToken),
+        secureStorage.write(
+            key: AppConstants.refreshToken, value: tokens.refreshToken),
+        secureStorage.write(
+            key: AppConstants.phoneNumber, value: authProvider.phoneNumber!),
+      ]);
 
-        await Future.wait([
-          FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic),
-          FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic),
-          prefs.setStringList('delSugList', []),
-          prefs.setString(AppConstants.userName, authProvider.userName!),
-          prefs.setString(AppConstants.userId, authProvider.userId!),
-          prefs.setString(AppConstants.profileUrl, authProvider.profileUrl!),
-          prefs.setBool(AppConstants.isFriendAlarm, true),
-          prefs.setBool(AppConstants.isContactAgree, true),
-          prefs.setBool(AppConstants.isAllAlertToggled, true),
-          prefs.setBool(AppConstants.isModakbulAlertToggled, true),
-          prefs.setBool(AppConstants.isAdAlertToggled, true),
-        ]);
+      await Future.wait([
+        FirebaseMessaging.instance.subscribeToTopic(AppConstants.modakbulAlertTopic),
+        FirebaseMessaging.instance.subscribeToTopic(AppConstants.adAlertTopic),
+        prefs.setStringList('delSugList', []),
+        prefs.setString(AppConstants.userName, authProvider.userName!),
+        prefs.setString(AppConstants.userId, authProvider.userId!),
+        prefs.setString(AppConstants.profileUrl, authProvider.profileUrl!),
+        prefs.setString(AppConstants.phoneNumber, authProvider.phoneNumber!),
+        prefs.setBool(AppConstants.isFriendAlarm, true),
+        prefs.setBool(AppConstants.isContactAgree, true),
+        prefs.setBool(AppConstants.isAllAlertToggled, true),
+        prefs.setBool(AppConstants.isModakbulAlertToggled, true),
+        prefs.setBool(AppConstants.isAdAlertToggled, true),
+      ]);
 
         if (!context.mounted) return;
         Routes.navigateAndRemoveUntil(context, Routes.mainScreen);

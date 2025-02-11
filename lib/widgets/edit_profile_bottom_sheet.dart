@@ -188,7 +188,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                                   _textEditingController.text);
                             }
                             Navigator.pop(context, true);
-                            CustomToast.showToast(context, '프로필이 변경되었습니다.', false);
+                            CustomToast.showToast(context, '프로필이 변경되었습니다.', false, customBottom: 56.h);
                           } on DioException catch (e) {
                             String errorMessage = '프로필 수정에 실패했습니다';
                             if (e.response?.statusCode == 404) {

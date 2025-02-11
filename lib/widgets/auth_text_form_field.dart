@@ -161,7 +161,7 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
                         .bigHeadLine1
                         .copyWith(color: ColorSchemes.gray200),
                 isDense: true,
-                contentPadding: EdgeInsets.only(left: 4.w),
+                contentPadding: EdgeInsets.only(left: 4.w, bottom: 6.h),
                 border: InputBorder.none,
                 errorText: null,
                 errorStyle:

@@ -52,6 +52,9 @@ class _SplashScreenState extends State<SplashScreen> {
         logger.d('자동 로그인 o');
         try {
           await healthCheckService.healthCheck();
+
+          await prefs.setString(AppConstants.phoneNumber, phoneNumber);
+
           if(!context.mounted) return;
           Routes.navigateSplashReplacement(context, Routes.mainScreen);
         } catch (e) {
