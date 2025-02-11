@@ -23,6 +23,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/image_picker_utils.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -41,32 +42,34 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
   AwsService awsService = AwsService();
   AuthService authService = AuthService();
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  bool _isButtonEnabled = true;
 
   _handleButtonPress() async {
-    if (authProvider.isDefaultProfile!) {
-      authProvider.profileUrl = '${ApiPath.s3Url}/default';
-    } else {
-      authProvider.profileUrl =
-          await awsService.uploadProfileImage(authProvider.profileImage!);
-    }
-    // 개발자 권한 받으면 변경 예정
-    String? fcmToken;
-    if (Platform.isIOS) {
-      // await Future.delayed(Duration(seconds: 2));
-      fcmToken = await FirebaseMessaging.instance.getAPNSToken();
-      print('APNS Token: $fcmToken');
-    } else if (Platform.isAndroid) {
-      fcmToken = await FirebaseMessaging.instance.getToken();
-    }
-
-    Tokens tokens = await authService.signUp(User(
-        userId: authProvider.userId!,
-        name: authProvider.userName!,
-        phoneNo: authProvider.phoneNumber!,
-        profileUrl: authProvider.profileUrl!,
-        fcmToken: [fcmToken!],
-        isFriendAlarm: true,
-        isContactAgree: true));
+    try {
+      _isButtonEnabled = false;
+      if (authProvider.isDefaultProfile!) {
+        authProvider.profileUrl = '${ApiPath.s3Url}/default';
+      } else {
+        authProvider.profileUrl =
+        await awsService.uploadProfileImage(authProvider.profileImage!);
+      }
+      // 개발자 권한 받으면 변경 예정
+      String? fcmToken;
+      if (Platform.isIOS) {
+        // await Future.delayed(Duration(seconds: 2));
+        fcmToken = await FirebaseMessaging.instance.getAPNSToken();
+        print('APNS Token: $fcmToken');
+      } else if (Platform.isAndroid) {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+      }
+      Tokens tokens = await authService.signUp(User(
+          userId: authProvider.userId!,
+          name: authProvider.userName!,
+          phoneNo: authProvider.phoneNumber!,
+          profileUrl: authProvider.profileUrl!,
+          fcmToken: [fcmToken!],
+          isFriendAlarm: true,
+          isContactAgree: true));
 
     if (tokens.accessToken.isNotEmpty && tokens.accessToken.isNotEmpty) {
       print('회원가입 시 저장되는 전화번호: ${authProvider.phoneNumber}');
@@ -94,8 +97,16 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
         prefs.setBool(AppConstants.isAdAlertToggled, true),
       ]);
 
-      if (!context.mounted) return;
-      Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
+        if (!context.mounted) return;
+        Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
+      }
+    } catch (e) {
+      CustomToast.showToast(context, '회원가입에 실패하였습니다', true);
+    } finally {
+      // 비동기 작업이 끝난 후 버튼을 활성화
+      setState(() {
+        _isButtonEnabled = true;
+      });
     }
   }
 
@@ -214,7 +225,7 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
                 width: double.infinity,
                 child: CustomButton(
                   text: '회원가입 완료',
-                  onPressed: authProvider.profileImage != null
+                  onPressed: authProvider.profileImage != null && _isButtonEnabled
                       ? _handleButtonPress
                       : null,
                   buttonColor: ColorSchemes.orange200,

@@ -36,6 +36,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
   Future<void> _initializeTime() async {
     DateTime koreaTime = await DateTimeUtils.getKoreaTime();
     setState(() {
+      MeetingProvider meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
       currentTime = koreaTime;
 
       bool isToday = widget.selectedDate.year == currentTime!.year &&
@@ -60,8 +61,8 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
       }
 
 
-      selectedHour = currentTime!.hour;
-      selectedMinute = currentTime!.minute;
+      selectedHour = meetingProvider.selectHour != null ? int.tryParse(meetingProvider.selectHour!) : currentTime!.hour;
+      selectedMinute = meetingProvider.selectMinute != null ? int.tryParse(meetingProvider.selectMinute!) : currentTime!.minute;
       selectedPeriod = currentTime!.hour >= 12 ? '오후' : '오전';
     });
   }

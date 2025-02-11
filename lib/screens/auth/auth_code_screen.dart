@@ -169,7 +169,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
     } else {
       if (!context.mounted) return;
-      Routes.navigateAndRemoveUntil(context, Routes.authNameScreen);
+      Routes.navigateAndRemoveUntilFirst(context, Routes.authNameScreen);
     }
   }
 
