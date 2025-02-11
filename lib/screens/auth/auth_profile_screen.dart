@@ -69,6 +69,7 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
         isContactAgree: true));
 
     if (tokens.accessToken.isNotEmpty && tokens.accessToken.isNotEmpty) {
+      print('회원가입 시 저장되는 전화번호: ${authProvider.phoneNumber}');
       await Future.wait([
         secureStorage.write(
             key: AppConstants.accessToken, value: tokens.accessToken),
@@ -85,6 +86,7 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
         prefs.setString(AppConstants.userName, authProvider.userName!),
         prefs.setString(AppConstants.userId, authProvider.userId!),
         prefs.setString(AppConstants.profileUrl, authProvider.profileUrl!),
+        prefs.setString(AppConstants.phoneNumber, authProvider.phoneNumber!),
         prefs.setBool(AppConstants.isFriendAlarm, true),
         prefs.setBool(AppConstants.isContactAgree, true),
         prefs.setBool(AppConstants.isAllAlertToggled, true),

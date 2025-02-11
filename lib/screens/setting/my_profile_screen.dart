@@ -96,27 +96,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           Expanded(
                             child: Row(
                               children: [
-                                Stack(children: [
-                                  CircleAvatar(
-                                    radius:
-                                    StyleConstants.circleSizeS,
-                                    child: ClipOval(
-                                        child: CachedNetworkImage(imageUrl: profileUrl)),
-                                  ),
-                                  Positioned(
-                                      right: 0,
-                                      bottom: 0,
-                                      child: CircleAvatar(
-                                        backgroundColor:
-                                        ColorSchemes.orange200,
-                                        radius: StyleConstants
-                                            .circleSizeXXXXXXXS,
-                                        child: SvgPicture.asset(
-                                            IconPath
-                                                .photoCameraOrange100,
-                                            width: 13.83.r),
-                                      )),
-                                ]),
+                                CircleAvatar(
+                                  radius:
+                                  StyleConstants.circleSizeS,
+                                  child: ClipOval(
+                                      child: CachedNetworkImage(imageUrl: profileUrl)),
+                                ),
                                 SizedBox(width: 8.w),
                                 Flexible(
                                   child: Column(

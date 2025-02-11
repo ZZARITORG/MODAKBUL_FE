@@ -24,21 +24,27 @@ class CommonSettingScreen extends StatefulWidget {
 class _CommonSettingScreenState extends State<CommonSettingScreen> {
   bool _isToggled = false;
   UserService userService = UserService();
-  ///late Future<MyProfile> _futureProfile;
+  String phone = '';
+
+  String formatPhoneNumber(String phone) {
+    if (phone.length == 11) {
+      return '${phone.substring(0, 3)}-${phone.substring(3, 7)}-${phone.substring(7)}';
+    }
+    return phone;
+  }
 
   @override
   void initState() {
     super.initState();
-    ///_futureProfile = _loadProfile();
     _isToggled = prefs.getBool(AppConstants.isContactAgree)!;
-  }
 
-  Future<MyProfile> _loadProfile() async {
-    final profile = await userService.getMyProfile();
-    setState(() {
-      _isToggled = profile.isContactAgree ?? false;
-    });
-    return profile;
+    String? savedPhone = prefs.getString(AppConstants.phoneNumber);
+
+    if (savedPhone != null) {
+      phone = formatPhoneNumber(savedPhone);
+    } else {
+      phone = '';
+    }
   }
 
   Future<void> _updateContactAgree(bool value) async {
@@ -100,7 +106,7 @@ class _CommonSettingScreenState extends State<CommonSettingScreen> {
                                             .copyWith(
                                                 color: ColorSchemes.gray500)),
                                     SizedBox(height: 8.h),
-                                    Text('010-0000-0000',
+                                    Text(phone,
                                         style: Theme.of(context)
                                             .textTheme
                                             .body3

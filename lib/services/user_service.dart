@@ -36,8 +36,14 @@ class UserService {
   }
 
   Future<void> deleteUser(String firebaseUid) async {
-    await dio.delete(
-      ApiPath.userCheck(firebaseUid)
-    );
+    try {
+      final response = await dio.delete(
+          ApiPath.userDelete(firebaseUid)
+      );
+      print('삭제 응답: ${response.data}');
+    } catch (e) {
+      print('삭제 에러: $e');
+      throw e;
+    }
   }
 }

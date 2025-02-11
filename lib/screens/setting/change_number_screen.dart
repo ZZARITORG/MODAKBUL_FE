@@ -113,7 +113,7 @@ class _ChangeNumberScreenState extends State<ChangeNumberScreen> {
                         ),
                         AuthTextFormField(
                           textInputType: TextInputType.number,
-                          hintText: '010.0000.0000',
+                          hintText: '010-0000-0000',
                           formatters: [
                             MultiMaskedTextInputFormatter(
                                 masks: ['xxx-xxxx-xxxx', 'xxx-xxx-xxxx'],

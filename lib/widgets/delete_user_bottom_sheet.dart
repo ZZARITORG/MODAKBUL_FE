@@ -27,10 +27,8 @@ class DeleteUserBottomSheet extends StatelessWidget {
       final firebaseUser = FirebaseAuth.instance.currentUser;
       final firebaseUid = firebaseUser!.uid;
 
-      // 1. 서버에서 사용자 삭제
       await userService.deleteUser(firebaseUid);
 
-      // 3. Local Storage(Flutter Secure Storage) 데이터 삭제
       final storage = FlutterSecureStorage();
       await storage.deleteAll();
 

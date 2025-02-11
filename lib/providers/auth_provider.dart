@@ -19,6 +19,7 @@ class AuthProvider with ChangeNotifier {
 
 
   set phoneNumber(String? phoneNumber) {
+    print('AuthProvider: phoneNumber 설정됨 -> $phoneNumber');
     _phoneNumber = phoneNumber;
     notifyListeners();
   }
