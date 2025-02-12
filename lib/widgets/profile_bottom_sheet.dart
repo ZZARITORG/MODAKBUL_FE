@@ -175,7 +175,7 @@ class ProfileBottomSheet extends StatelessWidget {
                             text: '요청 취소',
                             onPressed: () {
                               friendService
-                                  .rejectFriend(Uuid(targetId: selectedUserId))
+                                  .deleteFriend(Uuid(targetId: selectedUserId))
                                   .then((_) {
                                 Navigator.pop(context);
                               });
@@ -197,6 +197,7 @@ class ProfileBottomSheet extends StatelessWidget {
                                     : '삭제')
                                 : '친구 요청',
                         onPressed: () {
+                          print('유저스테이터스${userCheckData.status}');
                           switch (userCheckData.status) {
                             case 'ACCEPTED':
                               friendService
@@ -207,7 +208,7 @@ class ProfileBottomSheet extends StatelessWidget {
                               break;
                             case 'REJECTED':
                               friendService
-                                  .rejectFriend(Uuid(targetId: selectedUserId))
+                                  .requestFriend(Uuid(targetId: selectedUserId))
                                   .then((_) {
                                 Navigator.pop(context);
                               });
@@ -219,25 +220,6 @@ class ProfileBottomSheet extends StatelessWidget {
                                   .then((_) {
                                 Navigator.pop(context);
                               });
-                              break;
-                            case 'PENDING':
-                              if (userCheckData.sourceId == selectedUserId) {
-                                friendService
-                                    .acceptFriend(
-                                        Uuid(targetId: selectedUserId))
-                                    .then((_) {
-                                  Navigator.pop(context);
-                                });
-                              } else if (userCheckData.targetId ==
-                                  selectedUserId) {
-                                friendService
-                                    .rejectFriend(
-                                        Uuid(targetId: selectedUserId))
-                                    .then((_) {
-                                  Navigator.pop(context);
-                                });
-                              }
-                              break;
                           }
                         },
                         buttonColor: ColorSchemes.orange200,

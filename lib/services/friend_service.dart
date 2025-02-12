@@ -61,6 +61,7 @@ class FriendService {
   }
 
   Future<void> deleteFriend(Uuid uuid) async {
+    Response response =
     await dio.delete(
       ApiPath.friend,
       data: uuid.toJson()
@@ -68,6 +69,7 @@ class FriendService {
   }
 
   Future<void> requestFriend(Uuid uuid) async {
+    Response response =
     await dio.post(
         ApiPath.friendReq,
         data: uuid.toJson()

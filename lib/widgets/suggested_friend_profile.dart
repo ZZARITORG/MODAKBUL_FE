@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
+import 'package:modakbul/models/user_check.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -12,7 +13,7 @@ class SuggestedFriendProfile extends StatelessWidget {
   final String mutualFriendCount;
   final VoidCallback acceptOnPressed;
   final VoidCallback rejectOnPressed;
-  final bool isPressed;
+  final UserCheck userCheckData;
 
   const SuggestedFriendProfile({
     Key? key,
@@ -21,7 +22,7 @@ class SuggestedFriendProfile extends StatelessWidget {
     required this.mutualFriendCount,
     required this.acceptOnPressed,
     required this.rejectOnPressed,
-    required this.isPressed,
+    required this.userCheckData,
   }) : super(key: key);
 
   @override
@@ -69,34 +70,43 @@ class SuggestedFriendProfile extends StatelessWidget {
               SizedBox(
                 height: 9.h,
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 40.h,
-                      child: CustomButton(
-                          text: isPressed ? '친구추가' : '취소',
-                          onPressed: acceptOnPressed,
-                          buttonColor: isPressed ? ColorSchemes.orange200 : ColorSchemes.orange100,
-                          textStyle: Theme.of(context).textTheme.body3,
-                          textColor: ColorSchemes.white),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 7.w,
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      height: 40.h,
-                      child: CustomButton(
-                          text: '삭제',
-                          onPressed: rejectOnPressed,
-                          buttonColor: ColorSchemes.gray100,
-                          textStyle: Theme.of(context).textTheme.body3,
-                          textColor: ColorSchemes.gray400),
-                    ),
-                  ),
-                ],
+              ValueListenableBuilder<String>(
+                valueListenable: ValueNotifier<String>(userCheckData.status),
+                builder: (context, status, child) {
+                  String buttonText = status == 'PENDING' ? '취소' : '친구 추가';
+                  Color buttonColor = status == 'PENDING'
+                      ? ColorSchemes.orange100
+                      : ColorSchemes.orange200;
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 40.h,
+                          child: CustomButton(
+                            text: buttonText,
+                            onPressed: acceptOnPressed,
+                            buttonColor: buttonColor,
+                            textStyle: Theme.of(context).textTheme.body3,
+                            textColor: ColorSchemes.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 7.w),
+                      Expanded(
+                        child: SizedBox(
+                          height: 40.h,
+                          child: CustomButton(
+                            text: '삭제',
+                            onPressed: rejectOnPressed,
+                            buttonColor: ColorSchemes.gray100,
+                            textStyle: Theme.of(context).textTheme.body3,
+                            textColor: ColorSchemes.gray400,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
           ),

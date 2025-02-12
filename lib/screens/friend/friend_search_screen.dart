@@ -8,8 +8,10 @@ import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/contacts.dart';
+import 'package:modakbul/models/friend_list.dart';
 import 'package:modakbul/models/friend_req_list.dart';
 import 'package:modakbul/models/friend_suggested.dart';
+import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/models/user_check.dart';
 import 'package:modakbul/models/user_list.dart';
 import 'package:modakbul/models/uuid.dart';
@@ -19,6 +21,7 @@ import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/utils/date_time_utils.dart';
+import 'package:modakbul/utils/json_utils.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
@@ -45,8 +48,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
   List<Map<String, String>> selectedFriends = [];
   List<FriendSuggested> friendSuggested = [];
   List<FriendReqList> friendRequests = [];
-  late List<bool> isPressedList = [];
-  late Future<List<UserList>> getUser;
+  List<FriendList> friendList = [];
   late Future<UserCheck> getUserCheck;
   late Future<List<FriendSuggested>> getSug;
   late Future<List<FriendReqList>> getReq;
@@ -56,28 +58,27 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
   bool isLoading = false;
   bool isSearching = false;
   bool showLottie = false;
+  bool isEnd = false;
   int page = 1;
 
   Future<void> getContacts() async {
     List<String> contactNumbers = [];
     final prefs = await SharedPreferences.getInstance();
     List<String> delSugList = prefs.getStringList('delSugList') ?? [];
-
     if (await FlutterContacts.requestPermission()) {
-      List<Contact> contacts = await FlutterContacts.getContacts(
-          withProperties: true);
+      List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
+      List<FriendList> currentFriendList = await friendService.getFriendList();
+      List<String> currentFriendIds = currentFriendList.map((friend) => friend.id).toList();
       setState(() {
         contactNumbers = contacts
             .where((contact) => contact.phones.isNotEmpty)
             .map((contact) => contact.phones[0].number)
             .toList();
-
         getSug = friendService.getFriendSuggested(Contacts(contacts: contactNumbers))
             .then((suggestions) {
-          // delSugList에 있는 ID와 friendRequests의 ID 제외
-          List<String> requestedUserIds = friendRequests.map((request) => request.id).toList();
           return suggestions.where((friend) =>
-          !delSugList.contains(friend.id) && !requestedUserIds.contains(friend.id)
+          !delSugList.contains(friend.id) &&
+              !currentFriendIds.contains(friend.id)
           ).toList();
         });
       });
@@ -107,9 +108,15 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
 
   Future<void> fetchAllUsers(String query) async {
     try {
-      final users = await userService.getUserList(query, page: 1);
+      final response = await userService.getUserList(query, page: 1);
+      List<UserList> users = JsonUtils().parseUserList(response['users'] as List);
+      if (query.isNotEmpty) {
+        MyProfile myProfile = await userService.getMyProfile();
+        users = users.where((user) => user.userId != myProfile.userId).toList();
+      }
       setState(() {
         userList = users;
+        isEnd = response['isEnd'];
         page ++;
       });
     } catch (error) {
@@ -129,25 +136,28 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
   }
 
   void onScroll() async {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      if (!isLoading) {
-        setState(() {
-          isLoading = true;
-          showLottie = true;
-        });
-        _lottieController.repeat();
-        final newUsers = await userService.getUserList(
-            _searchController.text.trim(), page: page);
-        print('page: $page, users: ${newUsers.toString()}');
-        await Future.delayed(const Duration(seconds: 2));
-        setState(() {
-          userList.addAll(newUsers);
-          page++;
-          isLoading = false;
-          showLottie = false;
-        });
-        _lottieController.stop();
+    if (!isEnd) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (!isLoading) {
+          setState(() {
+            isLoading = true;
+            showLottie = true;
+          });
+          _lottieController.repeat();
+          final response = await userService.getUserList(
+              _searchController.text.trim(), page: page);
+          List<UserList> newUsers = JsonUtils().parseUserList(response['users'] as List);
+          isEnd = response['isEnd'];
+          await Future.delayed(const Duration(seconds: 2));
+          setState(() {
+            userList.addAll(newUsers);
+            page++;
+            isLoading = false;
+            showLottie = false;
+          });
+          _lottieController.stop();
+        }
       }
     }
   }
@@ -159,7 +169,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
       if (query.isNotEmpty) {
         setState(() {
           isSearching = true;
-          getUser = userService.getUserList(query, page: 1);
           page = 1;
         });
         fetchAllUsers(query);
@@ -169,12 +178,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
         });
       }
     });
-  }
-
-  void initializeIsPressedList(int length) {
-    if (isPressedList.isEmpty) {
-      isPressedList = List<bool>.filled(length, true);
-    }
   }
 
   static String timeAgo(DateTime dateTime, DateTime currentTime) {
@@ -234,6 +237,22 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
             horizontal: StyleConstants.defaultPadding),
         child: Column(
           children: [
+            SizedBox(height: 14.h),
+            Padding(
+              padding: EdgeInsets.only(left: 4.w),
+              child: Row(
+                children: [
+                  Text(
+                    '검색결과',
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bigHeadLine4
+                        .copyWith(color: ColorSchemes.gray500),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: 144.h),
             Text(
               '검색 결과가 없습니다',
@@ -260,7 +279,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
       padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
       child: Column(
         children: [
-          SizedBox(height: 4.h),
+          SizedBox(height: 14.h),
           Padding(
             padding: EdgeInsets.only(left: 4.w),
             child: Row(
@@ -359,6 +378,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
     );
   }
 
+
   Widget _buildFriendRequests() {
     return SingleChildScrollView(
       child: Padding(
@@ -367,7 +387,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 4.h),
+            SizedBox(height: 14.h),
             Row(
               children: [
                 SizedBox(width: 4.w),
@@ -461,8 +481,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                         return Center(child: Text(
                                             'Error: ${snapshot.error}'));
                                       } else {
-                                        UserCheck userCheckData = snapshot
-                                            .data!;
+                                        UserCheck userCheckData = snapshot.data!;
                                         if (userCheckData.status == 'BLOCKED') {
                                           return SizedBox.shrink();
                                         }
@@ -542,8 +561,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                       Center(
                         child: Text(
                           '추천 친구가 없어요',
-                          style: Theme
-                              .of(context)
+                          style: Theme.of(context)
                               .textTheme
                               .bigHeadLine3
                               .copyWith(color: ColorSchemes.orange100),
@@ -553,8 +571,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                       Center(
                         child: Text(
                           '친구를 추가하고 모닥불을 피워보세요.',
-                          style: Theme
-                              .of(context)
+                          style: Theme.of(context)
                               .textTheme
                               .body2
                               .copyWith(color: ColorSchemes.gray300),
@@ -565,78 +582,67 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                   );
                 } else {
                   List<FriendSuggested> friendSuggested = snapshot.data!;
-                  List<String> requestedUserIds = friendRequests.map((request) => request.id).toList();
-                  initializeIsPressedList(friendSuggested.length);
                   return Column(
                     children: List.generate(
                       friendSuggested.length,
                           (index) {
                         final friend = friendSuggested[index];
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            bottom: index == friendSuggested.length - 1
-                                ? 0
-                                : 24.h,
-                          ),
-                          child: GestureDetector(
-                            onTap: () async {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return FutureBuilder<UserCheck>(
-                                    future: userService.getUserCheck(
-                                        friend.id),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                            child: CircularProgressIndicator());
-                                      } else if (snapshot.hasError) {
-                                        return Center(child: Text(
-                                            'Error: ${snapshot.error}'));
-                                      } else {
-                                        UserCheck userCheckData = snapshot
-                                            .data!;
-                                        if (userCheckData.status == 'BLOCKED') {
-                                          return SizedBox.shrink();
-                                        }
+                        return FutureBuilder<UserCheck>(
+                          future: userService.getUserCheck(friend.id),
+                          builder: (context, userSnapshot) {
+                            if (userSnapshot.connectionState == ConnectionState.waiting) {
+                              return SizedBox.shrink();
+                            } else if (userSnapshot.hasError) {
+                              return Center(child: Text('Error: ${userSnapshot.error}'));
+                            } else {
+                              UserCheck userCheckData = userSnapshot.data!;
+                              if (userCheckData.status == 'BLOCKED') {
+                                return SizedBox.shrink();
+                              }
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: index == friendSuggested.length - 1 ? 0 : 24.h),
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () {
+                                    // 모달 바텀 시트 호출
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
                                         return ProfileBottomSheet(
-                                            userCheckData: userCheckData,
-                                            selectedUserId: friend.id,
-                                            friendService: friendService
+                                          userCheckData: userCheckData,
+                                          selectedUserId: friend.id,
+                                          friendService: friendService,
                                         );
+                                      },
+                                    );
+                                  },
+                                  child: SuggestedFriendProfile(
+                                    profileImage: friend.profileUrl,
+                                    userName: friend.name,
+                                    mutualFriendCount: friend.mutualFriendCount.toString(),
+                                    userCheckData: userCheckData,
+                                    acceptOnPressed: () async {
+                                      if (userCheckData.status == 'PENDING') {
+                                        await friendService.deleteFriend(Uuid(targetId: friend.id));
+                                      } else {
+                                        await friendService.requestFriend(Uuid(targetId: friend.id));
                                       }
+                                      setState(() {});
                                     },
-                                  );
-                                },
+                                    rejectOnPressed: () async {
+                                      final prefs = await SharedPreferences.getInstance();
+                                      List<String> delSugList = prefs.getStringList('delSugList') ?? [];
+                                      delSugList.add(friend.id);
+                                      await prefs.setStringList('delSugList', delSugList);
+                                      setState(() {
+                                        friendSuggested.removeWhere((request) => request.id == friend.id);
+                                      });
+                                    },
+                                  ),
+                                ),
                               );
-                            },
-                            child: SuggestedFriendProfile(
-                              profileImage: friend.profileUrl,
-                              userName: friend.name,
-                              isPressed: isPressedList[index],
-                              mutualFriendCount: friend.mutualFriendCount
-                                  .toString(),
-                              acceptOnPressed: () async {
-                                if (isPressedList[index]) {
-                                  await friendService.requestFriend(Uuid(targetId: friend.id));}
-                                else {
-                                  await friendService.deleteFriend(Uuid(targetId: friend.id));}
-                                setState(() {
-                                  isPressedList[index] = !isPressedList[index];
-                                });
-                              },
-                              rejectOnPressed: () async {
-                                final prefs = await SharedPreferences.getInstance();
-                                List<String> delSugList = prefs.getStringList('delSugList') ?? [];
-                                delSugList.add(friend.id);
-                                await prefs.setStringList('delSugList', delSugList);
-                                setState(() {
-                                  friendSuggested.removeWhere((request) => request.id == friend.id);
-                                });
-                              },
-                            ),
-                          ),
+                            }
+                          },
                         );
                       },
                     ),
