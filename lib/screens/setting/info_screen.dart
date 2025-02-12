@@ -37,7 +37,7 @@ class InfoScreen extends StatelessWidget {
                 onPressed: () {}),
             SizedBox(height: 28.h),
             SettingMenu.version(
-                menu: '개인정보 처리 방침',
+                menu: '버전 정보',
                 icon: IconPath.mail,
                 iconWidth: 18.r),
           ],

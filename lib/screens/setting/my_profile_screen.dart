@@ -136,6 +136,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
                           SizedBox(width: 32.w),
                           InkWell(
+                            overlayColor: WidgetStateProperty.all(Colors.transparent),
                             onTap: () async {
                               final result = await Routes.navigateAndReturn(context, Routes.editMyProfileScreen);
                               if (result == true) {

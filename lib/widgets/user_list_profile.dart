@@ -17,7 +17,7 @@ class UserListProfile extends StatelessWidget {
   final String userId;
   final VoidCallback? onIconPressed;
   final String id;
-
+  final VoidCallback? onUnblockSuccess;
 
   const UserListProfile({
     Key? key,
@@ -26,17 +26,24 @@ class UserListProfile extends StatelessWidget {
     required this.userName,
     required this.userId,
     this.onIconPressed,
-    this.id = ''
+    this.id = '',
+    this.onUnblockSuccess
   }) : super(key: key);
 
   factory UserListProfile.icon(
-      {required String userName, required String userId, String? profileImage, String id = ''}) =>
+      {
+        required String userName,
+        required String userId,
+        String? profileImage, String id = '',
+        VoidCallback? onUnblockSuccess,
+      }) =>
       UserListProfile(
         isButton: false,
         userName: userName,
         userId: userId,
         profileImage:  profileImage,
-        id: id
+        id: id,
+        onUnblockSuccess: onUnblockSuccess
       );
 
   @override
@@ -116,6 +123,7 @@ class UserListProfile extends StatelessWidget {
 
                     try {
                       await friendService.unblockedUser(UnblockedUser(targetId: id));
+                      onUnblockSuccess?.call();
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('차단 해제 실패: $e')),

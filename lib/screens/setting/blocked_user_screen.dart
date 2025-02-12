@@ -9,113 +9,15 @@ import 'package:modakbul/widgets/blocked_user_screen_skeleton.dart';
 import 'package:modakbul/widgets/user_list_profile.dart';
 import 'package:modakbul/models/blocked_user.dart';
 
-class BlockedUserScreen extends StatelessWidget {
+class BlockedUserScreen extends StatefulWidget {
   BlockedUserScreen({super.key});
 
-  FriendService friendService = FriendService();
+  @override
+  State<BlockedUserScreen> createState() => _BlockedUserScreenState();
+}
 
-  final List<Map<String, dynamic>> blockedUsersData = [
-    {
-      'userName': 'Alice Kim',
-      'userId': 'alice_kim',
-      'profileImage': 'https://via.placeholder.com/150?text=Alice'
-    },
-    {
-      'userName': 'Bob Lee',
-      'userId': 'bob_lee',
-      'profileImage': 'https://via.placeholder.com/150?text=Bob'
-    },
-    {
-      'userName': 'Charlie Park',
-      'userId': 'charlie_park',
-      'profileImage': 'https://via.placeholder.com/150?text=Charlie'
-    },
-    {
-      'userName': 'Diana Choi',
-      'userId': 'diana_choi',
-      'profileImage': 'https://via.placeholder.com/150?text=Diana'
-    },
-    {
-      'userName': 'Ethan Song',
-      'userId': 'ethan_song',
-      'profileImage': 'https://via.placeholder.com/150?text=Ethan'
-    },
-    {
-      'userName': 'Fiona Lee',
-      'userId': 'fiona_lee',
-      'profileImage': 'https://via.placeholder.com/150?text=Fiona'
-    },
-    {
-      'userName': 'George Kim',
-      'userId': 'george_kim',
-      'profileImage': 'https://via.placeholder.com/150?text=George'
-    },
-    {
-      'userName': 'Hannah Jung',
-      'userId': 'hannah_jung',
-      'profileImage': 'https://via.placeholder.com/150?text=Hannah'
-    },
-    {
-      'userName': 'Ian Kang',
-      'userId': 'ian_kang',
-      'profileImage': 'https://via.placeholder.com/150?text=Ian'
-    },
-    {
-      'userName': 'Julia Park',
-      'userId': 'julia_park',
-      'profileImage': 'https://via.placeholder.com/150?text=Julia'
-    },
-    {
-      'userName': 'Kevin Lee',
-      'userId': 'kevin_lee',
-      'profileImage': 'https://via.placeholder.com/150?text=Kevin'
-    },
-    {
-      'userName': 'Laura Kim',
-      'userId': 'laura_kim',
-      'profileImage': 'https://via.placeholder.com/150?text=Laura'
-    },
-    {
-      'userName': 'Michael Song',
-      'userId': 'michael_song',
-      'profileImage': 'https://via.placeholder.com/150?text=Michael'
-    },
-    {
-      'userName': 'Nina Choi',
-      'userId': 'nina_choi',
-      'profileImage': 'https://via.placeholder.com/150?text=Nina'
-    },
-    {
-      'userName': 'Oliver Park',
-      'userId': 'oliver_park',
-      'profileImage': 'https://via.placeholder.com/150?text=Oliver'
-    },
-    {
-      'userName': 'Paula Kang',
-      'userId': 'paula_kang',
-      'profileImage': 'https://via.placeholder.com/150?text=Paula'
-    },
-    {
-      'userName': 'Quincy Kim',
-      'userId': 'quincy_kim',
-      'profileImage': 'https://via.placeholder.com/150?text=Quincy'
-    },
-    {
-      'userName': 'Rachel Lee',
-      'userId': 'rachel_lee',
-      'profileImage': 'https://via.placeholder.com/150?text=Rachel'
-    },
-    {
-      'userName': 'Steve Choi',
-      'userId': 'steve_choi',
-      'profileImage': 'https://via.placeholder.com/150?text=Steve'
-    },
-    {
-      'userName': 'Tina Jung',
-      'userId': 'tina_jung',
-      'profileImage': 'https://via.placeholder.com/150?text=Tina'
-    },
-  ];
+class _BlockedUserScreenState extends State<BlockedUserScreen> {
+  FriendService friendService = FriendService();
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +97,13 @@ class BlockedUserScreen extends StatelessWidget {
                                       userId: blockedUserList[index].userId,
                                       profileImage:
                                           blockedUserList[index].profileUrl,
-                                      id: blockedUserList[index].id));
+                                      id: blockedUserList[index].id,
+                                    onUnblockSuccess: () {
+                                      setState(() {
+                                        blockedUserList.removeAt(index);
+                                      });
+                                    },
+                                  ));
                             })
                       ],
                     ),

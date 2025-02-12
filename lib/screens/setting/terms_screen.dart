@@ -35,12 +35,12 @@ class TermsScreen extends StatelessWidget {
                   .smallHeadLine3
                   .copyWith(color: ColorSchemes.orange200),
             ),
-            SizedBox(height: 28.h),
+            /*SizedBox(height: 28.h),
             SettingMenu.arrow(
                 menu: '이용약관',
                 icon: IconPath.description,
                 iconWidth: 16.r,
-                onPressed: () {}),
+                onPressed: () {}),*/
             SizedBox(height: 28.h),
             SettingMenu.arrow(
                 menu: '개인정보 처리 방침',
