@@ -50,6 +50,9 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     super.initState();
     getData = groupService.getGroupList();
     _searchController.addListener(_onSearchChanged);
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
+    selectedGroupName = meetingProvider.selectGroupName;
+    selectedGroupId = meetingProvider.selectGroupId;
   }
 
   @override
@@ -158,6 +161,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
               SizedBox(height: 10.h),
               Expanded(
                 child: SingleChildScrollView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   controller: _scrollController,
                   child: Column(
                     children: [

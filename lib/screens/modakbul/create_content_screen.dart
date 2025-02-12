@@ -427,6 +427,11 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                           lng: meetingProvider.selectLng!,
                                           groupId: meetingProvider.selectGroupId!));
                                 } else {
+                                  List<String> selectFriends = meetingProvider.selectFriends!
+                                      .map((friend) =>
+                                  friend['id'] as String)
+                                      .toList();
+                                  meetingProvider.isGroup = false;
                                   await meetingService.createModakbulByUserId(
                                       ModakbulByUserId(
                                           title: _titleController.text,
@@ -438,7 +443,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                           date: selectDateTime,
                                           lat: meetingProvider.selectLat!,
                                           lng: meetingProvider.selectLng!,
-                                          friendIds: meetingProvider.selectFriends!));
+                                          friendIds: selectFriends));
                                 }
                                 Navigator.pop(context);
                                 meetingProvider.reset();

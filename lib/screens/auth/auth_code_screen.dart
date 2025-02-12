@@ -153,6 +153,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
         prefs.setString(AppConstants.profileUrl, myProfile.profileUrl!),
         prefs.setBool(AppConstants.isFriendAlarm, true),
         prefs.setBool(AppConstants.isContactAgree, true),
+        prefs.setString(AppConstants.phoneNumber, myProfile.phoneNumber!)
       ]);
 
       if (prefs.getBool(AppConstants.isAllAlertToggled) == null ||
