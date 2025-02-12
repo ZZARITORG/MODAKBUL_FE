@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
@@ -8,6 +9,7 @@ import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/modakbul_by_group_id.dart';
 import 'package:modakbul/models/modakbul_by_user_id.dart';
 import 'package:modakbul/providers/meeting_provider.dart';
+import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/meeting_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -15,6 +17,8 @@ import 'package:modakbul/utils/date_time_utils.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/content_info.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:modakbul/widgets/custom_calender_picker.dart';
+import 'package:modakbul/widgets/custom_time_picker.dart';
 import 'package:modakbul/widgets/custom_toast.dart';
 import 'package:provider/provider.dart';
 
@@ -71,7 +75,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: true);
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
@@ -202,46 +206,185 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                       ),
                     ),
                   ),
-                  ContentInfo(
-                    info: meetingProvider.selectGroupName ?? ' ',
-                    onPressed: () {},
-                    icon: isActivated
-                        ? IconPath.groupOrange200
-                        : IconPath.groupOrange100,
-                    isActivated: isActivated,
-                    iconWidth: 18.r,
+                  InkWell(
+                    overlayColor: WidgetStateProperty.all(Colors.transparent),
+                    onTap: () => Routes.navigateTo(context, Routes.groupSelectScreen),
+                    child: ContentInfo(
+                      info: meetingProvider.selectGroupName ?? ' ',
+                      onPressed: () {},
+                      icon: IconPath.groupOrange200,
+                      isActivated: true,
+                      iconWidth: 18.r,
+                    ),
                   ),
                   SizedBox(height: 18.h),
-                  ContentInfo(
-                    info: meetingProvider.selectPlace ?? ' ',
-                    onPressed: () {},
-                    icon: isActivated
-                        ? IconPath.pinDropOrange200
-                        : IconPath.pinDropOrange100,
-                    isActivated: isActivated,
-                    iconWidth: 16.r,
+                  InkWell(
+                    overlayColor: WidgetStateProperty.all(Colors.transparent),
+                    onTap: () => Routes.navigateTo(context, Routes.mapSearchScreen),
+                    child: ContentInfo(
+                      info: meetingProvider.selectPlace ?? ' ',
+                      onPressed: () {},
+                      icon: IconPath.pinDropOrange200,
+                      isActivated: true,
+                      iconWidth: 16.r,
+                    ),
                   ),
                   SizedBox(height: 18.h),
-                  ContentInfo(
-                    info:
-                        DateFormat('M월 d일').format(meetingProvider.selectDate ?? DateTime(1999, 1, 1)),
-                    onPressed: () {},
-                    icon: isActivated
-                        ? IconPath.calendarMonthOrange200
-                        : IconPath.calendarMonthOrange100,
-                    isActivated: isActivated,
-                    iconWidth: 16.r,
+                  InkWell(
+                    overlayColor: WidgetStateProperty.all(Colors.transparent),
+                    onTap: () => showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(StyleConstants.radiusLarge)),
+                        ),
+                        builder: (context) {
+                          return SafeArea(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: StyleConstants.defaultPadding),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        height: 28.r,
+                                        width: 28.r,
+                                        child: IconButton(
+                                            padding: EdgeInsets.zero, // 패딩 제거
+                                            constraints: const BoxConstraints(),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            icon: SvgPicture.asset(
+                                              IconPath.close,
+                                              width: 14.r,
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    '날짜를 선택해주세요',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bigHeadLine3
+                                        .copyWith(color: ColorSchemes.gray500),
+                                  ),
+                                  SizedBox(
+                                    height: 8.h,
+                                  ),
+                                  Text(
+                                    '기간은 최대 1달까지 선택할 수 있습니다!',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .body2
+                                        .copyWith(color: ColorSchemes.gray500),
+                                  ),
+                                  SizedBox(
+                                    height: 24.h,
+                                  ),
+                                  CustomCalendarPicker(),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                    child: ContentInfo(
+                      info:
+                          DateFormat('M월 d일').format(meetingProvider.selectDate ?? DateTime(1999, 1, 1)),
+                      onPressed: () {},
+                      icon: IconPath.calendarMonthOrange200,
+                      isActivated: true,
+                      iconWidth: 16.r,
+                    ),
                   ),
                   SizedBox(height: 18.h),
-                  ContentInfo(
-                    info:
-                        '${meetingProvider.selectHour ?? ' '}시 ${meetingProvider.selectMinute ?? ' '!.padLeft(2, '0')}분',
-                    onPressed: () {},
-                    icon: isActivated
-                        ? IconPath.timeOrange200
-                        : IconPath.timeOrange100,
-                    isActivated: isActivated,
-                    iconWidth: 18.r,
+                  InkWell(
+                    overlayColor: WidgetStateProperty.all(Colors.transparent),
+                    onTap: () {
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(StyleConstants.radiusLarge)),
+                          ),
+                          builder: (context) {
+                            return SafeArea(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: StyleConstants.defaultPadding),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      height: 10.h,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        SizedBox(
+                                          height: 28.r,
+                                          width: 28.r,
+                                          child: IconButton(
+                                              padding: EdgeInsets.zero, // 패딩 제거
+                                              constraints: const BoxConstraints(),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              icon: SvgPicture.asset(
+                                                IconPath.close,
+                                                width: 14.r,
+                                              )),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      '시간을 선택해주세요',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bigHeadLine3
+                                          .copyWith(color: ColorSchemes.gray500),
+                                    ),
+                                    SizedBox(
+                                      height: 8.h,
+                                    ),
+                                    Text(
+                                      '다른 모닥들과 모일 시간을 선택해주세요!',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body2
+                                          .copyWith(color: ColorSchemes.gray500),
+                                    ),
+                                    SizedBox(
+                                      height: 24.h,
+                                    ),
+                                    CustomTimePicker(
+                                        selectedDate: meetingProvider.selectDate!),
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                    child: ContentInfo(
+                      info:
+                          meetingProvider.selectHour != null || meetingProvider.selectMinute != null ? '${meetingProvider.selectHour ?? ' '}시 ${meetingProvider.selectMinute ?? ' '!.padLeft(2, '0')}분' : '시간 선택',
+                      onPressed: () {},
+                      icon: meetingProvider.selectHour != null || meetingProvider.selectMinute != null
+                          ? IconPath.timeOrange200
+                          : IconPath.timeOrange100,
+                      isActivated: meetingProvider.selectHour != null || meetingProvider.selectMinute != null,
+                      iconWidth: 18.r,
+                    ),
                   ),
                   SizedBox(
                     height: 100.h,
@@ -259,53 +402,57 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                   text: '게시하기',
                   onPressed: isActivated && !isButtonDisabled
                       ? () async {
-                          try {
-                            setState(() {
-                              isButtonDisabled = true;
-                            });
-                            DateTime now = await DateTimeUtils.getKoreaTime();
-                            DateTime selectDateTime = combineTimeWithDate(
-                                meetingProvider.selectDate!,
-                                meetingProvider.selectHour!,
-                                meetingProvider.selectMinute!);
-                            if(selectDateTime.isAfter(now)) {
-                              if (meetingProvider.isGroup!) {
-                                await meetingService.createModakbulByGroupId(
-                                    ModakbulByGroupId(
-                                        title: _titleController.text,
-                                        content: _contentController.text,
-                                        location: meetingProvider.selectPlace!,
-                                        address: meetingProvider.selectAddress!,
-                                        detailAddress:
-                                        meetingProvider.selectDetailAddress!,
-                                        date: selectDateTime,
-                                        lat: meetingProvider.selectLat!,
-                                        lng: meetingProvider.selectLng!,
-                                        groupId: meetingProvider.selectGroupId!));
-                              } else {
-                                await meetingService.createModakbulByUserId(
-                                    ModakbulByUserId(
-                                        title: _titleController.text,
-                                        content: _contentController.text,
-                                        location: meetingProvider.selectPlace!,
-                                        address: meetingProvider.selectAddress!,
-                                        detailAddress:
-                                        meetingProvider.selectDetailAddress!,
-                                        date: selectDateTime,
-                                        lat: meetingProvider.selectLat!,
-                                        lng: meetingProvider.selectLng!,
-                                        friendIds: meetingProvider.selectFriends!));
-                              }
-                              Navigator.pop(context);
-                              meetingProvider.reset();
+                          if (meetingProvider.selectHour != null || meetingProvider.selectMinute != null) {
+                            try {
                               setState(() {
-                                isButtonDisabled = false;
+                                isButtonDisabled = true;
                               });
-                            } else {
-                              CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.', false);
+                              DateTime now = await DateTimeUtils.getKoreaTime();
+                              DateTime selectDateTime = combineTimeWithDate(
+                                  meetingProvider.selectDate!,
+                                  meetingProvider.selectHour!,
+                                  meetingProvider.selectMinute!);
+                              if(selectDateTime.isAfter(now)) {
+                                if (meetingProvider.isGroup!) {
+                                  await meetingService.createModakbulByGroupId(
+                                      ModakbulByGroupId(
+                                          title: _titleController.text,
+                                          content: _contentController.text,
+                                          location: meetingProvider.selectPlace!,
+                                          address: meetingProvider.selectAddress!,
+                                          detailAddress:
+                                          meetingProvider.selectDetailAddress!,
+                                          date: selectDateTime,
+                                          lat: meetingProvider.selectLat!,
+                                          lng: meetingProvider.selectLng!,
+                                          groupId: meetingProvider.selectGroupId!));
+                                } else {
+                                  await meetingService.createModakbulByUserId(
+                                      ModakbulByUserId(
+                                          title: _titleController.text,
+                                          content: _contentController.text,
+                                          location: meetingProvider.selectPlace!,
+                                          address: meetingProvider.selectAddress!,
+                                          detailAddress:
+                                          meetingProvider.selectDetailAddress!,
+                                          date: selectDateTime,
+                                          lat: meetingProvider.selectLat!,
+                                          lng: meetingProvider.selectLng!,
+                                          friendIds: meetingProvider.selectFriends!));
+                                }
+                                Navigator.pop(context);
+                                meetingProvider.reset();
+                                setState(() {
+                                  isButtonDisabled = false;
+                                });
+                              } else {
+                                CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.', false);
+                              }
+                            } catch (e) {
+                              CustomToast.showToast(context, '모닥불 생성을 실패했습니다.', false);
                             }
-                          } catch (e) {
-                            CustomToast.showToast(context, '모닥불 생성을 실패했습니다.', true);
+                          } else {
+                            CustomToast.showToast(context, '시간이 선택되지 않았습니다.', false);
                           }
                         }
                       : null,
