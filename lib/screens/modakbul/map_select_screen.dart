@@ -207,8 +207,8 @@ class MapSelectScreen extends StatelessWidget {
                               meetingProvider.selectLng = placeProvider.x;
 
                               ///이부분 기능 개발할때 생각
-                              Navigator.of(context)
-                                  .popUntil((route) => route.isFirst);
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
                             },
                             buttonColor: ColorSchemes.orange200,
                             textStyle:
