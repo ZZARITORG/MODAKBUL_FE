@@ -6,8 +6,10 @@ import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/friend_list.dart';
+import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/services/group_service.dart';
+import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
@@ -18,6 +20,7 @@ import 'package:modakbul/widgets/user_info_check.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/services/group_service.dart';
+
 
 
 class CreateGroupScreen extends StatefulWidget {
@@ -35,6 +38,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   FriendService friendService = FriendService();
+  UserService userService = UserService();
   List<FriendList> friendList = [];
   late Future<List<FriendList>> getData;
   final GroupService _groupService = GroupService();
@@ -48,14 +52,24 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   void initState() {
     super.initState();
     _searchController.addListener(_filterFriends);
-
-    // friendList를 초기화하거나 필터링된 데이터를 설정
     getData = friendService.getFriendList(); // 친구 데이터를 불러오는 Future
-    getData.then((data) {
+    getData.then((data) async {
       setState(() {
         friendList = data; // 전체 친구 리스트 저장
         _filteredFriendsNotifier.value = data; // 초기 필터링된 리스트 설정
       });
+      /*final MyProfile myProfile = await userService.getMyProfile();
+      final Me = {
+        'Id': myProfile.id,
+        'userId': myProfile.userId,
+        'userName': myProfile.userName,
+        'profilePicture': myProfile.profileUrl,
+      };
+      //setState(() {
+        selectedFriends.add(Me);
+      });
+      List<String> friendIds = selectedFriends.map((Me) => Me['id']!).toList();
+      print('내 프로필 포함 friendIds: $friendIds');*/
     });
   }
 
@@ -129,6 +143,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     }
 
     List<String> friendIds = selectedFriends.map((friend) => friend['userId']!).toList();
+    print('친구들 friendIds: $friendIds');
 
     if (friendIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -376,9 +391,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                                               MainAxisSize
                                                                   .min,
                                                               children: [
-                                                                SizedBox(
-                                                                    height:
-                                                                    38.h),
+                                                                SizedBox(height: 38.h),
                                                                 Row(
                                                                   children: [
                                                                     Text(
@@ -392,30 +405,22 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                SizedBox(
-                                                                    height:
-                                                                    24.h),
+                                                                SizedBox(height: 24.h),
                                                                 _buildFilterOption(
                                                                     '최신순',
                                                                     'latest',
                                                                     context),
-                                                                SizedBox(
-                                                                    height:
-                                                                    24.h),
+                                                                SizedBox(height: 24.h),
                                                                 _buildFilterOption(
                                                                     '가나다순',
                                                                     'alphabetical',
                                                                     context),
-                                                                SizedBox(
-                                                                    height:
-                                                                    24.h),
+                                                                SizedBox(height: 24.h),
                                                                 _buildFilterOption(
                                                                     '자주 만나는 친구',
                                                                     'frequent',
                                                                     context),
-                                                                SizedBox(
-                                                                    height:
-                                                                    56.h),
+                                                                SizedBox(height: 56.h),
                                                               ],
                                                             ),
                                                           ),
@@ -436,12 +441,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                               ],
                                             ),
                                             SizedBox(height: 14.h),
-                                            ValueListenableBuilder<
-                                                List<FriendList>>(
+                                            ValueListenableBuilder<List<FriendList>>(
                                               valueListenable:
                                               _filteredFriendsNotifier,
-                                              builder: (context,
-                                                  filteredFriends, _) {
+                                              builder: (context, filteredFriends, _) {
                                                 return ListView.builder(
                                                   primary: false,
                                                   shrinkWrap: true,
@@ -450,15 +453,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                                   itemBuilder:
                                                       (BuildContext context,
                                                       int index) {
-                                                    final friend =
-                                                    filteredFriends[index];
-                                                    final isChecked =
-                                                    selectedFriends.any(
-                                                          (selectedFriend) =>
-                                                      selectedFriend[
-                                                      'userId'] ==
-                                                          friend.id,
-                                                    );
+                                                    final friend = filteredFriends[index];
+                                                    final isChecked = selectedFriends.any((selectedFriend) => selectedFriend['userId'] == friend.id,);
                                                     return GestureDetector(
                                                       behavior: HitTestBehavior
                                                           .translucent,
@@ -467,8 +463,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                                             friend.id,
                                                             friend.userName,
                                                             friend.profileUrl);
-                                                        _searchController.text =
-                                                        ''; // 검색어 초기화
+                                                        _searchController.text = ''; // 검색어 초기화
                                                       },
                                                       child:
                                                       SelectUserListProfile(
@@ -555,18 +550,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                         children: [
                                           TextField(
                                             onChanged: (value) {
-                                              setState(() {
-                                                groupName = value;
-                                              });
-                                            },
-                                            maxLength: AppConstants
-                                                .maxAddressLength,
+                                              setState(() {groupName = value;});},
+                                            maxLength: AppConstants.maxAddressLength,
                                             cursorColor:
                                             ColorSchemes.orange100,
-                                            onTapOutside: (event) =>
-                                                FocusManager
-                                                    .instance.primaryFocus
-                                                    ?.unfocus(),
+                                            onTapOutside: (event) => FocusManager.instance.primaryFocus ?.unfocus(),
                                             keyboardType:
                                             TextInputType.text,
                                             textInputAction:

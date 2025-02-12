@@ -15,12 +15,13 @@ class UserService {
     return MyProfile.fromJson(response.data['data']);
   }
 
-  Future<List<UserList>> getUserList(String searchQuery, {required int page}) async {
+  Future<Map<String, dynamic>> getUserList(String searchQuery, {required int page}) async {
     Response response = await dio.get(ApiPath.user, queryParameters: {
       'search': searchQuery,
       'page': page
     });
-    return JsonUtils().parseUserList(response.data['data'] as List);
+    return response.data['data'];
+    //return ;
   }
 
   Future<UserCheck> getUserCheck(String id) async {
