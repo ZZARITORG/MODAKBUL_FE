@@ -52,16 +52,26 @@ class MainScreenState extends State<MainScreen> {
     },
   ];
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const FriendScreen(),
-    const CreateModakbulScreen(),
-    const FriendSearchScreen(),
-    MyProfileScreen(),
-  ];
+  // 키를 사용하여 리빌드 제어
+  Key getKey(int index) => ValueKey('screen_$index${DateTime.now().millisecondsSinceEpoch}');
+
+  Widget _getScreen(int index) {
+    // 매번 새로운 키를 생성하여 리빌드 강제
+    return KeyedSubtree(
+      key: getKey(index),
+      child: switch (index) {
+        0 => const HomeScreen(),
+        1 => const FriendScreen(),
+        2 => const CreateModakbulScreen(),
+        3 => const FriendSearchScreen(),
+        4 => MyProfileScreen(),
+        _ => const HomeScreen(),
+      },
+    );
+  }
+
   HandlerUtils handlerUtils = HandlerUtils();
   LocationUtils locationUtils = LocationUtils();
-
 
   @override
   void initState() {
@@ -72,14 +82,11 @@ class MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: selectedIndex,
-        children: _screens,
-      ),
+      body: _getScreen(selectedIndex),
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,
         height: 56.h,
-        elevation: 0, // 그림자 없애기
+        elevation: 0,
         color: Colors.white,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.5.w),
@@ -88,46 +95,45 @@ class MainScreenState extends State<MainScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: List.generate(_icons.length, (index) {
               return InkWell(
-                    overlayColor: WidgetStateProperty.all(Colors.transparent),
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = index;
-                      });
-                    },
-                    child: SizedBox(
-                      width: 64.w,
-                      child: Center(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 8.h,),
-                            SizedBox(
-                              width: 32.r,
-                              height: 32.r,
-                              child: Center(
-                                child:
-                                    SvgPicture.asset(
-                                      selectedIndex == index
-                                          ? _icons[index]['activate']!
-                                          : _icons[index]['disable']!,
-                                      width: _icons[index]['width'],
-                                    ),
-                              ),
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                onTap: () {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                child: SizedBox(
+                  width: 64.w,
+                  child: Center(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 8.h),
+                        SizedBox(
+                          width: 32.r,
+                          height: 32.r,
+                          child: Center(
+                            child: SvgPicture.asset(
+                              selectedIndex == index
+                                  ? _icons[index]['activate']!
+                                  : _icons[index]['disable']!,
+                              width: _icons[index]['width'],
                             ),
-                            SizedBox(height: 2.h,),
-                            if (selectedIndex == index)
-                              Container(
-                                width: 4.r, // 원의 크기
-                                height: 4.r,
-                                decoration: const BoxDecoration(
-                                  color: ColorSchemes.orange200,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                          ],
+                          ),
                         ),
-                      ),
+                        SizedBox(height: 2.h),
+                        if (selectedIndex == index)
+                          Container(
+                            width: 4.r,
+                            height: 4.r,
+                            decoration: const BoxDecoration(
+                              color: ColorSchemes.orange200,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                      ],
                     ),
-                  );
+                  ),
+                ),
+              );
             }),
           ),
         ),

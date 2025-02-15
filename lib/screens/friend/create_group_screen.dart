@@ -171,7 +171,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   @override
   Widget build(BuildContext context) {
     final String buttonText;
-    if (selectedFriends.length >= 3) {
+    if (selectedFriends.length >= 2) {
       buttonText = '${selectedFriends.first['userName']} 외 ${selectedFriends.length - 1}인 그룹 만들기';
     }  else {
       buttonText = '그룹 만들기';
@@ -518,7 +518,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       height: 56.h,
                       child: CustomButton(
                         text: buttonText,
-                        onPressed: selectedFriends.length >= 3
+                        onPressed: selectedFriends.length >= 2
                             ? () {
                           showModalBottomSheet(
                             context: context,

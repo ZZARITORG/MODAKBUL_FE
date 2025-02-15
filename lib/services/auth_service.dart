@@ -51,15 +51,6 @@ class AuthService {
       ),
     );
     final tokens = Tokens.fromJson(response.data['data']);
-
-    final profile = await _userService.getMyProfile();
-
-    const storage = FlutterSecureStorage();
-    await Future.wait([
-      storage.write(key: AppConstants.phoneNumber, value: profile.phoneNumber),
-      prefs.setString(AppConstants.phoneNumber, profile.phoneNumber!)
-    ]);
-
     return tokens;
   }
 
