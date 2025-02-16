@@ -38,6 +38,11 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
   late MeetingProvider meetingProvider;
   MeetingService meetingService = MeetingService();
 
+  // 문자 수를 정확하게 계산하는 메서드
+  int getCharacterCount(String text) {
+    return text.characters.length; // length 대신 characters 사용
+  }
+
   void _updateActivationState() {
     setState(() {
       isActivated = _titleController.text.isNotEmpty &&
@@ -61,7 +66,18 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
     _titleController.addListener(_updateActivationState);
     _contentController.addListener(() {
       setState(() {
-        _contentLength = _contentController.text.length;
+        _contentLength = getCharacterCount(_contentController.text);
+        // 최대 길이를 초과하는 문자 자동 제거
+        if (_contentLength > AppConstants.maxContentLength) {
+          final trimmedText = _contentController.text.characters
+              .take(AppConstants.maxContentLength)
+              .toString();
+          _contentController.value = TextEditingValue(
+            text: trimmedText,
+            selection: TextSelection.collapsed(offset: trimmedText.length),
+          );
+          _contentLength = AppConstants.maxContentLength;
+        }
         _updateActivationState();
       });
     });

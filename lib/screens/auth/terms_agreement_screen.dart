@@ -9,6 +9,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/custom_check_box.dart';
+import 'package:modakbul/widgets/launch_custom_tab.dart';
 
 class TermsAgreementScreen extends StatefulWidget {
   const TermsAgreementScreen({super.key});
@@ -165,7 +166,13 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                     SizedBox(
                       height: 62.h,
                       child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await launchCustomTab(
+                              context,
+                              url: 'https://zzarit.notion.site/bf6e1538e9b54eafae9f11f94dd63a7e',
+                              title: '모닥불 개인정보 처리방침',
+                            );
+                          },
                           style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                               backgroundColor: WidgetStateProperty.all(
                                 ColorSchemes.white,

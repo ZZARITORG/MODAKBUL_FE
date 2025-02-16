@@ -105,7 +105,7 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
         Stack(
           children: [
             TextFormField(
-              enableInteractiveSelection: false,
+              enableInteractiveSelection: true,
               onChanged: (value) {
                 widget.onChanged!(value);
                 _validateInput(value);

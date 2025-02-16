@@ -207,6 +207,7 @@ class _MapSearchScreenState extends State<MapSearchScreen>
           Expanded(
             child: SingleChildScrollView(
               controller: _scrollController,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: Builder(builder: (context) {
                 if (_searchController.text.isEmpty) {
                   return Column(
