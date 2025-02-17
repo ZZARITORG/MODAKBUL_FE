@@ -44,7 +44,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
   bool isLoading = true;
 
   MeetingService meetingService = MeetingService();
-  FriendService friendService = FriendService();
+  FriendService  friendService = FriendService();
   UserService userService = UserService();
 
   @override

@@ -145,331 +145,337 @@ class _State extends State<BrowseTabScreen> {
           ],
         );
       },
-      child: Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-          child: FutureBuilder(
-              future: meetingService.getPendingModakbulList(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return BrowseTabScreenSkeleton();
-                } else if (snapshot.hasError) {
-                  return GlobalErrorWidget();
-                } else if (snapshot.hasData) {
-                  final pendingModakbulList = snapshot.data!;
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 14.h,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            if (mounted) {
-                              setState(() {
-                                final mainScreenState = context.findAncestorStateOfType<MainScreenState>();
-                                mainScreenState?.setState(() {
-                                  mainScreenState.selectedIndex = 2;
-                                });
-                              });
-                            }
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: Container(
-                            padding:
-                                EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    StyleConstants.radiusMedium),
-                                color: ColorSchemes.white,
-                                boxShadow: const [
-                                  BoxShadow(
-                                      offset: Offset(0, 4),
-                                      blurRadius: 10,
-                                      color: Color(0x40F3F3F3))
-                                ]),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('혼자는 너무 춥지 않아?',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bigHeadLine4
-                                            .copyWith(
-                                                color: ColorSchemes.orange200)),
-                                    SizedBox(
-                                      height: 6.h,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text('모닥불 피우러가기',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .body2
-                                                .copyWith(
-                                                    color: ColorSchemes
-                                                        .orange100)),
-                                        SizedBox(
-                                          width: 6.w,
-                                        ),
-                                        SvgPicture.asset(
-                                            IconPath.arrowForward15Orange100),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 75.w,
-                                  height: 75.h,
-                                  child: Image.asset(ImagePath.homeModakbul),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 24.h,
-                        ),
-                        Column(
-                          children: [
-                            ValueListenableBuilder<String>(
-                              valueListenable: selectedFilter,
-                              builder: (context, value, child) {
-                                List<PendingModakbul>
-                                    sortedPendingModakbulList =
-                                    List.from(pendingModakbulList);
-                                if (value == '최신순') {
-                                  sortedPendingModakbulList.sort((a, b) =>
-                                      b.createdAt.compareTo(a.createdAt));
-                                } else if (value == '마감 임박') {
-                                  sortedPendingModakbulList
-                                      .sort((a, b) => a.date.compareTo(b.date));
-                                } else if (value == '거리순') {
-                                  if (myLat == null && myLng == null) {
-                                    return Center(
-                                      child: Text('위치 정보 없다'),
-                                    );
+      child: Column(
+        children: [
+          Expanded(
+            child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                child: FutureBuilder(
+                    future: meetingService.getPendingModakbulList(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return BrowseTabScreenSkeleton();
+                      } else if (snapshot.hasError) {
+                        return GlobalErrorWidget();
+                      } else if (snapshot.hasData) {
+                        final pendingModakbulList = snapshot.data!;
+                        return SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 14.h,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  if (mounted) {
+                                    setState(() {
+                                      final mainScreenState = context.findAncestorStateOfType<MainScreenState>();
+                                      mainScreenState?.setState(() {
+                                        mainScreenState.selectedIndex = 2;
+                                      });
+                                    });
                                   }
-                                  sortedPendingModakbulList.sort((a, b) {
-                                    double distanceA = distance.as(
-                                      LengthUnit.Kilometer,
-                                      LatLng(myLat!, myLng!),
-                                      LatLng(a.lat!, a.lng!),
-                                    );
-                                    double distanceB = distance.as(
-                                      LengthUnit.Kilometer,
-                                      LatLng(myLat!, myLng!),
-                                      LatLng(b.lat!, b.lng!),
-                                    );
-
-                                    return distanceA.compareTo(distanceB);
-                                  });
-                                }
-
-                                return Column(
-                                  children: [
-                                    Row(
-                                        children: filters.map((filter) {
-                                      final isSelected = value == filter;
-                                      return Padding(
-                                        padding: EdgeInsets.only(right: 8.w),
-                                        child: ElevatedButton(
-                                          onPressed: () async {
-                                            HapticFeedback.lightImpact();
-                                            if (filter == '거리순' &&
-                                                (myLat == null ||
-                                                    myLng == null)) {
-                                              return;
-                                            }
-                                            selectedFilter.value = filter;
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: isSelected
-                                                ? ColorSchemes.orange200
-                                                : ColorSchemes.orange000,
-                                            padding: isSelected
-                                                ? EdgeInsets.symmetric(
-                                                    vertical: 7.h,
-                                                    horizontal: 14.w)
-                                                : EdgeInsets.symmetric(
-                                                    vertical: 6.h,
-                                                    horizontal: 12.w),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        StyleConstants
-                                                            .radiusMedium)),
-                                          ).copyWith(
-                                            backgroundColor: WidgetStateProperty
-                                                .resolveWith<Color>((states) {
-                                              if (states.contains(
-                                                  WidgetState.pressed)) {
-                                                return ColorSchemes.orange100;
-                                              }
-                                              return isSelected
-                                                  ? ColorSchemes.orange200
-                                                  : ColorSchemes.orange000;
-                                            }),
-                                            foregroundColor: WidgetStateProperty
-                                                .resolveWith<Color>((states) {
-                                              if (states.contains(
-                                                  WidgetState.pressed)) {
-                                                return ColorSchemes.orange000;
-                                              }
-                                              return isSelected
-                                                  ? ColorSchemes.white
-                                                  : ColorSchemes.orange100;
-                                            }),
+                                },
+                                behavior: HitTestBehavior.opaque,
+                                child: Container(
+                                  padding:
+                                      EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          StyleConstants.radiusMedium),
+                                      color: ColorSchemes.white,
+                                      boxShadow: const [
+                                        BoxShadow(
+                                            offset: Offset(0, 4),
+                                            blurRadius: 10,
+                                            color: Color(0x40F3F3F3))
+                                      ]),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('혼자는 너무 춥지 않아?',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bigHeadLine4
+                                                  .copyWith(
+                                                      color: ColorSchemes.orange200)),
+                                          SizedBox(
+                                            height: 6.h,
                                           ),
-                                          child: Row(
+                                          Row(
                                             children: [
-                                              Text(filter,
+                                              Text('모닥불 피우러가기',
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .body3),
-                                              if (filter == value)
-                                                SizedBox(
-                                                    width: 18.w,
-                                                    height: 18.h,
-                                                    child: Image.asset(
-                                                      ImagePath
-                                                          .browseSmallModakbul,
-                                                    )),
+                                                      .body2
+                                                      .copyWith(
+                                                          color: ColorSchemes
+                                                              .orange100)),
+                                              SizedBox(
+                                                width: 6.w,
+                                              ),
+                                              SvgPicture.asset(
+                                                  IconPath.arrowForward15Orange100),
                                             ],
                                           ),
-                                        ),
-                                      );
-                                    }).toList()),
-                                    SizedBox(
-                                      height: 12.h,
-                                    ),
-                                    pendingModakbulList.length > 0
-                                        ? ListView.builder(
-                                            itemCount:
-                                                pendingModakbulList.length,
-                                            shrinkWrap: true,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            itemBuilder: (context, index) {
-                                              final pendingModakbulData =
-                                                  sortedPendingModakbulList[
-                                                      index];
-                                              String hostId =
-                                                  pendingModakbulData!.hostId;
-                                              String title =
-                                                  pendingModakbulData!.title;
-                                              String content =
-                                                  pendingModakbulData!.content;
-                                              String address =
-                                                  pendingModakbulData!.address;
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: 75.w,
+                                        height: 75.h,
+                                        child: Image.asset(ImagePath.homeModakbul),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 24.h,
+                              ),
+                              Column(
+                                children: [
+                                  ValueListenableBuilder<String>(
+                                    valueListenable: selectedFilter,
+                                    builder: (context, value, child) {
+                                      List<PendingModakbul>
+                                          sortedPendingModakbulList =
+                                          List.from(pendingModakbulList);
+                                      if (value == '최신순') {
+                                        sortedPendingModakbulList.sort((a, b) =>
+                                            b.createdAt.compareTo(a.createdAt));
+                                      } else if (value == '마감 임박') {
+                                        sortedPendingModakbulList
+                                            .sort((a, b) => a.date.compareTo(b.date));
+                                      } else if (value == '거리순') {
+                                        if (myLat == null && myLng == null) {
+                                          return Center(
+                                            child: Text('위치 정보 없다'),
+                                          );
+                                        }
+                                        sortedPendingModakbulList.sort((a, b) {
+                                          double distanceA = distance.as(
+                                            LengthUnit.Kilometer,
+                                            LatLng(myLat!, myLng!),
+                                            LatLng(a.lat!, a.lng!),
+                                          );
+                                          double distanceB = distance.as(
+                                            LengthUnit.Kilometer,
+                                            LatLng(myLat!, myLng!),
+                                            LatLng(b.lat!, b.lng!),
+                                          );
 
-                                              DateTime utcDate =
-                                                  pendingModakbulData!.date;
-                                              DateTime kstDate = utcDate
-                                                  .add(Duration(hours: 9));
-                                              Intl.defaultLocale = 'ko_KR';
-                                              String date =
-                                                  DateFormat('MM.dd(E) a h시 m분')
-                                                      .format(kstDate);
-                                              List<UserStatus> users =
-                                                  pendingModakbulData!.users;
-                                              UserStatus? host =
-                                                  users.firstWhere(
-                                                      (user) =>
-                                                          user.id == hostId,
-                                                      orElse: () => UserStatus(
-                                                          id: '',
-                                                          userId: '알 수 없음',
-                                                          name: '알 수 없음',
-                                                          profileUrl: '',
-                                                          status: ''));
-                                              List<UserStatus>
-                                                  participantUsers = users
-                                                      .where((user) =>
-                                                          user.id != hostId)
-                                                      .toList();
+                                          return distanceA.compareTo(distanceB);
+                                        });
+                                      }
 
-                                              return GestureDetector(
-                                                onTap: () => Routes.navigateTo(
-                                                    context,
-                                                    Routes.modakbulDetailScreen,
-                                                    arguments: {
-                                                      'id':
-                                                          sortedPendingModakbulList[
-                                                                  index]
-                                                              .id
-                                                    }),
-                                                behavior:
-                                                    HitTestBehavior.opaque,
-                                                child: Padding(
-                                                  padding: index !=
-                                                          pendingModakbulList
-                                                                  .length -
-                                                              1
-                                                      ? EdgeInsets.only(
-                                                          bottom: 12.h)
-                                                      : EdgeInsets.only(
-                                                          bottom: 0.h),
-                                                  child: InvitedModakbulCard(
-                                                      hostProfileImage:
-                                                          host.profileUrl,
-                                                      participantLength:
-                                                          users.length - 1,
-                                                      hostName: host.name,
-                                                      hostId: host.userId,
-                                                      title: title,
-                                                      content: content,
-                                                      date: date,
-                                                      address: address,
-                                                      participantUsers:
-                                                          participantUsers),
+                                      return Column(
+                                        children: [
+                                          Row(
+                                              children: filters.map((filter) {
+                                            final isSelected = value == filter;
+                                            return Padding(
+                                              padding: EdgeInsets.only(right: 8.w),
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  HapticFeedback.lightImpact();
+                                                  if (filter == '거리순' &&
+                                                      (myLat == null ||
+                                                          myLng == null)) {
+                                                    return;
+                                                  }
+                                                  selectedFilter.value = filter;
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: isSelected
+                                                      ? ColorSchemes.orange200
+                                                      : ColorSchemes.orange000,
+                                                  padding: isSelected
+                                                      ? EdgeInsets.symmetric(
+                                                          vertical: 7.h,
+                                                          horizontal: 14.w)
+                                                      : EdgeInsets.symmetric(
+                                                          vertical: 6.h,
+                                                          horizontal: 12.w),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              StyleConstants
+                                                                  .radiusMedium)),
+                                                ).copyWith(
+                                                  backgroundColor: WidgetStateProperty
+                                                      .resolveWith<Color>((states) {
+                                                    if (states.contains(
+                                                        WidgetState.pressed)) {
+                                                      return ColorSchemes.orange100;
+                                                    }
+                                                    return isSelected
+                                                        ? ColorSchemes.orange200
+                                                        : ColorSchemes.orange000;
+                                                  }),
+                                                  foregroundColor: WidgetStateProperty
+                                                      .resolveWith<Color>((states) {
+                                                    if (states.contains(
+                                                        WidgetState.pressed)) {
+                                                      return ColorSchemes.orange000;
+                                                    }
+                                                    return isSelected
+                                                        ? ColorSchemes.white
+                                                        : ColorSchemes.orange100;
+                                                  }),
                                                 ),
-                                              );
-                                            },
-                                          )
-                                        : Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 120.h,
+                                                child: Row(
+                                                  children: [
+                                                    Text(filter,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .body3),
+                                                    if (filter == value)
+                                                      SizedBox(
+                                                          width: 18.w,
+                                                          height: 18.h,
+                                                          child: Image.asset(
+                                                            ImagePath
+                                                                .browseSmallModakbul,
+                                                          )),
+                                                  ],
+                                                ),
                                               ),
-                                              Text(
-                                                '초대된 모닥불이 없습니다.',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bigHeadLine3
-                                                    .copyWith(
-                                                        color: ColorSchemes
-                                                            .orange100),
-                                              ),
-                                              Text(
-                                                '초대가 오면 알림을 보내드리겠습니다.',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .body2
-                                                    .copyWith(
-                                                        color: ColorSchemes
-                                                            .gray300),
-                                              ),
-                                            ],
-                                          )
-                                  ],
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                } else {
-                  return Text('머지이거');
-                }
-              })),
+                                            );
+                                          }).toList()),
+                                          SizedBox(
+                                            height: 12.h,
+                                          ),
+                                          pendingModakbulList.length > 0
+                                              ? ListView.builder(
+                                                  itemCount:
+                                                      pendingModakbulList.length,
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                  itemBuilder: (context, index) {
+                                                    final pendingModakbulData =
+                                                        sortedPendingModakbulList[
+                                                            index];
+                                                    String hostId =
+                                                        pendingModakbulData!.hostId;
+                                                    String title =
+                                                        pendingModakbulData!.title;
+                                                    String content =
+                                                        pendingModakbulData!.content;
+                                                    String address =
+                                                        pendingModakbulData!.address;
+
+                                                    DateTime utcDate =
+                                                        pendingModakbulData!.date;
+                                                    DateTime kstDate = utcDate
+                                                        .add(Duration(hours: 9));
+                                                    Intl.defaultLocale = 'ko_KR';
+                                                    String date =
+                                                        DateFormat('MM.dd(E) a h시 m분')
+                                                            .format(kstDate);
+                                                    List<UserStatus> users =
+                                                        pendingModakbulData!.users;
+                                                    UserStatus? host =
+                                                        users.firstWhere(
+                                                            (user) =>
+                                                                user.id == hostId,
+                                                            orElse: () => UserStatus(
+                                                                id: '',
+                                                                userId: '알 수 없음',
+                                                                name: '알 수 없음',
+                                                                profileUrl: '',
+                                                                status: ''));
+                                                    List<UserStatus>
+                                                        participantUsers = users
+                                                            .where((user) =>
+                                                                user.id != hostId)
+                                                            .toList();
+
+                                                    return GestureDetector(
+                                                      onTap: () => Routes.navigateTo(
+                                                          context,
+                                                          Routes.modakbulDetailScreen,
+                                                          arguments: {
+                                                            'id':
+                                                                sortedPendingModakbulList[
+                                                                        index]
+                                                                    .id
+                                                          }),
+                                                      behavior:
+                                                          HitTestBehavior.opaque,
+                                                      child: Padding(
+                                                        padding: index !=
+                                                                pendingModakbulList
+                                                                        .length -
+                                                                    1
+                                                            ? EdgeInsets.only(
+                                                                bottom: 12.h)
+                                                            : EdgeInsets.only(
+                                                                bottom: 0.h),
+                                                        child: InvitedModakbulCard(
+                                                            hostProfileImage:
+                                                                host.profileUrl,
+                                                            participantLength:
+                                                                users.length - 1,
+                                                            hostName: host.name,
+                                                            hostId: host.userId,
+                                                            title: title,
+                                                            content: content,
+                                                            date: date,
+                                                            address: address,
+                                                            participantUsers:
+                                                                participantUsers),
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 120.h,
+                                                    ),
+                                                    Text(
+                                                      '초대된 모닥불이 없습니다.',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bigHeadLine3
+                                                          .copyWith(
+                                                              color: ColorSchemes
+                                                                  .orange100),
+                                                    ),
+                                                    Text(
+                                                      '초대가 오면 알림을 보내드리겠습니다.',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .body2
+                                                          .copyWith(
+                                                              color: ColorSchemes
+                                                                  .gray300),
+                                                    ),
+                                                  ],
+                                                )
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        );
+                      } else {
+                        return Text('머지이거');
+                      }
+                    })),
+          ),
+        ],
+      ),
     );
   }
 }

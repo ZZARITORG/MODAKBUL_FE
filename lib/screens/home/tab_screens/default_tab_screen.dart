@@ -18,6 +18,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:modakbul/models/my_host_modakbul.dart';
 import 'package:modakbul/screens/main_screen.dart';
 
+import '../../../services/friend_service.dart';
+
 class DefaultTabScreen extends StatefulWidget {
   const DefaultTabScreen({super.key});
 
@@ -35,6 +37,7 @@ class _State extends State<DefaultTabScreen> {
   int _currentPage = 0;
 
   final MeetingService meetingService = MeetingService();
+  final FriendService friendService = FriendService();
   static const double _maxDragOffset = 36;
   bool isLoading = true;
 
@@ -347,6 +350,13 @@ class _State extends State<DefaultTabScreen> {
                                                                   location,
                                                               participantUsers:
                                                                   participantUsers,
+                                                                  users: users,
+                                                                  isBlocked: false,
+                                                                  isPending: false,
+                                                                  userId: myHostModaktbulList[index].hostId,
+                                                                  friendService: friendService,
+
+
                                                             ),
                                                           ),
                                                         ],
@@ -495,57 +505,48 @@ class _State extends State<DefaultTabScreen> {
                         acceptedModakbulList.length > 0
                             ? SizedBox(
                                 height: 154.h,
-                                child: SingleChildScrollView(
+                                child: ListView.builder(
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 16.w),
                                   scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: List.generate(
-                                      acceptedModakbulList.length,
-                                      (index) {
-                                        String title =
-                                            acceptedModakbulList[index]!.title;
-                                        DateTime utcDate =
-                                            acceptedModakbulList[index]!.date;
-                                        DateTime kstDate =
-                                            utcDate.add(Duration(hours: 9));
-                                        Intl.defaultLocale = 'ko_KR';
-                                        String date =
-                                            DateFormat('MM.dd(E) a h시 m분')
-                                                .format(kstDate);
-                                        String location =
-                                            acceptedModakbulList[index]!
-                                                .address;
-                                        return Padding(
-                                          padding: EdgeInsets.only(
-                                            right: index ==
-                                                    acceptedModakbulList
-                                                            .length -
-                                                        1
-                                                ? 0
-                                                : 8.w,
-                                          ),
-                                          child: GestureDetector(
-                                            onTap: () => Routes.navigateTo(
-                                                context,
-                                                Routes.modakbulDetailScreen,
-                                                arguments: {
-                                                  'id': acceptedModakbulList[
-                                                          index]
-                                                      .id,
-                                                  'isAccepted': true
-                                                }),
-                                            behavior: HitTestBehavior.opaque,
-                                            child: FixedModakbulCard(
-                                              title: title,
-                                              date: date.toString(),
-                                              location: location,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
+                                  itemCount: acceptedModakbulList.length,
+                                  itemBuilder: (context, index) {
+                                    String title =
+                                        acceptedModakbulList[index]!.title;
+                                    DateTime utcDate =
+                                        acceptedModakbulList[index]!.date;
+                                    DateTime kstDate =
+                                        utcDate.add(Duration(hours: 9));
+                                    Intl.defaultLocale = 'ko_KR';
+                                    String date = DateFormat('MM.dd(E) a h시 m분')
+                                        .format(kstDate);
+                                    String location =
+                                        acceptedModakbulList[index]!.address;
+
+                                    return Padding(
+                                      padding: EdgeInsets.only(
+                                        right: index ==
+                                                acceptedModakbulList.length - 1
+                                            ? 0
+                                            : 8.w,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () => Routes.navigateTo(context,
+                                            Routes.modakbulDetailScreen,
+                                            arguments: {
+                                              'id': acceptedModakbulList[index]
+                                                  .id,
+                                              'isAccepted': true
+                                            }),
+                                        behavior: HitTestBehavior.opaque,
+                                        child: FixedModakbulCard(
+                                          title: title,
+                                          date: date.toString(),
+                                          location: location,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               )
                             : Padding(

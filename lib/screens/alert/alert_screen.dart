@@ -13,6 +13,7 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/models/notifications.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/widgets/global_error_widget.dart';
+import '../../routes/routes.dart';
 
 class AlertScreen extends StatefulWidget {
   const AlertScreen({Key? key}) : super(key: key);
@@ -27,7 +28,8 @@ class _AlertScreenState extends State<AlertScreen> {
   static const double _maxDragOffset = 36;
   bool isLoading = true;
 
-  String _getLoadingAsset(double offset) {
+  String? _getLoadingAsset(double offset) {
+    if (offset < 0.1) return null;
     int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
     segment = segment.clamp(1, 8);
 
@@ -166,14 +168,15 @@ class _AlertScreenState extends State<AlertScreen> {
                                     Animation<double> animation) {
                                   return child;
                                 },
-                                child: SvgPicture.asset(
-                                  _getLoadingAsset(
-                                      controller.value * _maxDragOffset),
+                                child: _getLoadingAsset(controller.value * _maxDragOffset) != null
+                                    ? SvgPicture.asset(
+                                  _getLoadingAsset(controller.value * _maxDragOffset)!,
                                   width: 25.r,
                                   height: 25.r,
                                   key: ValueKey<String>(_getLoadingAsset(
-                                      controller.value * _maxDragOffset)),
-                                ),
+                                      controller.value * _maxDragOffset)!),
+                                )
+                                    : const SizedBox.shrink(),
                               ),
                       ),
                     ),
@@ -284,11 +287,45 @@ class _AlertScreenState extends State<AlertScreen> {
           children: notifications.map((notification) {
             return Column(
               children: [
-                AlertListTile(
-                  title: notification.getTitle(),
-                  content: notification.getContent(),
-                  alertType: notification.type,
-                  time: formatTime(notification.createdAt),
+                GestureDetector(
+                  onTap: () {
+                    switch (notification.type) {
+                      case 'FRIEND_REQUEST':
+                        Routes.navigateTo(context, Routes.addFriendListScreen);
+                        break;
+                      case 'MEETING_ALARM':
+                        if (notification.meetingId != null) {
+                          Routes.navigateTo(
+                            context,
+                            Routes.modakbulDetailScreen,
+                            arguments: {
+                              'id': notification.meetingId,
+                              'isAccepted': false,
+                            },
+                          );
+                        }
+                        break;
+                      case 'MEETING_CANCEL_PARTICIPANT':
+                        if (notification.meetingId != null) {
+                          Routes.navigateTo(
+                            context,
+                            Routes.modakbulDetailScreen,
+                            arguments: {
+                              'id': notification.meetingId,
+                              'isAccepted': true,
+                            },
+                          );
+                        }
+                        break;
+                    }
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: AlertListTile(
+                    title: notification.getTitle(),
+                    content: notification.getContent(),
+                    alertType: notification.type,
+                    time: formatTime(notification.createdAt),
+                  ),
                 ),
                 SizedBox(height: 12.h),
               ],

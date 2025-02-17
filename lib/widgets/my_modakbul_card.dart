@@ -4,8 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
-import 'package:modakbul/models/my_host_modakbul.dart';
+import 'package:modakbul/models/my_host_modakbul.dart' as host_model;
+import 'package:modakbul/models/modakbul_detail.dart' as detail_model;
 import 'package:modakbul/themes/styles.dart';
+import 'package:modakbul/widgets/participant_bottom_sheet.dart';
+import '../services/friend_service.dart';
 import '../themes/color_schemes.dart';
 
 class MyModakbulCard extends StatelessWidget {
@@ -14,7 +17,12 @@ class MyModakbulCard extends StatelessWidget {
   final String groupName;
   final String date;
   final String location;
-  final List<UserStatus> participantUsers;
+  final List<host_model.UserStatus> participantUsers;
+  final String userId;
+  final List<host_model.UserStatus> users;
+  final bool isPending;
+  final bool isBlocked;
+  final FriendService friendService;
 
   const MyModakbulCard({
     Key? key,
@@ -24,6 +32,11 @@ class MyModakbulCard extends StatelessWidget {
     required this.date,
     required this.location,
     required this.participantUsers,
+    required this.users,
+    required this.isBlocked,
+    required this.isPending,
+    required this.userId,
+    required this.friendService,
   }) : super(key: key);
 
   @override
@@ -122,7 +135,28 @@ class MyModakbulCard extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                if (participantLength > 1) {
+                  showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (BuildContext bottomSheetContext) {
+                        return ParticipantBottomSheet(
+                          users: users.map((user) => detail_model.UserStatus(
+                            id: user.id,
+                            userId: user.userId,
+                            name: user.name,
+                            profileUrl: user.profileUrl,
+                            status: user.status,
+                          )).toList(),
+                          hostUserId: userId,
+                          blockedUsers: const [],
+                          friendService: friendService,
+                          myUserId: userId,
+                        );
+                      });
+                }
+              },
               child: Row(
                 children: [
                   participantLength == 1
@@ -155,7 +189,9 @@ class MyModakbulCard extends StatelessWidget {
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
                                           child: ClipOval(
-                                              child: CachedNetworkImage(imageUrl: participantUsers[0].profileUrl)),
+                                              child: CachedNetworkImage(
+                                                  imageUrl: participantUsers[0]
+                                                      .profileUrl)),
                                         ),
                                       ),
                                     ),
@@ -169,7 +205,9 @@ class MyModakbulCard extends StatelessWidget {
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
                                           child: ClipOval(
-                                              child: CachedNetworkImage(imageUrl: participantUsers[1].profileUrl)),
+                                              child: CachedNetworkImage(
+                                                  imageUrl: participantUsers[1]
+                                                      .profileUrl)),
                                         ),
                                       ),
                                     ),
@@ -183,7 +221,9 @@ class MyModakbulCard extends StatelessWidget {
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
                                           child: ClipOval(
-                                              child: CachedNetworkImage(imageUrl: participantUsers[2].profileUrl)),
+                                              child: CachedNetworkImage(
+                                                  imageUrl: participantUsers[2]
+                                                      .profileUrl)),
                                         ),
                                       ),
                                     ),
@@ -193,8 +233,10 @@ class MyModakbulCard extends StatelessWidget {
                             SizedBox(width: 7.w),
                             Text(
                               '${participantLength - 1}명',
-                              style: Theme.of(context).textTheme.body3.copyWith(
-                                  color: ColorSchemes.gray200),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body3
+                                  .copyWith(color: ColorSchemes.gray200),
                             ),
                             SizedBox(width: 6.w),
                             SvgPicture.asset(IconPath.arrowForward15Gray200,
