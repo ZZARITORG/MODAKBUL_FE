@@ -17,7 +17,6 @@ import '../services/user_service.dart';
 
 class ParticipantBottomSheet extends StatefulWidget {
   final List<UserStatus> users;
-  final String hostUserNmae;
   final String hostUserId;
   final List<BlockedUser> blockedUsers;
   final FriendService friendService;
@@ -26,7 +25,6 @@ class ParticipantBottomSheet extends StatefulWidget {
   const ParticipantBottomSheet({
     super.key,
     required this.users,
-    required this.hostUserNmae,
     required this.hostUserId,
     required this.blockedUsers,
     required this.friendService,

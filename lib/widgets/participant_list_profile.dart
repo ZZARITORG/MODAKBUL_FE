@@ -117,7 +117,7 @@ class Participantlistprofile extends StatelessWidget {
                         style: Theme.of(context)
                             .textTheme
                             .smallHeadLine3
-                            .copyWith(color: userNameColor),
+                            .copyWith(color: isBlocked ? ColorSchemes.red : userNameColor),
                       ),
                       SizedBox(
                         height: 4.h,
@@ -126,11 +126,11 @@ class Participantlistprofile extends StatelessWidget {
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          userId,
+                          isBlocked ? '차단된 사용자 입니다.' : userId,
                           style: Theme.of(context)
                               .textTheme
                               .body3
-                              .copyWith(color: userIdColor),
+                              .copyWith(color: isBlocked ? ColorSchemes.gray200 : userIdColor),
                         ),
                       ),
                     ],
