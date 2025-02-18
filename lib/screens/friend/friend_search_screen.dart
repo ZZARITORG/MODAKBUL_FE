@@ -27,6 +27,7 @@ import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/logo_app_bar.dart';
 import 'package:modakbul/widgets/participant_list_profile.dart';
 import 'package:modakbul/widgets/profile_bottom_sheet.dart';
+import 'package:modakbul/widgets/search_screen_skeleton.dart';
 import 'package:modakbul/widgets/suggested_friend_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,7 +42,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _searchFocusNode = FocusNode();
-  final paginationThrottle = Throttle(Duration(milliseconds: 300), initialValue: 1, checkEquality: false);
+  final paginationThrottle = Throttle(
+      Duration(milliseconds: 300), initialValue: 1, checkEquality: false);
   UserService userService = UserService();
   FriendService friendService = FriendService();
   List<UserList> userList = [];
@@ -66,17 +68,20 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
     final prefs = await SharedPreferences.getInstance();
     List<String> delSugList = prefs.getStringList('delSugList') ?? [];
     if (await FlutterContacts.requestPermission()) {
-      List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
+      List<Contact> contacts = await FlutterContacts.getContacts(
+          withProperties: true);
       setState(() {
         contactNumbers = contacts
             .where((contact) => contact.phones.isNotEmpty)
             .map((contact) => contact.phones[0].number)
             .toList();
-        getSug = friendService.getFriendSuggested(Contacts(contacts: contactNumbers))
-            .then((suggestions) {
-          return suggestions.where((friend) => !delSugList.contains(friend.id)
-          ).toList();
-        });
+        getSug =
+            friendService.getFriendSuggested(Contacts(contacts: contactNumbers))
+                .then((suggestions) {
+              return suggestions.where((friend) =>
+              !delSugList.contains(friend.id)
+              ).toList();
+            });
       });
     } else {
       print('Permission denied');
@@ -105,7 +110,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
   Future<void> fetchAllUsers(String query) async {
     try {
       final response = await userService.getUserList(query, page: 1);
-      List<UserList> users = JsonUtils().parseUserList(response['users'] as List);
+      List<UserList> users = JsonUtils().parseUserList(
+          response['users'] as List);
       if (query.isNotEmpty) {
         MyProfile myProfile = await userService.getMyProfile();
         users = users.where((user) => user.userId != myProfile.userId).toList();
@@ -149,7 +155,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
           _lottieController.repeat();
           final response = await userService.getUserList(
               _searchController.text.trim(), page: page);
-          List<UserList> newUsers = JsonUtils().parseUserList(response['users'] as List);
+          List<UserList> newUsers = JsonUtils().parseUserList(
+              response['users'] as List);
           isEnd = response['isEnd'];
           await Future.delayed(const Duration(seconds: 2));
           setState(() {
@@ -321,7 +328,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
                                     return Center(
-                                        child: CircularProgressIndicator());
+                                        child: SearchScreenSkeleton());
                                   } else if (snapshot.hasError) {
                                     return Center(child: Text(
                                         'Error: ${snapshot.error}'));
@@ -380,293 +387,304 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
     );
   }
 
-
   Widget _buildFriendRequests() {
-    return SingleChildScrollView(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: StyleConstants.defaultPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 14.h),
-            Row(
-              children: [
-                SizedBox(width: 4.w),
-                Text(
-                  '친구요청',
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .bigHeadLine4
-                      .copyWith(color: ColorSchemes.gray500),
-                ),
-                Spacer(),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddFreindScreen()),
-                    );
-                  },
-                  child: Text(
-                    '전체보기',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .body3
-                        .copyWith(color: ColorSchemes.orange200),
-                  ),
-                ),
-                SizedBox(width: 4.w),
-              ],
-            ),
-            SizedBox(height: 14.h),
-            FutureBuilder<List<FriendReqList>>(
-              future: getReq,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Column(
+    return FutureBuilder<List<dynamic>>(
+      future: Future.wait([getReq, getSug]), // 두 비동기 작업을 동시에 실행
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SearchScreenSkeleton();
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No data available'));
+        } else {
+          final friendRequests = snapshot.data![0] as List<FriendReqList>;
+          final friendSuggested = snapshot.data![1] as List<FriendSuggested>;
+          return SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: StyleConstants.defaultPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 14.h),
+                  Row(
                     children: [
-                      Center(
+                      SizedBox(width: 4.w),
+                      Text(
+                        '친구요청',
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bigHeadLine4
+                            .copyWith(color: ColorSchemes.gray500),
+                      ),
+                      Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddFreindScreen()),
+                          );
+                        },
                         child: Text(
-                          '아직 친구가 없어요',
+                          '전체보기',
                           style: Theme
                               .of(context)
                               .textTheme
-                              .bigHeadLine3
-                              .copyWith(color: ColorSchemes.orange100),
+                              .body3
+                              .copyWith(color: ColorSchemes.orange200),
                         ),
                       ),
-                      SizedBox(height: 8.h),
-                      Center(
-                        child: Text(
-                          '친구를 추가하고 모닥불을 피워보세요.',
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .body2
-                              .copyWith(color: ColorSchemes.gray300),
-                        ),
-                      ),
-                      SizedBox(height: 28.h),
+                      SizedBox(width: 4.w),
                     ],
-                  );
-                } else {
-                  friendRequests = snapshot.data!;
-                  return Column(
-                    children: List.generate(
-                      friendRequests.length >= 2 ? 2 : friendRequests.length,
-                          (index) {
-                        final friend = friendRequests[index];
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 24.h),
-                          child: GestureDetector(
-                            onTap: () async {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return FutureBuilder<UserCheck>(
-                                    future: userService.getUserCheck(
-                                        friend.id),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                            child: CircularProgressIndicator());
-                                      } else if (snapshot.hasError) {
-                                        return Center(child: Text(
-                                            'Error: ${snapshot.error}'));
-                                      } else {
-                                        UserCheck userCheckData = snapshot.data!;
-                                        if (userCheckData.status == 'BLOCKED') {
-                                          return SizedBox.shrink();
-                                        }
-                                        return ProfileBottomSheet(
+                  ),
+                  SizedBox(height: 14.h),
+                  if (friendRequests.isEmpty)
+                    Column(
+                      children: [
+                        Center(
+                          child: Text(
+                            '아직 친구가 없어요',
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .bigHeadLine3
+                                .copyWith(color: ColorSchemes.orange100),
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Center(
+                          child: Text(
+                            '친구를 추가하고 모닥불을 피워보세요.',
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .body2
+                                .copyWith(color: ColorSchemes.gray300),
+                          ),
+                        ),
+                        SizedBox(height: 28.h),
+                      ],
+                    )
+                  else
+                    Column(
+                      children: List.generate(
+                        friendRequests.length >= 2 ? 2 : friendRequests.length,
+                            (index) {
+                          final friend = friendRequests[index];
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 24.h),
+                            child: GestureDetector(
+                              onTap: () async {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return FutureBuilder<UserCheck>(
+                                      future: userService.getUserCheck(
+                                          friend.id),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Center(
+                                              child: CircularProgressIndicator());
+                                        } else if (snapshot.hasError) {
+                                          return Center(child: Text(
+                                              'Error: ${snapshot.error}'));
+                                        } else {
+                                          UserCheck userCheckData = snapshot
+                                              .data!;
+                                          if (userCheckData.status ==
+                                              'BLOCKED') {
+                                            return SizedBox.shrink();
+                                          }
+                                          return ProfileBottomSheet(
                                             userCheckData: userCheckData,
                                             selectedUserId: friend.id,
-                                            friendService: friendService
-                                        );
-                                      }
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                            child: AddFriendProfile(
-                              profileImage: friend.profileUrl,
-                              userName: friend.name,
-                              userId: friend.userId,
-                              time: timeAgo(friend.updatedAt, currentTime),
-                              acceptOnPressed: () async {
-                                await friendService.acceptFriend(
-                                    Uuid(targetId: friend.id));
-                                setState(() {
-                                  friendRequests.removeWhere((
-                                      request) => request.id == friend.id);
-                                  friendSuggested.removeWhere((
-                                      suggested) => suggested.id == friend.id);
-                                });
-                              },
-                              rejectOnPressed: () async {
-                                await friendService.rejectFriend(
-                                    Uuid(targetId: friend.id));
-                                setState(() {
-                                  friendRequests.removeWhere((
-                                      request) => request.id == friend.id);
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                }
-              },
-            ),
-            Divider(
-              thickness: 2.h,
-              height: 2.h,
-              color: ColorSchemes.gray100,
-            ),
-            SizedBox(height: 28.h),
-            Row(
-              children: [
-                SizedBox(width: 4.w),
-                Text(
-                  '알 수도 있는 사람',
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .bigHeadLine4
-                      .copyWith(color: ColorSchemes.gray500),
-                ),
-              ],
-            ),
-            SizedBox(height: 24.h),
-            FutureBuilder<List<FriendSuggested>>(
-              future: getSug,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Column(
-                    children: [
-                      Center(
-                        child: Text(
-                          '추천 친구가 없어요',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bigHeadLine3
-                              .copyWith(color: ColorSchemes.orange100),
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Center(
-                        child: Text(
-                          '친구를 추가하고 모닥불을 피워보세요.',
-                          style: Theme.of(context)
-                              .textTheme
-                              .body2
-                              .copyWith(color: ColorSchemes.gray300),
-                        ),
-                      ),
-                      SizedBox(height: 28.h),
-                    ],
-                  );
-                } else {
-                  List<FriendSuggested> friendSuggested = snapshot.data!;
-                  return Column(
-                    children: List.generate(
-                      friendSuggested.length,
-                          (index) {
-                        final friend = friendSuggested[index];
-                        return FutureBuilder<UserCheck>(
-                          future: userService.getUserCheck(friend.id),
-                          builder: (context, userSnapshot) {
-                            if (userSnapshot.connectionState == ConnectionState.waiting) {
-                              return SizedBox.shrink();
-                            } else if (userSnapshot.hasError) {
-                              return Center(child: Text('Error: ${userSnapshot.error}'));
-                            } else {
-                              UserCheck userCheckData = userSnapshot.data!;
-                              if (userCheckData.status == 'BLOCKED') {
-                                return SizedBox.shrink();
-                              }
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: index == friendSuggested.length - 1 ? 0 : 24.h),
-                                child: GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () {
-                                    // 모달 바텀 시트 호출
-                                    showModalBottomSheet(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return FutureBuilder<UserCheck>(
-                                          future: userService.getUserCheck(friend.id), // 최신 상태 가져오기
-                                          builder: (context, userSnapshot) {
-                                            if (userSnapshot.connectionState == ConnectionState.waiting) {
-                                              return Center(child: CircularProgressIndicator());
-                                            } else if (userSnapshot.hasError) {
-                                              return Center(child: Text('Error: ${userSnapshot.error}'));
-                                            } else {
-                                              UserCheck userCheckData = userSnapshot.data!;
-                                              return ProfileBottomSheet(
-                                                userCheckData: userCheckData,
-                                                selectedUserId: friend.id,
-                                                friendService: friendService,
-                                                onFriendStatusChanged: updateFriendStatus,
-                                              );
-                                            }
-                                          },
-                                        );
+                                            friendService: friendService,
+                                          );
+                                        }
                                       },
                                     );
                                   },
-                                  child: SuggestedFriendProfile(
-                                    profileImage: friend.profileUrl,
-                                    userName: friend.name,
-                                    mutualFriendCount: friend.mutualFriendCount.toString(),
-                                    userId: friend.id,
-                                    userCheckData: userCheckData,
-                                    requestFriend: friendService.requestFriend,
-                                    deleteFriend: friendService.deleteFriend,
-                                    onFriendStatusChanged: (newStatus) {
-                                      // 필요한 경우 상태 변경 처리
-                                    },
-                                    onReject: () async {
-                                      final prefs = await SharedPreferences.getInstance();
-                                      List<String> delSugList = prefs.getStringList('delSugList') ?? [];
-                                      delSugList.add(friend.id);
-                                      await prefs.setStringList('delSugList', delSugList);
-                                      // 여기서는 해당 항목만 제거
-                                      // 리스트에서 해당 항목 제거 로직
-                                    },
-                                  )
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      },
+                                );
+                              },
+                              child: AddFriendProfile(
+                                profileImage: friend.profileUrl,
+                                userName: friend.name,
+                                userId: friend.userId,
+                                time: timeAgo(friend.updatedAt, currentTime),
+                                acceptOnPressed: () async {
+                                  await friendService.acceptFriend(
+                                      Uuid(targetId: friend.id));
+                                  setState(() {
+                                    friendRequests.removeWhere((
+                                        request) => request.id == friend.id);
+                                    friendSuggested.removeWhere((suggested) =>
+                                    suggested.id == friend.id);
+                                  });
+                                },
+                                rejectOnPressed: () async {
+                                  await friendService.rejectFriend(
+                                      Uuid(targetId: friend.id));
+                                  setState(() {
+                                    friendRequests.removeWhere((
+                                        request) => request.id == friend.id);
+                                  });
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  );
-                }
-              },
+                  Divider(
+                    thickness: 2.h,
+                    height: 2.h,
+                    color: ColorSchemes.gray100,
+                  ),
+                  SizedBox(height: 28.h),
+                  Row(
+                    children: [
+                      SizedBox(width: 4.w),
+                      Text(
+                        '알 수도 있는 사람',
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bigHeadLine4
+                            .copyWith(color: ColorSchemes.gray500),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.h),
+                  if (friendSuggested.isEmpty)
+                    Column(
+                      children: [
+                        Center(
+                          child: Text(
+                            '추천 친구가 없어요',
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .bigHeadLine3
+                                .copyWith(color: ColorSchemes.orange100),
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Center(
+                          child: Text(
+                            '친구를 추가하고 모닥불을 피워보세요.',
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .body2
+                                .copyWith(color: ColorSchemes.gray300),
+                          ),
+                        ),
+                        SizedBox(height: 28.h),
+                      ],
+                    )
+                  else
+                    Column(
+                      children: List.generate(
+                        friendSuggested.length,
+                            (index) {
+                          final friend = friendSuggested[index];
+                          return FutureBuilder<UserCheck>(
+                            future: userService.getUserCheck(friend.id),
+                            builder: (context, userSnapshot) {
+                              if (userSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SizedBox.shrink();
+                              } else if (userSnapshot.hasError) {
+                                return Center(child: Text(
+                                    'Error: ${userSnapshot.error}'));
+                              } else {
+                                UserCheck userCheckData = userSnapshot.data!;
+                                if (userCheckData.status == 'BLOCKED') {
+                                  return SizedBox.shrink();
+                                }
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: index ==
+                                      friendSuggested.length - 1 ? 0 : 24.h),
+                                  child: GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return FutureBuilder<UserCheck>(
+                                            future: userService.getUserCheck(
+                                                friend.id),
+                                            builder: (context, userSnapshot) {
+                                              if (userSnapshot
+                                                  .connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return Center(
+                                                    child: CircularProgressIndicator());
+                                              } else
+                                              if (userSnapshot.hasError) {
+                                                return Center(child: Text(
+                                                    'Error: ${userSnapshot
+                                                        .error}'));
+                                              } else {
+                                                UserCheck userCheckData = userSnapshot
+                                                    .data!;
+                                                return ProfileBottomSheet(
+                                                  userCheckData: userCheckData,
+                                                  selectedUserId: friend.id,
+                                                  friendService: friendService,
+                                                  onFriendStatusChanged: updateFriendStatus,
+                                                );
+                                              }
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: SuggestedFriendProfile(
+                                      profileImage: friend.profileUrl,
+                                      userName: friend.name,
+                                      mutualFriendCount: friend
+                                          .mutualFriendCount.toString(),
+                                      userId: friend.id,
+                                      userCheckData: userCheckData,
+                                      requestFriend: friendService
+                                          .requestFriend,
+                                      deleteFriend: friendService.deleteFriend,
+                                      onFriendStatusChanged: (newStatus) {
+                                        // 필요한 경우 상태 변경 처리
+                                      },
+                                      onReject: () async {
+                                        final prefs = await SharedPreferences
+                                            .getInstance();
+                                        List<String> delSugList = prefs
+                                            .getStringList('delSugList') ?? [];
+                                        delSugList.add(friend.id);
+                                        await prefs.setStringList(
+                                            'delSugList', delSugList);
+                                        // 여기서는 해당 항목만 제거
+                                        // 리스트에서 해당 항목 제거 로직
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  SizedBox(height: 24.h),
+                ],
+              ),
             ),
-            SizedBox(height: 24.h)
-          ],
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 }
