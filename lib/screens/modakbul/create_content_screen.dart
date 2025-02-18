@@ -37,6 +37,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
   int _contentLength = 0;
   late MeetingProvider meetingProvider;
   MeetingService meetingService = MeetingService();
+  String uuid = '';
 
   // 문자 수를 정확하게 계산하는 메서드
   int getCharacterCount(String text) {
@@ -430,7 +431,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                   meetingProvider.selectMinute!);
                               if(selectDateTime.isAfter(now)) {
                                 if (meetingProvider.isGroup!) {
-                                  await meetingService.createModakbulByGroupId(
+                                  uuid = await meetingService.createModakbulByGroupId(
                                       ModakbulByGroupId(
                                           title: _titleController.text,
                                           content: _contentController.text,
@@ -448,7 +449,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                   friend['id'] as String)
                                       .toList();
                                   meetingProvider.isGroup = false;
-                                  await meetingService.createModakbulByUserId(
+                                  uuid = await meetingService.createModakbulByUserId(
                                       ModakbulByUserId(
                                           title: _titleController.text,
                                           content: _contentController.text,
@@ -461,7 +462,16 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                           lng: meetingProvider.selectLng!,
                                           friendIds: selectFriends));
                                 }
-                                Navigator.pop(context);
+                                Routes
+                                    .navigateReplacement(
+                                    context,
+                                    Routes
+                                        .modakbulDetailScreen,
+                                    arguments: {
+                                      'id': uuid,
+                                      'isAccepted':
+                                      true,
+                                    });
                                 meetingProvider.reset();
                                 setState(() {
                                   isButtonDisabled = false;
