@@ -89,7 +89,7 @@ class SettingMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      overlayColor: WidgetStateProperty.all(ColorSchemes.orange000),
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
       onTap: onPressed,
       child: Container(
         width: double.infinity,

@@ -13,6 +13,7 @@ import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/models/edit_my_profile.dart';
 import 'package:modakbul/main.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CommonSettingScreen extends StatefulWidget {
   const CommonSettingScreen({super.key});
@@ -48,11 +49,54 @@ class _CommonSettingScreenState extends State<CommonSettingScreen> {
   }
 
   Future<void> _updateContactAgree(bool value) async {
-    await userService.updateMyProfile(EditMyProfile(isContactAgree: value));
-    await prefs.setBool(AppConstants.isContactAgree, value);
-    setState(() {
-      _isToggled = value;
-    });
+    print('토글 상태 변경 시도: $value');
+
+    if (value) {
+      try {
+        // 먼저 권한 요청
+        var status = await Permission.contacts.request();
+        print('권한 요청 직후 상태: $status');
+
+        // 권한 상태 다시 확인 (iOS에서 중요)
+        status = await Permission.contacts.status;
+
+        if (status.isGranted) {
+          await userService.updateMyProfile(EditMyProfile(isContactAgree: value));
+          await prefs.setBool(AppConstants.isContactAgree, value);
+          setState(() {
+            _isToggled = value;
+          });
+        } else {
+          print('권한이 거부됨, openAppSettings 시도');
+          await openAppSettings();
+
+          // 권한 설정 변경 후 앱으로 돌아왔을 때 권한 상태 다시 확인
+          status = await Permission.contacts.status;
+          if (status.isGranted) {
+            await userService.updateMyProfile(EditMyProfile(isContactAgree: value));
+            await prefs.setBool(AppConstants.isContactAgree, value);
+            setState(() {
+              _isToggled = value;
+            });
+          } else {
+            setState(() {
+              _isToggled = false;
+            });
+          }
+        }
+      } catch (e) {
+        print('권한 요청 중 에러 발생: $e');
+        setState(() {
+          _isToggled = false;
+        });
+      }
+    } else {
+      await userService.updateMyProfile(EditMyProfile(isContactAgree: value));
+      await prefs.setBool(AppConstants.isContactAgree, value);
+      setState(() {
+        _isToggled = value;
+      });
+    }
   }
 
   @override

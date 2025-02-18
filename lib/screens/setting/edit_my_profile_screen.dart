@@ -127,7 +127,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
                           }
                         },
                         overlayColor:
-                        WidgetStateProperty.all(ColorSchemes.orange100),
+                        WidgetStateProperty.all(Colors.transparent),
                         child: Column(
                           children: [
                             SizedBox(height: 8.h),
@@ -185,7 +185,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
                           }
                         },
                         overlayColor:
-                        WidgetStateProperty.all(ColorSchemes.orange100),
+                        WidgetStateProperty.all(Colors.transparent),
                         child: Column(
                           children: [
                             SizedBox(height: 8.h),
