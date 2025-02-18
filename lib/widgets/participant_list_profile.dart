@@ -94,6 +94,7 @@ class Participantlistprofile extends StatelessWidget {
                 isBlocked
                     ? CircleAvatar(
                         radius: StyleConstants.circleSizeS,
+                        backgroundColor: ColorSchemes.gray200,
                         child: ClipOval(
                             child: CachedNetworkImage(
                                 imageUrl:
@@ -101,6 +102,7 @@ class Participantlistprofile extends StatelessWidget {
                       )
                     : CircleAvatar(
                         radius: StyleConstants.circleSizeS,
+                        backgroundColor: ColorSchemes.gray200,
                         child: ClipOval(
                             child: CachedNetworkImage(imageUrl: profileImage)),
                       ),
