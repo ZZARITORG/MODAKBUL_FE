@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -48,6 +49,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
     super.initState();
     getData = friendService.getFriendList();
     _searchController.addListener(_onSearchChanged);
+    meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
+    selectedFriends = meetingProvider.selectFriends ?? [];
   }
 
   @override
@@ -171,6 +174,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                       children: [
                                         CircleAvatar(
                                           radius: StyleConstants.circleSizeM,
+                                          child: ClipOval(
+                                              child: CachedNetworkImage(imageUrl: friend['profilePicture']!)),
                                         ),
                                         Positioned(
                                           top: 0,
@@ -372,7 +377,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                       Row(
                                                         children: [
                                                           Text(
-                                                            '필터',
+                                                            '정렬',
                                                             style: Theme.of(
                                                                     context)
                                                                 .textTheme
@@ -473,7 +478,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                 _toggleSelectGroup(
                                                     friend.userId,
                                                     friend.userName,
-                                                    friend.userName,
+                                                    friend.profileUrl,
                                                     friend.id);
                                                 //filteredFriends = snapshot.data!;
                                                 _searchController.text = '';
@@ -532,15 +537,11 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                       height: 56.h,
                       child: CustomButton(
                           text: '그룹 선택',
-                          onPressed: selectedFriends.isNotEmpty
+                          onPressed: selectedFriends.length >= 2
                               ? () {
                                   meetingProvider.selectGroupName =
                                       '${selectedFriends[0]['userName']} 외 ${selectedFriends.length - 1}명';
-                                  meetingProvider.selectFriends =
-                                      selectedFriends
-                                          .map((friend) =>
-                                              friend['id'] as String)
-                                          .toList();
+                                  meetingProvider.selectFriends = selectedFriends;
                                   meetingProvider.isGroup = false;
                                   Navigator.pop(context);
                                 }

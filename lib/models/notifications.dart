@@ -3,12 +3,14 @@ class Notifications {
   final String sourceUserId;
   final String sourceUserName;
   final DateTime createdAt;
+  final String? meetingId;
 
   Notifications({
     required this.type,
     required this.sourceUserId,
     required this.sourceUserName,
     required this.createdAt,
+    this.meetingId,
   });
 
   factory Notifications.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class Notifications {
       sourceUserId: json['sourceUserId'] as String,
       sourceUserName: json['sourceUserName'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      meetingId: json['meetingId'] as String?,
     );
   }
 

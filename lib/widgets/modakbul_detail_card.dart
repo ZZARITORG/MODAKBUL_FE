@@ -107,7 +107,7 @@ class ModakbulDetailCard extends StatelessWidget {
                     context: context,
                     isScrollControlled: true,
                     builder: (BuildContext bottomSheetContext) {
-                      return ParticipantBottomSheet(users: users, hostUserNmae: hostName, hostUserId: hostUserId, blockedUsers: blockedUsers,
+                      return ParticipantBottomSheet(users: users, hostUserId: hostUserId, blockedUsers: blockedUsers,
                         friendService: friendService, myUserId: myUserId);
                     }
                 );

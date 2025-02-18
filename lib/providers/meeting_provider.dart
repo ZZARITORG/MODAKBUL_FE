@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MeetingProvider with ChangeNotifier {
   String? _selectGroupName;
   String? _selectGroupId;
-  List<String>? _selectFriends;
+  List<Map<String, String>>? _selectFriends;
   bool? _isGroup;
   String? _selectPlace;
   DateTime? _selectDate;
@@ -17,7 +17,7 @@ class MeetingProvider with ChangeNotifier {
   // Getters
   String? get selectGroupName => _selectGroupName;
   String? get selectGroupId => _selectGroupId;
-  List<String>? get selectFriends => _selectFriends;
+  List<Map<String, String>>? get selectFriends => _selectFriends;
   bool? get isGroup => _isGroup;
   String? get selectPlace => _selectPlace;
   DateTime? get selectDate => _selectDate;
@@ -39,7 +39,7 @@ class MeetingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  set selectFriends(List<String>? selectFriends) {
+  set selectFriends(List<Map<String, String>>? selectFriends) {
     _selectFriends = selectFriends;
     notifyListeners();
   }

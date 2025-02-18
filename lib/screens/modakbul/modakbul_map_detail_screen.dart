@@ -67,18 +67,8 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 24.h),
-                              Text(
-                                '모닥불이 피워진 위치를\n확인해 주세요',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bigHeadLine2
-                                    .copyWith(
-                                        color: ColorSchemes.gray500,
-                                        height: 1.5),
-                              ),
                               SizedBox(
-                                height: 24.h,
+                                height: 16.h,
                               ),
                               FittedBox(
                                 fit: BoxFit.fitWidth,
@@ -86,26 +76,34 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      detailAddress.isNotEmpty
-                                          ? detailAddress
-                                          : location.isNotEmpty
-                                          ? location
-                                          : '',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .smallHeadLine2
-                                          .copyWith(color: ColorSchemes.orange200),
-                                    ),
-                                    SizedBox(
-                                      height: 4.h,
-                                    ),
-                                    Text(
                                       address,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .body2
+                                          .body3
+                                          .copyWith(color: ColorSchemes.gray300),
+                                    ),
+                                    SizedBox(
+                                      height: 8.h,
+                                    ),
+                                    Text(
+                                      location,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bigHeadLine3
                                           .copyWith(color: ColorSchemes.orange200),
                                     ),
+                                    detailAddress.replaceAll('\u200B', '').replaceAll('<...>', '').trim().isNotEmpty ? Column(
+                                      children: [
+                                        SizedBox(height: 4.h,),
+                                        Text(
+                                          detailAddress,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .body3
+                                              .copyWith(color: ColorSchemes.orange100),
+                                        ),
+                                      ],
+                                    ) : const SizedBox.shrink()
                                   ],
                                 ),
                               ),
