@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modakbul/screens/alert/alert_screen.dart';
 import 'package:modakbul/screens/auth/auth_code_screen.dart';
@@ -31,6 +32,7 @@ import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/screens/setting/terms_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/screens/setting/image_cropper_setting_screen.dart';
+
 
 class Routes {
   Routes._();
@@ -120,18 +122,9 @@ class Routes {
   };
 
   /// FadeTransition을 사용하는 커스텀 페이지 빌더
-  static PageRouteBuilder _fadePage(Widget page, Object? arguments) {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOut,
-          ),
-          child: page,
-        );
-      },
-      transitionDuration: const Duration(milliseconds: 300),
+  static Route _fadePage(Widget page, Object? arguments) {
+    return CupertinoPageRoute(
+      builder: (context) => page,
       settings: RouteSettings(arguments: arguments),
     );
   }
