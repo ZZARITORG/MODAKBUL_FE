@@ -207,6 +207,7 @@ class _MapSearchScreenState extends State<MapSearchScreen>
           Expanded(
             child: SingleChildScrollView(
               controller: _scrollController,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: Builder(builder: (context) {
                 if (_searchController.text.isEmpty) {
                   return Column(
@@ -296,49 +297,45 @@ class _MapSearchScreenState extends State<MapSearchScreen>
                                     ],
                                   )),
                             ),
+                            SizedBox(
+                              height: 24.h,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 4.w,
+                                ),
+                                Text(
+                                  '최근 검색한 위치',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine4
+                                      .copyWith(color: ColorSchemes.gray500),
+                                ),
+                                const Spacer(),
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      LocationManager.clearLocations();
+                                    });
+                                  },
+                                  child: Text(
+                                    '전체 삭제',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .body3
+                                        .copyWith(color: ColorSchemes.orange100),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 4.w,
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                       if (recentSearchList.isNotEmpty) ...[
-                        SizedBox(
-                          height: 24.h,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: StyleConstants.defaultPadding),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 4.w,
-                              ),
-                              Text(
-                                '최근 검색한 위치',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bigHeadLine4
-                                    .copyWith(color: ColorSchemes.gray500),
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    LocationManager.clearLocations();
-                                  });
-                                },
-                                child: Text(
-                                  '전체 삭제',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .body3
-                                      .copyWith(color: ColorSchemes.orange100),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 4.w,
-                              ),
-                            ],
-                          ),
-                        ),
                         SizedBox(
                           height: 14.h,
                         ),

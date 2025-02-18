@@ -277,7 +277,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
                             .smallHeadLine3
                             .copyWith(
                                 color: _canResend
-                                    ? ColorSchemes.orange100
+                                    ? ColorSchemes.orange200
                                     : ColorSchemes.gray200),
                       )),
                 ),
