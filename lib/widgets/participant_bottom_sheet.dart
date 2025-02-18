@@ -46,7 +46,17 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
     sortedUsers.sort((a, b) {
       if (a.userId == widget.hostUserId) return -1;
       if (b.userId == widget.hostUserId) return 1;
-      return 0;
+
+      final statusOrder = {
+        'REJECTED' : 0,
+        'ACCEPTED' : 1,
+        'PENDING' : 2,
+      };
+
+      final aOrder = statusOrder[a.status]!;
+      final bOrder = statusOrder[b.status]!;
+
+      return aOrder.compareTo(bOrder);
     });
     blockedUsersIds =
         widget.blockedUsers.map((blockedUser) => blockedUser.id).toList();
@@ -106,7 +116,7 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
               child: ListView.separated(
                 padding: EdgeInsets.only(top: 24.h),
                 itemCount: sortedUsers.length,
-                separatorBuilder: (context, index) => SizedBox(height: 18.h),
+                separatorBuilder: (context, index) => SizedBox(height: 0.h),
                 itemBuilder: (context, index) {
                   final user = sortedUsers[index];
                   final bool isPending =
