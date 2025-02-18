@@ -158,7 +158,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                 controller: _searchController,
                 focusNode: _searchFocusNode,
               ),
-              SizedBox(height: 10.h),
+              SizedBox(height: 24.h),
               Expanded(
                 child: GestureDetector(
                   onTap: () => FocusScope.of(context).unfocus(),
@@ -375,7 +375,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                                 );
                                               },
                                               child: Text(
-                                                '필터',
+                                                '정렬',
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .body3

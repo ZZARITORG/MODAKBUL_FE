@@ -140,23 +140,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 10.h,
-                ),
-                CustomSearchBar(
-                  hintText: '친구를 검색해 보세요.',
-                  controller: _searchController,
-                  focusNode: _searchFocusNode,
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
                 Builder(builder: (context) {
                   if (selectedFriends.isEmpty) {
                     return const SizedBox.shrink();
                   } else {
                     return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      padding: EdgeInsets.only(top: 10.h, bottom: 6.h),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         padding: EdgeInsets.only(
@@ -189,12 +178,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                               child: IconButton(
                                                 padding: EdgeInsets.zero,
                                                 constraints:
-                                                    const BoxConstraints(),
+                                                const BoxConstraints(),
                                                 onPressed: () {
                                                   setState(() {
                                                     selectedFriends.removeWhere(
-                                                      (item) =>
-                                                          item['userId'] ==
+                                                          (item) =>
+                                                      item['userId'] ==
                                                           friend['userId'],
                                                     );
                                                   });
@@ -219,7 +208,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                 .textTheme
                                                 .body3
                                                 .copyWith(
-                                                    color: ColorSchemes.gray300),
+                                                color: ColorSchemes.gray300),
                                           ),
                                         ),
                                       ),
@@ -234,6 +223,17 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                     );
                   }
                 }),
+                SizedBox(
+                  height: 10.h,
+                ),
+                CustomSearchBar(
+                  hintText: '친구를 검색해 보세요.',
+                  controller: _searchController,
+                  focusNode: _searchFocusNode,
+                ),
+                SizedBox(
+                  height: 24.h,
+                ),
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: StyleConstants.defaultPadding),
@@ -280,7 +280,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        '필터',
+                                                        '정렬',
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .bigHeadLine3
@@ -413,7 +413,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                             );
                                           },
                                           child: Text(
-                                            '필터',
+                                            '정렬',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .body3
