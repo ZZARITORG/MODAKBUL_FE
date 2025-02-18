@@ -69,6 +69,17 @@ dependencies:
   collection: ^1.18.0
 
 dev_dependencies:
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.8
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_launcher_icons:
+  android: "launch_icon"
+  ios: "AppIcon"
+  image_path_ios: "assets/images/icon.png"
+  image_path_android: "assets/images/icon.png"
+  remove_alpha_ios: true
+
   flutter_test:
     sdk: flutter
 
@@ -100,3 +111,4 @@ flutter:
     - family: PretendardVariable
       fonts:
         - asset: assets/fonts/PretendardVariable.ttf
+
