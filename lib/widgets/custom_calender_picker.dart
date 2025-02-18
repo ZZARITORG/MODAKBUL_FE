@@ -243,9 +243,11 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
             onPressed: () {
               if (_isDateSelectable(_selectedDate!)) {
                 //widget.onDateSelected(_selectedDate!);
-                meetingProvider.selectDate = _selectedDate;
-                meetingProvider.selectHour = null;
-                meetingProvider.selectMinute = null;
+                if (meetingProvider.selectDate != _selectedDate) {
+                  meetingProvider.selectDate = _selectedDate;
+                  meetingProvider.selectHour = null;
+                  meetingProvider.selectMinute = null;
+                }
                 Navigator.pop(context);
               }
             },

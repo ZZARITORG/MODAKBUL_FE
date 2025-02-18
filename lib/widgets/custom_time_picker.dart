@@ -72,6 +72,12 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
         || (selectedHour! < currentTime!.hour));
   }
 
+  int convertTo12Hour(int hour) {
+    if (hour == 0) return 12; // 00시는 12시로 변환
+    if (hour > 12) return hour - 12; // 13~23시는 1~11시로 변환
+    return hour; // 1~12시는 그대로 반환
+  }
+
   @override
   Widget build(BuildContext context) {
     meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
@@ -217,7 +223,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
             height: 56.h,
             width: double.infinity,
             child: CustomButton(
-              text: '$selectedHour시 ${selectedMinute.toString().padLeft(
+              text: '$selectedPeriod ${convertTo12Hour(selectedHour!)}시 ${selectedMinute.toString().padLeft(
                   2, '0')}분 등록',
                onPressed: isMinuteSelectable(selectedMinute!) ? () {
                  //widget.onTimeSelected(selectedHour!.toString(), selectedMinute!.toString());
