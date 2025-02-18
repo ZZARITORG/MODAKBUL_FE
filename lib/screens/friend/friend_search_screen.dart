@@ -377,6 +377,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
 
   Widget _buildFriendRequests() {
     return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: StyleConstants.defaultPadding),

@@ -75,35 +75,37 @@ class ProfileBottomSheet extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 24.h),
-                              InkWell(
-                                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                                onTap: () {
-                                  friendService
-                                      .requestFriend(
-                                      Uuid(targetId: selectedUserId))
-                                      .then((_) {
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('친구추가', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
-                                    SizedBox(
-                                      width: 24.r,
-                                      height: 24.r,
-                                      child: Center(
-                                        child: SvgPicture.asset(
-                                          IconPath.arrowForwardGray200,
-                                          width: 9.r,
-                                          height: 16.r,
+                              if (userCheckData.status != 'ACCEPTED' && userCheckData.status != 'PENDING') ...[
+                                InkWell(
+                                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                  onTap: () {
+                                    friendService
+                                        .requestFriend(
+                                        Uuid(targetId: selectedUserId))
+                                        .then((_) {
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('친구추가', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                      SizedBox(
+                                        width: 24.r,
+                                        height: 24.r,
+                                        child: Center(
+                                          child: SvgPicture.asset(
+                                            IconPath.arrowForwardGray200,
+                                            width: 9.r,
+                                            height: 16.r,
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 24.h),
+                                SizedBox(height: 24.h),
+                              ],
                               InkWell(
                                 overlayColor: WidgetStateProperty.all(Colors.transparent),
                                 onTap: () {

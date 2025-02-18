@@ -15,7 +15,6 @@ import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
 import 'package:modakbul/widgets/select_user_list_profile.dart';
 
-
 class GroupEditScreen extends StatefulWidget {
   const GroupEditScreen({super.key});
 
@@ -36,7 +35,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
   final GroupService _groupService = GroupService();
   final FocusNode _searchFocusNode = FocusNode();
   String updateGroupName = '';
-  bool get isButtonEnabled => selectedFriends.length >= 2;
+  bool get isButtonEnabled => selectedFriends.length >= 3;
 
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
 
@@ -263,6 +262,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                       SizedBox(height: 24.h),
                       if (selectedFriends.isNotEmpty)
                         SingleChildScrollView(
+                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                           scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.only(
                               left: StyleConstants.defaultPadding, right: 4.w),
@@ -350,6 +350,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                           padding: EdgeInsets.symmetric(
                               horizontal: StyleConstants.defaultPadding),
                           child: SingleChildScrollView(
+                            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                             controller: _scrollController,
                             child: Column(
                               children: [

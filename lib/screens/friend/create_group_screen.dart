@@ -216,6 +216,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       SizedBox(height: 24.h),
                       if (selectedFriends.isNotEmpty)
                         SingleChildScrollView(
+                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                           scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.only(
                               left: StyleConstants.defaultPadding, right: 4.w),
