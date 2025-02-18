@@ -16,30 +16,54 @@ import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
-class MapSelectScreen extends StatelessWidget {
+class MapSelectScreen extends StatefulWidget {
   MapSelectScreen({super.key});
 
+  @override
+  State<MapSelectScreen> createState() => _MapSelectScreenState();
+}
+
+class _MapSelectScreenState extends State<MapSelectScreen> {
   TextEditingController detailAddressController = TextEditingController();
+
   Set<Marker> markers = {};
+
   late PlaceProvider placeProvider;
+
   late MeetingProvider meetingProvider;
+
+  late KakaoMapController mapController;
 
   @override
   Widget build(BuildContext context) {
     placeProvider = Provider.of<PlaceProvider>(context, listen: false);
     meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
-    late KakaoMapController kakaoMapController;
     return Scaffold(
       appBar: const BackButtonAppBar(),
       body: SafeArea(
         child: Stack(
           children: [
-            KakaoMap(
-              onMapCreated: ((controller) async {
-                kakaoMapController = await controller.setDraggable(false);
-              }),
-              markers: markers.toList(),
-              center: LatLng(placeProvider.y!, placeProvider.x!),
+            StatefulBuilder(
+                builder: (context, setInState) {
+                return KakaoMap(
+                  onMapCreated: ((controller) async {
+                    mapController = controller;
+                    mapController.setDraggable(false);
+                    markers.add(Marker(
+                      markerId: UniqueKey().toString(),
+                      latLng: await mapController.getCenter(),
+                      width: 40,
+                      height: 55,
+                      offsetX: 20,
+                      offsetY: 55,
+                      markerImageSrc: 'https://zzarit-madakbul-bucket.s3.ap-northeast-2.amazonaws.com/asset/pin_circle_modak.png',
+                    ));
+                    setInState(() {});
+                  }),
+                  markers: markers.toList(),
+                  center: LatLng(placeProvider.y!, placeProvider.x!),
+                );
+              }
             ),
             Positioned(
               bottom: 0,
