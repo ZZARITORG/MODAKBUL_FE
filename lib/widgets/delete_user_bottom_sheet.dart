@@ -51,8 +51,7 @@ class DeleteUserBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+    return SafeArea(
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),

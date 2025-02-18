@@ -127,7 +127,7 @@ class _AuthCodeScreenState extends State<AuthCodeScreen> {
       String? fcmToken;
       if (Platform.isIOS) {
         // await Future.delayed(Duration(seconds: 2));
-        fcmToken = await FirebaseMessaging.instance.getAPNSToken();
+        fcmToken = await FirebaseMessaging.instance.getToken();
         print('APNS Token: $fcmToken');
       } else if (Platform.isAndroid) {
         fcmToken = await FirebaseMessaging.instance.getToken();

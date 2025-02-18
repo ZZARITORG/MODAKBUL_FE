@@ -52,15 +52,15 @@ class Validators {
     RegExp(r'(?=.*[ㄱ-ㅎ])(?=.*[가-힣])|(?=.*[ㅏ-ㅣ])(?=.*[가-힣])');
 
     if (!userNamePattern.hasMatch(value)) {
-      return '이름은 한글, 영문만 가능합니다. (초성 사용불가)';
+      return '이름은 한글 또는 영문만 가능합니다.';
     }
 
     if (hasOnlyConsonantsAndVowels.hasMatch(value)) {
-      return '이름은 한글, 영문만 가능합니다. (초성 사용불가)';
+      return '이름은 한글 또는 영문만 가능합니다.';
     }
 
     if (hasMixedConsonantsAndSyllables.hasMatch(value)) {
-      return '이름은 한글, 영문만 가능합니다. (초성 사용불가)';
+      return '이름은 한글 또는 영문만 가능합니다.';
     }
 
     return null;
@@ -79,7 +79,7 @@ class Validators {
     final userIdPattern = RegExp(r'^[a-zA-Z0-9_.]+$');
 
     if (!userIdPattern.hasMatch(value)) {
-      return '숫자, 영어 알파벳, 언더스코어(_) 또는 점(.)만 입력할 수 있습니다.';
+      return '숫자, 영문, 언더스코어(_) 또는 점(.)만 입력할 수 있습니다.';
     }
 
     if (errorMessage != null) {
