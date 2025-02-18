@@ -29,7 +29,7 @@ class ProfileBottomSheet extends StatefulWidget {
 }
 
 class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
-  bool isRequesting = false;
+  bool _isButtonDisabled = false;
 
   void _handleStatusChange(BuildContext context) {
     if (widget.onFriendStatusChanged != null) {
@@ -38,15 +38,69 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
     Navigator.pop(context);
   }
 
-  Future<void> _sendRequest(BuildContext context) async {
-    if (isRequesting) return;  // 이미 요청 중이면 반환
-    isRequesting = true;  // 요청 중 상태로 변경
+  void _handleFriendRequest(BuildContext context) async {
+    if (_isButtonDisabled) return;
+    setState(() {
+      _isButtonDisabled = true;
+    });
 
-    // 친구 추가 요청
-    await widget.friendService.requestFriend(Uuid(targetId: widget.selectedUserId));
-    _handleStatusChange(context);
+    try {
+      await widget.friendService
+          .requestFriend(Uuid(targetId: widget.selectedUserId));
+      _handleStatusChange(context);
+    } catch (e) {
+    } finally {
+      Future.delayed(Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            _isButtonDisabled = false;
+          });
+        }
+      });
+    }
+  }
 
-    isRequesting = false;  // 요청 후 상태를 초기화
+  void _handleFriendDeletion(BuildContext context) async {
+    if (_isButtonDisabled) return;
+    setState(() {
+      _isButtonDisabled = true;
+    });
+
+    try {
+      await widget.friendService
+          .deleteFriend(Uuid(targetId: widget.selectedUserId));
+      _handleStatusChange(context);
+    } catch (e) {
+    } finally {
+      Future.delayed(Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            _isButtonDisabled = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _handleFriendAcceptance(BuildContext context) async {
+    if (_isButtonDisabled) return;
+    setState(() {
+      _isButtonDisabled = true;
+    });
+    try {
+      await widget.friendService
+          .acceptFriend(Uuid(targetId: widget.selectedUserId));
+      _handleStatusChange(context);
+    } catch (e) {
+    } finally {
+      Future.delayed(Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            _isButtonDisabled = false;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -109,14 +163,11 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
                                 InkWell(
                                   overlayColor: WidgetStateProperty.all(
                                       Colors.transparent),
-                                  onTap: () {
-                                    widget.friendService
-                                        .requestFriend(
-                                            Uuid(targetId: widget.selectedUserId))
-                                        .then((_) {
-                                      _handleStatusChange(context);
-                                    });
-                                  },
+                                  onTap: _isButtonDisabled
+                                      ? null
+                                      : () {
+                                          _handleFriendRequest(context);
+                                        },
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -279,7 +330,8 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
                 SizedBox(width: 37.w),
                 CircleAvatar(
                   radius: StyleConstants.circleSizeL,
-                  backgroundImage: NetworkImage(widget.userCheckData.profileUrl),
+                  backgroundImage:
+                      NetworkImage(widget.userCheckData.profileUrl),
                 ),
               ],
             ),
@@ -300,15 +352,14 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
                                 height: 56.h,
                                 child: CustomButton(
                                   text: '친구 수락',
-                                  onPressed: () {
-                                    widget.friendService
-                                        .acceptFriend(
-                                            Uuid(targetId: widget.selectedUserId))
-                                        .then((_) {
-                                      _handleStatusChange(context);
-                                    });
-                                  },
-                                  buttonColor: ColorSchemes.orange200,
+                                  onPressed: _isButtonDisabled
+                                      ? null
+                                      : () {
+                                          _handleFriendAcceptance(context);
+                                        },
+                                  buttonColor: _isButtonDisabled
+                                      ? ColorSchemes.gray200
+                                      : ColorSchemes.orange200,
                                   textStyle: Theme.of(context)
                                       .textTheme
                                       .smallHeadLine2,
@@ -322,14 +373,11 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
                                 height: 56.h,
                                 child: CustomButton(
                                   text: '삭제',
-                                  onPressed: () {
-                                    widget.friendService
-                                        .deleteFriend(
-                                            Uuid(targetId: widget.selectedUserId))
-                                        .then((_) {
-                                      _handleStatusChange(context);
-                                    });
-                                  },
+                                  onPressed: _isButtonDisabled
+                                      ? null
+                                      : () {
+                                          _handleFriendDeletion(context);
+                                        },
                                   buttonColor: ColorSchemes.gray100,
                                   textStyle: Theme.of(context)
                                       .textTheme
@@ -344,14 +392,14 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
                           height: 56.h,
                           child: CustomButton(
                             text: '요청 취소',
-                            onPressed: () {
-                              widget.friendService
-                                  .deleteFriend(Uuid(targetId: widget.selectedUserId))
-                                  .then((_) {
-                                _handleStatusChange(context);
-                              });
-                            },
-                            buttonColor: ColorSchemes.orange100,
+                            onPressed: _isButtonDisabled
+                                ? null
+                                : () {
+                                    _handleFriendDeletion(context);
+                                  },
+                            buttonColor: _isButtonDisabled
+                                ? ColorSchemes.gray200
+                                : ColorSchemes.orange100,
                             textStyle:
                                 Theme.of(context).textTheme.smallHeadLine2,
                             textColor: Colors.white,
@@ -363,29 +411,26 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
                         text: widget.userCheckData.status == 'ACCEPTED'
                             ? '친구 삭제'
                             : widget.userCheckData.status == 'PENDING'
-                                ? (widget.userCheckData.sourceId == widget.selectedUserId
+                                ? (widget.userCheckData.sourceId ==
+                                        widget.selectedUserId
                                     ? '친구 수락'
                                     : '삭제')
                                 : '친구 요청',
-                        onPressed: () {
-                          switch (widget.userCheckData.status) {
-                            case 'ACCEPTED':
-                              widget.friendService
-                                  .deleteFriend(Uuid(targetId: widget.selectedUserId))
-                                  .then((_) {
-                                _handleStatusChange(context);
-                              });
-                              break;
-                            case 'REJECTED':
-                            case 'NONE':
-                              widget.friendService
-                                  .requestFriend(Uuid(targetId: widget.selectedUserId))
-                                  .then((_) {
-                                _handleStatusChange(context);
-                              });
-                          }
-                        },
-                        buttonColor: ColorSchemes.orange200,
+                        onPressed: _isButtonDisabled
+                            ? null
+                            : () {
+                                switch (widget.userCheckData.status) {
+                                  case 'ACCEPTED':
+                                    _handleFriendDeletion(context);
+                                    break;
+                                  case 'REJECTED':
+                                  case 'NONE':
+                                    _handleFriendRequest(context);
+                                }
+                              },
+                        buttonColor: _isButtonDisabled
+                            ? ColorSchemes.orange200
+                            : ColorSchemes.orange200,
                         textStyle: Theme.of(context).textTheme.smallHeadLine2,
                         textColor: Colors.white,
                       ),

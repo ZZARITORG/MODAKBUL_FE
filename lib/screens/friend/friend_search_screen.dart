@@ -503,7 +503,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                               profileImage: friend.profileUrl,
                               userName: friend.name,
                               userId: friend.userId,
-                              time: timeAgo(friend.createdAt, currentTime),
+                              time: timeAgo(friend.updatedAt, currentTime),
                               acceptOnPressed: () async {
                                 await friendService.acceptFriend(
                                     Uuid(targetId: friend.id));
