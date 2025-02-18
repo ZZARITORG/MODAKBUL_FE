@@ -122,6 +122,12 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
     }
   }
 
+  void updateFriendStatus(String userId) {
+    setState(() {
+      getSug = getSug;
+    });
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -618,6 +624,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                                 userCheckData: userCheckData,
                                                 selectedUserId: friend.id,
                                                 friendService: friendService,
+                                                onFriendStatusChanged: updateFriendStatus,
                                               );
                                             }
                                           },

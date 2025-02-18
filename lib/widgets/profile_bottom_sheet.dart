@@ -14,13 +14,22 @@ class ProfileBottomSheet extends StatelessWidget {
   final UserCheck userCheckData;
   final String selectedUserId;
   final FriendService friendService;
+  final Function(String)? onFriendStatusChanged;
 
   const ProfileBottomSheet({
     Key? key,
     required this.userCheckData,
     required this.selectedUserId,
     required this.friendService,
+    this.onFriendStatusChanged,
   }) : super(key: key);
+
+  void _handleStatusChange(BuildContext context) {
+    if (onFriendStatusChanged != null) {
+      onFriendStatusChanged!(selectedUserId);
+    }
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +67,7 @@ class ProfileBottomSheet extends StatelessWidget {
                             ),
                           ),
                           padding: EdgeInsets.symmetric(
-                            horizontal: StyleConstants.defaultPadding),
+                              horizontal: StyleConstants.defaultPadding),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -75,21 +84,29 @@ class ProfileBottomSheet extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 24.h),
-                              if (userCheckData.status != 'ACCEPTED' && userCheckData.status != 'PENDING') ...[
+                              if (userCheckData.status != 'ACCEPTED' &&
+                                  userCheckData.status != 'PENDING') ...[
                                 InkWell(
-                                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                  overlayColor:
+                                  WidgetStateProperty.all(Colors.transparent),
                                   onTap: () {
                                     friendService
                                         .requestFriend(
                                         Uuid(targetId: selectedUserId))
                                         .then((_) {
-                                      Navigator.pop(context);
+                                      _handleStatusChange(context);
                                     });
                                   },
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text('친구추가', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                      Text('친구추가',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .smallHeadLine3
+                                              .copyWith(
+                                              color: ColorSchemes.gray300)),
                                       SizedBox(
                                         width: 24.r,
                                         height: 24.r,
@@ -107,19 +124,25 @@ class ProfileBottomSheet extends StatelessWidget {
                                 SizedBox(height: 24.h),
                               ],
                               InkWell(
-                                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                overlayColor:
+                                WidgetStateProperty.all(Colors.transparent),
                                 onTap: () {
                                   friendService
-                                      .blockFriend(
-                                      Uuid(targetId: selectedUserId))
+                                      .blockFriend(Uuid(targetId: selectedUserId))
                                       .then((_) {
-                                    Navigator.pop(context);
+                                    _handleStatusChange(context);
                                   });
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('사용자 차단하기', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                    Text('사용자 차단하기',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .smallHeadLine3
+                                            .copyWith(
+                                            color: ColorSchemes.gray300)),
                                     SizedBox(
                                       width: 24.r,
                                       height: 24.r,
@@ -136,13 +159,19 @@ class ProfileBottomSheet extends StatelessWidget {
                               ),
                               SizedBox(height: 24.h),
                               InkWell(
-                                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                                onTap: () {
-                                },
+                                overlayColor:
+                                WidgetStateProperty.all(Colors.transparent),
+                                onTap: () {},
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('사용자 신고하기', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                    Text('사용자 신고하기',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .smallHeadLine3
+                                            .copyWith(
+                                            color: ColorSchemes.gray300)),
                                     SizedBox(
                                       width: 24.r,
                                       height: 24.r,
@@ -195,8 +224,7 @@ class ProfileBottomSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (userCheckData.mutualCount == 0)
-                        SizedBox(height: 14.h),
+                      if (userCheckData.mutualCount == 0) SizedBox(height: 14.h),
                       Text(
                         userCheckData.name,
                         style: Theme.of(context)
@@ -236,118 +264,108 @@ class ProfileBottomSheet extends StatelessWidget {
           ),
           SizedBox(height: 24.h),
           Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+            padding: EdgeInsets.symmetric(
+                horizontal: StyleConstants.defaultPadding),
             child: SizedBox(
               width: double.infinity,
               child: userCheckData.status == 'PENDING'
                   ? userCheckData.sourceId == selectedUserId
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: SizedBox(
-                                height: 56.h,
-                                child: CustomButton(
-                                  text: '친구 수락',
-                                  onPressed: () {
-                                    friendService
-                                        .acceptFriend(
-                                            Uuid(targetId: selectedUserId))
-                                        .then((_) {
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                                  buttonColor: ColorSchemes.orange200,
-                                  textStyle: Theme.of(context)
-                                      .textTheme
-                                      .smallHeadLine2,
-                                  textColor: Colors.white,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10.w),
-                            Expanded(
-                              child: SizedBox(
-                                height: 56.h,
-                                child: CustomButton(
-                                  text: '삭제',
-                                  onPressed: () {
-                                    friendService
-                                        .deleteFriend(
-                                            Uuid(targetId: selectedUserId))
-                                        .then((_) {
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                                  buttonColor: ColorSchemes.gray100,
-                                  textStyle: Theme.of(context)
-                                      .textTheme
-                                      .smallHeadLine2,
-                                  textColor: ColorSchemes.gray400,
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : SizedBox(
-                          height: 56.h,
-                          child: CustomButton(
-                            text: '요청 취소',
-                            onPressed: () {
-                              friendService
-                                  .deleteFriend(Uuid(targetId: selectedUserId))
-                                  .then((_) {
-                                Navigator.pop(context);
-                              });
-                            },
-                            buttonColor: ColorSchemes.orange100,
-                            textStyle:
-                                Theme.of(context).textTheme.smallHeadLine2,
-                            textColor: Colors.white,
-                          ),
-                        )
-                  : SizedBox(
+                  ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: SizedBox(
                       height: 56.h,
                       child: CustomButton(
-                        text: userCheckData.status == 'ACCEPTED'
-                            ? '친구 삭제'
-                            : userCheckData.status == 'PENDING'
-                                ? (userCheckData.sourceId == selectedUserId
-                                    ? '친구 수락'
-                                    : '삭제')
-                                : '친구 요청',
+                        text: '친구 수락',
                         onPressed: () {
-                          print('유저스테이터스${userCheckData.status}');
-                          switch (userCheckData.status) {
-                            case 'ACCEPTED':
-                              friendService
-                                  .deleteFriend(Uuid(targetId: selectedUserId))
-                                  .then((_) {
-                                Navigator.pop(context);
-                              });
-                              break;
-                            case 'REJECTED':
-                              friendService
-                                  .requestFriend(Uuid(targetId: selectedUserId))
-                                  .then((_) {
-                                Navigator.pop(context);
-                              });
-                              break;
-                            case 'NONE':
-                              friendService
-                                  .requestFriend(
-                                      Uuid(targetId: selectedUserId))
-                                  .then((_) {
-                                Navigator.pop(context);
-                              });
-                          }
+                          friendService
+                              .acceptFriend(
+                              Uuid(targetId: selectedUserId))
+                              .then((_) {
+                            _handleStatusChange(context);
+                          });
                         },
                         buttonColor: ColorSchemes.orange200,
-                        textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                        textStyle:
+                        Theme.of(context).textTheme.smallHeadLine2,
                         textColor: Colors.white,
                       ),
                     ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: SizedBox(
+                      height: 56.h,
+                      child: CustomButton(
+                        text: '삭제',
+                        onPressed: () {
+                          friendService
+                              .deleteFriend(
+                              Uuid(targetId: selectedUserId))
+                              .then((_) {
+                            _handleStatusChange(context);
+                          });
+                        },
+                        buttonColor: ColorSchemes.gray100,
+                        textStyle:
+                        Theme.of(context).textTheme.smallHeadLine2,
+                        textColor: ColorSchemes.gray400,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+                  : SizedBox(
+                height: 56.h,
+                child: CustomButton(
+                  text: '요청 취소',
+                  onPressed: () {
+                    friendService
+                        .deleteFriend(Uuid(targetId: selectedUserId))
+                        .then((_) {
+                      _handleStatusChange(context);
+                    });
+                  },
+                  buttonColor: ColorSchemes.orange100,
+                  textStyle:
+                  Theme.of(context).textTheme.smallHeadLine2,
+                  textColor: Colors.white,
+                ),
+              )
+                  : SizedBox(
+                height: 56.h,
+                child: CustomButton(
+                  text: userCheckData.status == 'ACCEPTED'
+                      ? '친구 삭제'
+                      : userCheckData.status == 'PENDING'
+                      ? (userCheckData.sourceId == selectedUserId
+                      ? '친구 수락'
+                      : '삭제')
+                      : '친구 요청',
+                  onPressed: () {
+                    switch (userCheckData.status) {
+                      case 'ACCEPTED':
+                        friendService
+                            .deleteFriend(Uuid(targetId: selectedUserId))
+                            .then((_) {
+                          _handleStatusChange(context);
+                        });
+                        break;
+                      case 'REJECTED':
+                      case 'NONE':
+                        friendService
+                            .requestFriend(Uuid(targetId: selectedUserId))
+                            .then((_) {
+                          _handleStatusChange(context);
+                        });
+                    }
+                  },
+                  buttonColor: ColorSchemes.orange200,
+                  textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                  textColor: Colors.white,
+                ),
+              ),
             ),
           ),
           SizedBox(height: 56.h),

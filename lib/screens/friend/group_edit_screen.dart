@@ -35,7 +35,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
   final GroupService _groupService = GroupService();
   final FocusNode _searchFocusNode = FocusNode();
   String updateGroupName = '';
-  bool get isButtonEnabled => selectedFriends.length >= 3;
+  bool get isButtonEnabled => selectedFriends.length >= 2;
 
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
 
