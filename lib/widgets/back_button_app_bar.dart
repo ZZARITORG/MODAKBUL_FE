@@ -29,23 +29,27 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
       ///스타일로 옮기기
       automaticallyImplyLeading: false,
       leading: Padding(
-        padding: EdgeInsets.only(left: StyleConstants.defaultPadding),
+        padding: EdgeInsets.only(left: 4.w),
         child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onPressed: () {
-                if (returnResult) {
-                  Navigator.pop(context, true);
-                } else {
-                  Navigator.pop(context);
-                }
-              },
-              icon: SvgPicture.asset(
-                IconPath.arrowBack,
-                height: 22.r, // 반응형 높이
-                width: 22.r, fit: BoxFit.scaleDown,
-              )),
+          SizedBox(
+            height: 32.r,
+            width: 32.r,
+            child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () {
+                  if (returnResult) {
+                    Navigator.pop(context, true);
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
+                icon: SvgPicture.asset(
+                  IconPath.arrowBack,
+                  height: 22.r, // 반응형 높이
+                  width: 22.r, fit: BoxFit.scaleDown,
+                )),
+          ),
         ]),
       ),
       actions: [
