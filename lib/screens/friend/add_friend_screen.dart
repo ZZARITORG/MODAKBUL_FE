@@ -9,30 +9,30 @@ import 'package:modakbul/utils/date_time_utils.dart';
 import 'package:modakbul/widgets/add_friend_profile.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 
-class AddFreindScreen extends StatefulWidget {
-  const AddFreindScreen({super.key});
+class AddFriendScreen extends StatefulWidget {
+  const AddFriendScreen({super.key});
 
   @override
-  State<AddFreindScreen> createState() => _AddFreindScreenState();
+  State<AddFriendScreen> createState() => _AddFriendScreenState();
 }
 
-class _AddFreindScreenState extends State<AddFreindScreen> {
+class _AddFriendScreenState extends State<AddFriendScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   FriendService friendService = FriendService();
   List<FriendReqList> friendRequests = [];
   late Future<List<FriendReqList>> getData;
-  late DateTime currentTime;
+  late DateTime currentTime = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    getData = friendService.getFriendReqList();
-    _initializeCurrentTime();  // 비동기 메서드 호출
+    getData = friendService.getFriendReqList();// 비동기 메서드 호출
+    _updateKoreaTime();
   }
 
   // 비동기 메서드를 따로 분리
-  Future<void> _initializeCurrentTime() async {
+  Future<void> _updateKoreaTime() async {
     currentTime = await DateTimeUtils.getKoreaTime();
     setState(() {});  // currentTime을 업데이트하고 화면을 리빌드
   }

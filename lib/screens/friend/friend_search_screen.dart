@@ -15,7 +15,7 @@ import 'package:modakbul/models/my_profile.dart';
 import 'package:modakbul/models/user_check.dart';
 import 'package:modakbul/models/user_list.dart';
 import 'package:modakbul/models/uuid.dart';
-import 'package:modakbul/screens/friend/add_freind_screen.dart';
+import 'package:modakbul/screens/friend/add_friend_screen.dart';
 import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/services/user_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -401,7 +401,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => AddFreindScreen()),
+                          builder: (context) => AddFriendScreen()),
                     );
                   },
                   child: Text(

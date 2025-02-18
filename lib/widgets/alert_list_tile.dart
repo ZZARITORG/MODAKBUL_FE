@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/constants/style_constants.dart';
@@ -9,13 +10,16 @@ class AlertListTile extends StatelessWidget {
   final String content;
   final String alertType;
   final String time;
+  final String sourceUserProfileUrl;
 
   const AlertListTile(
       {Key? key,
       required this.title,
       required this.content,
       required this.alertType,
-      required this.time})
+      required this.time,
+      required this.sourceUserProfileUrl,
+      })
       : super(key: key);
 
   @override
@@ -31,6 +35,9 @@ class AlertListTile extends StatelessWidget {
           CircleAvatar(
             radius: StyleConstants.circleSizeXXS,
             backgroundColor: ColorSchemes.gray100,
+            child: ClipOval(
+              child: CachedNetworkImage(imageUrl: sourceUserProfileUrl),
+            ),
           ),
           SizedBox(
             width: 6.w,

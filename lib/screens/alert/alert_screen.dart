@@ -168,14 +168,18 @@ class _AlertScreenState extends State<AlertScreen> {
                                     Animation<double> animation) {
                                   return child;
                                 },
-                                child: _getLoadingAsset(controller.value * _maxDragOffset) != null
+                                child: _getLoadingAsset(controller.value *
+                                            _maxDragOffset) !=
+                                        null
                                     ? SvgPicture.asset(
-                                  _getLoadingAsset(controller.value * _maxDragOffset)!,
-                                  width: 25.r,
-                                  height: 25.r,
-                                  key: ValueKey<String>(_getLoadingAsset(
-                                      controller.value * _maxDragOffset)!),
-                                )
+                                        _getLoadingAsset(
+                                            controller.value * _maxDragOffset)!,
+                                        width: 25.r,
+                                        height: 25.r,
+                                        key: ValueKey<String>(_getLoadingAsset(
+                                            controller.value *
+                                                _maxDragOffset)!),
+                                      )
                                     : const SizedBox.shrink(),
                               ),
                       ),
@@ -226,7 +230,9 @@ class _AlertScreenState extends State<AlertScreen> {
                   return Container(
                     width: double.infinity,
                     height: double.infinity,
-                    padding: EdgeInsets.only(bottom: (Scaffold.of(context).appBarMaxHeight!).toDouble()),
+                    padding: EdgeInsets.only(
+                        bottom:
+                            (Scaffold.of(context).appBarMaxHeight!).toDouble()),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -291,7 +297,7 @@ class _AlertScreenState extends State<AlertScreen> {
                   onTap: () {
                     switch (notification.type) {
                       case 'FRIEND_REQUEST':
-                        Routes.navigateTo(context, Routes.addFriendListScreen);
+                        Routes.navigateTo(context, Routes.addFriendScreen);
                         break;
                       case 'MEETING_ALARM':
                         if (notification.meetingId != null) {
@@ -321,11 +327,11 @@ class _AlertScreenState extends State<AlertScreen> {
                   },
                   behavior: HitTestBehavior.opaque,
                   child: AlertListTile(
-                    title: notification.getTitle(),
-                    content: notification.getContent(),
-                    alertType: notification.type,
-                    time: formatTime(notification.createdAt),
-                  ),
+                      title: notification.getTitle(),
+                      content: notification.getContent(),
+                      alertType: notification.type,
+                      time: formatTime(notification.createdAt),
+                      sourceUserProfileUrl: notification.sourceUserProfileUrl),
                 ),
                 SizedBox(height: 12.h),
               ],

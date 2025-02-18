@@ -4,12 +4,14 @@ class Notifications {
   final String sourceUserName;
   final DateTime createdAt;
   final String? meetingId;
+  final String sourceUserProfileUrl;
 
   Notifications({
     required this.type,
     required this.sourceUserId,
     required this.sourceUserName,
     required this.createdAt,
+    required this.sourceUserProfileUrl,
     this.meetingId,
   });
 
@@ -20,6 +22,7 @@ class Notifications {
       sourceUserName: json['sourceUserName'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       meetingId: json['meetingId'] as String?,
+      sourceUserProfileUrl: json['sourceUserProfileUrl'] as String,
     );
   }
 

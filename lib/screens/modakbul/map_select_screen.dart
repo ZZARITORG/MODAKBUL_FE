@@ -35,6 +35,12 @@ class _MapSelectScreenState extends State<MapSelectScreen> {
   late KakaoMapController mapController;
 
   @override
+  void dispose() {
+    mapController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     placeProvider = Provider.of<PlaceProvider>(context, listen: false);
     meetingProvider = Provider.of<MeetingProvider>(context, listen: false);

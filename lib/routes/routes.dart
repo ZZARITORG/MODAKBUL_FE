@@ -18,7 +18,7 @@ import 'package:modakbul/screens/modakbul/map_select_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_detail_screen.dart';
 import 'package:modakbul/screens/modakbul/modakbul_map_detail_screen.dart';
 import 'package:modakbul/screens/modakbul/my_modakbul_screen.dart';
-import 'package:modakbul/screens/search/add_friend_list_screen.dart';
+import 'package:modakbul/screens/friend/add_friend_screen.dart';
 import 'package:modakbul/screens/search/search_screen.dart';
 import 'package:modakbul/screens/setting/alert_setting_screen.dart';
 import 'package:modakbul/screens/setting/blocked_user_screen.dart';
@@ -53,7 +53,7 @@ class Routes {
   static const String mapSearchScreen = '/mapSearchScreen';
   static const String mapSelectScreen = '/mapSelectScreen';
   static const String modakbulDetailScreen = '/modakbulDetailScreen';
-  static const String addFriendListScreen = '/addFriendListScreen';
+  static const String addFriendScreen = '/addFriendScreen';
   static const String searchScreen = '/searchScreen';
   static const String alertSettingScreen = '/alertSettingScreen';
   static const String blockedUserScreen = '/blockedUserScreen';
@@ -100,7 +100,7 @@ class Routes {
     modakbulMapDetailScreen: (BuildContext context) => const ModakbulMapDetailScreen(),
 
     ///search
-    addFriendListScreen: (BuildContext context) => const AddFriendListScreen(),
+    addFriendScreen: (BuildContext context) => const AddFriendScreen(),
     searchScreen: (BuildContext context) => const SearchScreen(),
 
     ///setting
