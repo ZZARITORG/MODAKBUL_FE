@@ -51,7 +51,6 @@ class AuthService {
       ),
     );
     final tokens = Tokens.fromJson(response.data['data']);
-
     return tokens;
   }
 

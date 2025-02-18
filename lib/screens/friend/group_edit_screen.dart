@@ -36,6 +36,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
   final GroupService _groupService = GroupService();
   final FocusNode _searchFocusNode = FocusNode();
   String updateGroupName = '';
+  bool get isButtonEnabled => selectedFriends.length >= 2;
 
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
 
@@ -568,7 +569,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                       height: 56.h,
                       child: CustomButton(
                           text: '그룹 수정하기',
-                          onPressed:_updateGroup,
+                          onPressed: isButtonEnabled ? _updateGroup : null,
                           buttonColor:
                           ColorSchemes.orange200,
                           textStyle: Theme.of(context)

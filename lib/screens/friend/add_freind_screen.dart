@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/models/friend_req_list.dart';
+import 'package:modakbul/models/uuid.dart';
 import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
@@ -102,7 +103,7 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                           SizedBox(height: 144.h),
                           Center(
                             child: Text(
-                              '아직 친구가 없습니다.',
+                              '아직 친구가 없어요',
                               style: Theme
                                   .of(context)
                                   .textTheme
@@ -139,8 +140,22 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                               userName: friend.name,
                               userId: friend.userId,
                               time: timeAgo(friend.createdAt, currentTime),
-                              acceptOnPressed: () {},
-                              rejectOnPressed: () {},
+                              acceptOnPressed: () async {
+                                await friendService.acceptFriend(
+                                    Uuid(targetId: friend.id));
+                                setState(() {
+                                  friendRequests.removeWhere((
+                                      request) => request.id == friend.id);
+                                });
+                              },
+                              rejectOnPressed: () async {
+                                await friendService.rejectFriend(
+                                    Uuid(targetId: friend.id));
+                                setState(() {
+                                  friendRequests.removeWhere((
+                                      request) => request.id == friend.id);
+                                });
+                              },
                             ),
                           );
                         },

@@ -67,8 +67,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
     List<String> delSugList = prefs.getStringList('delSugList') ?? [];
     if (await FlutterContacts.requestPermission()) {
       List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
-      List<FriendList> currentFriendList = await friendService.getFriendList();
-      List<String> currentFriendIds = currentFriendList.map((friend) => friend.id).toList();
       setState(() {
         contactNumbers = contacts
             .where((contact) => contact.phones.isNotEmpty)
@@ -76,9 +74,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
             .toList();
         getSug = friendService.getFriendSuggested(Contacts(contacts: contactNumbers))
             .then((suggestions) {
-          return suggestions.where((friend) =>
-          !delSugList.contains(friend.id) &&
-              !currentFriendIds.contains(friend.id)
+          return suggestions.where((friend) => !delSugList.contains(friend.id)
           ).toList();
         });
       });
@@ -608,10 +604,22 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                     showModalBottomSheet(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return ProfileBottomSheet(
-                                          userCheckData: userCheckData,
-                                          selectedUserId: friend.id,
-                                          friendService: friendService,
+                                        return FutureBuilder<UserCheck>(
+                                          future: userService.getUserCheck(friend.id), // 최신 상태 가져오기
+                                          builder: (context, userSnapshot) {
+                                            if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                              return Center(child: CircularProgressIndicator());
+                                            } else if (userSnapshot.hasError) {
+                                              return Center(child: Text('Error: ${userSnapshot.error}'));
+                                            } else {
+                                              UserCheck userCheckData = userSnapshot.data!;
+                                              return ProfileBottomSheet(
+                                                userCheckData: userCheckData,
+                                                selectedUserId: friend.id,
+                                                friendService: friendService,
+                                              );
+                                            }
+                                          },
                                         );
                                       },
                                     );
@@ -620,25 +628,22 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> with TickerProv
                                     profileImage: friend.profileUrl,
                                     userName: friend.name,
                                     mutualFriendCount: friend.mutualFriendCount.toString(),
+                                    userId: friend.id,
                                     userCheckData: userCheckData,
-                                    acceptOnPressed: () async {
-                                      if (userCheckData.status == 'PENDING') {
-                                        await friendService.deleteFriend(Uuid(targetId: friend.id));
-                                      } else {
-                                        await friendService.requestFriend(Uuid(targetId: friend.id));
-                                      }
-                                      setState(() {});
+                                    requestFriend: friendService.requestFriend,
+                                    deleteFriend: friendService.deleteFriend,
+                                    onFriendStatusChanged: (newStatus) {
+                                      // 필요한 경우 상태 변경 처리
                                     },
-                                    rejectOnPressed: () async {
+                                    onReject: () async {
                                       final prefs = await SharedPreferences.getInstance();
                                       List<String> delSugList = prefs.getStringList('delSugList') ?? [];
                                       delSugList.add(friend.id);
                                       await prefs.setStringList('delSugList', delSugList);
-                                      setState(() {
-                                        friendSuggested.removeWhere((request) => request.id == friend.id);
-                                      });
+                                      // 여기서는 해당 항목만 제거
+                                      // 리스트에서 해당 항목 제거 로직
                                     },
-                                  ),
+                                  )
                                 ),
                               );
                             }

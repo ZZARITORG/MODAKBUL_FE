@@ -530,6 +530,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                                                         ),
                                                                       ).then((_) {
                                                                         _reloadGroups();
+                                                                        Navigator.pop(context);
                                                                       });
                                                                     },
                                                                     child: Row(

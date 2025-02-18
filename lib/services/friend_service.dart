@@ -61,11 +61,18 @@ class FriendService {
   }
 
   Future<void> deleteFriend(Uuid uuid) async {
-    Response response =
-    await dio.delete(
-      ApiPath.friend,
-      data: uuid.toJson()
-    );
+    try {
+      print('deleteFriend 호출 - targetId: ${uuid.targetId}');
+      Response response = await dio.delete(
+          ApiPath.friend,
+          data: uuid.toJson()
+      );
+      print('deleteFriend 응답 - statusCode: ${response.statusCode}');
+      print('deleteFriend 응답 데이터: ${response.data}');
+    } catch (e) {
+      print('deleteFriend 에러 발생: $e');
+      throw e;
+    }
   }
 
   Future<void> requestFriend(Uuid uuid) async {

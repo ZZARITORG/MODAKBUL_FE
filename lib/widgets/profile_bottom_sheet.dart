@@ -44,7 +44,124 @@ class ProfileBottomSheet extends StatelessWidget {
                 IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(StyleConstants.radiusLarge),
+                              topRight: Radius.circular(StyleConstants.radiusLarge),
+                            ),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: StyleConstants.defaultPadding),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: 38.h),
+                              Row(
+                                children: [
+                                  Text(
+                                    userCheckData.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bigHeadLine3
+                                        .copyWith(color: ColorSchemes.gray500),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 24.h),
+                              InkWell(
+                                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                onTap: () {
+                                  friendService
+                                      .requestFriend(
+                                      Uuid(targetId: selectedUserId))
+                                      .then((_) {
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('친구추가', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                    SizedBox(
+                                      width: 24.r,
+                                      height: 24.r,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          IconPath.arrowForwardGray200,
+                                          width: 9.r,
+                                          height: 16.r,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 24.h),
+                              InkWell(
+                                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                onTap: () {
+                                  friendService
+                                      .blockFriend(
+                                      Uuid(targetId: selectedUserId))
+                                      .then((_) {
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('사용자 차단하기', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                    SizedBox(
+                                      width: 24.r,
+                                      height: 24.r,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          IconPath.arrowForwardGray200,
+                                          width: 9.r,
+                                          height: 16.r,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 24.h),
+                              InkWell(
+                                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                onTap: () {
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('사용자 신고하기', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                    SizedBox(
+                                      width: 24.r,
+                                      height: 24.r,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          IconPath.arrowForwardGray200,
+                                          width: 9.r,
+                                          height: 16.r,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 56.h),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
                   icon: SvgPicture.asset(
                     IconPath.moreHorizontal,
                     width: 20.w,
@@ -54,7 +171,9 @@ class ProfileBottomSheet extends StatelessWidget {
                 IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   icon: SvgPicture.asset(
                     IconPath.arrowDown,
                     width: 18.w,
