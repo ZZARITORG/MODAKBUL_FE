@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modakbul/constants/app_constants.dart';
@@ -22,7 +23,7 @@ class CommonSettingScreen extends StatefulWidget {
   State<CommonSettingScreen> createState() => _CommonSettingScreenState();
 }
 
-class _CommonSettingScreenState extends State<CommonSettingScreen> {
+class _CommonSettingScreenState extends State<CommonSettingScreen> with WidgetsBindingObserver {
   bool _isToggled = false;
   UserService userService = UserService();
   String phone = '';
@@ -37,65 +38,134 @@ class _CommonSettingScreenState extends State<CommonSettingScreen> {
   @override
   void initState() {
     super.initState();
-    _isToggled = prefs.getBool(AppConstants.isContactAgree)!;
+    WidgetsBinding.instance.addObserver(this);
+    _loadInitialState();
+  }
 
-    String? savedPhone = prefs.getString(AppConstants.phoneNumber);
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
-    if (savedPhone != null) {
-      phone = formatPhoneNumber(savedPhone);
-    } else {
-      phone = '';
+  Future<void> _loadInitialState() async {
+    try {
+      debugPrint('_loadInitialState 시작');
+
+      var permissionStatus = await Permission.contacts.status;
+      debugPrint('초기 권한 상태: ${permissionStatus.toString()}');
+
+      if (permissionStatus.isDenied) {
+        debugPrint('권한 요청 시도');
+        permissionStatus = await Permission.contacts.request();
+        debugPrint('권한 요청 결과: ${permissionStatus.toString()}');
+      }
+
+      if (permissionStatus.isPermanentlyDenied) {
+        debugPrint('설정에서 권한 확인 필요');
+        try {
+          if (await FlutterContacts.requestPermission()) {
+            debugPrint('연락처 접근 성공');
+            permissionStatus = await Permission.contacts.status;  // 상태 재확인
+          }
+        } catch (e) {
+          debugPrint('연락처 접근 시도 중 에러: $e');
+        }
+      }
+
+      if (permissionStatus.isGranted || await FlutterContacts.requestPermission()) {
+        debugPrint('권한이 허용됨, 토글 ON으로 설정');
+        await userService.updateMyProfile(EditMyProfile(isContactAgree: true));
+        await prefs.setBool(AppConstants.isContactAgree, true);
+        setState(() {
+          _isToggled = true;
+        });
+      } else {
+        debugPrint('권한이 거부됨, 토글 OFF로 설정');
+        await userService.updateMyProfile(EditMyProfile(isContactAgree: false));
+        await prefs.setBool(AppConstants.isContactAgree, false);
+        setState(() {
+          _isToggled = false;
+        });
+      }
+
+      String? savedPhone = prefs.getString(AppConstants.phoneNumber);
+      if (savedPhone != null) {
+        setState(() {
+          phone = formatPhoneNumber(savedPhone);
+        });
+      }
+    } catch (e) {
+      debugPrint('초기 상태 로드 중 오류 발생: $e');
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    try {
+      if (state == AppLifecycleState.resumed) {
+        debugPrint('앱 라이프사이클 상태 변경: resumed');
+        _loadInitialState();
+      }
+    } catch (e) {
+      debugPrint('라이프사이클 상태 변경 처리 중 오류: $e');
     }
   }
 
   Future<void> _updateContactAgree(bool value) async {
-    print('토글 상태 변경 시도: $value');
+    debugPrint('토글 상태 변경 시도: $value');
 
     if (value) {
       try {
-        // 먼저 권한 요청
         var status = await Permission.contacts.request();
-        print('권한 요청 직후 상태: $status');
-
-        // 권한 상태 다시 확인 (iOS에서 중요)
-        status = await Permission.contacts.status;
+        debugPrint('권한 요청 결과: $status');
 
         if (status.isGranted) {
-          await userService.updateMyProfile(EditMyProfile(isContactAgree: value));
-          await prefs.setBool(AppConstants.isContactAgree, value);
+          await userService.updateMyProfile(EditMyProfile(isContactAgree: true));
+          await prefs.setBool(AppConstants.isContactAgree, true);
           setState(() {
-            _isToggled = value;
+            _isToggled = true;
           });
         } else {
-          print('권한이 거부됨, openAppSettings 시도');
-          await openAppSettings();
-
-          // 권한 설정 변경 후 앱으로 돌아왔을 때 권한 상태 다시 확인
-          status = await Permission.contacts.status;
-          if (status.isGranted) {
-            await userService.updateMyProfile(EditMyProfile(isContactAgree: value));
-            await prefs.setBool(AppConstants.isContactAgree, value);
-            setState(() {
-              _isToggled = value;
-            });
-          } else {
-            setState(() {
-              _isToggled = false;
-            });
+          if (status.isPermanentlyDenied) {
+            await openAppSettings();
           }
+          setState(() {
+            _isToggled = false;
+          });
         }
       } catch (e) {
-        print('권한 요청 중 에러 발생: $e');
+        debugPrint('권한 요청 중 에러 발생: $e');
         setState(() {
           _isToggled = false;
         });
       }
     } else {
-      await userService.updateMyProfile(EditMyProfile(isContactAgree: value));
-      await prefs.setBool(AppConstants.isContactAgree, value);
-      setState(() {
-        _isToggled = value;
-      });
+      try {
+        debugPrint('토글 OFF 처리 시작');
+
+        await openAppSettings();
+
+        await userService.updateMyProfile(EditMyProfile(isContactAgree: false));
+        await prefs.setBool(AppConstants.isContactAgree, false);
+
+        setState(() {
+          _isToggled = false;
+        });
+
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          var currentStatus = await Permission.contacts.status;
+          debugPrint('권한 상태 재확인: $currentStatus');
+          if (currentStatus.isGranted) {
+            setState(() {
+              _isToggled = true;
+            });
+          }
+        });
+      } catch (e) {
+        debugPrint('토글 OFF 처리 중 에러 발생: $e');
+      }
     }
   }
 
