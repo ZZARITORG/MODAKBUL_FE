@@ -15,12 +15,14 @@ import 'package:modakbul/utils/json_utils.dart';
 class MeetingService {
   Dio dio = DioClient().dio;
 
-  Future<void> createModakbulByUserId(ModakbulByUserId modakbul) async {
-    await dio.post(ApiPath.meetingFriend, data: modakbul.toJson());
+  Future<String> createModakbulByUserId(ModakbulByUserId modakbul) async {
+    Response response = await dio.post(ApiPath.meetingFriend, data: modakbul.toJson());
+    return response.data['data']['id'];
   }
 
-  Future<void> createModakbulByGroupId(ModakbulByGroupId modakbul) async {
-    await dio.post(ApiPath.meetingGroup, data: modakbul.toJson());
+  Future<String> createModakbulByGroupId(ModakbulByGroupId modakbul) async {
+    Response response = await dio.post(ApiPath.meetingGroup, data: modakbul.toJson());
+    return response.data['data']['id'];
   }
 
   Future<List<MyHostModakbul>> getMyHostModakbulList() async {
