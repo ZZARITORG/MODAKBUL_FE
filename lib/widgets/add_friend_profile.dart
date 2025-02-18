@@ -34,7 +34,7 @@ class AddFriendProfile extends StatelessWidget {
           child: ClipOval(
             child: CachedNetworkImage(imageUrl: profileImage!),
           ),
-          backgroundColor: ColorSchemes.gray500,
+          backgroundColor: ColorSchemes.gray200,
         ),
         SizedBox(
           width: 12.w,

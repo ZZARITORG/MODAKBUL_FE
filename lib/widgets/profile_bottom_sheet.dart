@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -227,7 +228,9 @@ class ProfileBottomSheet extends StatelessWidget {
                 SizedBox(width: 37.w),
                 CircleAvatar(
                   radius: StyleConstants.circleSizeL,
-                  backgroundImage: NetworkImage(userCheckData.profileUrl),
+                  backgroundColor: ColorSchemes.gray200,
+                  child: ClipOval(
+                      child: CachedNetworkImage(imageUrl: userCheckData.profileUrl)),
                 ),
               ],
             ),

@@ -130,8 +130,7 @@ class InvitedModakbulCard extends StatelessWidget {
                                               child: CircleAvatar(
                                                 radius: StyleConstants
                                                     .circleSizeXXXXXS,
-                                                backgroundColor:
-                                                    ColorSchemes.white,
+                                                backgroundColor: ColorSchemes.gray200,
                                                 child: CircleAvatar(
                                                   radius: StyleConstants
                                                       .circleSizeXXXXXXS,
@@ -146,8 +145,7 @@ class InvitedModakbulCard extends StatelessWidget {
                                               child: CircleAvatar(
                                                 radius: StyleConstants
                                                     .circleSizeXXXXXS,
-                                                backgroundColor:
-                                                    ColorSchemes.white,
+                                                backgroundColor: ColorSchemes.gray200,
                                                 child: CircleAvatar(
                                                   radius: StyleConstants
                                                       .circleSizeXXXXXXS,

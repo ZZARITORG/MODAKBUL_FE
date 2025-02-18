@@ -33,7 +33,7 @@ class SelectUserListProfile extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: StyleConstants.circleSizeS,
-                  backgroundColor: ColorSchemes.gray500,
+                  backgroundColor: ColorSchemes.gray200,
                   child: ClipOval(
                       child: CachedNetworkImage(imageUrl: profileImage!)),
                 ),

@@ -188,6 +188,7 @@ class MyModakbulCard extends StatelessWidget {
                                         child: CircleAvatar(
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
+                                          backgroundColor: ColorSchemes.gray200,
                                           child: ClipOval(
                                               child: CachedNetworkImage(
                                                   imageUrl: participantUsers[0]
@@ -202,6 +203,7 @@ class MyModakbulCard extends StatelessWidget {
                                         radius: StyleConstants.circleSizeXXXXXS,
                                         backgroundColor: ColorSchemes.white,
                                         child: CircleAvatar(
+                                          backgroundColor: ColorSchemes.gray200,
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
                                           child: ClipOval(
@@ -218,6 +220,7 @@ class MyModakbulCard extends StatelessWidget {
                                         radius: StyleConstants.circleSizeXXXXXS,
                                         backgroundColor: ColorSchemes.white,
                                         child: CircleAvatar(
+                                          backgroundColor: ColorSchemes.gray200,
                                           radius:
                                               StyleConstants.circleSizeXXXXXXS,
                                           child: ClipOval(
