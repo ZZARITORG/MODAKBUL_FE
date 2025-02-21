@@ -87,15 +87,19 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                       return Column(
                         children: [
                           SizedBox(height: 32.h),
-                          Padding(
-                            padding: EdgeInsets.only(left: 4.w),
-                            child: Text(
-                              '친구요청',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bigHeadLine4
-                                  .copyWith(color: ColorSchemes.gray500),
-                            ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 4.w),
+                                child: Text(
+                                  '친구요청',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine4
+                                      .copyWith(color: ColorSchemes.gray500),
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(height: 112.h),
                           Center(
