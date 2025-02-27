@@ -76,7 +76,7 @@ class _AlertScreenState extends State<AlertScreen> {
 
     List<Notifications> sortNotifications(List<Notifications> notifications) {
       return notifications
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt)); // 내림차순 정렬 (최신순)
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     }
 
     return {
@@ -140,6 +140,7 @@ class _AlertScreenState extends State<AlertScreen> {
       body: SafeArea(
         child: CustomRefreshIndicator(
           onRefresh: _refreshData,
+          triggerMode: IndicatorTriggerMode.anywhere,
           builder: (
             BuildContext context,
             Widget child,
