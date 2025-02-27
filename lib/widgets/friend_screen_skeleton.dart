@@ -26,7 +26,7 @@ class FriendScreenSkeleton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('자주 만나는 친구',
+            Text('가나다순',
                 style: Theme.of(context)
                     .textTheme
                     .bigHeadLine4

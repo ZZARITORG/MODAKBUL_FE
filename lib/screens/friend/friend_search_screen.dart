@@ -94,7 +94,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
     }
   }
 
-  String _getLoadingAsset(double offset) {
+  String? _getLoadingAsset(double offset) {
+    if (offset < 0.1) return null;
     int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
     segment = segment.clamp(1, 8);
 
@@ -262,6 +263,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
       ),
       body: SafeArea(
         child: CustomRefreshIndicator(
+          triggerMode: IndicatorTriggerMode.anywhere,
           offsetToArmed: _maxDragOffset,
           onRefresh: _refreshData,
           builder: (
@@ -292,14 +294,19 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                                     Animation<double> animation) {
                                   return child;
                                 },
-                                child: SvgPicture.asset(
-                                  _getLoadingAsset(
-                                      controller.value * _maxDragOffset),
-                                  width: 25.r,
-                                  height: 25.r,
-                                  key: ValueKey<String>(_getLoadingAsset(
-                                      controller.value * _maxDragOffset)),
-                                ),
+                                child: _getLoadingAsset(controller.value *
+                                            _maxDragOffset) !=
+                                        null
+                                    ? SvgPicture.asset(
+                                        _getLoadingAsset(
+                                            controller.value * _maxDragOffset)!,
+                                        width: 25.r,
+                                        height: 25.r,
+                                        key: ValueKey<String>(_getLoadingAsset(
+                                            controller.value *
+                                                _maxDragOffset)!),
+                                      )
+                                    : const SizedBox.shrink(),
                               ),
                       ),
                     ),
@@ -325,7 +332,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                       focusNode: _searchFocusNode,
                     ),
                     SizedBox(height: 24.h),
-
                   ],
                 ),
               ),
