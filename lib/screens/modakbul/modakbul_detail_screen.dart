@@ -87,6 +87,9 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
           .where((user) => user.id != modakbulDetailData!.hostId)
           .toList();
 
+      UserStatus host = modakbulDetailData!.users.firstWhere((user) => user.id == modakbulDetailData!.hostId);
+      bool isHost = myUserId == host.userId;
+
       bool hasBlockedParticipant = participantUsers.any(
               (participant) => blockedUsersData.any(
                   (blockedUser) => blockedUser.id == participant.id
@@ -94,7 +97,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
       );
 
       if (hasBlockedParticipant) {
-        CustomToast.showToast(context, '차단된 사용자가 있습니다!', false);
+        CustomToast.showToast(context, '차단된 사용자가 있습니다!', false, customBottom: isHost ? 16.h : 86.h);
       }
     } catch (e) {
       setState(() {
@@ -307,13 +310,15 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                           return KakaoMap(
                                             onMapCreated: ((controller) async {
                                               mapController = controller;
+                                              mapController.setDraggable(false);
                                               markers.add(Marker(
                                                 markerId: UniqueKey().toString(),
                                                 latLng: await mapController.getCenter(),
-                                                width: 18,
-                                                height: 18,
-                                                offsetX: 20,
-                                                offsetY: 20,
+                                                width: 20,
+                                                height: 28,
+                                                offsetX: 10,
+                                                offsetY: 28,
+                                                markerImageSrc: 'https://zzarit-madakbul-bucket.s3.ap-northeast-2.amazonaws.com/asset/pin_circle_modak.png',
                                               ));
                                               setInState(() {});
                                             }),
@@ -343,7 +348,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                   GestureDetector(
                                     onTap: () {
                                       Clipboard.setData(ClipboardData(text: address));
-                                      CustomToast.showToast(context, '주소가 복사되었습니다.', false);
+                                      CustomToast.showToast(context, '주소가 복사되었습니다.', false, customBottom: 86.h);
                                     },
                                     child: Row(
                                       children: [

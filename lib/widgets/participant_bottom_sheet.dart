@@ -46,7 +46,17 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
     sortedUsers.sort((a, b) {
       if (a.userId == widget.hostUserId) return -1;
       if (b.userId == widget.hostUserId) return 1;
-      return 0;
+
+      final statusOrder = {
+        'REJECTED' : 0,
+        'ACCEPTED' : 1,
+        'PENDING' : 2,
+      };
+
+      final aOrder = statusOrder[a.status]!;
+      final bOrder = statusOrder[b.status]!;
+
+      return aOrder.compareTo(bOrder);
     });
     blockedUsersIds =
         widget.blockedUsers.map((blockedUser) => blockedUser.id).toList();
@@ -54,102 +64,99 @@ class _ParticipantBottomSheetState extends State<ParticipantBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-      child: SafeArea(
-        child: Container(
-          width: double.infinity,
-          height: 390.h,
-          padding: EdgeInsets.symmetric(horizontal: 15.w),
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(24),
-                topRight: Radius.circular(24),
-              ),
-              color: ColorSchemes.white),
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(0, 10.h, 0, 8.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          width: 28.r,
-                          height: 28.r,
-                          child: IconButton(
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: SvgPicture.asset(
-                              IconPath.close,
-                              width: 14.r,
-                            ),
+    return SafeArea(
+      child: Container(
+        width: double.infinity,
+        height: 390.h,
+        padding: EdgeInsets.symmetric(horizontal: 15.w),
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+            color: ColorSchemes.white),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 10.h, 0, 8.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        width: 28.r,
+                        height: 28.r,
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: SvgPicture.asset(
+                            IconPath.close,
+                            width: 14.r,
                           ),
-                        )
-                      ],
-                    ),
-                    Text(
-                      '참여자 정보를 확인해 주세요',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine3
-                          .copyWith(color: ColorSchemes.gray500, height: 1.193),
-                    ),
-                  ],
-                ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Text(
+                    '참여자 정보를 확인해 주세요',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bigHeadLine3
+                        .copyWith(color: ColorSchemes.gray500, height: 1.193),
+                  ),
+                ],
               ),
-              Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.only(top: 24.h),
-                  itemCount: sortedUsers.length,
-                  separatorBuilder: (context, index) => SizedBox(height: 18.h),
-                  itemBuilder: (context, index) {
-                    final user = sortedUsers[index];
-                    final bool isPending =
-                        sortedUsers[index].status == 'PENDING' ? true : false;
-                    final bool isBlocked =
-                        blockedUsersIds.contains(sortedUsers[index].id);
-                    return GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () async {
-                        if (user.userId == widget.hostUserId || user.userId == widget.myUserId) {
-                          return;
-                        }
-                        Navigator.pop(context);
-                        final userCheckData =
-                            await userService.getUserCheck(user.id);
-                        if (userCheckData.status != 'BLOCKED') {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ProfileBottomSheet(
-                                  userCheckData: userCheckData,
-                                  selectedUserId: user.id,
-                                  friendService: widget.friendService);
-                            },
-                          );
-                        }
-                      },
-                      child: Participantlistprofile.icon(
-                        profileImage: sortedUsers[index].profileUrl,
-                        userName: sortedUsers[index].name,
-                        userId: sortedUsers[index].userId,
-                        users: sortedUsers,
-                        isPending: isPending,
-                        isBlocked: isBlocked,
-                      ),
-                    );
-                  },
-                ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                padding: EdgeInsets.only(top: 24.h),
+                itemCount: sortedUsers.length,
+                separatorBuilder: (context, index) => SizedBox(height: 0.h),
+                itemBuilder: (context, index) {
+                  final user = sortedUsers[index];
+                  final bool isPending =
+                      sortedUsers[index].status == 'PENDING' ? true : false;
+                  final bool isBlocked =
+                      blockedUsersIds.contains(sortedUsers[index].id);
+                  return GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      if (user.userId == widget.hostUserId || user.userId == widget.myUserId) {
+                        return;
+                      }
+                      Navigator.pop(context);
+                      final userCheckData =
+                          await userService.getUserCheck(user.id);
+                      if (userCheckData.status != 'BLOCKED') {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ProfileBottomSheet(
+                                userCheckData: userCheckData,
+                                selectedUserId: user.id,
+                                friendService: widget.friendService);
+                          },
+                        );
+                      }
+                    },
+                    child: Participantlistprofile.icon(
+                      profileImage: sortedUsers[index].profileUrl,
+                      userName: sortedUsers[index].name,
+                      userId: sortedUsers[index].userId,
+                      users: sortedUsers,
+                      isPending: isPending,
+                      isBlocked: isBlocked,
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

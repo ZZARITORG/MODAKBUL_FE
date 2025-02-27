@@ -59,6 +59,16 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
         meetingProvider.selectMinute != null;
   }
 
+  int convertTo12Hour(int hour) {
+    if (hour == 0) return 12; // 00시는 12시로 변환
+    if (hour > 12) return hour - 12; // 13~23시는 1~11시로 변환
+    return hour; // 1~12시는 그대로 반환
+  }
+
+  String getAmPm(int hour) {
+    return hour < 12 ? '오전' : '오후';
+  }
+
   @override
   Widget build(BuildContext context) {
     meetingProvider = Provider.of<MeetingProvider>(context);
@@ -241,7 +251,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
               type: '시간',
               content: meetingProvider.selectHour != null &&
                       meetingProvider.selectMinute != null
-                  ? '${meetingProvider.selectHour}시 ${meetingProvider.selectMinute!.padLeft(2, '0')}분'
+                  ? '${getAmPm(int.parse(meetingProvider.selectHour!))} ${convertTo12Hour(int.parse(meetingProvider.selectHour!))}:${meetingProvider.selectMinute!.padLeft(2, '0')}'
                   : '시간 선택',
               onPressed: () {
                 if (meetingProvider.selectDate != null) {

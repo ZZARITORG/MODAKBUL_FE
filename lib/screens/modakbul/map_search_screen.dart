@@ -205,367 +205,372 @@ class _MapSearchScreenState extends State<MapSearchScreen>
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Builder(builder: (context) {
-                if (_searchController.text.isEmpty) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: StyleConstants.defaultPadding),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 48.h,
-                              child: ElevatedButton(
-                                  onPressed: () async {
-                                    //현재 위치 없을때 토스트 띄우기
-                                    if (latitude != null && longitude != null) {
-                                      List<address_model.Address> address =
-                                          await kakaoService.getCoordToAddress(
-                                              latitude!.toString(),
-                                              longitude!.toString());
-                                      placeProvider.placeName = address[0]
-                                                      .roadAddress
-                                                      ?.addressName ==
-                                                  '' ||
-                                              address[0].roadAddress == null
-                                          ? address[0].detailedAddress.addressName
-                                          : address[0].roadAddress?.addressName;
-                                      placeProvider.roadAddressName =
-                                          address[0].detailedAddress.addressName;
-                                      placeProvider.x = longitude!;
-                                      placeProvider.y = latitude!;
-                                      Routes.navigateTo(
-                                          context, Routes.mapSelectScreen);
-                                    } else {
-                                      CustomToast.showToast(
-                                          context, '날짜를 먼저 선택해주세요.', false);
-                                    }
-                                  },
-                                  style: Theme.of(context)
-                                      .elevatedButtonTheme
-                                      .style!
-                                      .copyWith(
-                                        // 기본값 0
-                                        shape: WidgetStateProperty.all(
-                                          RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  StyleConstants.radiusSmall),
-                                              side: BorderSide(
-                                                width: 1.5.w,
-                                                color: ColorSchemes.orange100,
-                                              )),
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                //keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                child: Builder(builder: (context) {
+                  if (_searchController.text.isEmpty) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: StyleConstants.defaultPadding),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 48.h,
+                                child: ElevatedButton(
+                                    onPressed: () async {
+                                      //현재 위치 없을때 토스트 띄우기
+                                      if (latitude != null && longitude != null) {
+                                        List<address_model.Address> address =
+                                            await kakaoService.getCoordToAddress(
+                                                latitude!.toString(),
+                                                longitude!.toString());
+                                        placeProvider.placeName = address[0]
+                                                        .roadAddress
+                                                        ?.addressName ==
+                                                    '' ||
+                                                address[0].roadAddress == null
+                                            ? address[0].detailedAddress.addressName
+                                            : address[0].roadAddress?.addressName;
+                                        placeProvider.roadAddressName =
+                                            address[0].detailedAddress.addressName;
+                                        placeProvider.x = longitude!;
+                                        placeProvider.y = latitude!;
+                                        Routes.navigateTo(
+                                            context, Routes.mapSelectScreen);
+                                      } else {
+                                        CustomToast.showToast(
+                                            context, '위치 권한이 없습니다.', false);
+                                      }
+                                    },
+                                    style: Theme.of(context)
+                                        .elevatedButtonTheme
+                                        .style!
+                                        .copyWith(
+                                          // 기본값 0
+                                          shape: WidgetStateProperty.all(
+                                            RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    StyleConstants.radiusSmall),
+                                                side: BorderSide(
+                                                  width: 1.5.w,
+                                                  color: ColorSchemes.orange100,
+                                                )),
+                                          ),
+                                          backgroundColor:
+                                              WidgetStateProperty.resolveWith(
+                                                  (states) {
+                                            if (states
+                                                .contains(WidgetState.disabled)) {
+                                              return ColorSchemes
+                                                  .gray200; // 비활성화 상태일 때의 배경색
+                                            }
+                                            return ColorSchemes.gray000; // 기본 배경색
+                                          }), // 버튼 색상 적용
                                         ),
-                                        backgroundColor:
-                                            WidgetStateProperty.resolveWith(
-                                                (states) {
-                                          if (states
-                                              .contains(WidgetState.disabled)) {
-                                            return ColorSchemes
-                                                .gray200; // 비활성화 상태일 때의 배경색
-                                          }
-                                          return ColorSchemes.gray000; // 기본 배경색
-                                        }), // 버튼 색상 적용
-                                      ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        height: 24.r,
-                                        width: 24.r,
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            IconPath.locationSearching,
-                                            width: 16.r,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          height: 24.r,
+                                          width: 24.r,
+                                          child: Center(
+                                            child: SvgPicture.asset(
+                                              IconPath.locationSearching,
+                                              width: 16.r,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 2.w,
-                                      ),
-                                      Text(
-                                        '현재 위치로 모닥불 피우기',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .body3
-                                            .copyWith(
-                                                color: ColorSchemes.orange200),
-                                      )
-                                    ],
-                                  )),
-                            ),
-                            SizedBox(
-                              height: 24.h,
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 4.w,
-                                ),
-                                Text(
-                                  '최근 검색한 위치',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bigHeadLine4
-                                      .copyWith(color: ColorSchemes.gray500),
-                                ),
-                                const Spacer(),
-                                TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      LocationManager.clearLocations();
-                                    });
-                                  },
-                                  child: Text(
-                                    '전체 삭제',
+                                        SizedBox(
+                                          width: 2.w,
+                                        ),
+                                        Text(
+                                          '현재 위치로 모닥불 피우기',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .body3
+                                              .copyWith(
+                                                  color: ColorSchemes.orange200),
+                                        )
+                                      ],
+                                    )),
+                              ),
+                              SizedBox(
+                                height: 24.h,
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 4.w,
+                                  ),
+                                  Text(
+                                    '최근 검색한 위치',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .body3
-                                        .copyWith(color: ColorSchemes.orange100),
+                                        .bigHeadLine4
+                                        .copyWith(color: ColorSchemes.gray500),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 4.w,
-                                ),
-                              ],
-                            ),
-                          ],
+                                  const Spacer(),
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        LocationManager.clearLocations();
+                                      });
+                                    },
+                                    child: Text(
+                                      '전체 삭제',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body3
+                                          .copyWith(color: ColorSchemes.orange100),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 4.w,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      if (recentSearchList.isNotEmpty) ...[
+                        if (recentSearchList.isNotEmpty) ...[
+                          SizedBox(
+                            height: 14.h,
+                          ),
+                          ListView.builder(
+                              itemCount: recentSearchList.length,
+                              primary: false,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                final latlong.Distance distance =
+                                    latlong.Distance();
+                                double distanceMeter = distance(
+                                    latlong.LatLng(latitude!, longitude!),
+                                    latlong.LatLng(recentSearchList[index]['y']!,
+                                        recentSearchList[index]['x']!));
+                                double kilometers =
+                                    (distanceMeter / 1000 * 10).round() / 10;
+                                return InkWell(
+                                  overlayColor: const WidgetStatePropertyAll(
+                                      ColorSchemes.orange000),
+                                  onTap: () {
+                                    placeProvider.placeName =
+                                        recentSearchList[index]['placeName']!;
+                                    placeProvider.roadAddressName =
+                                        recentSearchList[index]['roadAddressName']!;
+                                    placeProvider.x = recentSearchList[index]['x']!;
+                                    placeProvider.y = recentSearchList[index]['y']!;
+                                    placeProvider.distance =
+                                        recentSearchList[index]['distance']!;
+                                    Routes.navigateTo(
+                                        context, Routes.mapSelectScreen);
+                                  },
+                                  child: LocationListTile.isGrayIcon(
+                                    locationName: recentSearchList[index]
+                                        ['placeName']!,
+                                    address: recentSearchList[index]
+                                        ['roadAddressName']!,
+                                    //이부분 현재위치에서 불러오게끔 바꾸기
+                                    distance: '$kilometers km',
+                                    onPressed: () {
+                                      setState(() {
+                                        LocationManager.removeLocation(index);
+                                      });
+                                    },
+                                  ),
+                                );
+                              }),
+                        ]
+                      ],
+                    );
+                  } else if (_filteredLocations.isEmpty) {
+                    return Column(
+                      children: [
                         SizedBox(
-                          height: 14.h,
+                          height: 24.h,
+                        ),
+                        Center(
+                          child: Text(
+                            '검색 결과가 없습니다',
+                            style: Theme.of(context)
+                                .textTheme
+                                .body1
+                                .copyWith(color: ColorSchemes.gray300),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: StyleConstants.defaultPadding),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 12.h,
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 4.w,
+                                  ),
+                                  Text(
+                                    filterText,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bigHeadLine4
+                                        .copyWith(color: ColorSchemes.gray500),
+                                  ),
+                                  const Spacer(),
+                                  TextButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(
+                                                    StyleConstants.radiusLarge),
+                                                topRight: Radius.circular(
+                                                    StyleConstants.radiusLarge),
+                                              ),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: StyleConstants
+                                                      .defaultPadding),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SizedBox(height: 38.h),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '필터',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bigHeadLine3
+                                                            .copyWith(
+                                                                color: ColorSchemes
+                                                                    .gray500),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 24.h),
+                                                  _buildFilterOption(
+                                                      '정확도 순', 'accuracy', context),
+                                                  SizedBox(height: 24.h),
+                                                  _buildFilterOption(
+                                                      '거리 순', 'distance', context),
+                                                  SizedBox(height: 56.h),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      '필터',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body3
+                                          .copyWith(color: ColorSchemes.gray300),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 4.w,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 14.h,
+                              )
+                            ],
+                          ),
                         ),
                         ListView.builder(
-                            itemCount: recentSearchList.length,
+                            itemCount:
+                                _filteredLocations.length + (showLottie ? 1 : 0),
                             primary: false,
                             shrinkWrap: true,
                             itemBuilder: (BuildContext context, int index) {
-                              final latlong.Distance distance =
-                                  latlong.Distance();
-                              double distanceMeter = distance(
-                                  latlong.LatLng(latitude!, longitude!),
-                                  latlong.LatLng(recentSearchList[index]['y']!,
-                                      recentSearchList[index]['x']!));
-                              double kilometers =
-                                  (distanceMeter / 1000 * 10).round() / 10;
-                              return InkWell(
-                                overlayColor: const WidgetStatePropertyAll(
-                                    ColorSchemes.orange000),
-                                onTap: () {
-                                  placeProvider.placeName =
-                                      recentSearchList[index]['placeName']!;
-                                  placeProvider.roadAddressName =
-                                      recentSearchList[index]['roadAddressName']!;
-                                  placeProvider.x = recentSearchList[index]['x']!;
-                                  placeProvider.y = recentSearchList[index]['y']!;
-                                  placeProvider.distance =
-                                      recentSearchList[index]['distance']!;
-                                  Routes.navigateTo(
-                                      context, Routes.mapSelectScreen);
-                                },
-                                child: LocationListTile.isGrayIcon(
-                                  locationName: recentSearchList[index]
-                                      ['placeName']!,
-                                  address: recentSearchList[index]
-                                      ['roadAddressName']!,
-                                  //이부분 현재위치에서 불러오게끔 바꾸기
-                                  distance: '$kilometers km',
-                                  onPressed: () {
-                                    setState(() {
-                                      LocationManager.removeLocation(index);
-                                    });
-                                  },
-                                ),
-                              );
-                            }),
-                      ]
-                    ],
-                  );
-                } else if (_filteredLocations.isEmpty) {
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: 24.h,
-                      ),
-                      Center(
-                        child: Text(
-                          '검색 결과가 없습니다',
-                          style: Theme.of(context)
-                              .textTheme
-                              .body1
-                              .copyWith(color: ColorSchemes.gray300),
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: StyleConstants.defaultPadding),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 12.h,
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 4.w,
-                                ),
-                                Text(
-                                  filterText,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bigHeadLine4
-                                      .copyWith(color: ColorSchemes.gray500),
-                                ),
-                                const Spacer(),
-                                TextButton(
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(
-                                                  StyleConstants.radiusLarge),
-                                              topRight: Radius.circular(
-                                                  StyleConstants.radiusLarge),
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: StyleConstants
-                                                    .defaultPadding),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(height: 38.h),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '필터',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bigHeadLine3
-                                                          .copyWith(
-                                                              color: ColorSchemes
-                                                                  .gray500),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 24.h),
-                                                _buildFilterOption(
-                                                    '정확도 순', 'accuracy', context),
-                                                SizedBox(height: 24.h),
-                                                _buildFilterOption(
-                                                    '거리 순', 'distance', context),
-                                                SizedBox(height: 56.h),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
+                              if (index < _filteredLocations.length) {
+                                Place place = _filteredLocations[index];
+                                double kilometers =
+                                    (place.distance / 1000 * 10).round() / 10;
+                                return InkWell(
+                                  onTap: () async {
+                                    placeProvider.distance = kilometers;
+                                    placeProvider.x = place.x;
+                                    placeProvider.y = place.y;
+                                    placeProvider.roadAddressName =
+                                        place.roadAddressName == ''
+                                            ? place.addressName
+                                            : place.roadAddressName;
+                                    placeProvider.placeName = place.placeName;
+                                    Map<String, dynamic> recentSearch = {
+                                      'placeName': placeProvider.placeName,
+                                      'roadAddressName':
+                                          placeProvider.roadAddressName,
+                                      'x': placeProvider.x,
+                                      'y': placeProvider.y,
+                                      'distance': placeProvider.distance
+                                    };
+                                    await LocationManager.addLocation(recentSearch);
+                                    Routes.navigateTo(
+                                      context,
+                                      Routes.mapSelectScreen,
                                     );
                                   },
-                                  child: Text(
-                                    '필터',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .body3
-                                        .copyWith(color: ColorSchemes.gray300),
+                                  overlayColor: const WidgetStatePropertyAll(
+                                      ColorSchemes.orange000),
+                                  child: LocationListTile(
+                                    locationName: place.placeName,
+                                    address: place.roadAddressName == ''
+                                        ? place.addressName
+                                        : place.roadAddressName,
+                                    distance: '${kilometers}km',
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 4.w,
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 14.h,
-                            )
-                          ],
-                        ),
-                      ),
-                      ListView.builder(
-                          itemCount:
-                              _filteredLocations.length + (showLottie ? 1 : 0),
-                          primary: false,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index < _filteredLocations.length) {
-                              Place place = _filteredLocations[index];
-                              double kilometers =
-                                  (place.distance / 1000 * 10).round() / 10;
-                              return InkWell(
-                                onTap: () async {
-                                  placeProvider.distance = kilometers;
-                                  placeProvider.x = place.x;
-                                  placeProvider.y = place.y;
-                                  placeProvider.roadAddressName =
-                                      place.roadAddressName == ''
-                                          ? place.addressName
-                                          : place.roadAddressName;
-                                  placeProvider.placeName = place.placeName;
-                                  Map<String, dynamic> recentSearch = {
-                                    'placeName': placeProvider.placeName,
-                                    'roadAddressName':
-                                        placeProvider.roadAddressName,
-                                    'x': placeProvider.x,
-                                    'y': placeProvider.y,
-                                    'distance': placeProvider.distance
-                                  };
-                                  await LocationManager.addLocation(recentSearch);
-                                  Routes.navigateTo(
-                                    context,
-                                    Routes.mapSelectScreen,
-                                  );
-                                },
-                                overlayColor: const WidgetStatePropertyAll(
-                                    ColorSchemes.orange000),
-                                child: LocationListTile(
-                                  locationName: place.placeName,
-                                  address: place.roadAddressName == ''
-                                      ? place.addressName
-                                      : place.roadAddressName,
-                                  distance: '${kilometers}km',
-                                ),
-                              );
-                            } else if (index == _filteredLocations.length && showLottie) {
-                              return SizedBox(
-                                height: 72.h,
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 14.h, bottom: 26.h), // 위쪽 14, 아래쪽 26 간격
-                                  child: Center(
-                                    child: SizedBox(
-                                      height: 32,
-                                      width: 32,
-                                      child: Lottie.asset(
-                                        controller: _lottieController,
-                                        AnimationPath.loadingFeed,
-                                        fit: BoxFit.contain,
-                                        repeat: true,
-                                        animate: true,
+                                );
+                              } else if (index == _filteredLocations.length && showLottie) {
+                                return SizedBox(
+                                  height: 72.h,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 14.h, bottom: 26.h), // 위쪽 14, 아래쪽 26 간격
+                                    child: Center(
+                                      child: SizedBox(
+                                        height: 32,
+                                        width: 32,
+                                        child: Lottie.asset(
+                                          controller: _lottieController,
+                                          AnimationPath.loadingFeed,
+                                          fit: BoxFit.contain,
+                                          repeat: true,
+                                          animate: true,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }
-                            return SizedBox.shrink();
-                          })
-                    ],
-                  );
-                }
-              }),
+                                );
+                              }
+                              return SizedBox.shrink();
+                            })
+                      ],
+                    );
+                  }
+                }),
+              ),
             ),
           ),
         ],

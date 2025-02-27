@@ -77,7 +77,7 @@ class _SuggestedFriendProfileState extends State<SuggestedFriendProfile> {
           radius: StyleConstants.circleSizeL,
           child: ClipOval(
               child: CachedNetworkImage(imageUrl: widget.profileImage!)),
-          backgroundColor: ColorSchemes.gray500,
+          backgroundColor: ColorSchemes.gray200,
         ),
         SizedBox(width: 12.w),
         Expanded(
