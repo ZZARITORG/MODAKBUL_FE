@@ -97,6 +97,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             child: Row(
                               children: [
                                 CircleAvatar(
+                                  backgroundColor: ColorSchemes.gray200,
                                   radius:
                                   StyleConstants.circleSizeS,
                                   child: ClipOval(

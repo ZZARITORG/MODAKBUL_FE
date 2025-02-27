@@ -333,7 +333,7 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
                   radius: StyleConstants.circleSizeL,
                   backgroundColor: ColorSchemes.gray200,
                   child: ClipOval(
-                      child: CachedNetworkImage(imageUrl: userCheckData.profileUrl)),
+                      child: CachedNetworkImage(imageUrl: widget.userCheckData.profileUrl)),
                 ),
               ],
             ),
