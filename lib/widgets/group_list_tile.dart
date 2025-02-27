@@ -110,7 +110,6 @@ class GroupListTile extends StatelessWidget {
                       if (profileLength >= 2)
                         Positioned(
                           left: profileLength == 2 ? 56.r : 28.r,
-                            right: 28.r,
                             child: CircleAvatar(
                               radius: StyleConstants.circleSizeXS,
                               backgroundColor: ColorSchemes.white,

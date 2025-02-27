@@ -11,17 +11,98 @@ import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 
-class ProfileBottomSheet extends StatelessWidget {
+class ProfileBottomSheet extends StatefulWidget {
   final UserCheck userCheckData;
   final String selectedUserId;
   final FriendService friendService;
+  final Function(String)? onFriendStatusChanged;
 
   const ProfileBottomSheet({
     Key? key,
     required this.userCheckData,
     required this.selectedUserId,
     required this.friendService,
+    this.onFriendStatusChanged,
   }) : super(key: key);
+
+  @override
+  State<ProfileBottomSheet> createState() => _ProfileBottomSheetState();
+}
+
+class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
+  bool _isButtonDisabled = false;
+
+  void _handleStatusChange(BuildContext context) {
+    if (widget.onFriendStatusChanged != null) {
+      widget.onFriendStatusChanged!(widget.selectedUserId);
+    }
+    Navigator.pop(context);
+  }
+
+  void _handleFriendRequest(BuildContext context) async {
+    if (_isButtonDisabled) return;
+    setState(() {
+      _isButtonDisabled = true;
+    });
+
+    try {
+      await widget.friendService
+          .requestFriend(Uuid(targetId: widget.selectedUserId));
+      _handleStatusChange(context);
+    } catch (e) {
+    } finally {
+      Future.delayed(Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            _isButtonDisabled = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _handleFriendDeletion(BuildContext context) async {
+    if (_isButtonDisabled) return;
+    setState(() {
+      _isButtonDisabled = true;
+    });
+
+    try {
+      await widget.friendService
+          .deleteFriend(Uuid(targetId: widget.selectedUserId));
+      _handleStatusChange(context);
+    } catch (e) {
+    } finally {
+      Future.delayed(Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            _isButtonDisabled = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _handleFriendAcceptance(BuildContext context) async {
+    if (_isButtonDisabled) return;
+    setState(() {
+      _isButtonDisabled = true;
+    });
+    try {
+      await widget.friendService
+          .acceptFriend(Uuid(targetId: widget.selectedUserId));
+      _handleStatusChange(context);
+    } catch (e) {
+    } finally {
+      Future.delayed(Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            _isButtonDisabled = false;
+          });
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +135,14 @@ class ProfileBottomSheet extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(StyleConstants.radiusLarge),
-                              topRight: Radius.circular(StyleConstants.radiusLarge),
+                              topLeft:
+                                  Radius.circular(StyleConstants.radiusLarge),
+                              topRight:
+                                  Radius.circular(StyleConstants.radiusLarge),
                             ),
                           ),
                           padding: EdgeInsets.symmetric(
-                            horizontal: StyleConstants.defaultPadding),
+                              horizontal: StyleConstants.defaultPadding),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -67,7 +150,7 @@ class ProfileBottomSheet extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    userCheckData.name,
+                                    widget.userCheckData.name,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bigHeadLine3
@@ -76,49 +159,63 @@ class ProfileBottomSheet extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 24.h),
-                              InkWell(
-                                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                                onTap: () {
-                                  friendService
-                                      .requestFriend(
-                                      Uuid(targetId: selectedUserId))
-                                      .then((_) {
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('친구추가', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
-                                    SizedBox(
-                                      width: 24.r,
-                                      height: 24.r,
-                                      child: Center(
-                                        child: SvgPicture.asset(
-                                          IconPath.arrowForwardGray200,
-                                          width: 9.r,
-                                          height: 16.r,
+                              if (widget.userCheckData.status != 'ACCEPTED' &&
+                                  widget.userCheckData.status != 'PENDING') ...[
+                                InkWell(
+                                  overlayColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                  onTap: _isButtonDisabled
+                                      ? null
+                                      : () {
+                                          _handleFriendRequest(context);
+                                        },
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('친구추가',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .smallHeadLine3
+                                              .copyWith(
+                                                  color: ColorSchemes.gray300)),
+                                      SizedBox(
+                                        width: 24.r,
+                                        height: 24.r,
+                                        child: Center(
+                                          child: SvgPicture.asset(
+                                            IconPath.arrowForwardGray200,
+                                            width: 9.r,
+                                            height: 16.r,
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 24.h),
+                                SizedBox(height: 24.h),
+                              ],
                               InkWell(
-                                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                overlayColor:
+                                    WidgetStateProperty.all(Colors.transparent),
                                 onTap: () {
-                                  friendService
+                                  widget.friendService
                                       .blockFriend(
-                                      Uuid(targetId: selectedUserId))
+                                          Uuid(targetId: widget.selectedUserId))
                                       .then((_) {
-                                    Navigator.pop(context);
+                                    _handleStatusChange(context);
                                   });
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('사용자 차단하기', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                    Text('사용자 차단하기',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .smallHeadLine3
+                                            .copyWith(
+                                                color: ColorSchemes.gray300)),
                                     SizedBox(
                                       width: 24.r,
                                       height: 24.r,
@@ -135,13 +232,19 @@ class ProfileBottomSheet extends StatelessWidget {
                               ),
                               SizedBox(height: 24.h),
                               InkWell(
-                                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                                onTap: () {
-                                },
+                                overlayColor:
+                                    WidgetStateProperty.all(Colors.transparent),
+                                onTap: () {},
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('사용자 신고하기', style: Theme.of(context).textTheme.smallHeadLine3.copyWith(color: ColorSchemes.gray300)),
+                                    Text('사용자 신고하기',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .smallHeadLine3
+                                            .copyWith(
+                                                color: ColorSchemes.gray300)),
                                     SizedBox(
                                       width: 24.r,
                                       height: 24.r,
@@ -194,10 +297,10 @@ class ProfileBottomSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (userCheckData.mutualCount == 0)
+                      if (widget.userCheckData.mutualCount == 0)
                         SizedBox(height: 14.h),
                       Text(
-                        userCheckData.name,
+                        widget.userCheckData.name,
                         style: Theme.of(context)
                             .textTheme
                             .bigHeadLine2
@@ -207,16 +310,16 @@ class ProfileBottomSheet extends StatelessWidget {
                       ),
                       SizedBox(height: 2.h),
                       Text(
-                        userCheckData.userId,
+                        widget.userCheckData.userId,
                         style: Theme.of(context)
                             .textTheme
                             .body2
                             .copyWith(color: ColorSchemes.gray300),
                       ),
                       SizedBox(height: 6.h),
-                      if (userCheckData.mutualCount > 0)
+                      if (widget.userCheckData.mutualCount > 0)
                         Text(
-                          '함께하는 친구가 ${userCheckData.mutualCount}명 있습니다!',
+                          '함께하는 친구가 ${widget.userCheckData.mutualCount}명 있습니다!',
                           style: Theme.of(context)
                               .textTheme
                               .body3
@@ -241,8 +344,8 @@ class ProfileBottomSheet extends StatelessWidget {
                 EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
             child: SizedBox(
               width: double.infinity,
-              child: userCheckData.status == 'PENDING'
-                  ? userCheckData.sourceId == selectedUserId
+              child: widget.userCheckData.status == 'PENDING'
+                  ? widget.userCheckData.sourceId == widget.selectedUserId
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -251,15 +354,14 @@ class ProfileBottomSheet extends StatelessWidget {
                                 height: 56.h,
                                 child: CustomButton(
                                   text: '친구 수락',
-                                  onPressed: () {
-                                    friendService
-                                        .acceptFriend(
-                                            Uuid(targetId: selectedUserId))
-                                        .then((_) {
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                                  buttonColor: ColorSchemes.orange200,
+                                  onPressed: _isButtonDisabled
+                                      ? null
+                                      : () {
+                                          _handleFriendAcceptance(context);
+                                        },
+                                  buttonColor: _isButtonDisabled
+                                      ? ColorSchemes.gray200
+                                      : ColorSchemes.orange200,
                                   textStyle: Theme.of(context)
                                       .textTheme
                                       .smallHeadLine2,
@@ -273,14 +375,11 @@ class ProfileBottomSheet extends StatelessWidget {
                                 height: 56.h,
                                 child: CustomButton(
                                   text: '삭제',
-                                  onPressed: () {
-                                    friendService
-                                        .deleteFriend(
-                                            Uuid(targetId: selectedUserId))
-                                        .then((_) {
-                                      Navigator.pop(context);
-                                    });
-                                  },
+                                  onPressed: _isButtonDisabled
+                                      ? null
+                                      : () {
+                                          _handleFriendDeletion(context);
+                                        },
                                   buttonColor: ColorSchemes.gray100,
                                   textStyle: Theme.of(context)
                                       .textTheme
@@ -295,14 +394,14 @@ class ProfileBottomSheet extends StatelessWidget {
                           height: 56.h,
                           child: CustomButton(
                             text: '요청 취소',
-                            onPressed: () {
-                              friendService
-                                  .deleteFriend(Uuid(targetId: selectedUserId))
-                                  .then((_) {
-                                Navigator.pop(context);
-                              });
-                            },
-                            buttonColor: ColorSchemes.orange100,
+                            onPressed: _isButtonDisabled
+                                ? null
+                                : () {
+                                    _handleFriendDeletion(context);
+                                  },
+                            buttonColor: _isButtonDisabled
+                                ? ColorSchemes.gray200
+                                : ColorSchemes.orange100,
                             textStyle:
                                 Theme.of(context).textTheme.smallHeadLine2,
                             textColor: Colors.white,
@@ -311,40 +410,29 @@ class ProfileBottomSheet extends StatelessWidget {
                   : SizedBox(
                       height: 56.h,
                       child: CustomButton(
-                        text: userCheckData.status == 'ACCEPTED'
+                        text: widget.userCheckData.status == 'ACCEPTED'
                             ? '친구 삭제'
-                            : userCheckData.status == 'PENDING'
-                                ? (userCheckData.sourceId == selectedUserId
+                            : widget.userCheckData.status == 'PENDING'
+                                ? (widget.userCheckData.sourceId ==
+                                        widget.selectedUserId
                                     ? '친구 수락'
                                     : '삭제')
                                 : '친구 요청',
-                        onPressed: () {
-                          print('유저스테이터스${userCheckData.status}');
-                          switch (userCheckData.status) {
-                            case 'ACCEPTED':
-                              friendService
-                                  .deleteFriend(Uuid(targetId: selectedUserId))
-                                  .then((_) {
-                                Navigator.pop(context);
-                              });
-                              break;
-                            case 'REJECTED':
-                              friendService
-                                  .requestFriend(Uuid(targetId: selectedUserId))
-                                  .then((_) {
-                                Navigator.pop(context);
-                              });
-                              break;
-                            case 'NONE':
-                              friendService
-                                  .requestFriend(
-                                      Uuid(targetId: selectedUserId))
-                                  .then((_) {
-                                Navigator.pop(context);
-                              });
-                          }
-                        },
-                        buttonColor: ColorSchemes.orange200,
+                        onPressed: _isButtonDisabled
+                            ? null
+                            : () {
+                                switch (widget.userCheckData.status) {
+                                  case 'ACCEPTED':
+                                    _handleFriendDeletion(context);
+                                    break;
+                                  case 'REJECTED':
+                                  case 'NONE':
+                                    _handleFriendRequest(context);
+                                }
+                              },
+                        buttonColor: _isButtonDisabled
+                            ? ColorSchemes.orange200
+                            : ColorSchemes.orange200,
                         textStyle: Theme.of(context).textTheme.smallHeadLine2,
                         textColor: Colors.white,
                       ),

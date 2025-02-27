@@ -126,6 +126,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 controller: _scrollController,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -58,18 +58,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         friendList = data; // 전체 친구 리스트 저장
         _filteredFriendsNotifier.value = data; // 초기 필터링된 리스트 설정
       });
-      /*final MyProfile myProfile = await userService.getMyProfile();
-      final Me = {
-        'Id': myProfile.id,
-        'userId': myProfile.userId,
-        'userName': myProfile.userName,
-        'profilePicture': myProfile.profileUrl,
-      };
-      //setState(() {
-        selectedFriends.add(Me);
-      });
-      List<String> friendIds = selectedFriends.map((Me) => Me['id']!).toList();
-      print('내 프로필 포함 friendIds: $friendIds');*/
     });
   }
 
@@ -216,6 +204,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       SizedBox(height: 24.h),
                       if (selectedFriends.isNotEmpty)
                         SingleChildScrollView(
+                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                           scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.only(
                               left: StyleConstants.defaultPadding, right: 4.w),

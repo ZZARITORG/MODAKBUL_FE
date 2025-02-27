@@ -52,24 +52,13 @@ class MainScreenState extends State<MainScreen> {
     },
   ];
 
-  // 키를 사용하여 리빌드 제어
-  Key getKey(int index) => ValueKey('screen_$index${DateTime.now().millisecondsSinceEpoch}');
-
-  Widget _getScreen(int index) {
-    // 매번 새로운 키를 생성하여 리빌드 강제
-    return KeyedSubtree(
-      key: getKey(index),
-      child: switch (index) {
-        0 => const HomeScreen(),
-        1 => const FriendScreen(),
-        2 => const CreateModakbulScreen(),
-        3 => const FriendSearchScreen(),
-        4 => MyProfileScreen(),
-        _ => const HomeScreen(),
-      },
-    );
-  }
-
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const FriendScreen(),
+    const CreateModakbulScreen(),
+    const FriendSearchScreen(),
+    MyProfileScreen(),
+  ];
   HandlerUtils handlerUtils = HandlerUtils();
   LocationUtils locationUtils = LocationUtils();
 
@@ -82,11 +71,14 @@ class MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _getScreen(selectedIndex),
+      body: IndexedStack(
+        index: selectedIndex,
+        children: _screens,
+      ),
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,
         height: 56.h,
-        elevation: 0,
+        elevation: 0, // 그림자 없애기
         color: Colors.white,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.5.w),
@@ -95,7 +87,7 @@ class MainScreenState extends State<MainScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: List.generate(_icons.length, (index) {
               return InkWell(
-                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
                 onTap: () {
                   setState(() {
                     selectedIndex = index;
@@ -106,12 +98,13 @@ class MainScreenState extends State<MainScreen> {
                   child: Center(
                     child: Column(
                       children: [
-                        SizedBox(height: 8.h),
+                        SizedBox(height: 8.h,),
                         SizedBox(
                           width: 32.r,
                           height: 32.r,
                           child: Center(
-                            child: SvgPicture.asset(
+                            child:
+                            SvgPicture.asset(
                               selectedIndex == index
                                   ? _icons[index]['activate']!
                                   : _icons[index]['disable']!,
@@ -119,10 +112,10 @@ class MainScreenState extends State<MainScreen> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 2.h),
+                        SizedBox(height: 2.h,),
                         if (selectedIndex == index)
                           Container(
-                            width: 4.r,
+                            width: 4.r, // 원의 크기
                             height: 4.r,
                             decoration: const BoxDecoration(
                               color: ColorSchemes.orange200,

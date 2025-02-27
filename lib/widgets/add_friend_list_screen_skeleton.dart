@@ -14,11 +14,14 @@ class AddFriendListScreenSkeleton extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 32.h),
-        Text('친구요청',
-            style: Theme.of(context)
-                .textTheme
-                .bigHeadLine4
-                .copyWith(color: ColorSchemes.gray200)),
+        Padding(
+          padding: EdgeInsets.only(left: 4.w),
+          child: Text('친구요청',
+              style: Theme.of(context)
+                  .textTheme
+                  .bigHeadLine4
+                  .copyWith(color: ColorSchemes.gray200)),
+        ),
         SizedBox(height: 24.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
