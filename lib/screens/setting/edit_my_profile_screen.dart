@@ -60,6 +60,7 @@ class _EditMyProfileScreenState extends State<EditMyProfileScreen> {
                         child: Stack(
                           children: [
                             CircleAvatar(radius: StyleConstants.circleSizeXXL,
+                                backgroundColor: ColorSchemes.gray200,
                               child: ClipOval(
                                   child: CachedNetworkImage(imageUrl: profileUrl!))),
                             Positioned(

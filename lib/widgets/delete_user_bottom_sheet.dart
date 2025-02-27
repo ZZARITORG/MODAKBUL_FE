@@ -51,56 +51,58 @@ class DeleteUserBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(StyleConstants.radiusLarge),
-              topRight: Radius.circular(StyleConstants.radiusLarge),
-            ),
-            color: ColorSchemes.white),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 38.h,
-            ),
-            Text(
-              '정말 탈퇴 하시겠습니까?',
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(StyleConstants.radiusLarge),
+            topRight: Radius.circular(StyleConstants.radiusLarge),
+          ),
+          color: ColorSchemes.white),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 38.h,
+          ),
+          Text(
+            '정말 탈퇴 하시겠습니까?',
+            style: Theme.of(context)
+                .textTheme
+                .bigHeadLine3
+                .copyWith(color: ColorSchemes.orange200, height: 1.193, decoration: TextDecoration.none),
+          ),
+          SizedBox(
+            height: 12.h,
+          ),
+          FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Text(
+              '탈퇴가 진행되면 기존의 데이터가 삭제되며 복구할 수 없습니다.',
               style: Theme.of(context)
                   .textTheme
-                  .bigHeadLine3
-                  .copyWith(color: ColorSchemes.orange200, height: 1.193, decoration: TextDecoration.none),
+                  .body2
+                  .copyWith(color: ColorSchemes.gray300, height: 1.625, decoration: TextDecoration.none),
             ),
-            SizedBox(
-              height: 12.h,
-            ),
-            FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Text(
-                '탈퇴가 진행되면 기존의 데이터가 삭제되며 복구할 수 없습니다.',
-                style: Theme.of(context)
-                    .textTheme
-                    .body2
-                    .copyWith(color: ColorSchemes.gray300, height: 1.625, decoration: TextDecoration.none),
-              ),
-            ),
-            SizedBox(
-              height: 29.h,
-            ),
-            SizedBox(
-                width: double.infinity,
-                height: 56.h,
-                child: CustomButton(
-                    text: '탈퇴하기',
-                    onPressed: () => _handleDeleteUser(context),
-                    buttonColor: ColorSchemes.orange200,
-                    textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                    textColor: ColorSchemes.white))
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 29.h,
+          ),
+          SizedBox(
+              width: double.infinity,
+              height: 56.h,
+              child: CustomButton(
+                  text: '탈퇴하기',
+                  onPressed: () => _handleDeleteUser(context),
+                  buttonColor: ColorSchemes.orange200,
+                  textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                  textColor: ColorSchemes.white)),
+          SizedBox(
+            height: 16.h,
+          ),
+        ],
       ),
     );
   }
