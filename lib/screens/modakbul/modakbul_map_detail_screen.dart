@@ -38,11 +38,11 @@ class _ModakbulMapDetailScreenState extends State<ModakbulMapDetailScreen> {
     final double? lat = arguments?['lat'];
     final double? lng = arguments?['lng'];
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: ColorSchemes.gray000,
-        appBar: BackButtonAppBar(backgroundColor: ColorSchemes.gray000),
-        body: FutureBuilder(
+    return Scaffold(
+      backgroundColor: ColorSchemes.gray000,
+      appBar: BackButtonAppBar(backgroundColor: ColorSchemes.gray000),
+      body: SafeArea(
+        child: FutureBuilder(
             future: Future.delayed(
                 Duration(seconds: 0),
                 () => {
