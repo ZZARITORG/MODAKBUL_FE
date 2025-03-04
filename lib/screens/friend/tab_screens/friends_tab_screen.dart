@@ -199,8 +199,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
           child: Expanded(
             child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
-              keyboardDismissBehavior:
-                  ScrollViewKeyboardDismissBehavior.onDrag,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               controller: _scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,8 +234,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                     style: Theme.of(context)
                                         .textTheme
                                         .bigHeadLine4
-                                        .copyWith(
-                                            color: ColorSchemes.gray500),
+                                        .copyWith(color: ColorSchemes.gray500),
                                   ),
                                   Spacer(),
                                   TextButton(
@@ -247,14 +245,11 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                           return Container(
                                             decoration: BoxDecoration(
                                               color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.only(
+                                              borderRadius: BorderRadius.only(
                                                 topLeft: Radius.circular(
-                                                    StyleConstants
-                                                        .radiusLarge),
+                                                    StyleConstants.radiusLarge),
                                                 topRight: Radius.circular(
-                                                    StyleConstants
-                                                        .radiusLarge),
+                                                    StyleConstants.radiusLarge),
                                               ),
                                             ),
                                             child: Padding(
@@ -262,32 +257,29 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                   horizontal: StyleConstants
                                                       .defaultPadding),
                                               child: Column(
-                                                mainAxisSize:
-                                                    MainAxisSize.min,
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   SizedBox(height: 38.h),
                                                   Row(
                                                     children: [
                                                       Text(
                                                         '필터',
-                                                        style: Theme.of(
-                                                                context)
+                                                        style: Theme.of(context)
                                                             .textTheme
                                                             .bigHeadLine3
                                                             .copyWith(
-                                                                color: ColorSchemes
-                                                                    .gray500),
+                                                                color:
+                                                                    ColorSchemes
+                                                                        .gray500),
                                                       ),
                                                     ],
                                                   ),
                                                   SizedBox(height: 24.h),
-                                                  _buildFilterOption(
-                                                      '가나다순',
-                                                      'alphabetical',
-                                                      context),
+                                                  _buildFilterOption('가나다순',
+                                                      'alphabetical', context),
                                                   SizedBox(height: 24.h),
-                                                  _buildFilterOption('최신순',
-                                                      'latest', context),
+                                                  _buildFilterOption(
+                                                      '최신순', 'latest', context),
                                                   SizedBox(height: 24.h),
                                                   _buildFilterOption(
                                                       '자주 만나는 친구',
@@ -318,8 +310,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .bigHeadLine3
-                                    .copyWith(
-                                        color: ColorSchemes.orange100),
+                                    .copyWith(color: ColorSchemes.orange100),
                               ),
                               SizedBox(height: 8.h),
                               Text(
@@ -347,16 +338,14 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                             .textTheme
                                             .bigHeadLine4
                                             .copyWith(
-                                                color:
-                                                    ColorSchemes.gray500),
+                                                color: ColorSchemes.gray500),
                                       ),
                                       Spacer(),
                                       TextButton(
                                         onPressed: () {
                                           showModalBottomSheet(
                                             context: context,
-                                            builder:
-                                                (BuildContext context) {
+                                            builder: (BuildContext context) {
                                               return Container(
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
@@ -372,15 +361,13 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                 ),
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          StyleConstants
-                                                              .defaultPadding),
+                                                      horizontal: StyleConstants
+                                                          .defaultPadding),
                                                   child: Column(
                                                     mainAxisSize:
                                                         MainAxisSize.min,
                                                     children: [
-                                                      SizedBox(
-                                                          height: 38.h),
+                                                      SizedBox(height: 38.h),
                                                       Row(
                                                         children: [
                                                           Text(
@@ -395,26 +382,20 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                           ),
                                                         ],
                                                       ),
-                                                      SizedBox(
-                                                          height: 24.h),
+                                                      SizedBox(height: 24.h),
                                                       _buildFilterOption(
                                                           '가나다순',
                                                           'alphabetical',
                                                           context),
-                                                      SizedBox(
-                                                          height: 24.h),
-                                                      _buildFilterOption(
-                                                          '최신순',
-                                                          'latest',
-                                                          context),
-                                                      SizedBox(
-                                                          height: 24.h),
+                                                      SizedBox(height: 24.h),
+                                                      _buildFilterOption('최신순',
+                                                          'latest', context),
+                                                      SizedBox(height: 24.h),
                                                       _buildFilterOption(
                                                           '자주 만나는 친구',
                                                           'frequent',
                                                           context),
-                                                      SizedBox(
-                                                          height: 56.h),
+                                                      SizedBox(height: 56.h),
                                                     ],
                                                   ),
                                                 ),
@@ -428,8 +409,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                               .textTheme
                                               .body3
                                               .copyWith(
-                                                  color:
-                                                      ColorSchemes.gray300),
+                                                  color: ColorSchemes.gray300),
                                         ),
                                       ),
                                     ],
@@ -450,8 +430,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                               .textTheme
                                               .bigHeadLine3
                                               .copyWith(
-                                                  color: ColorSchemes
-                                                      .orange100),
+                                                  color:
+                                                      ColorSchemes.orange100),
                                         ),
                                         SizedBox(height: 8.h),
                                         Text(
@@ -460,8 +440,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                               .textTheme
                                               .body2
                                               .copyWith(
-                                                  color:
-                                                      ColorSchemes.gray300),
+                                                  color: ColorSchemes.gray300),
                                         ),
                                       ],
                                     );
@@ -480,23 +459,21 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                       String userId =
                                           filteredFriends[index].userId;
                                       return GestureDetector(
-                                        behavior:
-                                            HitTestBehavior.translucent,
+                                        behavior: HitTestBehavior.translucent,
                                         onTap: () async {
                                           showModalBottomSheet(
+                                            isScrollControlled: true,
+                                            isDismissible: true,
+                                            enableDrag: false,
                                             context: context,
-                                            builder:
-                                                (BuildContext context) {
-                                              return FutureBuilder<
-                                                  UserCheck>(
+                                            builder: (BuildContext context) {
+                                              return FutureBuilder<UserCheck>(
                                                 future: userService
                                                     .getUserCheck(id),
-                                                builder:
-                                                    (context, snapshot) {
+                                                builder: (context, snapshot) {
                                                   if (snapshot
                                                           .connectionState ==
-                                                      ConnectionState
-                                                          .waiting) {
+                                                      ConnectionState.waiting) {
                                                     return Center(
                                                         child:
                                                             CircularProgressIndicator());
@@ -506,8 +483,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                         child: Text(
                                                             'Error: ${snapshot.error}'));
                                                   } else {
-                                                    UserCheck
-                                                        userCheckData =
+                                                    UserCheck userCheckData =
                                                         snapshot.data!;
                                                     return ProfileBottomSheet(
                                                       userCheckData:
@@ -528,9 +504,11 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                           profileImage: profileUrl,
                                           onIconPressed: () {
                                             showModalBottomSheet(
+                                              isScrollControlled: true,
+                                              isDismissible: true,
+                                              enableDrag: false,
                                               context: context,
-                                              builder:
-                                                  (BuildContext context) {
+                                              builder: (BuildContext context) {
                                                 return Container(
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
@@ -556,8 +534,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
-                                                        SizedBox(
-                                                            height: 38.h),
+                                                        SizedBox(height: 38.h),
                                                         Text(userName,
                                                             style: Theme.of(
                                                                     context)
@@ -566,8 +543,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                                 .copyWith(
                                                                     color: ColorSchemes
                                                                         .gray500)),
-                                                        SizedBox(
-                                                            height: 24.h),
+                                                        SizedBox(height: 24.h),
                                                         InkWell(
                                                           overlayColor:
                                                               WidgetStateProperty
@@ -575,9 +551,10 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                                       .transparent),
                                                           onTap: () async {
                                                             await friendService
-                                                                .deleteFriend(Uuid(
-                                                                    targetId:
-                                                                        id));
+                                                                .deleteFriend(
+                                                                    Uuid(
+                                                                        targetId:
+                                                                            id));
                                                             setState(() {
                                                               friendList.removeWhere(
                                                                   (friend) =>
@@ -603,19 +580,18 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                                       .textTheme
                                                                       .smallHeadLine2
                                                                       .copyWith(
-                                                                          color: ColorSchemes.gray300)),
+                                                                          color:
+                                                                              ColorSchemes.gray300)),
                                                               SizedBox(
                                                                 width: 24.r,
-                                                                height:
-                                                                    24.r,
-                                                                child:
-                                                                    Center(
-                                                                  child: SvgPicture
-                                                                      .asset(
+                                                                height: 24.r,
+                                                                child: Center(
+                                                                  child:
+                                                                      SvgPicture
+                                                                          .asset(
                                                                     IconPath
                                                                         .arrowForwardGray200,
-                                                                    width:
-                                                                        9.r,
+                                                                    width: 9.r,
                                                                     height:
                                                                         16.r,
                                                                   ),
@@ -624,8 +600,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                             ],
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            height: 24.h),
+                                                        SizedBox(height: 24.h),
                                                         InkWell(
                                                           overlayColor:
                                                               WidgetStateProperty
@@ -661,19 +636,18 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                                       .textTheme
                                                                       .smallHeadLine2
                                                                       .copyWith(
-                                                                          color: ColorSchemes.gray300)),
+                                                                          color:
+                                                                              ColorSchemes.gray300)),
                                                               SizedBox(
                                                                 width: 24.r,
-                                                                height:
-                                                                    24.r,
-                                                                child:
-                                                                    Center(
-                                                                  child: SvgPicture
-                                                                      .asset(
+                                                                height: 24.r,
+                                                                child: Center(
+                                                                  child:
+                                                                      SvgPicture
+                                                                          .asset(
                                                                     IconPath
                                                                         .arrowForwardGray200,
-                                                                    width:
-                                                                        9.r,
+                                                                    width: 9.r,
                                                                     height:
                                                                         16.r,
                                                                   ),
@@ -682,8 +656,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                             ],
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            height: 56.h),
+                                                        SizedBox(height: 56.h),
                                                       ],
                                                     ),
                                                   ),
