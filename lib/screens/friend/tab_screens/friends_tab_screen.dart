@@ -154,6 +154,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
               children: <Widget>[
                 if (!controller.isIdle)
                   Positioned(
+                    top: 10.h,
                     child: SizedBox(
                       height: 32,
                       width: 32,

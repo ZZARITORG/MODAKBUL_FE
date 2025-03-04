@@ -418,6 +418,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
         children: [
           Row(
             children: [
+              SizedBox(width: 4.w),
               Text(
                 '검색결과',
                 style: Theme.of(context)
@@ -441,6 +442,9 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                       final selectedUser = userList[index];
                       showModalBottomSheet(
                         context: context,
+                        isScrollControlled: true,
+                        isDismissible: true,
+                        enableDrag: false,
                         builder: (BuildContext context) {
                           return FutureBuilder<UserCheck>(
                             future:
@@ -448,11 +452,17 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator());
+                                return Container(
+                                  height: 304.h,
+                                  child: Center(
+                                      child: SizedBox.shrink()),
+                                );
                               } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Text('Error: ${snapshot.error}'));
+                                return Container(
+                                  height: 304.h,
+                                  child: Center(
+                                      child: Text('Error: ${snapshot.error}')),
+                                );
                               } else {
                                 UserCheck userCheckData = snapshot.data!;
                                 if (userCheckData.status == 'BLOCKED') {
@@ -578,18 +588,24 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                   child: GestureDetector(
                     onTap: () async {
                       showModalBottomSheet(
+                        isScrollControlled: true,
+                        isDismissible: true,
+                        enableDrag: false,
                         context: context,
                         builder: (BuildContext context) {
                           return FutureBuilder<UserCheck>(
                             future: userService.getUserCheck(friend.id),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator());
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Container(
+                                  height: 304.h,
+                                  child: SizedBox.shrink(),
+                                );
                               } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Text('Error: ${snapshot.error}'));
+                                return Container(
+                                  height: 304.h,
+                                  child: Center(child: Text('Error: ${snapshot.error}')),
+                                );
                               } else {
                                 UserCheck userCheckData = snapshot.data!;
                                 if (userCheckData.status == 'BLOCKED') {
@@ -708,27 +724,32 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                           onTap: () {
                             showModalBottomSheet(
                               context: context,
+                              isScrollControlled: true,
+                              isDismissible: true,
+                              enableDrag: false,
                               builder: (BuildContext context) {
                                 return FutureBuilder<UserCheck>(
                                   future: userService.getUserCheck(friend.id),
-                                  builder: (context, userSnapshot) {
-                                    if (userSnapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    } else if (userSnapshot.hasError) {
-                                      return Center(
-                                          child: Text(
-                                              'Error: ${userSnapshot.error}'));
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Container(
+                                        height: 304.h,
+                                        child: SizedBox.shrink(),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Container(
+                                        height: 304.h,
+                                        child: Center(child: Text('Error: ${snapshot.error}')),
+                                      );
                                     } else {
-                                      UserCheck userCheckData =
-                                          userSnapshot.data!;
+                                      UserCheck userCheckData = snapshot.data!;
+                                      if (userCheckData.status == 'BLOCKED') {
+                                        return SizedBox.shrink();
+                                      }
                                       return ProfileBottomSheet(
                                         userCheckData: userCheckData,
                                         selectedUserId: friend.id,
                                         friendService: friendService,
-                                        onFriendStatusChanged:
-                                            updateFriendStatus,
                                       );
                                     }
                                   },
@@ -756,7 +777,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                               delSugList.add(friend.id);
                               await prefs.setStringList(
                                   'delSugList', delSugList);
-
                               setState(() {
                                 friendSuggested.removeWhere(
                                     (item) => item.id == friend.id);
