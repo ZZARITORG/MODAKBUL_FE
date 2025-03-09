@@ -224,9 +224,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     // FCM 토큰 가져오기
                     String? fcmToken;
                     if (Platform.isIOS) {
-                      fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
+                      // fcmToken = dotenv.env['FCM_TOKEN'] ?? '';
                       // await Future.delayed(Duration(seconds: 2));
-                      // fcmToken = await FirebaseMessaging.instance.getToken();
+                      fcmToken = await FirebaseMessaging.instance.getToken();
                       print('APNS Token: $fcmToken');
                     } else if (Platform.isAndroid) {
                       fcmToken = await FirebaseMessaging.instance.getToken();
