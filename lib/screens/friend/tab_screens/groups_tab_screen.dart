@@ -38,7 +38,6 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   late DateTime currentTime;
   bool _isRefreshing = false;
   Timer? _debounce;
-  Logger logger = Logger(printer: PrettyPrinter());
   final ValueNotifier<List<Group>> _filteredGroupsNotifier = ValueNotifier([]);
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
 
@@ -48,7 +47,6 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     getData = _dioClient.handleRequest<List<Group>>(
         requestFunction: () => groupService.getGroupList());
     _searchController.addListener(_onSearchChanged);
-    _scrollController.addListener(_scrollListener);
   }
 
   @override
@@ -126,18 +124,6 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     }
   }
 
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      if (!_isRefreshing) {
-        setState(() {
-          _isRefreshing = true;
-        });
-        _refreshData();
-      }
-    }
-  }
-
   Future<void> _refreshData() async {
     setState(() {
       _isRefreshing = true;
@@ -185,7 +171,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
       backgroundColor: ColorSchemes.gray000,
       body: SafeArea(
         child: CustomRefreshIndicator(
-          triggerMode: IndicatorTriggerMode.anywhere,
+          triggerMode: IndicatorTriggerMode.onEdge,
           offsetToArmed: _maxDragOffset,
           onRefresh: _refreshData,
           builder: (BuildContext context, Widget child,
@@ -193,6 +179,13 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Transform.translate(
+                    offset: Offset(0, controller.value * _maxDragOffset),
+                    child: child,
+                  ),
+                ),
                 if (!controller.isIdle)
                   Positioned(
                     top: 10.h,
@@ -230,644 +223,645 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                       ),
                     ),
                   ),
-                Transform.translate(
-                  offset: Offset(0, _maxDragOffset * controller.value),
-                  child: child,
-                ),
               ],
             );
           },
-          child: Expanded(
-            child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              keyboardDismissBehavior:
-                  ScrollViewKeyboardDismissBehavior.onDrag,
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: StyleConstants.defaultPadding),
-                    child: FutureBuilder<List<Group>>(
-                      future: getData,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const GroupScreenSkeleton();
-                        } else if (snapshot.hasError) {
-                          return const GlobalErrorWidget();
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          _filteredGroupsNotifier.value = [];
-                          return Column(
-                            children: [
-                              SizedBox(height: 10.h),
-                              CustomSearchBar(
-                                hintText: '사용자를 검색해보세요.',
-                                controller: _searchController,
-                                focusNode: _searchFocusNode,
-                              ),
-                              SizedBox(height: 10.h),
-                              SizedBox(height: 14.h),
-                              Row(
-                                children: [
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    filterText,
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            keyboardDismissBehavior:
+                ScrollViewKeyboardDismissBehavior.onDrag,
+            controller: _scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: StyleConstants.defaultPadding),
+                  child: FutureBuilder<List<Group>>(
+                    future: getData,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const GroupScreenSkeleton();
+                      } else if (snapshot.hasError) {
+                        return const GlobalErrorWidget();
+                      } else if (!snapshot.hasData ||
+                          snapshot.data!.isEmpty) {
+                        _filteredGroupsNotifier.value = [];
+                        return Column(
+                          children: [
+                            SizedBox(height: 10.h),
+                            CustomSearchBar(
+                              hintText: '사용자를 검색해보세요.',
+                              controller: _searchController,
+                              focusNode: _searchFocusNode,
+                            ),
+                            SizedBox(height: 10.h),
+                            SizedBox(height: 14.h),
+                            Row(
+                              children: [
+                                SizedBox(width: 4.w),
+                                Text(
+                                  filterText,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine4
+                                      .copyWith(
+                                          color: ColorSchemes.gray500),
+                                ),
+                                Spacer(),
+                                TextButton(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.only(
+                                              topLeft: Radius.circular(
+                                                  StyleConstants
+                                                      .radiusLarge),
+                                              topRight: Radius.circular(
+                                                  StyleConstants
+                                                      .radiusLarge),
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: StyleConstants
+                                                    .defaultPadding),
+                                            child: Column(
+                                              mainAxisSize:
+                                                  MainAxisSize.min,
+                                              children: [
+                                                SizedBox(height: 38.h),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '정렬',
+                                                      style: Theme.of(
+                                                              context)
+                                                          .textTheme
+                                                          .bigHeadLine3
+                                                          .copyWith(
+                                                              color: ColorSchemes
+                                                                  .gray500),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 24.h),
+                                                _buildFilterOption('최신순',
+                                                    'latest', context),
+                                                SizedBox(height: 24.h),
+                                                _buildFilterOption(
+                                                    '가나다순',
+                                                    'alphabetical',
+                                                    context),
+                                                SizedBox(height: 24.h),
+                                                _buildFilterOption(
+                                                    '자주 만나는 그룹',
+                                                    'frequent',
+                                                    context),
+                                                SizedBox(height: 56.h),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Text(
+                                    '정렬',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .bigHeadLine4
+                                        .body3
                                         .copyWith(
-                                            color: ColorSchemes.gray500),
+                                            color: ColorSchemes.gray300),
                                   ),
-                                  Spacer(),
-                                  TextButton(
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    StyleConstants
-                                                        .radiusLarge),
-                                                topRight: Radius.circular(
-                                                    StyleConstants
-                                                        .radiusLarge),
-                                              ),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: StyleConstants
-                                                      .defaultPadding),
-                                              child: Column(
-                                                mainAxisSize:
-                                                    MainAxisSize.min,
-                                                children: [
-                                                  SizedBox(height: 38.h),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        '정렬',
-                                                        style: Theme.of(
-                                                                context)
-                                                            .textTheme
-                                                            .bigHeadLine3
-                                                            .copyWith(
-                                                                color: ColorSchemes
-                                                                    .gray500),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 24.h),
-                                                  _buildFilterOption('최신순',
-                                                      'latest', context),
-                                                  SizedBox(height: 24.h),
-                                                  _buildFilterOption(
-                                                      '가나다순',
-                                                      'alphabetical',
-                                                      context),
-                                                  SizedBox(height: 24.h),
-                                                  _buildFilterOption(
-                                                      '자주 만나는 그룹',
-                                                      'frequent',
-                                                      context),
-                                                  SizedBox(height: 56.h),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      '정렬',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .body3
-                                          .copyWith(
-                                              color: ColorSchemes.gray300),
-                                    ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 14.h),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CreateGroupScreen()),
+                                ).then((_) {
+                                  _reloadGroups();
+                                });
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        StyleConstants.radiusMedium),
                                   ),
-                                ],
-                              ),
-                              SizedBox(height: 14.h),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CreateGroupScreen()),
-                                  ).then((_) {
-                                    _reloadGroups();
-                                  });
-                                },
-                                behavior: HitTestBehavior.opaque,
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          StyleConstants.radiusMedium),
-                                    ),
-                                    color: ColorSchemes.gray100,
-                                    margin: EdgeInsets.zero,
-                                    elevation: 0,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 20.h, bottom: 14.h),
-                                      child: Column(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: StyleConstants
-                                                .circleSizeXXXS,
-                                            backgroundColor:
-                                                ColorSchemes.gray300,
-                                            child: SvgPicture.asset(
-                                                IconPath.plus,
-                                                width: 11.r),
-                                          ),
-                                          SizedBox(height: 10.h),
-                                          Text(
-                                            '그룹 생성하기',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .smallHeadLine3
-                                                .copyWith(
-                                                    color: ColorSchemes
-                                                        .gray200),
-                                          ),
-                                        ],
-                                      ),
+                                  color: ColorSchemes.gray100,
+                                  margin: EdgeInsets.zero,
+                                  elevation: 0,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 20.h, bottom: 14.h),
+                                    child: Column(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: StyleConstants
+                                              .circleSizeXXXS,
+                                          backgroundColor:
+                                              ColorSchemes.gray300,
+                                          child: SvgPicture.asset(
+                                              IconPath.plus,
+                                              width: 11.r),
+                                        ),
+                                        SizedBox(height: 10.h),
+                                        Text(
+                                          '그룹 생성하기',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .smallHeadLine3
+                                              .copyWith(
+                                                  color: ColorSchemes
+                                                      .gray200),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                height: 144.h,
-                              ),
-                              Text(
-                                '아직 그룹이 없습니다',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bigHeadLine3
-                                    .copyWith(
-                                        color: ColorSchemes.orange100),
-                              ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                '그룹을 생성하고 모닥불을 피워보세요.',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .body2
-                                    .copyWith(color: ColorSchemes.gray300),
-                              ),
-                            ],
-                          );
-                        } else {
-                          groupList = snapshot.data!;
-                          _filteredGroupsNotifier.value = groupList;
-                          return Column(
-                            children: [
-                              Column(
-                                children: [
-                                  SizedBox(height: 14.h),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        filterText,
+                            ),
+                            SizedBox(
+                              height: 144.h,
+                            ),
+                            Text(
+                              '아직 그룹이 없습니다',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bigHeadLine3
+                                  .copyWith(
+                                      color: ColorSchemes.orange100),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              '그룹을 생성하고 모닥불을 피워보세요.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body2
+                                  .copyWith(color: ColorSchemes.gray300),
+                            ),
+                          ],
+                        );
+                      } else {
+                        groupList = snapshot.data!;
+                        _filteredGroupsNotifier.value = groupList;
+                        return Column(
+                          children: [
+                            SizedBox(height: 10.h),
+                            CustomSearchBar(
+                              hintText: '사용자를 검색해보세요.',
+                              controller: _searchController,
+                              focusNode: _searchFocusNode,
+                            ),
+                            SizedBox(height: 10.h),
+                            Column(
+                              children: [
+                                SizedBox(height: 14.h),
+                                Row(
+                                  children: [
+                                    Text(
+                                      filterText,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bigHeadLine4
+                                          .copyWith(
+                                              color:
+                                                  ColorSchemes.gray500),
+                                    ),
+                                    Spacer(),
+                                    TextButton(
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          builder:
+                                              (BuildContext context) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.only(
+                                                  topLeft: Radius.circular(
+                                                      StyleConstants
+                                                          .radiusLarge),
+                                                  topRight: Radius.circular(
+                                                      StyleConstants
+                                                          .radiusLarge),
+                                                ),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        StyleConstants
+                                                            .defaultPadding),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    SizedBox(
+                                                        height: 38.h),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          '정렬',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bigHeadLine3
+                                                              .copyWith(
+                                                                  color: ColorSchemes
+                                                                      .gray500),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                        height: 24.h),
+                                                    _buildFilterOption(
+                                                        '최신순',
+                                                        'latest',
+                                                        context),
+                                                    SizedBox(
+                                                        height: 24.h),
+                                                    _buildFilterOption(
+                                                        '가나다순',
+                                                        'alphabetical',
+                                                        context),
+                                                    SizedBox(
+                                                        height: 24.h),
+                                                    _buildFilterOption(
+                                                        '자주 만나는 그룹',
+                                                        'frequent',
+                                                        context),
+                                                    SizedBox(
+                                                        height: 56.h),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                        '정렬',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bigHeadLine4
+                                            .body3
                                             .copyWith(
                                                 color:
-                                                    ColorSchemes.gray500),
+                                                    ColorSchemes.gray300),
                                       ),
-                                      Spacer(),
-                                      TextButton(
-                                        onPressed: () {
-                                          showModalBottomSheet(
-                                            context: context,
-                                            builder:
-                                                (BuildContext context) {
-                                              return Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft: Radius.circular(
-                                                        StyleConstants
-                                                            .radiusLarge),
-                                                    topRight: Radius.circular(
-                                                        StyleConstants
-                                                            .radiusLarge),
-                                                  ),
-                                                ),
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          StyleConstants
-                                                              .defaultPadding),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      SizedBox(
-                                                          height: 38.h),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            '정렬',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bigHeadLine3
-                                                                .copyWith(
-                                                                    color: ColorSchemes
-                                                                        .gray500),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                          height: 24.h),
-                                                      _buildFilterOption(
-                                                          '최신순',
-                                                          'latest',
-                                                          context),
-                                                      SizedBox(
-                                                          height: 24.h),
-                                                      _buildFilterOption(
-                                                          '가나다순',
-                                                          'alphabetical',
-                                                          context),
-                                                      SizedBox(
-                                                          height: 24.h),
-                                                      _buildFilterOption(
-                                                          '자주 만나는 그룹',
-                                                          'frequent',
-                                                          context),
-                                                      SizedBox(
-                                                          height: 56.h),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          '정렬',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .body3
-                                              .copyWith(
-                                                  color:
-                                                      ColorSchemes.gray300),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 14.h),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CreateGroupScreen()),
+                                      ).then((_) {
+                                        _reloadGroups();
+                                      });
+                                    },
+                                    behavior: HitTestBehavior.opaque,
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(
+                                                  StyleConstants
+                                                      .radiusMedium),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 14.h),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CreateGroupScreen()),
-                                        ).then((_) {
-                                          _reloadGroups();
-                                        });
-                                      },
-                                      behavior: HitTestBehavior.opaque,
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: Card(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    StyleConstants
-                                                        .radiusMedium),
-                                          ),
-                                          color: ColorSchemes.gray100,
-                                          margin: EdgeInsets.zero,
-                                          elevation: 0,
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 20.h, bottom: 14.h),
-                                            child: Column(
-                                              children: [
-                                                CircleAvatar(
-                                                  radius: StyleConstants
-                                                      .circleSizeXXXS,
-                                                  backgroundColor:
-                                                      ColorSchemes.gray300,
-                                                  child: SvgPicture.asset(
-                                                      IconPath.plus,
-                                                      width: 11.r),
-                                                ),
-                                                SizedBox(height: 10.h),
-                                                Text(
-                                                  '그룹 생성하기',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .smallHeadLine3
-                                                      .copyWith(
-                                                          color:
-                                                              ColorSchemes
-                                                                  .gray200),
-                                                ),
-                                              ],
-                                            ),
+                                        color: ColorSchemes.gray100,
+                                        margin: EdgeInsets.zero,
+                                        elevation: 0,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 20.h, bottom: 14.h),
+                                          child: Column(
+                                            children: [
+                                              CircleAvatar(
+                                                radius: StyleConstants
+                                                    .circleSizeXXXS,
+                                                backgroundColor:
+                                                    ColorSchemes.gray300,
+                                                child: SvgPicture.asset(
+                                                    IconPath.plus,
+                                                    width: 11.r),
+                                              ),
+                                              SizedBox(height: 10.h),
+                                              Text(
+                                                '그룹 생성하기',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .smallHeadLine3
+                                                    .copyWith(
+                                                        color:
+                                                            ColorSchemes
+                                                                .gray200),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 14.h),
-                                  ValueListenableBuilder<List<Group>>(
-                                    valueListenable:
-                                        _filteredGroupsNotifier,
-                                    builder: (context, filteredGroups, _) {
-                                      if (filteredGroups.isEmpty) {
-                                        return Column(
-                                          children: [
-                                            SizedBox(height: 144.h),
-                                            Text(
-                                              '검색 결과가 없습니다',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bigHeadLine3
-                                                  .copyWith(
-                                                      color: ColorSchemes
-                                                          .orange100),
-                                            ),
-                                            SizedBox(height: 8.h),
-                                            Text(
-                                              '검색어를 다시 확인해 주세요.',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .body2
-                                                  .copyWith(
-                                                      color: ColorSchemes
-                                                          .gray300),
-                                            ),
-                                          ],
-                                        );
-                                      }
-                                      return ListView.builder(
-                                        primary: false,
-                                        shrinkWrap: true,
-                                        itemCount: filteredGroups.length,
-                                        itemBuilder: (BuildContext context,
-                                            int index) {
-                                          String groupName =
-                                              filteredGroups[index].name;
-                                          String groupId =
-                                              filteredGroups[index].id;
-                                          var members =
-                                              filteredGroups[index].members;
-                                          String profileImage2 =
-                                              members.length > 1
-                                                  ? members[1]
-                                                      .user
-                                                      .profileUrl
-                                                  : '';
-                                          return GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      GroupEditScreen(),
-                                                  settings: RouteSettings(
-                                                    arguments: {
-                                                      'groupId':
-                                                          filteredGroups[
-                                                                  index]
-                                                              .id,
-                                                      'groupName':
-                                                          filteredGroups[
-                                                                  index]
-                                                              .name,
-                                                      'members':
-                                                          filteredGroups[
-                                                                  index]
-                                                              .members,
-                                                    },
-                                                  ),
-                                                ),
-                                              ).then((_) {
-                                                _reloadGroups();
-                                              });
-                                            },
-                                            child: Column(
-                                              children: [
-                                                GroupListTile(
-                                                  title: groupName,
-                                                  time: timeAgo(
-                                                    DateTime.parse(
+                                ),
+                                SizedBox(height: 14.h),
+                                ValueListenableBuilder<List<Group>>(
+                                  valueListenable:
+                                      _filteredGroupsNotifier,
+                                  builder: (context, filteredGroups, _) {
+                                    if (filteredGroups.isEmpty) {
+                                      return Column(
+                                        children: [
+                                          SizedBox(height: 144.h),
+                                          Text(
+                                            '검색 결과가 없습니다',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bigHeadLine3
+                                                .copyWith(
+                                                    color: ColorSchemes
+                                                        .orange100),
+                                          ),
+                                          SizedBox(height: 8.h),
+                                          Text(
+                                            '검색어를 다시 확인해 주세요.',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .body2
+                                                .copyWith(
+                                                    color: ColorSchemes
+                                                        .gray300),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                    return ListView.builder(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      itemCount: filteredGroups.length,
+                                      itemBuilder: (BuildContext context,
+                                          int index) {
+                                        String groupName =
+                                            filteredGroups[index].name;
+                                        String groupId =
+                                            filteredGroups[index].id;
+                                        var members =
+                                            filteredGroups[index].members;
+                                        String profileImage2 =
+                                            members.length > 1
+                                                ? members[1]
+                                                    .user
+                                                    .profileUrl
+                                                : '';
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    GroupEditScreen(),
+                                                settings: RouteSettings(
+                                                  arguments: {
+                                                    'groupId':
                                                         filteredGroups[
                                                                 index]
-                                                            .createdAt),
-                                                    DateTime.now(),
-                                                  ),
-                                                  profileLength:
-                                                      filteredGroups[index]
-                                                          .members
-                                                          .length,
-                                                  profileImage1: members[0]
-                                                      .user
-                                                      .profileUrl,
-                                                  profileImage2:
-                                                      profileImage2.isEmpty
-                                                          ? null
-                                                          : profileImage2,
-                                                  isSelected: false,
-                                                  onPressed: () {
-                                                    showModalBottomSheet(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .only(
-                                                              topLeft: Radius
-                                                                  .circular(
-                                                                      StyleConstants
-                                                                          .radiusLarge),
-                                                              topRight: Radius
-                                                                  .circular(
-                                                                      StyleConstants
-                                                                          .radiusLarge),
-                                                            ),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(
-                                                                horizontal:
-                                                                    StyleConstants
-                                                                        .defaultPadding),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              children: [
-                                                                SizedBox(
-                                                                    height:
-                                                                        38.h),
-                                                                Text(
-                                                                    groupName,
-                                                                    style: Theme.of(context)
-                                                                        .textTheme
-                                                                        .bigHeadLine3
-                                                                        .copyWith(color: ColorSchemes.gray500)),
-                                                                SizedBox(
-                                                                    height:
-                                                                        24.h),
-                                                                InkWell(
-                                                                  overlayColor:
-                                                                      WidgetStateProperty.all(
-                                                                          Colors.transparent),
-                                                                  onTap:
-                                                                      () {
-                                                                    Navigator
-                                                                        .push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            GroupEditScreen(),
-                                                                        settings:
-                                                                            RouteSettings(
-                                                                          arguments: {
-                                                                            'groupId': filteredGroups[index].id,
-                                                                            'groupName': filteredGroups[index].name,
-                                                                            'members': filteredGroups[index].members,
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    ).then(
-                                                                        (_) {
-                                                                      _reloadGroups();
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment.spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                          '그룹 수정하기',
-                                                                          style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            24.r,
-                                                                        height:
-                                                                            24.r,
-                                                                        child:
-                                                                            Center(
-                                                                          child: SvgPicture.asset(
-                                                                            IconPath.arrowForwardGray200,
-                                                                            width: 9.r,
-                                                                            height: 16.r,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    height:
-                                                                        24.h),
-                                                                InkWell(
-                                                                  overlayColor:
-                                                                      WidgetStateProperty.all(
-                                                                          Colors.transparent),
-                                                                  onTap:
-                                                                      () async {
-                                                                    await groupService
-                                                                        .deleteGroup(groupId);
-                                                                    setState(
-                                                                        () {
-                                                                      filteredGroups.removeWhere((group) =>
-                                                                          group.id ==
-                                                                          groupId);
-                                                                      _filteredGroupsNotifier.value =
-                                                                          List<Group>.from(groupList);
-                                                                    });
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child:
-                                                                      Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment.spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                          '그룹 삭제하기',
-                                                                          style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            24.r,
-                                                                        height:
-                                                                            24.r,
-                                                                        child:
-                                                                            Center(
-                                                                          child: SvgPicture.asset(
-                                                                            IconPath.arrowForwardGray200,
-                                                                            width: 9.r,
-                                                                            height: 16.r,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    height:
-                                                                        56.h),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                    );
+                                                            .id,
+                                                    'groupName':
+                                                        filteredGroups[
+                                                                index]
+                                                            .name,
+                                                    'members':
+                                                        filteredGroups[
+                                                                index]
+                                                            .members,
                                                   },
                                                 ),
-                                                SizedBox(height: 12.h),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        }
-                      },
-                    ),
+                                              ),
+                                            ).then((_) {
+                                              _reloadGroups();
+                                            });
+                                          },
+                                          child: Column(
+                                            children: [
+                                              GroupListTile(
+                                                title: groupName,
+                                                time: timeAgo(
+                                                  DateTime.parse(
+                                                      filteredGroups[
+                                                              index]
+                                                          .createdAt),
+                                                  DateTime.now(),
+                                                ),
+                                                profileLength:
+                                                    filteredGroups[index]
+                                                        .members
+                                                        .length,
+                                                profileImage1: members[0]
+                                                    .user
+                                                    .profileUrl,
+                                                profileImage2:
+                                                    profileImage2.isEmpty
+                                                        ? null
+                                                        : profileImage2,
+                                                isSelected: false,
+                                                onPressed: () {
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                        context) {
+                                                      return Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .white,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .only(
+                                                            topLeft: Radius
+                                                                .circular(
+                                                                    StyleConstants
+                                                                        .radiusLarge),
+                                                            topRight: Radius
+                                                                .circular(
+                                                                    StyleConstants
+                                                                        .radiusLarge),
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  StyleConstants
+                                                                      .defaultPadding),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              SizedBox(
+                                                                  height:
+                                                                      38.h),
+                                                              Text(
+                                                                  groupName,
+                                                                  style: Theme.of(context)
+                                                                      .textTheme
+                                                                      .bigHeadLine3
+                                                                      .copyWith(color: ColorSchemes.gray500)),
+                                                              SizedBox(
+                                                                  height:
+                                                                      24.h),
+                                                              InkWell(
+                                                                overlayColor:
+                                                                    WidgetStateProperty.all(
+                                                                        Colors.transparent),
+                                                                onTap:
+                                                                    () {
+                                                                  Navigator
+                                                                      .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          GroupEditScreen(),
+                                                                      settings:
+                                                                          RouteSettings(
+                                                                        arguments: {
+                                                                          'groupId': filteredGroups[index].id,
+                                                                          'groupName': filteredGroups[index].name,
+                                                                          'members': filteredGroups[index].members,
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ).then(
+                                                                      (_) {
+                                                                    _reloadGroups();
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                        '그룹 수정하기',
+                                                                        style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          24.r,
+                                                                      height:
+                                                                          24.r,
+                                                                      child:
+                                                                          Center(
+                                                                        child: SvgPicture.asset(
+                                                                          IconPath.arrowForwardGray200,
+                                                                          width: 9.r,
+                                                                          height: 16.r,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                  height:
+                                                                      24.h),
+                                                              InkWell(
+                                                                overlayColor:
+                                                                    WidgetStateProperty.all(
+                                                                        Colors.transparent),
+                                                                onTap:
+                                                                    () async {
+                                                                  await groupService
+                                                                      .deleteGroup(groupId);
+                                                                  setState(
+                                                                      () {
+                                                                    filteredGroups.removeWhere((group) =>
+                                                                        group.id ==
+                                                                        groupId);
+                                                                    _filteredGroupsNotifier.value =
+                                                                        List<Group>.from(groupList);
+                                                                  });
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child:
+                                                                    Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                        '그룹 삭제하기',
+                                                                        style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          24.r,
+                                                                      height:
+                                                                          24.r,
+                                                                      child:
+                                                                          Center(
+                                                                        child: SvgPicture.asset(
+                                                                          IconPath.arrowForwardGray200,
+                                                                          width: 9.r,
+                                                                          height: 16.r,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                  height:
+                                                                      56.h),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                              SizedBox(height: 12.h),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
