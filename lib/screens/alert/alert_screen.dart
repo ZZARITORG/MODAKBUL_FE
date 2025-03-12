@@ -292,7 +292,7 @@ class _AlertScreenState extends State<AlertScreen> {
                   onTap: () {
                     switch (notification.type) {
                       case 'FRIEND_REQUEST':
-                        Routes.navigateTo(context, Routes.addFriendListScreen);
+                        Routes.navigateTo(context, Routes.addFriendScreen);
                         break;
                       case 'MEETING_ALARM':
                         if (notification.meetingId != null) {

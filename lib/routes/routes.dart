@@ -32,6 +32,7 @@ import 'package:modakbul/screens/setting/my_profile_screen.dart';
 import 'package:modakbul/screens/setting/terms_screen.dart';
 import 'package:modakbul/screens/splash_screen.dart';
 import 'package:modakbul/screens/setting/image_cropper_setting_screen.dart';
+import 'package:modakbul/screens/friend/add_freind_screen.dart';
 
 
 class Routes {
@@ -54,6 +55,7 @@ class Routes {
   static const String mapSelectScreen = '/mapSelectScreen';
   static const String modakbulDetailScreen = '/modakbulDetailScreen';
   static const String addFriendListScreen = '/addFriendListScreen';
+  static const String addFriendScreen = '/addFriendScreen';
   static const String searchScreen = '/searchScreen';
   static const String alertSettingScreen = '/alertSettingScreen';
   static const String blockedUserScreen = '/blockedUserScreen';
@@ -101,6 +103,7 @@ class Routes {
 
     ///search
     addFriendListScreen: (BuildContext context) => const AddFriendListScreen(),
+    addFriendScreen: (BuildContext context) => const AddFreindScreen(),
     searchScreen: (BuildContext context) => const SearchScreen(),
 
     ///setting
