@@ -16,7 +16,6 @@ class Group {
   });
 
   factory Group.fromJson(Map<String, dynamic> json) {
-    print('Group id: ${json['members']}');
     return Group(
       id: json['id'],
       name: json['name'],

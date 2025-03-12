@@ -37,7 +37,6 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   late Future<UserCheck> getUserCheck;
   late Future<List<FriendList>> getData;
   Timer? _debounce;
-  Logger logger = Logger(printer: PrettyPrinter());
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
   bool isLoading = false;
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
@@ -152,6 +151,13 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Transform.translate(
+                    offset: Offset(0, controller.value * _maxDragOffset),
+                    child: child,
+                  ),
+                ),
                 if (!controller.isIdle)
                   Positioned(
                     top: 10.h,
@@ -189,10 +195,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                       ),
                     ),
                   ),
-                Transform.translate(
-                  offset: Offset(0, _maxDragOffset * controller.value),
-                  child: child,
-                ),
+
               ],
             );
           },

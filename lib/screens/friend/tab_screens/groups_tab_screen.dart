@@ -38,7 +38,6 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   late DateTime currentTime;
   bool _isRefreshing = false;
   Timer? _debounce;
-  Logger logger = Logger(printer: PrettyPrinter());
   final ValueNotifier<List<Group>> _filteredGroupsNotifier = ValueNotifier([]);
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
 
@@ -180,6 +179,13 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Transform.translate(
+                    offset: Offset(0, controller.value * _maxDragOffset),
+                    child: child,
+                  ),
+                ),
                 if (!controller.isIdle)
                   Positioned(
                     top: 10.h,
@@ -217,10 +223,6 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                       ),
                     ),
                   ),
-                Transform.translate(
-                  offset: Offset(0, _maxDragOffset * controller.value),
-                  child: child,
-                ),
               ],
             );
           },
