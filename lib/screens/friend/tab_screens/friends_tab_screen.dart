@@ -480,14 +480,16 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                 if (snapshot
                                                         .connectionState ==
                                                     ConnectionState.waiting) {
-                                                  return Center(
-                                                      child:
-                                                          CircularProgressIndicator());
+                                                  return Container(
+                                                    height: 304.h,
+                                                    child: SizedBox.shrink(),
+                                                  );
                                                 } else if (snapshot
                                                     .hasError) {
-                                                  return Center(
-                                                      child: Text(
-                                                          'Error: ${snapshot.error}'));
+                                                  return Container(
+                                                    height: 304.h,
+                                                    child: SizedBox.shrink(),
+                                                  );
                                                 } else {
                                                   UserCheck userCheckData =
                                                       snapshot.data!;
