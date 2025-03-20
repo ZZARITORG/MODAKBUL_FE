@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
+import 'package:lottie/lottie.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/friend_list.dart';
@@ -40,6 +42,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   Timer? _debounce;
   Logger logger = Logger(printer: PrettyPrinter());
   late MeetingProvider meetingProvider;
+  bool isLoading = false;
+  static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
 
   // ValueNotifier로 _filteredFriends 관리
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
@@ -59,6 +63,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
     _searchFocusNode.dispose();
     _debounce?.cancel();
     _filteredFriendsNotifier.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -126,231 +131,252 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
     });
   }
 
+  Future<void> _refreshData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    getData = friendService.getFriendList();
+    _filteredFriendsNotifier.value = [];
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  String? _getLoadingAsset(double offset) {
+    if (offset < 0.1) return null;
+    int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
+    segment = segment.clamp(1, 8);
+
+    switch (segment) {
+      case 1:
+        return AnimationPath.loading1;
+      case 2:
+        return AnimationPath.loading2;
+      case 3:
+        return AnimationPath.loading3;
+      case 4:
+        return AnimationPath.loading4;
+      case 5:
+        return AnimationPath.loading5;
+      case 6:
+        return AnimationPath.loading6;
+      case 7:
+        return AnimationPath.loading7;
+      case 8:
+        return AnimationPath.loading8;
+      default:
+        return AnimationPath.loading1;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(
-            //keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            controller: _scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Builder(builder: (context) {
-                  if (selectedFriends.isEmpty) {
-                    return const SizedBox.shrink();
-                  } else {
-                    return Padding(
-                      padding: EdgeInsets.only(top: 10.h, bottom: 6.h),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.only(
-                          left: StyleConstants.defaultPadding,
-                          right: 4.w,
+    return Scaffold(
+      backgroundColor: ColorSchemes.gray000,
+      body: SafeArea(
+        child: Stack(
+            children: [
+              CustomRefreshIndicator(
+                triggerMode: IndicatorTriggerMode.onEdge,
+                offsetToArmed: _maxDragOffset,
+                onRefresh: _refreshData,
+                builder: (BuildContext context, Widget child,
+                    IndicatorController controller) {
+                  return Stack(
+                    alignment: Alignment.topCenter,
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        child: Transform.translate(
+                          offset: Offset(0, controller.value * _maxDragOffset),
+                          child: child,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: selectedFriends.map((friend) {
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 12.w),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
+                      ),
+                      if (!controller.isIdle)
+                        Positioned(
+                          top: 10.h,
+                          child: SizedBox(
+                            height: 32,
+                            width: 32,
+                            child: Center(
+                              child: controller.isLoading
+                                  ? Lottie.asset(
+                                width: 25.r,
+                                height: 25.r,
+                                AnimationPath.loadingFeed,
+                                animate: controller.isLoading,
+                              )
+                                  : AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 200),
+                                transitionBuilder: (Widget child,
+                                    Animation<double> animation) {
+                                  return child;
+                                },
+                                child: _getLoadingAsset(controller.value *
+                                    _maxDragOffset) !=
+                                    null
+                                    ? SvgPicture.asset(
+                                  _getLoadingAsset(
+                                      controller.value * _maxDragOffset)!,
+                                  width: 25.r,
+                                  height: 25.r,
+                                  key: ValueKey<String>(_getLoadingAsset(
+                                      controller.value *
+                                          _maxDragOffset)!),
+                                )
+                                    : const SizedBox.shrink(),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+                child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  controller: _scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Builder(builder: (context) {
+                        if (selectedFriends.isEmpty) {
+                          return const SizedBox.shrink();
+                        } else {
+                          return Padding(
+                            padding: EdgeInsets.only(top: 10.h, bottom: 6.h),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.only(
+                                left: StyleConstants.defaultPadding,
+                                right: 4.w,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: selectedFriends.map((friend) {
+                                  return Column(
                                     children: [
-                                      Stack(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: StyleConstants.circleSizeM,
-                                            child: ClipOval(
-                                                child: CachedNetworkImage(imageUrl: friend['profilePicture']!)),
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: SizedBox(
-                                              height: 24.r,
-                                              width: 24.r,
-                                              child: IconButton(
-                                                padding: EdgeInsets.zero,
-                                                constraints:
-                                                const BoxConstraints(),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    selectedFriends.removeWhere(
-                                                          (item) =>
-                                                      item['userId'] ==
-                                                          friend['userId'],
-                                                    );
-                                                  });
-                                                },
-                                                icon: SvgPicture.asset(
-                                                  IconPath.cancel,
-                                                  width: 24.r,
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 12.w),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Stack(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: StyleConstants
+                                                      .circleSizeM,
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(
+                                                          imageUrl: friend[
+                                                              'profilePicture']!)),
+                                                ),
+                                                Positioned(
+                                                  top: 0,
+                                                  right: 0,
+                                                  child: SizedBox(
+                                                    height: 24.r,
+                                                    width: 24.r,
+                                                    child: IconButton(
+                                                      padding: EdgeInsets.zero,
+                                                      constraints:
+                                                          const BoxConstraints(),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          selectedFriends
+                                                              .removeWhere(
+                                                            (item) =>
+                                                                item[
+                                                                    'userId'] ==
+                                                                friend[
+                                                                    'userId'],
+                                                          );
+                                                        });
+                                                      },
+                                                      icon: SvgPicture.asset(
+                                                        IconPath.cancel,
+                                                        width: 24.r,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 4.h),
+                                            SizedBox(
+                                              width:
+                                                  StyleConstants.circleSizeM *
+                                                      2,
+                                              child: Center(
+                                                child: Text(
+                                                  friend['userName']!,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .body3
+                                                      .copyWith(
+                                                          color: ColorSchemes
+                                                              .gray300),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 4.h),
-                                      SizedBox(
-                                        width: StyleConstants.circleSizeM * 2,
-                                        child: Center(
-                                          child: Text(
-                                            friend['userName']!,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .body3
-                                                .copyWith(
-                                                color: ColorSchemes.gray300),
-                                          ),
+                                          ],
                                         ),
                                       ),
                                     ],
-                                  ),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    );
-                  }
-                }),
-                SizedBox(
-                  height: 10.h,
-                ),
-                CustomSearchBar(
-                  hintText: '친구를 검색해 보세요.',
-                  controller: _searchController,
-                  focusNode: _searchFocusNode,
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: StyleConstants.defaultPadding),
-                  child: FutureBuilder<List<FriendList>>(
-                      future: getData,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const FriendScreenSkeleton();
-                        } else if (snapshot.hasError) {
-                          return const GlobalErrorWidget();
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return Column(
-                            children: [
-                              SizedBox(height: 14.h),
-                              Row(
-                                children: [
-                                  Text(
-                                    filterText,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bigHeadLine4
-                                        .copyWith(color: ColorSchemes.gray500),
-                                  ),
-                                  Spacer(),
-                                  TextButton(
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(StyleConstants.radiusLarge),
-                                                topRight: Radius.circular(StyleConstants.radiusLarge),
-                                              ),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  SizedBox(height: 38.h),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        '정렬',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bigHeadLine3
-                                                            .copyWith(color: ColorSchemes.gray500),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 24.h),
-                                                  _buildFilterOption('최신순', 'latest', context),
-                                                  SizedBox(height: 24.h),
-                                                  _buildFilterOption('가나다순', 'alphabetical', context),
-                                                  SizedBox(height: 24.h),
-                                                  _buildFilterOption('자주 만나는 친구', 'frequent', context),
-                                                  SizedBox(height: 56.h),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      '정렬',
-                                      style: Theme.of(context).textTheme.body3.copyWith(color: ColorSchemes.gray300),
-                                    ),
-                                  ),
-                                ],
+                                  );
+                                }).toList(),
                               ),
-                              SizedBox(
-                                height: 144.h,
-                              ),
-                              Text(
-                                '아직 친구가 없습니다',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bigHeadLine3
-                                    .copyWith(color: ColorSchemes.orange100),
-                              ),
-                              SizedBox(height: 8.h,),
-                              Text(
-                                '친구를 추가하고 모닥불을 피워보세요.',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .body2
-                                    .copyWith(color: ColorSchemes.gray300),
-                              )
-                            ],
+                            ),
                           );
-                        } else {
-                          friendList = snapshot.data!;
-                          _filteredFriendsNotifier.value = friendList;
-                          return Column(
-                            children: [
-                              Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 4.w,
-                                      ),
-                                      Text(
-                                        filterText,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bigHeadLine4
-                                            .copyWith(
-                                                color: ColorSchemes.gray500),
-                                      ),
-                                      const Spacer(),
-                                      TextButton(
+                        }
+                      }),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      CustomSearchBar(
+                        hintText: '친구를 검색해 보세요.',
+                        controller: _searchController,
+                        focusNode: _searchFocusNode,
+                      ),
+                      SizedBox(
+                        height: 24.h,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: StyleConstants.defaultPadding),
+                        child: FutureBuilder<List<FriendList>>(
+                            future: getData,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const FriendScreenSkeleton();
+                              } else if (snapshot.hasError) {
+                                return const GlobalErrorWidget();
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return Column(
+                                  children: [
+                                    SizedBox(height: 14.h),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          filterText,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bigHeadLine4
+                                              .copyWith(
+                                                  color: ColorSchemes.gray500),
+                                        ),
+                                        Spacer(),
+                                        TextButton(
                                           onPressed: () {
                                             showModalBottomSheet(
                                               context: context,
@@ -370,8 +396,9 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                   ),
                                                   child: Padding(
                                                     padding: EdgeInsets.symmetric(
-                                                        horizontal: StyleConstants
-                                                            .defaultPadding),
+                                                        horizontal:
+                                                            StyleConstants
+                                                                .defaultPadding),
                                                     child: Column(
                                                       mainAxisSize:
                                                           MainAxisSize.min,
@@ -393,12 +420,14 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                         ),
                                                         SizedBox(height: 24.h),
                                                         _buildFilterOption(
+                                                            '최신순',
+                                                            'latest',
+                                                            context),
+                                                        SizedBox(height: 24.h),
+                                                        _buildFilterOption(
                                                             '가나다순',
                                                             'alphabetical',
                                                             context),
-                                                        SizedBox(height: 24.h),
-                                                        _buildFilterOption('최신순',
-                                                            'latest', context),
                                                         SizedBox(height: 24.h),
                                                         _buildFilterOption(
                                                             '자주 만나는 친구',
@@ -418,146 +447,297 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                                 .textTheme
                                                 .body3
                                                 .copyWith(
-                                                    color: ColorSchemes.gray300),
-                                          )),
-                                      SizedBox(
-                                        width: 4.w,
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 14.h,
-                                  ),
-                                  ValueListenableBuilder<List<FriendList>>(
-                                      valueListenable: _filteredFriendsNotifier,
-                                      builder: (context, filteredFriends, _) {
-                                        if (filteredFriends.isEmpty) {
-                                          return Column(
-                                            children: [
-                                              SizedBox(height: 132.h),
-                                              Text(
-                                                '검색결과가 없습니다',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bigHeadLine3
-                                                    .copyWith(
-                                                        color: ColorSchemes
-                                                            .orange100),
-                                              ),
-                                              SizedBox(height: 8.h),
-                                              Text(
-                                                '검색어를 다시 확인해 주세요',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .body2
-                                                    .copyWith(
-                                                        color:
-                                                            ColorSchemes.gray300),
-                                              ),
-                                            ],
-                                          );
-                                        }
-                                        return ListView.builder(
-                                            primary: false,
-                                            shrinkWrap: true,
-                                            itemCount: filteredFriends.length,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              final friend =
-                                                  filteredFriends[index];
-                                              final isChecked = selectedFriends
-                                                  .any((selectedFriend) =>
-                                                      selectedFriend['userId'] ==
-                                                      friend.userId);
-                                              return GestureDetector(
-                                                behavior:
-                                                    HitTestBehavior.translucent,
-                                                /*overlayColor: const WidgetStatePropertyAll(
+                                                    color:
+                                                        ColorSchemes.gray300),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 144.h,
+                                    ),
+                                    Text(
+                                      '아직 친구가 없습니다',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bigHeadLine3
+                                          .copyWith(
+                                              color: ColorSchemes.orange100),
+                                    ),
+                                    SizedBox(
+                                      height: 8.h,
+                                    ),
+                                    Text(
+                                      '친구를 추가하고 모닥불을 피워보세요.',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body2
+                                          .copyWith(
+                                              color: ColorSchemes.gray300),
+                                    )
+                                  ],
+                                );
+                              } else {
+                                friendList = snapshot.data!;
+                                _filteredFriendsNotifier.value = friendList;
+                                return Column(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 4.w,
+                                            ),
+                                            Text(
+                                              filterText,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bigHeadLine4
+                                                  .copyWith(
+                                                      color:
+                                                          ColorSchemes.gray500),
+                                            ),
+                                            const Spacer(),
+                                            TextButton(
+                                                onPressed: () {
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                            topLeft: Radius.circular(
+                                                                StyleConstants
+                                                                    .radiusLarge),
+                                                            topRight: Radius.circular(
+                                                                StyleConstants
+                                                                    .radiusLarge),
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  StyleConstants
+                                                                      .defaultPadding),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              SizedBox(
+                                                                  height: 38.h),
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    '정렬',
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .bigHeadLine3
+                                                                        .copyWith(
+                                                                            color:
+                                                                                ColorSchemes.gray500),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                  height: 24.h),
+                                                              _buildFilterOption(
+                                                                  '가나다순',
+                                                                  'alphabetical',
+                                                                  context),
+                                                              SizedBox(
+                                                                  height: 24.h),
+                                                              _buildFilterOption(
+                                                                  '최신순',
+                                                                  'latest',
+                                                                  context),
+                                                              SizedBox(
+                                                                  height: 24.h),
+                                                              _buildFilterOption(
+                                                                  '자주 만나는 친구',
+                                                                  'frequent',
+                                                                  context),
+                                                              SizedBox(
+                                                                  height: 56.h),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Text(
+                                                  '정렬',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .body3
+                                                      .copyWith(
+                                                          color: ColorSchemes
+                                                              .gray300),
+                                                )),
+                                            SizedBox(
+                                              width: 4.w,
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 14.h,
+                                        ),
+                                        ValueListenableBuilder<
+                                                List<FriendList>>(
+                                            valueListenable:
+                                                _filteredFriendsNotifier,
+                                            builder:
+                                                (context, filteredFriends, _) {
+                                              if (filteredFriends.isEmpty) {
+                                                return Column(
+                                                  children: [
+                                                    SizedBox(height: 132.h),
+                                                    Text(
+                                                      '검색결과가 없습니다',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bigHeadLine3
+                                                          .copyWith(
+                                                              color: ColorSchemes
+                                                                  .orange100),
+                                                    ),
+                                                    SizedBox(height: 8.h),
+                                                    Text(
+                                                      '검색어를 다시 확인해 주세요',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .body2
+                                                          .copyWith(
+                                                              color:
+                                                                  ColorSchemes
+                                                                      .gray300),
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                              return ListView.builder(
+                                                  primary: false,
+                                                  shrinkWrap: true,
+                                                  itemCount:
+                                                      filteredFriends.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    final friend =
+                                                        filteredFriends[index];
+                                                    final isChecked =
+                                                        selectedFriends.any(
+                                                            (selectedFriend) =>
+                                                                selectedFriend[
+                                                                    'userId'] ==
+                                                                friend.userId);
+                                                    return GestureDetector(
+                                                      behavior: HitTestBehavior
+                                                          .translucent,
+                                                      /*overlayColor: const WidgetStatePropertyAll(
                                         Colors.transparent,
 
                                         ///투명으로 바꿀수도있음
                                                                         ),*/
-                                                onTap: () {
-                                                  _toggleSelectGroup(
-                                                      friend.userId,
-                                                      friend.userName,
-                                                      friend.profileUrl,
-                                                      friend.id);
-                                                  //filteredFriends = snapshot.data!;
-                                                  _searchController.text = '';
-                                                },
-                                                onTapDown: (_) {
-                                                  /// 터치 이벤트가 상위로 전파되는 것을 막습니다
-                                                  /// 이렇게 하면 SelectUserListProfile을 터치해도 키보드가 내려가지 않습니다
-                                                },
-                                                child: SelectUserListProfile(
-                                                  userName: filteredFriends[index]
-                                                      .userName,
-                                                  userId: filteredFriends[index]
-                                                      .userId,
-                                                  profileImage:
-                                                      filteredFriends[index]
-                                                          .profileUrl,
-                                                  isChecked: isChecked,
-                                                ),
-                                              );
-                                            });
-                                      }),
-                                ],
-                              ),
-                              SizedBox(height: 88.h),
-                            ],
-                          );
-                        }
-                      }),
-                )
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-            bottom: 0,
-            left: 16.h,
-            right: 16.h,
-            child: Stack(
-              children: [
-                SizedBox(
-                  height: 72.h,
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 37.h,
-                    color: ColorSchemes.gray000,
+                                                      onTap: () {
+                                                        _toggleSelectGroup(
+                                                            friend.userId,
+                                                            friend.userName,
+                                                            friend.profileUrl,
+                                                            friend.id);
+                                                        //filteredFriends = snapshot.data!;
+                                                        _searchController.text =
+                                                            '';
+                                                      },
+                                                      onTapDown: (_) {
+                                                        /// 터치 이벤트가 상위로 전파되는 것을 막습니다
+                                                        /// 이렇게 하면 SelectUserListProfile을 터치해도 키보드가 내려가지 않습니다
+                                                      },
+                                                      child:
+                                                          SelectUserListProfile(
+                                                        userName:
+                                                            filteredFriends[
+                                                                    index]
+                                                                .userName,
+                                                        userId: filteredFriends[
+                                                                index]
+                                                            .userId,
+                                                        profileImage:
+                                                            filteredFriends[
+                                                                    index]
+                                                                .profileUrl,
+                                                        isChecked: isChecked,
+                                                      ),
+                                                    );
+                                                  });
+                                            }),
+                                      ],
+                                    ),
+                                    SizedBox(height: 88.h),
+                                  ],
+                                );
+                              }
+                            }),
+                      )
+                    ],
                   ),
                 ),
-                Positioned(
-                    bottom: 16.h,
-                    left: 0,
-                    right: 0,
-                    child: SizedBox(
-                      height: 56.h,
-                      child: CustomButton(
-                          text: '그룹 선택',
-                          onPressed: selectedFriends.length >= 2
-                              ? () {
-                                  meetingProvider.selectGroupName =
-                                      '${selectedFriends[0]['userName']} 외 ${selectedFriends.length - 1}명';
-                                  meetingProvider.selectFriends = selectedFriends;
-                                  meetingProvider.isGroup = false;
-                                  Navigator.pop(context);
-                                }
-                              : null,
-                          buttonColor: ColorSchemes.orange200,
-                          textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                          textColor: ColorSchemes.white),
-                    )),
-              ],
-            ))
-      ],
-    );
+              ),
+    ),
+              Positioned(
+                  bottom: 0,
+                  left: 16.h,
+                  right: 16.h,
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        height: 72.h,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          height: 37.h,
+                          color: ColorSchemes.gray000,
+                        ),
+                      ),
+                      Positioned(
+                          bottom: 16.h,
+                          left: 0,
+                          right: 0,
+                          child: SizedBox(
+                            height: 56.h,
+                            child: CustomButton(
+                                text: '그룹 선택',
+                                onPressed: selectedFriends.length >= 2
+                                    ? () {
+                                        meetingProvider.selectGroupName =
+                                            '${selectedFriends[0]['userName']} 외 ${selectedFriends.length - 1}명';
+                                        meetingProvider.selectFriends =
+                                            selectedFriends;
+                                        meetingProvider.isGroup = false;
+                                        Navigator.pop(context);
+                                      }
+                                    : null,
+                                buttonColor: ColorSchemes.orange200,
+                                textStyle:
+                                    Theme.of(context).textTheme.smallHeadLine2,
+                                textColor: ColorSchemes.white),
+                          )),
+                    ],
+                  ))
+            ],
+          ),
+        ),
+      );
   }
 
   Widget _buildFilterOption(
