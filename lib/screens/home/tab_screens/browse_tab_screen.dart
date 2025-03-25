@@ -38,6 +38,7 @@ class _State extends State<BrowseTabScreen> {
 
   static const double _maxDragOffset = 36;
   bool isLoading = true;
+  bool _wasRefreshing = false;
 
   String _getLoadingAsset(double offset) {
     int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
@@ -98,12 +99,21 @@ class _State extends State<BrowseTabScreen> {
   Widget build(BuildContext context) {
     return CustomRefreshIndicator(
       offsetToArmed: _maxDragOffset,
-      onRefresh: _refreshData,
+      onRefresh: () async {
+        HapticFeedback.mediumImpact();
+        await _refreshData();
+      },
       builder: (
         BuildContext context,
         Widget child,
         IndicatorController controller,
       ) {
+        if (controller.isLoading && !_wasRefreshing) {
+          HapticFeedback.lightImpact();
+          _wasRefreshing = true;
+        } else if (!controller.isLoading && _wasRefreshing) {
+          _wasRefreshing = false;
+        }
         return Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[

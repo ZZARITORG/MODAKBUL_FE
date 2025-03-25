@@ -1,5 +1,6 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -28,6 +29,7 @@ class DefaultTabScreen extends StatefulWidget {
 }
 
 class _State extends State<DefaultTabScreen> {
+
   void initState() {
     super.initState();
     initializeDateFormatting();
@@ -40,6 +42,7 @@ class _State extends State<DefaultTabScreen> {
   final FriendService friendService = FriendService();
   static const double _maxDragOffset = 36;
   bool isLoading = true;
+  bool _wasRefreshing = false;
 
   String _getLoadingAsset(double offset) {
     int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
@@ -85,12 +88,21 @@ class _State extends State<DefaultTabScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomRefreshIndicator(
-      onRefresh: _refreshData,
+      onRefresh: () async {
+        HapticFeedback.mediumImpact();
+        await _refreshData();
+      },
       builder: (
         BuildContext context,
         Widget child,
         IndicatorController controller,
       ) {
+        if (controller.isLoading && !_wasRefreshing) {
+          HapticFeedback.lightImpact();
+          _wasRefreshing = true;
+        } else if (!controller.isLoading && _wasRefreshing) {
+          _wasRefreshing = false;
+        }
         return Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[
