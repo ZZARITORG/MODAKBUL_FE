@@ -88,10 +88,7 @@ class _State extends State<DefaultTabScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomRefreshIndicator(
-      onRefresh: () async {
-        HapticFeedback.mediumImpact();
-        await _refreshData();
-      },
+      onRefresh: _refreshData,
       builder: (
         BuildContext context,
         Widget child,

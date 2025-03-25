@@ -61,6 +61,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
   late AnimationController _lottieController;
   Timer? _debounce;
   bool isLoading = false;
+  bool _wasRefreshing = false;
   bool isSearching = false;
   bool showLottie = false;
   bool isEnd = false;
@@ -271,6 +272,12 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
             Widget child,
             IndicatorController controller,
           ) {
+            if (controller.isLoading && !_wasRefreshing) {
+              HapticFeedback.lightImpact();
+              _wasRefreshing = true;
+            } else if (!controller.isLoading && _wasRefreshing) {
+              _wasRefreshing = false;
+            }
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[

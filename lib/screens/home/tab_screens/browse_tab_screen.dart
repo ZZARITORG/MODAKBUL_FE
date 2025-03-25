@@ -99,10 +99,7 @@ class _State extends State<BrowseTabScreen> {
   Widget build(BuildContext context) {
     return CustomRefreshIndicator(
       offsetToArmed: _maxDragOffset,
-      onRefresh: () async {
-        HapticFeedback.mediumImpact();
-        await _refreshData();
-      },
+      onRefresh: _refreshData,
       builder: (
         BuildContext context,
         Widget child,
