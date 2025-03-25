@@ -326,6 +326,7 @@ class _AlertScreenState extends State<AlertScreen> {
                     content: notification.getContent(),
                     alertType: notification.type,
                     time: formatTime(notification.createdAt),
+                    sourceUserProfileUrl: notification.sourceUserProfileUrl,
                   ),
                 ),
                 SizedBox(height: 12.h),
