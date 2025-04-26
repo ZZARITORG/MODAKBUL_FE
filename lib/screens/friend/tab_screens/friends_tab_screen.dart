@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
@@ -39,6 +40,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   Timer? _debounce;
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
   bool isLoading = false;
+  bool _wasRefreshing = false;
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
 
   @override
@@ -148,6 +150,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
           onRefresh: _refreshData,
           builder: (BuildContext context, Widget child,
               IndicatorController controller) {
+            if (controller.isLoading && !_wasRefreshing) {
+              HapticFeedback.lightImpact();
+              _wasRefreshing = true;
+            } else if (!controller.isLoading && _wasRefreshing) {
+              _wasRefreshing = false;
+            }
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
