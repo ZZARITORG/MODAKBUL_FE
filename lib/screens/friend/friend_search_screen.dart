@@ -472,6 +472,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                                   userCheckData: userCheckData,
                                   selectedUserId: selectedUser.id,
                                   friendService: friendService,
+                                  onFriendStatusChanged: updateFriendStatus,
                                 );
                               }
                             },
@@ -615,6 +616,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                                   userCheckData: userCheckData,
                                   selectedUserId: friend.id,
                                   friendService: friendService,
+                                  onFriendStatusChanged: updateFriendStatus,
                                 );
                               }
                             },
@@ -750,6 +752,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                                         userCheckData: userCheckData,
                                         selectedUserId: friend.id,
                                         friendService: friendService,
+                                        onFriendStatusChanged: updateFriendStatus,
                                       );
                                     }
                                   },
