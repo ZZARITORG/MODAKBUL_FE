@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
@@ -36,6 +37,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   late Future<List<Group>> getData;
   late DateTime currentTime;
   bool _isRefreshing = false;
+  bool _wasRefreshing = false;
   Timer? _debounce;
   final ValueNotifier<List<Group>> _filteredGroupsNotifier = ValueNotifier([]);
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
@@ -175,6 +177,12 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
           onRefresh: _refreshData,
           builder: (BuildContext context, Widget child,
               IndicatorController controller) {
+            if (controller.isLoading && !_wasRefreshing) {
+              HapticFeedback.lightImpact();
+              _wasRefreshing = true;
+            } else if (!controller.isLoading && _wasRefreshing) {
+              _wasRefreshing = false;
+            }
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[

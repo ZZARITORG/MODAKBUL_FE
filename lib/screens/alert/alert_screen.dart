@@ -1,5 +1,6 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
@@ -27,6 +28,7 @@ class _AlertScreenState extends State<AlertScreen> {
 
   static const double _maxDragOffset = 36;
   bool isLoading = true;
+  bool _wasRefreshing = false;
 
   String? _getLoadingAsset(double offset) {
     if (offset < 0.1) return null;
@@ -146,6 +148,12 @@ class _AlertScreenState extends State<AlertScreen> {
             Widget child,
             IndicatorController controller,
           ) {
+            if (controller.isLoading && !_wasRefreshing) {
+              HapticFeedback.lightImpact();
+            } else if (!controller.isLoading && _wasRefreshing) {
+              _wasRefreshing = false;
+            }
+            _wasRefreshing = controller.isLoading;
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
@@ -326,6 +334,7 @@ class _AlertScreenState extends State<AlertScreen> {
                     content: notification.getContent(),
                     alertType: notification.type,
                     time: formatTime(notification.createdAt),
+                    sourceUserProfileUrl: notification.sourceUserProfileUrl,
                   ),
                 ),
                 SizedBox(height: 12.h),

@@ -40,6 +40,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
   bool isLoading = false;
   bool _wasRefreshing = false;
+
   static const double _maxDragOffset = 36;
 
   @override
@@ -144,6 +145,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
           onRefresh: _refreshData,
           builder: (BuildContext context, Widget child,
               IndicatorController controller) {
+            if (controller.isLoading && !_wasRefreshing) {
+              HapticFeedback.lightImpact();
+              _wasRefreshing = true;
+            } else if (!controller.isLoading && _wasRefreshing) {
+              _wasRefreshing = false;
+            }
             return Stack(
               alignment: Alignment.topCenter,
               children: [
