@@ -194,37 +194,23 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
-            child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: StyleConstants.defaultPadding),
-                    child: FutureBuilder<List<FriendList>>(
-                      future: getData,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const FriendScreenSkeleton();
-                        } else if (snapshot.hasError) {
-                          return const GlobalErrorWidget();
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return _buildEmptyFriendList();
-                        } else {
-                          friendList = snapshot.data!;
-                          _filteredFriendsNotifier.value = friendList;
-                          return _buildFriendList();
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
+            child: FutureBuilder<List<FriendList>>(
+              future: getData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const FriendScreenSkeleton();
+                } else if (snapshot.hasError) {
+                  return const GlobalErrorWidget();
+                } else if (!snapshot.hasData ||
+                    snapshot.data!.isEmpty) {
+                  return _buildEmptyFriendList();
+                } else {
+                  friendList = snapshot.data!;
+                  _filteredFriendsNotifier.value = friendList;
+                  return _buildFriendList();
+                }
+              },
             ),
           ),
         ),
@@ -233,257 +219,272 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   }
 
   Widget _buildEmptyFriendList() {
-    return Column(
-      children: [
-        SizedBox(height: 10.h),
-        CustomSearchBar(
-          hintText: '사용자를 검색해보세요.',
-          controller: _searchController,
-          focusNode: _searchFocusNode,
-        ),
-        SizedBox(height: 144.h),
-        Center(
-          child: Column(
-            children: [
-              Text('아직 친구가 없습니다',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bigHeadLine3
-                      .copyWith(color: ColorSchemes.orange100)),
-              SizedBox(height: 8.h),
-              Text('친구를 추가하고 모닥불을 피워보세요.',
-                  style: Theme.of(context)
-                      .textTheme
-                      .body2
-                      .copyWith(color: ColorSchemes.gray300)),
-            ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+      child: ListView(
+        controller: _scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        children: [
+          SizedBox(height: 10.h),
+          CustomSearchBar(
+            hintText: '사용자를 검색해보세요.',
+            controller: _searchController,
+            focusNode: _searchFocusNode,
           ),
-        ),
-      ],
+          SizedBox(height: 144.h),
+          Center(
+            child: Column(
+              children: [
+                Text('아직 친구가 없습니다',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bigHeadLine3
+                        .copyWith(color: ColorSchemes.orange100)),
+                SizedBox(height: 8.h),
+                Text('친구를 추가하고 모닥불을 피워보세요.',
+                    style: Theme.of(context)
+                        .textTheme
+                        .body2
+                        .copyWith(color: ColorSchemes.gray300)),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildFriendList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 10.h),
-        CustomSearchBar(
-          hintText: '사용자를 검색해보세요.',
-          controller: _searchController,
-          focusNode: _searchFocusNode,
-        ),
-        SizedBox(height: 24.h),
-        Row(
-          children: [
-            SizedBox(width: 4.w),
-            Text(filterText,
-                style: Theme.of(context)
-                    .textTheme
-                    .bigHeadLine4
-                    .copyWith(color: ColorSchemes.gray500)),
-            Spacer(),
-            TextButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => _buildFilterBottomSheet(),
-                );
-              },
-              child: Text('필터',
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+      child: ListView(
+        controller: _scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        children: [
+          SizedBox(height: 10.h),
+          CustomSearchBar(
+            hintText: '사용자를 검색해보세요.',
+            controller: _searchController,
+            focusNode: _searchFocusNode,
+          ),
+          SizedBox(height: 24.h),
+          Row(
+            children: [
+              SizedBox(width: 4.w),
+              Text(filterText,
                   style: Theme.of(context)
                       .textTheme
-                      .body3
-                      .copyWith(color: ColorSchemes.gray300)),
-            ),
-            SizedBox(width: 4.w),
-          ],
-        ),
-        SizedBox(height: 14.h),
-        ValueListenableBuilder<List<FriendList>>(
-          valueListenable: _filteredFriendsNotifier,
-          builder: (context, filteredFriends, _) {
-            if (filteredFriends.isEmpty) {
-              return Column(
-                children: [
-                  SizedBox(height: 144.h),
-                  Text('검색 결과가 없습니다',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bigHeadLine3
-                          .copyWith(color: ColorSchemes.orange100)),
-                  SizedBox(height: 8.h),
-                  Text('검색어를 다시 확인해 주세요.',
-                      style: Theme.of(context)
-                          .textTheme
-                          .body2
-                          .copyWith(color: ColorSchemes.gray300)),
-                ],
-              );
-            }
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: filteredFriends.length,
-              itemBuilder: (context, index) {
-                final friend = filteredFriends[index];
-                return GestureDetector(
-                  onTap: () async {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (context) {
-                        return FutureBuilder<UserCheck>(
-                          future: userService.getUserCheck(friend.id),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return SizedBox(height: 304.h);
-                            } else if (snapshot.hasError) {
-                              return SizedBox(height: 304.h);
-                            } else {
-                              UserCheck userCheckData = snapshot.data!;
-                              return ProfileBottomSheet(
-                                userCheckData: userCheckData,
-                                selectedUserId: friend.id,
-                                friendService: friendService,
-                              );
-                            }
-                          },
-                        );
-                      },
-                    );
-                  },
-                  child: UserListProfile(
-                    userName: friend.userName,
-                    userId: friend.userId,
-                    profileImage: friend.profileUrl,
-                    onIconPressed: () {
+                      .bigHeadLine4
+                      .copyWith(color: ColorSchemes.gray500)),
+              Spacer(),
+              TextButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => _buildFilterBottomSheet(),
+                  );
+                },
+                child: Text('필터',
+                    style: Theme.of(context)
+                        .textTheme
+                        .body3
+                        .copyWith(color: ColorSchemes.gray300)),
+              ),
+              SizedBox(width: 4.w),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          ValueListenableBuilder<List<FriendList>>(
+            valueListenable: _filteredFriendsNotifier,
+            builder: (context, filteredFriends, _) {
+              if (filteredFriends.isEmpty) {
+                return Column(
+                  children: [
+                    SizedBox(height: 144.h),
+                    Text('검색 결과가 없습니다',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bigHeadLine3
+                            .copyWith(color: ColorSchemes.orange100)),
+                    SizedBox(height: 8.h),
+                    Text('검색어를 다시 확인해 주세요.',
+                        style: Theme.of(context)
+                            .textTheme
+                            .body2
+                            .copyWith(color: ColorSchemes.gray300)),
+                  ],
+                );
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: filteredFriends.length,
+                itemBuilder: (context, index) {
+                  final friend = filteredFriends[index];
+                  return GestureDetector(
+                    onTap: () async {
                       showModalBottomSheet(
                         isScrollControlled: true,
-                        isDismissible: true,
-                        enableDrag: false,
                         context: context,
-                        builder: (BuildContext context) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft:
-                                    Radius.circular(StyleConstants.radiusLarge),
-                                topRight:
-                                    Radius.circular(StyleConstants.radiusLarge),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: StyleConstants.defaultPadding),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(height: 38.h),
-                                  Text(friend.userName,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bigHeadLine3
-                                          .copyWith(
-                                              color: ColorSchemes.gray500)),
-                                  SizedBox(height: 24.h),
-                                  InkWell(
-                                    overlayColor: WidgetStateProperty.all(
-                                        Colors.transparent),
-                                    onTap: () async {
-                                      await friendService.deleteFriend(
-                                          Uuid(targetId: friend.id));
-                                      setState(() {
-                                        friendList.removeWhere(
-                                            (item) => item.id == friend.id);
-                                        _filteredFriendsNotifier.value =
-                                            List.from(friendList);
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text('삭제하기',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .smallHeadLine2
-                                                .copyWith(
-                                                    color:
-                                                        ColorSchemes.gray300)),
-                                        SizedBox(
-                                          width: 24.r,
-                                          height: 24.r,
-                                          child: Center(
-                                            child: SvgPicture.asset(
-                                              IconPath.arrowForwardGray200,
-                                              width: 9.r,
-                                              height: 16.r,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 24.h),
-                                  InkWell(
-                                    overlayColor: WidgetStateProperty.all(
-                                        Colors.transparent),
-                                    onTap: () async {
-                                      await friendService.blockFriend(
-                                          Uuid(targetId: friend.id));
-                                      setState(() {
-                                        friendList.removeWhere(
-                                            (item) => item.id == friend.id);
-                                        _filteredFriendsNotifier.value =
-                                            List.from(friendList);
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text('차단하기',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .smallHeadLine2
-                                                .copyWith(
-                                                    color:
-                                                        ColorSchemes.gray300)),
-                                        SizedBox(
-                                          width: 24.r,
-                                          height: 24.r,
-                                          child: Center(
-                                            child: SvgPicture.asset(
-                                              IconPath.arrowForwardGray200,
-                                              width: 9.r,
-                                              height: 16.r,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 56.h),
-                                ],
-                              ),
-                            ),
+                        builder: (context) {
+                          return FutureBuilder<UserCheck>(
+                            future: userService.getUserCheck(friend.id),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SizedBox(height: 304.h);
+                              } else if (snapshot.hasError) {
+                                return SizedBox(height: 304.h);
+                              } else {
+                                UserCheck userCheckData = snapshot.data!;
+                                return ProfileBottomSheet(
+                                  userCheckData: userCheckData,
+                                  selectedUserId: friend.id,
+                                  friendService: friendService,
+                                );
+                              }
+                            },
                           );
                         },
                       );
                     },
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ],
+                    child: UserListProfile(
+                      userName: friend.userName,
+                      userId: friend.userId,
+                      profileImage: friend.profileUrl,
+                      onIconPressed: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          isDismissible: true,
+                          enableDrag: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft:
+                                  Radius.circular(StyleConstants.radiusLarge),
+                                  topRight:
+                                  Radius.circular(StyleConstants.radiusLarge),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: StyleConstants.defaultPadding),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(height: 38.h),
+                                    Text(friend.userName,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bigHeadLine3
+                                            .copyWith(
+                                            color: ColorSchemes.gray500)),
+                                    SizedBox(height: 24.h),
+                                    InkWell(
+                                      overlayColor: WidgetStateProperty.all(
+                                          Colors.transparent),
+                                      onTap: () async {
+                                        await friendService.deleteFriend(
+                                            Uuid(targetId: friend.id));
+                                        setState(() {
+                                          friendList.removeWhere(
+                                                  (item) => item.id == friend.id);
+                                          _filteredFriendsNotifier.value =
+                                              List.from(friendList);
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('삭제하기',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .smallHeadLine2
+                                                  .copyWith(
+                                                  color:
+                                                  ColorSchemes.gray300)),
+                                          SizedBox(
+                                            width: 24.r,
+                                            height: 24.r,
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                IconPath.arrowForwardGray200,
+                                                width: 9.r,
+                                                height: 16.r,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 24.h),
+                                    InkWell(
+                                      overlayColor: WidgetStateProperty.all(
+                                          Colors.transparent),
+                                      onTap: () async {
+                                        await friendService.blockFriend(
+                                            Uuid(targetId: friend.id));
+                                        setState(() {
+                                          friendList.removeWhere(
+                                                  (item) => item.id == friend.id);
+                                          _filteredFriendsNotifier.value =
+                                              List.from(friendList);
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('차단하기',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .smallHeadLine2
+                                                  .copyWith(
+                                                  color:
+                                                  ColorSchemes.gray300)),
+                                          SizedBox(
+                                            width: 24.r,
+                                            height: 24.r,
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                IconPath.arrowForwardGray200,
+                                                width: 9.r,
+                                                height: 16.r,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 56.h),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

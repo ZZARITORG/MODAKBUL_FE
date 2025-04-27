@@ -225,38 +225,22 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: StyleConstants.defaultPadding),
-                    child: FutureBuilder<List<Group>>(
-                      future: getData,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const GroupScreenSkeleton();
-                        } else if (snapshot.hasError) {
-                          return const GlobalErrorWidget();
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          _filteredGroupsNotifier.value = [];
-                          return _buildEmptyGroupList();
-                        } else {
-                          groupList = snapshot.data!;
-                          _filteredGroupsNotifier.value = groupList;
-                          return _buildGroupList();
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
+            child: FutureBuilder<List<Group>>(
+              future: getData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const GroupScreenSkeleton();
+                } else if (snapshot.hasError) {
+                  return const GlobalErrorWidget();
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  _filteredGroupsNotifier.value = [];
+                  return _buildEmptyGroupList();
+                } else {
+                  groupList = snapshot.data!;
+                  _filteredGroupsNotifier.value = groupList;
+                  return _buildGroupList();
+                }
+              },
             ),
           ),
         ),
@@ -265,407 +249,433 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   }
 
   Widget _buildEmptyGroupList() {
-    return Column(
-      children: [
-        SizedBox(height: 10.h),
-        CustomSearchBar(
-          hintText: '사용자를 검색해보세요.',
-          controller: _searchController,
-          focusNode: _searchFocusNode,
-        ),
-        SizedBox(height: 24.h),
-        Row(
-          children: [
-            SizedBox(width: 4.w),
-            Text(
-              filterText,
-              style: Theme.of(context).textTheme.bigHeadLine4.copyWith(
-                  color: ColorSchemes.gray500),
-            ),
-            Spacer(),
-            TextButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => _buildFilterBottomSheet(),
-                );
-              },
-              child: Text(
-                '정렬',
-                style: Theme.of(context).textTheme.body3.copyWith(
-                    color: ColorSchemes.gray300),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+      child: ListView(
+        controller: _scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding:
+            EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        children: [
+          SizedBox(height: 10.h),
+          CustomSearchBar(
+            hintText: '사용자를 검색해보세요.',
+            controller: _searchController,
+            focusNode: _searchFocusNode,
+          ),
+          SizedBox(height: 24.h),
+          Row(
+            children: [
+              SizedBox(width: 4.w),
+              Text(
+                filterText,
+                style: Theme.of(context)
+                    .textTheme
+                    .bigHeadLine4
+                    .copyWith(color: ColorSchemes.gray500),
               ),
-            ),
-            SizedBox(width: 4.w),
-          ],
-        ),
-        SizedBox(height: 14.h),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      CreateGroupScreen()),
-            ).then((_) {
-              _reloadGroups();
-            });
-          },
-          behavior: HitTestBehavior.opaque,
-          child: SizedBox(
-            width: double.infinity,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                    StyleConstants.radiusMedium),
+              Spacer(),
+              TextButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => _buildFilterBottomSheet(),
+                  );
+                },
+                child: Text(
+                  '정렬',
+                  style: Theme.of(context)
+                      .textTheme
+                      .body3
+                      .copyWith(color: ColorSchemes.gray300),
+                ),
               ),
-              color: ColorSchemes.gray100,
-              margin: EdgeInsets.zero,
-              elevation: 0,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    top: 20.h, bottom: 14.h),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: StyleConstants.circleSizeXXXS,
-                      backgroundColor: ColorSchemes.gray300,
-                      child: SvgPicture.asset(
-                          IconPath.plus,
-                          width: 11.r),
-                    ),
-                    SizedBox(height: 10.h),
-                    Text(
-                      '그룹 생성하기',
-                      style: Theme.of(context).textTheme.smallHeadLine3.copyWith(
-                          color: ColorSchemes.gray200),
-                    ),
-                  ],
+              SizedBox(width: 4.w),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateGroupScreen()),
+              ).then((_) {
+                _reloadGroups();
+              });
+            },
+            behavior: HitTestBehavior.opaque,
+            child: SizedBox(
+              width: double.infinity,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(StyleConstants.radiusMedium),
+                ),
+                color: ColorSchemes.gray100,
+                margin: EdgeInsets.zero,
+                elevation: 0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20.h, bottom: 14.h),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: StyleConstants.circleSizeXXXS,
+                        backgroundColor: ColorSchemes.gray300,
+                        child: SvgPicture.asset(IconPath.plus, width: 11.r),
+                      ),
+                      SizedBox(height: 10.h),
+                      Text(
+                        '그룹 생성하기',
+                        style: Theme.of(context)
+                            .textTheme
+                            .smallHeadLine3
+                            .copyWith(color: ColorSchemes.gray200),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        SizedBox(height: 144.h),
-        Text(
-          '아직 그룹이 없습니다',
-          style: Theme.of(context)
-              .textTheme
-              .bigHeadLine3
-              .copyWith(
-              color: ColorSchemes.orange100),
-        ),
-        SizedBox(height: 8.h),
-        Text(
-          '그룹을 생성하고 모닥불을 피워보세요.',
-          style: Theme.of(context)
-              .textTheme
-              .body2
-              .copyWith(color: ColorSchemes.gray300),
-        ),
-      ],
+          SizedBox(height: 144.h),
+          Text(
+            '아직 그룹이 없습니다',
+            style: Theme.of(context)
+                .textTheme
+                .bigHeadLine3
+                .copyWith(color: ColorSchemes.orange100),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            '그룹을 생성하고 모닥불을 피워보세요.',
+            style: Theme.of(context)
+                .textTheme
+                .body2
+                .copyWith(color: ColorSchemes.gray300),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildGroupList() {
-    return Column(
-      children: [
-        SizedBox(height: 10.h),
-        CustomSearchBar(
-          hintText: '사용자를 검색해보세요.',
-          controller: _searchController,
-          focusNode: _searchFocusNode,
-        ),
-        SizedBox(height: 24.h),
-        Column(
-          children: [
-            Row(
-              children: [
-                SizedBox(width: 4.w),
-                Text(
-                  filterText,
-                  style: Theme.of(context).textTheme.bigHeadLine4.copyWith(
-                      color: ColorSchemes.gray500),
-                ),
-                Spacer(),
-                TextButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => _buildFilterBottomSheet(),
-                    );
-                  },
-                  child: Text(
-                    '정렬',
-                    style: Theme.of(context).textTheme.body3.copyWith(
-                        color: ColorSchemes.gray300),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+      child: ListView(
+        controller: _scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        children: [
+          SizedBox(height: 10.h),
+          CustomSearchBar(
+            hintText: '사용자를 검색해보세요.',
+            controller: _searchController,
+            focusNode: _searchFocusNode,
+          ),
+          SizedBox(height: 24.h),
+          Column(
+            children: [
+              Row(
+                children: [
+                  SizedBox(width: 4.w),
+                  Text(
+                    filterText,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bigHeadLine4
+                        .copyWith(color: ColorSchemes.gray500),
                   ),
-                ),
-                SizedBox(width: 4.w),
-              ],
-            ),
-            SizedBox(height: 14.h),
-            SizedBox(
-              width: double.infinity,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            CreateGroupScreen()),
-                  ).then((_) {
-                    _reloadGroups();
-                  });
-                },
-                behavior: HitTestBehavior.opaque,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.circular(
-                          StyleConstants.radiusMedium),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => _buildFilterBottomSheet(),
+                      );
+                    },
+                    child: Text(
+                      '정렬',
+                      style: Theme.of(context)
+                          .textTheme
+                          .body3
+                          .copyWith(color: ColorSchemes.gray300),
                     ),
-                    color: ColorSchemes.gray100,
-                    margin: EdgeInsets.zero,
-                    elevation: 0,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          top: 20.h, bottom: 14.h),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: StyleConstants.circleSizeXXXS,
-                            backgroundColor: ColorSchemes.gray300,
-                            child: SvgPicture.asset(
-                                IconPath.plus, width: 11.r),
-                          ),
-                          SizedBox(height: 10.h),
-                          Text(
-                            '그룹 생성하기',
-                            style: Theme.of(context).textTheme.smallHeadLine3.copyWith(
-                                color: ColorSchemes.gray200),
-                          ),
-                        ],
+                  ),
+                  SizedBox(width: 4.w),
+                ],
+              ),
+              SizedBox(height: 14.h),
+              SizedBox(
+                width: double.infinity,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CreateGroupScreen()),
+                    ).then((_) {
+                      _reloadGroups();
+                    });
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(StyleConstants.radiusMedium),
+                      ),
+                      color: ColorSchemes.gray100,
+                      margin: EdgeInsets.zero,
+                      elevation: 0,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 20.h, bottom: 14.h),
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: StyleConstants.circleSizeXXXS,
+                              backgroundColor: ColorSchemes.gray300,
+                              child: SvgPicture.asset(IconPath.plus, width: 11.r),
+                            ),
+                            SizedBox(height: 10.h),
+                            Text(
+                              '그룹 생성하기',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .smallHeadLine3
+                                  .copyWith(color: ColorSchemes.gray200),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 14.h),
-            ValueListenableBuilder<List<Group>>(
-              valueListenable:
-              _filteredGroupsNotifier,
-              builder: (context, filteredGroups, _) {
-                if (filteredGroups.isEmpty) {
-                  return Column(
-                    children: [
-                      SizedBox(height: 144.h),
-                      Text(
-                        '검색 결과가 없습니다',
-                        style: Theme.of(context).textTheme.bigHeadLine3.copyWith(
-                            color: ColorSchemes.orange100),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        '검색어를 다시 확인해 주세요.',
-                        style: Theme.of(context).textTheme.body2.copyWith(
-                            color: ColorSchemes.gray300
+              SizedBox(height: 14.h),
+              ValueListenableBuilder<List<Group>>(
+                valueListenable: _filteredGroupsNotifier,
+                builder: (context, filteredGroups, _) {
+                  if (filteredGroups.isEmpty) {
+                    return Column(
+                      children: [
+                        SizedBox(height: 144.h),
+                        Text(
+                          '검색 결과가 없습니다',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bigHeadLine3
+                              .copyWith(color: ColorSchemes.orange100),
                         ),
-                      ),
-                    ],
-                  );
-                }
-                return ListView.builder(
-                  primary: false,
-                  shrinkWrap: true,
-                  itemCount: filteredGroups.length,
-                  itemBuilder: (BuildContext context,
-                      int index) {
-                    String groupName = filteredGroups[index].name;
-                    String groupId = filteredGroups[index].id;
-                    var members = filteredGroups[index].members;
-                    String profileImage2 =
-                    members.length > 1 ? members[1].user.profileUrl : '';
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GroupEditScreen(),
-                            settings: RouteSettings(
-                              arguments: {
-                                'groupId': filteredGroups[index].id,
-                                'groupName': filteredGroups[index].name,
-                                'members': filteredGroups[index].members,
+                        SizedBox(height: 8.h),
+                        Text(
+                          '검색어를 다시 확인해 주세요.',
+                          style: Theme.of(context)
+                              .textTheme
+                              .body2
+                              .copyWith(color: ColorSchemes.gray300),
+                        ),
+                      ],
+                    );
+                  }
+                  return ListView.builder(
+                    primary: false,
+                    shrinkWrap: true,
+                    itemCount: filteredGroups.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      String groupName = filteredGroups[index].name;
+                      String groupId = filteredGroups[index].id;
+                      var members = filteredGroups[index].members;
+                      String profileImage2 =
+                      members.length > 1 ? members[1].user.profileUrl : '';
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GroupEditScreen(),
+                              settings: RouteSettings(
+                                arguments: {
+                                  'groupId': filteredGroups[index].id,
+                                  'groupName': filteredGroups[index].name,
+                                  'members': filteredGroups[index].members,
+                                },
+                              ),
+                            ),
+                          ).then((_) {
+                            _reloadGroups();
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            GroupListTile(
+                              title: groupName,
+                              time: timeAgo(
+                                DateTime.parse(filteredGroups[index].createdAt),
+                                DateTime.now(),
+                              ),
+                              profileLength: filteredGroups[index].members.length,
+                              profileImage1: members[0].user.profileUrl,
+                              profileImage2:
+                              profileImage2.isEmpty ? null : profileImage2,
+                              isSelected: false,
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(
+                                              StyleConstants.radiusLarge),
+                                          topRight: Radius.circular(
+                                              StyleConstants.radiusLarge),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                            StyleConstants.defaultPadding),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(height: 38.h),
+                                            Text(groupName,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bigHeadLine3
+                                                    .copyWith(
+                                                    color: ColorSchemes
+                                                        .gray500)),
+                                            SizedBox(height: 24.h),
+                                            InkWell(
+                                              overlayColor:
+                                              WidgetStateProperty.all(
+                                                  Colors.transparent),
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        GroupEditScreen(),
+                                                    settings: RouteSettings(
+                                                      arguments: {
+                                                        'groupId':
+                                                        filteredGroups[index]
+                                                            .id,
+                                                        'groupName':
+                                                        filteredGroups[index]
+                                                            .name,
+                                                        'members':
+                                                        filteredGroups[index]
+                                                            .members,
+                                                      },
+                                                    ),
+                                                  ),
+                                                ).then((_) {
+                                                  _reloadGroups();
+                                                  Navigator.pop(context);
+                                                });
+                                              },
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text('그룹 수정하기',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .smallHeadLine2
+                                                          .copyWith(
+                                                          color: ColorSchemes
+                                                              .gray300)),
+                                                  SizedBox(
+                                                    width: 24.r,
+                                                    height: 24.r,
+                                                    child: Center(
+                                                      child: SvgPicture.asset(
+                                                        IconPath
+                                                            .arrowForwardGray200,
+                                                        width: 9.r,
+                                                        height: 16.r,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 24.h),
+                                            InkWell(
+                                              overlayColor:
+                                              WidgetStateProperty.all(
+                                                  Colors.transparent),
+                                              onTap: () async {
+                                                await groupService
+                                                    .deleteGroup(groupId);
+                                                setState(() {
+                                                  filteredGroups.removeWhere(
+                                                          (group) =>
+                                                      group.id == groupId);
+                                                  _filteredGroupsNotifier.value =
+                                                  List<Group>.from(groupList);
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text('그룹 삭제하기',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .smallHeadLine2
+                                                          .copyWith(
+                                                          color: ColorSchemes
+                                                              .gray300)),
+                                                  SizedBox(
+                                                    width: 24.r,
+                                                    height: 24.r,
+                                                    child: Center(
+                                                      child: SvgPicture.asset(
+                                                        IconPath
+                                                            .arrowForwardGray200,
+                                                        width: 9.r,
+                                                        height: 16.r,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 56.h),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                             ),
-                          ),
-                        ).then((_) {
-                          _reloadGroups();
-                        });
-                      },
-                      child: Column(
-                        children: [
-                          GroupListTile(
-                            title: groupName,
-                            time: timeAgo(
-                              DateTime.parse(filteredGroups[index].createdAt),
-                              DateTime.now(),
-                            ),
-                            profileLength:
-                            filteredGroups[index].members.length,
-                            profileImage1: members[0].user.profileUrl,
-                            profileImage2:
-                            profileImage2.isEmpty
-                                ? null
-                                : profileImage2,
-                            isSelected: false,
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext
-                                context) {
-                                  return Container(
-                                    decoration:
-                                    BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(
-                                            StyleConstants.radiusLarge
-                                        ),
-                                        topRight: Radius.circular(
-                                            StyleConstants.radiusLarge
-                                        ),
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: StyleConstants.defaultPadding),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SizedBox(height: 38.h),
-                                          Text(
-                                              groupName,
-                                              style: Theme.of(context).textTheme.bigHeadLine3.copyWith(
-                                                  color: ColorSchemes.gray500)),
-                                          SizedBox(height: 24.h),
-                                          InkWell(
-                                            overlayColor:
-                                            WidgetStateProperty.all(
-                                                Colors.transparent),
-                                            onTap:
-                                                () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      GroupEditScreen(),
-                                                  settings:
-                                                  RouteSettings(
-                                                    arguments: {
-                                                      'groupId': filteredGroups[index].id,
-                                                      'groupName': filteredGroups[index].name,
-                                                      'members': filteredGroups[index].members,
-                                                    },
-                                                  ),
-                                                ),
-                                              ).then((_) {
-                                                    _reloadGroups();
-                                                    Navigator.pop(context);
-                                                  });
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                    '그룹 수정하기',
-                                                    style: Theme.of(context).textTheme.smallHeadLine2.copyWith(
-                                                        color: ColorSchemes.gray300)),
-                                                SizedBox(
-                                                  width: 24.r,
-                                                  height: 24.r,
-                                                  child:
-                                                  Center(
-                                                    child: SvgPicture.asset(
-                                                      IconPath.arrowForwardGray200,
-                                                      width: 9.r,
-                                                      height: 16.r,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          InkWell(
-                                            overlayColor:
-                                            WidgetStateProperty.all(
-                                                Colors.transparent),
-                                            onTap:
-                                                () async {
-                                              await groupService
-                                                  .deleteGroup(groupId);
-                                              setState(
-                                                      () {
-                                                    filteredGroups.removeWhere((group) =>
-                                                    group.id ==
-                                                        groupId);
-                                                    _filteredGroupsNotifier.value =
-                                                    List<Group>.from(groupList);
-                                                  });
-                                              Navigator.pop(
-                                                  context);
-                                            },
-                                            child:
-                                            Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                    '그룹 삭제하기',
-                                                    style: Theme.of(context).textTheme.smallHeadLine2.copyWith(
-                                                        color: ColorSchemes.gray300)),
-                                                SizedBox(
-                                                  width: 24.r,
-                                                  height: 24.r,
-                                                  child:
-                                                  Center(
-                                                    child: SvgPicture.asset(
-                                                      IconPath.arrowForwardGray200,
-                                                      width: 9.r,
-                                                      height: 16.r,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(height: 56.h),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                          SizedBox(height: 12.h),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-      ],
+                            SizedBox(height: 12.h),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -679,7 +689,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
       ),
       child: Padding(
         padding:
-        EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+            EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
