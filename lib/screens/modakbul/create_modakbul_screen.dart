@@ -24,28 +24,18 @@ class CreateModakbulScreen extends StatefulWidget {
 }
 
 class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
+  //String? selectAddress;
   DateTime? selectDate;
   String? selectHour;
   String? selectMinute;
   late MeetingProvider meetingProvider;
 
-  @override
-  void initState() {
-    super.initState();
-    // 화면이 처음 로드될 때 키보드 숨김
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).unfocus();
+  /*void _onAddressSelected(String address) {
+    setState(() {
+      selectAddress = address;
+      print('selectDate: $selectDate');
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // 페이지 전환 후 돌아올 때 키보드 숨김
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).unfocus();
-    });
-  }
+  }*/
 
   void _onDateSelected(DateTime date) {
     setState(() {
@@ -79,306 +69,298 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
     return hour < 12 ? '오전' : '오후';
   }
 
-  // 다른 페이지로 이동하기 전에 키보드를 숨기는 함수
-  void _navigateWithKeyboardDismiss(BuildContext context, String route) {
-    FocusScope.of(context).unfocus();
-    Future.delayed(const Duration(milliseconds: 100), () {
-      Routes.navigateTo(context, route);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     meetingProvider = Provider.of<MeetingProvider>(context);
     return Scaffold(
-      // 키보드가 열릴 때 화면이 조정되도록 설정
       resizeToAvoidBottomInset: true,
       backgroundColor: ColorSchemes.gray000,
       appBar: const LogoAppBar(
         backgroundColor: ColorSchemes.gray000,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          // 전체 UI를 스크롤 가능하게 만들어 오버플로우 방지
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
-                  AppBar().preferredSize.height -
-                  MediaQuery.of(context).padding.top -
-                  MediaQuery.of(context).padding.bottom,
+      body: Padding(
+        padding:
+        EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 24.h,
             ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 24.h),
-                  SizedBox(
-                      width: 322.w,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Text(
-                          '모닥불을 피우기 전\n상세정보를 선택해 주세요',
-                          maxLines: 2,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bigHeadLine2
-                              .copyWith(color: ColorSchemes.gray500),
-                        ),
-                      )
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    '다음으로 넘어가기 전 아래 항목을 선택해 주세요.',
+            SizedBox(
+                width: 322.w,
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    '모닥불을 피우기 전\n상세정보를 선택해 주세요',
+                    maxLines: 2,
                     style: Theme.of(context)
                         .textTheme
-                        .body2
-                        .copyWith(color: ColorSchemes.gray300),
+                        .bigHeadLine2
+                        .copyWith(color: ColorSchemes.gray500),
                   ),
-                  SizedBox(height: 71.h),
-                  CreateMeetingButton(
-                    type: '그룹',
-                    content: meetingProvider.selectGroupName != null
-                        ? meetingProvider.selectGroupName!
-                        : '그룹 선택',
-                    onPressed: () => _navigateWithKeyboardDismiss(
-                        context, Routes.groupSelectScreen),
-                    icon: meetingProvider.selectGroupName != null
-                        ? IconPath.groupOrange200
-                        : IconPath.groupOrange100,
-                    typeColor: meetingProvider.selectGroupName != null
-                        ? ColorSchemes.orange200
-                        : ColorSchemes.orange100,
-                    contentColor: meetingProvider.selectGroupName != null
-                        ? ColorSchemes.orange100
-                        : ColorSchemes.gray200,
-                    arrowIcon: meetingProvider.selectGroupName != null
-                        ? IconPath.arrowForward15Orange100
-                        : IconPath.arrowForward15Gray200,
-                    iconWidth: 20.r,
+                )),
+            SizedBox(
+              height: 8.h,
+            ),
+            Text(
+              '다음으로 넘어가기 전 아래 항목을 선택해 주세요.',
+              style: Theme.of(context)
+                  .textTheme
+                  .body2
+                  .copyWith(color: ColorSchemes.gray300),
+            ),
+            SizedBox(
+              height: 71.h,
+            ),
+            CreateMeetingButton(
+              type: '그룹',
+              content: meetingProvider.selectGroupName != null
+                  ? meetingProvider.selectGroupName!
+                  : '그룹 선택',
+              onPressed: () =>
+                  Routes.navigateTo(context, Routes.groupSelectScreen),
+              icon: meetingProvider.selectGroupName != null
+                  ? IconPath.groupOrange200
+                  : IconPath.groupOrange100,
+              typeColor: meetingProvider.selectGroupName != null
+                  ? ColorSchemes.orange200
+                  : ColorSchemes.orange100,
+              contentColor: meetingProvider.selectGroupName != null
+                  ? ColorSchemes.orange100
+                  : ColorSchemes.gray200,
+              arrowIcon: meetingProvider.selectGroupName != null
+                  ? IconPath.arrowForward15Orange100
+                  : IconPath.arrowForward15Gray200,
+              iconWidth: 20.r,
+            ),
+            SizedBox(
+              height: 14.h,
+            ),
+            CreateMeetingButton(
+              type: '위치',
+              content: meetingProvider.selectPlace != null
+                  ? meetingProvider.selectPlace!
+                  : '위치 선택',
+              onPressed: () =>
+                  Routes.navigateTo(context, Routes.mapSearchScreen),
+              icon: meetingProvider.selectPlace != null
+                  ? IconPath.pinDropOrange200
+                  : IconPath.pinDropOrange100,
+              typeColor: meetingProvider.selectPlace != null
+                  ? ColorSchemes.orange200
+                  : ColorSchemes.orange100,
+              contentColor: meetingProvider.selectPlace != null
+                  ? ColorSchemes.orange100
+                  : ColorSchemes.gray200,
+              arrowIcon: meetingProvider.selectPlace != null
+                  ? IconPath.arrowForward15Orange100
+                  : IconPath.arrowForward15Gray200,
+              iconWidth: 16.r,
+            ),
+            SizedBox(
+              height: 14.h,
+            ),
+            CreateMeetingButton(
+              type: '날짜',
+              content: meetingProvider.selectDate != null
+                  ? DateFormat('M월 d일').format(meetingProvider.selectDate!)
+                  : '날짜 선택',
+              onPressed: () => showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(StyleConstants.radiusLarge)),
                   ),
-                  SizedBox(height: 14.h),
-                  CreateMeetingButton(
-                    type: '위치',
-                    content: meetingProvider.selectPlace != null
-                        ? meetingProvider.selectPlace!
-                        : '위치 선택',
-                    onPressed: () => _navigateWithKeyboardDismiss(
-                        context, Routes.mapSearchScreen),
-                    icon: meetingProvider.selectPlace != null
-                        ? IconPath.pinDropOrange200
-                        : IconPath.pinDropOrange100,
-                    typeColor: meetingProvider.selectPlace != null
-                        ? ColorSchemes.orange200
-                        : ColorSchemes.orange100,
-                    contentColor: meetingProvider.selectPlace != null
-                        ? ColorSchemes.orange100
-                        : ColorSchemes.gray200,
-                    arrowIcon: meetingProvider.selectPlace != null
-                        ? IconPath.arrowForward15Orange100
-                        : IconPath.arrowForward15Gray200,
-                    iconWidth: 16.r,
-                  ),
-                  SizedBox(height: 14.h),
-                  CreateMeetingButton(
-                    type: '날짜',
-                    content: meetingProvider.selectDate != null
-                        ? DateFormat('M월 d일').format(meetingProvider.selectDate!)
-                        : '날짜 선택',
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(StyleConstants.radiusLarge)),
-                          ),
-                          builder: (context) {
-                            return SafeArea(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: StyleConstants.defaultPadding),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
+                  builder: (context) {
+                    return SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: StyleConstants.defaultPadding),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  height: 28.r,
+                                  width: 28.r,
+                                  child: IconButton(
+                                      padding: EdgeInsets.zero, // 패딩 제거
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: SvgPicture.asset(
+                                        IconPath.close,
+                                        width: 14.r,
+                                      )),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              '날짜를 선택해주세요',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bigHeadLine3
+                                  .copyWith(color: ColorSchemes.gray500),
+                            ),
+                            SizedBox(
+                              height: 8.h,
+                            ),
+                            Text(
+                              '기간은 최대 1달까지 선택할 수 있습니다!',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .body2
+                                  .copyWith(color: ColorSchemes.gray500),
+                            ),
+                            SizedBox(
+                              height: 24.h,
+                            ),
+                            CustomCalendarPicker(),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+              icon: meetingProvider.selectDate != null
+                  ? IconPath.calendarMonthOrange200
+                  : IconPath.calendarMonthOrange100,
+              typeColor: meetingProvider.selectDate != null
+                  ? ColorSchemes.orange200
+                  : ColorSchemes.orange100,
+              contentColor: meetingProvider.selectDate != null
+                  ? ColorSchemes.orange100
+                  : ColorSchemes.gray200,
+              arrowIcon: meetingProvider.selectDate != null
+                  ? IconPath.arrowForward15Orange100
+                  : IconPath.arrowForward15Gray200,
+              iconWidth: 19.r,
+            ),
+            SizedBox(
+              height: 14.h,
+            ),
+            CreateMeetingButton(
+              type: '시간',
+              content: meetingProvider.selectHour != null &&
+                  meetingProvider.selectMinute != null
+                  ? '${getAmPm(int.parse(meetingProvider.selectHour!))} ${convertTo12Hour(int.parse(meetingProvider.selectHour!))}:${meetingProvider.selectMinute!.padLeft(2, '0')}'
+                  : '시간 선택',
+              onPressed: () {
+                if (meetingProvider.selectDate != null) {
+                  showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(StyleConstants.radiusLarge)),
+                      ),
+                      builder: (context) {
+                        return SafeArea(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: StyleConstants.defaultPadding),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    SizedBox(height: 10.h),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        SizedBox(
-                                          height: 28.r,
-                                          width: 28.r,
-                                          child: IconButton(
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              icon: SvgPicture.asset(
-                                                IconPath.close,
-                                                width: 14.r,
-                                              )
-                                          ),
-                                        ),
-                                      ],
+                                    SizedBox(
+                                      height: 28.r,
+                                      width: 28.r,
+                                      child: IconButton(
+                                          padding: EdgeInsets.zero, // 패딩 제거
+                                          constraints: const BoxConstraints(),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          icon: SvgPicture.asset(
+                                            IconPath.close,
+                                            width: 14.r,
+                                          )),
                                     ),
-                                    Text(
-                                      '날짜를 선택해주세요',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bigHeadLine3
-                                          .copyWith(color: ColorSchemes.gray500),
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    Text(
-                                      '기간은 최대 1달까지 선택할 수 있습니다!',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .body2
-                                          .copyWith(color: ColorSchemes.gray500),
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    CustomCalendarPicker(),
                                   ],
                                 ),
-                              ),
-                            );
-                          }
-                      );
-                    },
-                    icon: meetingProvider.selectDate != null
-                        ? IconPath.calendarMonthOrange200
-                        : IconPath.calendarMonthOrange100,
-                    typeColor: meetingProvider.selectDate != null
-                        ? ColorSchemes.orange200
-                        : ColorSchemes.orange100,
-                    contentColor: meetingProvider.selectDate != null
-                        ? ColorSchemes.orange100
-                        : ColorSchemes.gray200,
-                    arrowIcon: meetingProvider.selectDate != null
-                        ? IconPath.arrowForward15Orange100
-                        : IconPath.arrowForward15Gray200,
-                    iconWidth: 19.r,
-                  ),
-                  SizedBox(height: 14.h),
-                  CreateMeetingButton(
-                    type: '시간',
-                    content: meetingProvider.selectHour != null &&
-                        meetingProvider.selectMinute != null
-                        ? '${getAmPm(int.parse(meetingProvider.selectHour!))} ${convertTo12Hour(int.parse(meetingProvider.selectHour!))}:${meetingProvider.selectMinute!.padLeft(2, '0')}'
-                        : '시간 선택',
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      if (meetingProvider.selectDate != null) {
-                        showModalBottomSheet(
-                            isScrollControlled: true,
-                            context: context,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(StyleConstants.radiusLarge)),
-                            ),
-                            builder: (context) {
-                              return SafeArea(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: StyleConstants.defaultPadding),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SizedBox(height: 10.h),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          SizedBox(
-                                            height: 28.r,
-                                            width: 28.r,
-                                            child: IconButton(
-                                                padding: EdgeInsets.zero,
-                                                constraints: const BoxConstraints(),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                icon: SvgPicture.asset(
-                                                  IconPath.close,
-                                                  width: 14.r,
-                                                )
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        '시간을 선택해주세요',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bigHeadLine3
-                                            .copyWith(color: ColorSchemes.gray500),
-                                      ),
-                                      SizedBox(height: 8.h),
-                                      Text(
-                                        '다른 모닥들과 모일 시간을 선택해주세요!',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .body2
-                                            .copyWith(color: ColorSchemes.gray500),
-                                      ),
-                                      SizedBox(height: 24.h),
-                                      CustomTimePicker(
-                                          selectedDate: meetingProvider.selectDate!),
-                                    ],
-                                  ),
+                                Text(
+                                  '시간을 선택해주세요',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bigHeadLine3
+                                      .copyWith(color: ColorSchemes.gray500),
                                 ),
-                              );
-                            }
+                                SizedBox(
+                                  height: 8.h,
+                                ),
+                                Text(
+                                  '다른 모닥들과 모일 시간을 선택해주세요!',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .body2
+                                      .copyWith(color: ColorSchemes.gray500),
+                                ),
+                                SizedBox(
+                                  height: 24.h,
+                                ),
+                                CustomTimePicker(
+                                    selectedDate: meetingProvider.selectDate!),
+                              ],
+                            ),
+                          ),
                         );
-                      } else {
-                        CustomToast.showToast(context, '날짜를 먼저 선택해주세요.', true);
-                      }
-                    },
-                    icon: meetingProvider.selectHour != null &&
-                        meetingProvider.selectMinute != null
-                        ? IconPath.timeOrange200
-                        : IconPath.timeOrange100,
-                    typeColor: meetingProvider.selectHour != null &&
-                        meetingProvider.selectMinute != null
-                        ? ColorSchemes.orange200
-                        : ColorSchemes.orange100,
-                    contentColor: meetingProvider.selectHour != null &&
-                        meetingProvider.selectMinute != null
-                        ? ColorSchemes.orange100
-                        : ColorSchemes.gray200,
-                    arrowIcon: meetingProvider.selectHour != null &&
-                        meetingProvider.selectMinute != null
-                        ? IconPath.arrowForward15Orange100
-                        : IconPath.arrowForward15Gray200,
-                    iconWidth: 20.r,
-                  ),
-                  SizedBox(height: 60.h),
-                  SizedBox(
-                    height: 56.h,
-                    width: double.infinity,
-                    child: CustomButton(
-                        text: '선택완료',
-                        onPressed: isActivated()
-                            ? () {
-                          FocusScope.of(context).unfocus();
-                          Future.delayed(const Duration(milliseconds: 100), () {
-                            Routes.navigateTo(context, Routes.createContentScreen);
-                          });
-                        }
-                            : null,
-                        buttonColor: ColorSchemes.orange200,
-                        textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                        textColor: ColorSchemes.white
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                ],
-              ),
+                      });
+                } else {
+                  CustomToast.showToast(context, '날짜를 먼저 선택해주세요.', true);
+                }
+              },
+              icon: meetingProvider.selectHour != null &&
+                  meetingProvider.selectMinute != null
+                  ? IconPath.timeOrange200
+                  : IconPath.timeOrange100,
+              typeColor: meetingProvider.selectHour != null &&
+                  meetingProvider.selectMinute != null
+                  ? ColorSchemes.orange200
+                  : ColorSchemes.orange100,
+              contentColor: meetingProvider.selectHour != null &&
+                  meetingProvider.selectMinute != null
+                  ? ColorSchemes.orange100
+                  : ColorSchemes.gray200,
+              arrowIcon: meetingProvider.selectHour != null &&
+                  meetingProvider.selectMinute != null
+                  ? IconPath.arrowForward15Orange100
+                  : IconPath.arrowForward15Gray200,
+              iconWidth: 20.r,
             ),
-          ),
+            const Spacer(),
+            SizedBox(
+              height: 56.h,
+              width: double.infinity,
+              child: CustomButton(
+                  text: '선택완료',
+                  onPressed: isActivated()
+                      ? () =>
+                      Routes.navigateTo(context, Routes.createContentScreen)
+                      : null,
+                  buttonColor: ColorSchemes.orange200,
+                  textStyle: Theme.of(context).textTheme.smallHeadLine2,
+                  textColor: ColorSchemes.white),
+            ),
+            SizedBox(
+              height: 16.h,
+            ),
+          ],
         ),
       ),
     );
