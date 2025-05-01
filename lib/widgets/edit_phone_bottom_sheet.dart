@@ -34,7 +34,7 @@ class EditPhoneBottomSheet extends StatelessWidget {
       Navigator.of(context).pop();
       Navigator.of(context).pop();
     } catch (e) {
-      CustomToast.showToast(context, '현재 휴대폰 번호와 동일합니다!', false);
+      CustomToast.showToast(context, '현재 휴대폰 번호와 동일합니다!', false, customBottom: 86.h);
     }
   }
 

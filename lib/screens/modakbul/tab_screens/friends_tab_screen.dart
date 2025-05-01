@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
@@ -44,6 +45,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   late MeetingProvider meetingProvider;
   bool isLoading = false;
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
+  bool _wasRefreshing = false;
 
   // ValueNotifier로 _filteredFriends 관리
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
@@ -185,16 +187,15 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                 onRefresh: _refreshData,
                 builder: (BuildContext context, Widget child,
                     IndicatorController controller) {
+                  if (controller.isLoading && !_wasRefreshing) {
+                    HapticFeedback.lightImpact();
+                    _wasRefreshing = true;
+                  } else if (!controller.isLoading && _wasRefreshing) {
+                    _wasRefreshing = false;
+                  }
                   return Stack(
                     alignment: Alignment.topCenter,
                     children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        child: Transform.translate(
-                          offset: Offset(0, controller.value * _maxDragOffset),
-                          child: child,
-                        ),
-                      ),
                       if (!controller.isIdle)
                         Positioned(
                           top: 10.h,
@@ -232,18 +233,20 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                             ),
                           ),
                         ),
+                      Transform.translate(
+                        offset: Offset(0, _maxDragOffset * controller.value),
+                        child: child,
+                      ),
                     ],
                   );
                 },
                 child: GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
-                child: SingleChildScrollView(
+                child: ListView(
                   physics: AlwaysScrollableScrollPhysics(),
                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   controller: _scrollController,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Builder(builder: (context) {
                         if (selectedFriends.isEmpty) {
@@ -687,7 +690,6 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                             }),
                       )
                     ],
-                  ),
                 ),
               ),
     ),

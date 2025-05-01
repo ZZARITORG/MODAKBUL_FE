@@ -13,6 +13,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/widgets/custom_search_bar.dart';
+import 'package:modakbul/widgets/custom_toast.dart';
 import 'package:modakbul/widgets/select_user_list_profile.dart';
 
 class GroupEditScreen extends StatefulWidget {
@@ -129,18 +130,14 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
     final String groupName = args['groupName'];
     final String groupId = args['groupId'];
     if (groupName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('그룹 이름을 입력해주세요.')),
-      );
+      CustomToast.showToast(context, '그룹 이름을 입력해주세요.', false, customBottom: 86.h);
       return;
     }
 
     List<String> friendIds = selectedFriends.map((friend) => friend['userId']!).toList();
 
     if (friendIds.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('친구를 선택해주세요.')),
-      );
+      CustomToast.showToast(context, '친구를 선택해주세요.', false, customBottom: 86.h);
       return;
     }
     // updateGroupname이 있으면 그 값을, 없으면 groupName을 보냄
@@ -148,15 +145,11 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
     try {
       final response = await _groupService.updateGroup(groupId, finalGroupName, friendIds);
       print('그룹 수정 성공: ${response.data}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('그룹 성공적으로 수정!')),
-      );
+      CustomToast.showToast(context, '그룹 성공적으로 수정!', false, customBottom: 86.h);
       Navigator.of(context).pop(true);
     } catch (e) {
       print('그룹 수정 실패: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('그룹 수정에 실패.')),
-      );
+      CustomToast.showToast(context, '그룹 수정에 실패.', false, customBottom: 86.h);
     }
   }
 

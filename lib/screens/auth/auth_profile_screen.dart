@@ -101,7 +101,7 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
         Routes.navigateAndRemoveUntil(context, Routes.mainScreen);
       }
     } catch (e) {
-      CustomToast.showToast(context, '회원가입에 실패하였습니다', true);
+      CustomToast.showToast(context, '회원가입에 실패하였습니다', false, customBottom: 86.h);
     } finally {
       // 비동기 작업이 끝난 후 버튼을 활성화
       setState(() {

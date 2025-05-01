@@ -82,7 +82,7 @@ class _ImageCropperSettingScreenState extends State<ImageCropperSettingScreen> {
                           //마운트 체크
                           if (!context.mounted) return;
                           Navigator.pop(context,true);
-                          CustomToast.showToast(context, '프로필 이미지가 변경되었습니다.', false);
+                          CustomToast.showToast(context, '프로필 이미지가 변경되었습니다.', false, customBottom: 86.h);
                         }
                       } catch (e) {
                           if (!context.mounted) return;

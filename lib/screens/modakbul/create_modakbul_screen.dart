@@ -321,7 +321,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
                         );
                       });
                 } else {
-                  CustomToast.showToast(context, '날짜를 먼저 선택해주세요.', true);
+                  CustomToast.showToast(context, '날짜를 먼저 선택해주세요.', false, customBottom: 86.h);
                 }
               },
               icon: meetingProvider.selectHour != null &&
