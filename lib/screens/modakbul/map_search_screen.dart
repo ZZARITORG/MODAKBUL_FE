@@ -246,7 +246,7 @@ class _MapSearchScreenState extends State<MapSearchScreen>
                                             context, Routes.mapSelectScreen);
                                       } else {
                                         CustomToast.showToast(
-                                            context, '위치 권한이 없습니다.', false);
+                                            context, '위치 권한이 없습니다.', false, customBottom: 86.h);
                                       }
                                     },
                                     style: Theme.of(context)

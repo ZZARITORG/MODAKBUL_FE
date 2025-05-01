@@ -477,13 +477,13 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                                   isButtonDisabled = false;
                                 });
                               } else {
-                                CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.', false);
+                                CustomToast.showToast(context, '선택한 시간이 현재시간보다 빠릅니다.', false, customBottom: 86.h);
                               }
                             } catch (e) {
-                              CustomToast.showToast(context, '모닥불 생성을 실패했습니다.', false);
+                              CustomToast.showToast(context, '모닥불 생성을 실패했습니다.', false, customBottom: 86.h);
                             }
                           } else {
-                            CustomToast.showToast(context, '시간이 선택되지 않았습니다.', false);
+                            CustomToast.showToast(context, '시간이 선택되지 않았습니다.', false, customBottom: 86.h);
                           }
                         }
                       : null,
