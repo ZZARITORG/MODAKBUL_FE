@@ -456,7 +456,7 @@ class _MapSearchScreenState extends State<MapSearchScreen>
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        '필터',
+                                                        '정렬',
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .bigHeadLine3
@@ -481,7 +481,7 @@ class _MapSearchScreenState extends State<MapSearchScreen>
                                       );
                                     },
                                     child: Text(
-                                      '필터',
+                                      '정렬',
                                       style: Theme.of(context)
                                           .textTheme
                                           .body3

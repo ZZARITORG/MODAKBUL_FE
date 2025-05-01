@@ -61,6 +61,16 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
         secondInt, millisecondInt);
   }
 
+  int convertTo12Hour(int hour) {
+    if (hour == 0) return 12; // 00시는 12시로 변환
+    if (hour > 12) return hour - 12; // 13~23시는 1~11시로 변환
+    return hour; // 1~12시는 그대로 반환
+  }
+
+  String getAmPm(int hour) {
+    return hour < 12 ? '오전' : '오후';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -394,7 +404,7 @@ class _CreateContentScreenState extends State<CreateContentScreen> {
                     },
                     child: ContentInfo(
                       info:
-                          meetingProvider.selectHour != null || meetingProvider.selectMinute != null ? '${meetingProvider.selectHour ?? ' '}시 ${meetingProvider.selectMinute ?? ' '!.padLeft(2, '0')}분' : '시간 선택',
+                          meetingProvider.selectHour != null || meetingProvider.selectMinute != null ? '${getAmPm(int.parse(meetingProvider.selectHour!))} ${convertTo12Hour(int.parse(meetingProvider.selectHour!))}:${meetingProvider.selectMinute!.padLeft(2, '0')}' : '시간 선택',
                       onPressed: () {},
                       icon: meetingProvider.selectHour != null || meetingProvider.selectMinute != null
                           ? IconPath.timeOrange200
