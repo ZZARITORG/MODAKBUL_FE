@@ -159,7 +159,7 @@ class _AuthProfileScreenState extends State<AuthProfileScreen> {
                   },
                   child: CircleAvatar(
                     radius: StyleConstants.circleSizeXXXL,
-                    backgroundColor: ColorSchemes.orange100,
+                    backgroundColor: authProvider.profileImage != null ? ColorSchemes.orange200 : ColorSchemes.orange100,
                     child: CircleAvatar(
                       radius: 120.r,
                       backgroundColor: ColorSchemes.white,
