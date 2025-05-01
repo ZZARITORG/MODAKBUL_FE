@@ -48,6 +48,13 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
     getData = _dioClient.handleRequest<List<Group>>(
         requestFunction: () => groupService.getGroupList());
     _searchController.addListener(_onSearchChanged);
+    // 포커스 변경 시에도 필터링 상태 유지하기 위한 리스너 추가
+    _searchFocusNode.addListener(() {
+      // 포커스가 변경되어도 현재 검색어로 필터링 유지
+      if (_searchController.text.isNotEmpty) {
+        _filterGroups();
+      }
+    });
   }
 
   @override
@@ -104,11 +111,15 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   // 검색 필터링 함수
   void _filterGroups() {
     String searchQuery = _searchController.text.toLowerCase().trim();
-    List<Group> filtered = groupList.where((group) {
-      return group.name.toLowerCase().contains(searchQuery) ||
-          group.id.toLowerCase().contains(searchQuery);
-    }).toList();
-    _filteredGroupsNotifier.value = filtered;
+    if (searchQuery.isNotEmpty) {
+      List<Group> filtered = groupList.where((group) {
+        return group.name.toLowerCase().contains(searchQuery) ||
+            group.id.toLowerCase().contains(searchQuery);
+      }).toList();
+      _filteredGroupsNotifier.value = filtered;
+    } else {
+      _filteredGroupsNotifier.value = groupList;
+    }
   }
 
   static String timeAgo(DateTime dateTime, DateTime currentTime) {
@@ -245,7 +256,11 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                   return _buildEmptyGroupList();
                 } else {
                   groupList = snapshot.data!;
-                  _filteredGroupsNotifier.value = groupList;
+                  if (_searchController.text.isNotEmpty) {
+                    _filterGroups();
+                  } else {
+                    _filteredGroupsNotifier.value = groupList;
+                  }
                   return _buildGroupList();
                 }
               },
@@ -258,8 +273,12 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
 
   Widget _buildEmptyGroupList() {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      onVerticalDragDown: (_) {
+        FocusScope.of(context).unfocus();
+      },
       child: ListView(
         controller: _scrollController,
         physics: AlwaysScrollableScrollPhysics(),
@@ -348,20 +367,24 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
             ),
           ),
           SizedBox(height: 144.h),
-          Text(
-            '아직 그룹이 없습니다',
-            style: Theme.of(context)
-                .textTheme
-                .bigHeadLine3
-                .copyWith(color: ColorSchemes.orange100),
+          Center(
+            child: Text(
+              '아직 그룹이 없습니다',
+              style: Theme.of(context)
+                  .textTheme
+                  .bigHeadLine3
+                  .copyWith(color: ColorSchemes.orange100),
+            ),
           ),
           SizedBox(height: 8.h),
-          Text(
-            '그룹을 생성하고 모닥불을 피워보세요.',
-            style: Theme.of(context)
-                .textTheme
-                .body2
-                .copyWith(color: ColorSchemes.gray300),
+          Center(
+            child: Text(
+              '그룹을 생성하고 모닥불을 피워보세요.',
+              style: Theme.of(context)
+                  .textTheme
+                  .body2
+                  .copyWith(color: ColorSchemes.gray300),
+            ),
           ),
         ],
       ),
@@ -370,8 +393,12 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
 
   Widget _buildGroupList() {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      onVerticalDragDown: (_) {
+        FocusScope.of(context).unfocus();
+      },
       child: ListView(
         controller: _scrollController,
         physics: AlwaysScrollableScrollPhysics(),

@@ -484,7 +484,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               ],
             ),
             Positioned(
-              bottom: 0,
+              bottom: MediaQuery.of(context).viewInsets.bottom,
               left: 16.h,
               right: 16.h,
               child: Stack(
@@ -512,103 +512,112 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
+                            useSafeArea: true,
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
+                            ),
                             builder: (BuildContext context) {
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(24),
-                                    topRight: Radius.circular(24),
+                              return Padding(
+                                  padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).viewInsets.bottom,
                                   ),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                      StyleConstants.defaultPadding),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SizedBox(height: 10.h),
-                                      UserInfoCheck(
-                                          text: '그룹 이름을 입력해주세요',
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          }),
-                                      SizedBox(height: 32.h),
-                                      Stack(
-                                        children: [
-                                          TextField(
-                                            onChanged: (value) {
-                                              setState(() {groupName = value;});},
-                                            maxLength: AppConstants.maxAddressLength,
-                                            cursorColor:
-                                            ColorSchemes.orange100,
-                                            onTapOutside: (event) => FocusManager.instance.primaryFocus ?.unfocus(),
-                                            keyboardType:
-                                            TextInputType.text,
-                                            textInputAction:
-                                            TextInputAction.done,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .body1
-                                                .copyWith(
-                                                color: ColorSchemes
-                                                    .gray500),
-                                            decoration: InputDecoration(
-                                              counterText: '',
-                                              hintText: '예) 자주 만나는 친구',
-                                              hintStyle: Theme.of(context)
+                                child: Container(
+                                  constraints: BoxConstraints(
+                                    maxHeight: MediaQuery.of(context).size.height * 0.9,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: StyleConstants.defaultPadding),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(height: 10.h),
+                                        UserInfoCheck(
+                                            text: '그룹 이름을 입력해주세요',
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            }),
+                                        SizedBox(height: 32.h),
+                                        Stack(
+                                          children: [
+                                            TextField(
+                                              onChanged: (value) {
+                                                setState(() {groupName = value;});},
+                                              maxLength: AppConstants.maxAddressLength,
+                                              cursorColor:
+                                              ColorSchemes.orange100,
+                                              onTapOutside: (event) => FocusManager.instance.primaryFocus ?.unfocus(),
+                                              keyboardType:
+                                              TextInputType.text,
+                                              textInputAction:
+                                              TextInputAction.done,
+                                              style: Theme.of(context)
                                                   .textTheme
                                                   .body1
                                                   .copyWith(
                                                   color: ColorSchemes
-                                                      .gray200),
-                                              isDense: true,
-                                              contentPadding:
-                                              EdgeInsets.only(
-                                                  left: 4.w,
-                                                  bottom: 4.h),
-                                              border: InputBorder.none,
-                                              errorText: null,
-                                              errorStyle: const TextStyle(
-                                                  color: ColorSchemes
-                                                      .orange100,
-                                                  fontSize: 0),
+                                                      .gray500),
+                                              decoration: InputDecoration(
+                                                counterText: '',
+                                                hintText: '예) 자주 만나는 친구',
+                                                hintStyle: Theme.of(context)
+                                                    .textTheme
+                                                    .body1
+                                                    .copyWith(
+                                                    color: ColorSchemes
+                                                        .gray200),
+                                                isDense: true,
+                                                contentPadding:
+                                                EdgeInsets.only(
+                                                    left: 4.w,
+                                                    bottom: 4.h),
+                                                border: InputBorder.none,
+                                                errorText: null,
+                                                errorStyle: const TextStyle(
+                                                    color: ColorSchemes
+                                                        .orange100,
+                                                    fontSize: 0),
+                                              ),
                                             ),
-                                          ),
-                                          Positioned(
-                                            left: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            child: Container(
-                                              height: 2.w,
-                                              decoration: BoxDecoration(
-                                                  color: ColorSchemes
-                                                      .gray100,
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(2.r)),
+                                            Positioned(
+                                              left: 0,
+                                              right: 0,
+                                              bottom: 0,
+                                              child: Container(
+                                                height: 2.w,
+                                                decoration: BoxDecoration(
+                                                    color: ColorSchemes
+                                                        .gray100,
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(2.r)),
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 16.h),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 56.h,
-                                        child: CustomButton(
-                                            text: '모임 생성 하기',
-                                            onPressed:_createGroup,
-                                            buttonColor:
-                                            ColorSchemes.orange200,
-                                            textStyle: Theme.of(context)
-                                                .textTheme
-                                                .smallHeadLine2,
-                                            textColor:
-                                            ColorSchemes.white),
-                                      ),
-                                      SizedBox(height: 16.h),
-                                    ],
+                                          ],
+                                        ),
+                                        SizedBox(height: 16.h),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          height: 56.h,
+                                          child: CustomButton(
+                                              text: '모임 생성 하기',
+                                              onPressed:_createGroup,
+                                              buttonColor:
+                                              ColorSchemes.orange200,
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .smallHeadLine2,
+                                              textColor:
+                                              ColorSchemes.white),
+                                        ),
+                                        SizedBox(height: 16.h),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
