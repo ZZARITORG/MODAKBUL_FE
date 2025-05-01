@@ -73,7 +73,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
   Widget build(BuildContext context) {
     meetingProvider = Provider.of<MeetingProvider>(context);
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       backgroundColor: ColorSchemes.gray000,
       appBar: const LogoAppBar(
         backgroundColor: ColorSchemes.gray000,
