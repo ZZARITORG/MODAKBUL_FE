@@ -90,8 +90,6 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
               .toList();
         });
       });
-    } else {
-      print('Permission denied');
     }
   }
 

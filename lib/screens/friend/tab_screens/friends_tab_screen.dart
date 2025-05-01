@@ -87,11 +87,15 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
 
   void _filterFriends() {
     String searchQuery = _searchController.text.toLowerCase().trim();
+    if (searchQuery.isNotEmpty) {
     List<FriendList> filtered = friendList.where((friend) {
       return friend.userName.toLowerCase().contains(searchQuery) ||
           friend.userId.toLowerCase().contains(searchQuery);
-    }).toList();
-    _filteredFriendsNotifier.value = filtered;
+      }).toList();
+      _filteredFriendsNotifier.value = filtered;
+    } else {
+      _filteredFriendsNotifier.value = friendList;
+    }
   }
 
   Future<void> _refreshData() async {
@@ -137,7 +141,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorSchemes.gray000,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: ColorSchemes.gray100,
       body: SafeArea(
         child: CustomRefreshIndicator(
           triggerMode: IndicatorTriggerMode.onEdge,
@@ -214,7 +219,11 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                   return _buildEmptyFriendList();
                 } else {
                   friendList = snapshot.data!;
-                  _filteredFriendsNotifier.value = friendList;
+                  if (_searchController.text.isNotEmpty) {
+                    _filterFriends();
+                  } else {
+                    _filteredFriendsNotifier.value = friendList;
+                  }
                   return _buildFriendList();
                 }
               },
@@ -227,8 +236,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
 
   Widget _buildEmptyFriendList() {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      onVerticalDragDown: (_) {
+        FocusScope.of(context).unfocus();
+      },
       child: ListView(
         controller: _scrollController,
         physics: AlwaysScrollableScrollPhysics(),
@@ -237,7 +250,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
         children: [
           SizedBox(height: 10.h),
           CustomSearchBar(
-            hintText: '사용자를 검색해보세요.',
+            hintText: '친구를 검색해보세요.',
             controller: _searchController,
             focusNode: _searchFocusNode,
           ),
@@ -266,8 +279,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
 
   Widget _buildFriendList() {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      onVerticalDragDown: (_) {
+        FocusScope.of(context).unfocus();
+      },
       child: ListView(
         controller: _scrollController,
         physics: AlwaysScrollableScrollPhysics(),
@@ -276,7 +293,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
         children: [
           SizedBox(height: 10.h),
           CustomSearchBar(
-            hintText: '사용자를 검색해보세요.',
+            hintText: '친구를 검색해보세요.',
             controller: _searchController,
             focusNode: _searchFocusNode,
           ),
@@ -297,7 +314,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                     builder: (context) => _buildFilterBottomSheet(),
                   );
                 },
-                child: Text('필터',
+                child: Text('정렬',
                     style: Theme.of(context)
                         .textTheme
                         .body3
@@ -335,6 +352,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                 itemBuilder: (context, index) {
                   final friend = filteredFriends[index];
                   return GestureDetector(
+                    behavior: HitTestBehavior
+                        .translucent,
                     onTap: () async {
                       showModalBottomSheet(
                         isScrollControlled: true,

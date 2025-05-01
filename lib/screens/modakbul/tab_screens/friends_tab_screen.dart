@@ -107,11 +107,15 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   // 검색 필터링 함수
   void _filterFriends() {
     String searchQuery = _searchController.text.toLowerCase().trim();
-    List<FriendList> filtered = friendList.where((friend) {
-      return friend.userName.toLowerCase().contains(searchQuery) ||
-          friend.userId.toLowerCase().contains(searchQuery);
-    }).toList();
-    _filteredFriendsNotifier.value = filtered;
+    if (searchQuery.isNotEmpty) {
+      List<FriendList> filtered = friendList.where((friend) {
+        return friend.userName.toLowerCase().contains(searchQuery) ||
+            friend.userId.toLowerCase().contains(searchQuery);
+      }).toList();
+      _filteredFriendsNotifier.value = filtered;
+    } else {
+      _filteredFriendsNotifier.value = friendList;
+    }
   }
 
   void _toggleSelectGroup(
@@ -241,8 +245,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                   );
                 },
                 child: GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  onVerticalDragDown: (_) {
+                    FocusScope.of(context).unfocus();
+                  },
                 child: ListView(
                   physics: AlwaysScrollableScrollPhysics(),
                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -344,10 +352,13 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                       SizedBox(
                         height: 10.h,
                       ),
-                      CustomSearchBar(
-                        hintText: '친구를 검색해 보세요.',
-                        controller: _searchController,
-                        focusNode: _searchFocusNode,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                        child: CustomSearchBar(
+                          hintText: '친구를 검색해 보세요.',
+                          controller: _searchController,
+                          focusNode: _searchFocusNode,
+                        ),
                       ),
                       SizedBox(
                         height: 24.h,
@@ -482,7 +493,11 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                 );
                               } else {
                                 friendList = snapshot.data!;
-                                _filteredFriendsNotifier.value = friendList;
+                                if (_searchController.text.isNotEmpty) {
+                                  _filterFriends();
+                                } else {
+                                  _filteredFriendsNotifier.value = friendList;
+                                }
                                 return Column(
                                   children: [
                                     Column(
