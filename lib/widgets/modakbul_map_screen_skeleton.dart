@@ -12,32 +12,29 @@ class ModakbulMapScreenSkeleton extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.only(left: StyleConstants.defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 24.h),
-              SkeletonLoader(
-                  width: 286.w,
-                  height: 38.h,
-                  borderRadius:
-                      BorderRadius.circular(StyleConstants.radiusMedium)),
-              SizedBox(height: 10.h),
-              SkeletonLoader(
-                  width: 170.w,
-                  height: 38.h,
-                  borderRadius:
-                      BorderRadius.circular(StyleConstants.radiusMedium)),
-              SizedBox(height: 20.h),
-              SkeletonLoader(
-                  width: 347.w,
-                  height: 16.h,
-                  borderRadius:
-                      BorderRadius.circular(StyleConstants.radiusMedium)),
-              SizedBox(height: 28.h),
-            ],
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 24.h),
+            SkeletonLoader(
+                width: 286.w,
+                height: 38.h,
+                borderRadius:
+                    BorderRadius.circular(StyleConstants.radiusMedium)),
+            SizedBox(height: 10.h),
+            SkeletonLoader(
+                width: 170.w,
+                height: 38.h,
+                borderRadius:
+                    BorderRadius.circular(StyleConstants.radiusMedium)),
+            SizedBox(height: 20.h),
+            SkeletonLoader(
+                width: 347.w,
+                height: 16.h,
+                borderRadius:
+                    BorderRadius.circular(StyleConstants.radiusMedium)),
+            SizedBox(height: 28.h),
+          ],
         ),
         Expanded(
           child: Container(

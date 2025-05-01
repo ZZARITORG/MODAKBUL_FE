@@ -16,7 +16,6 @@ class SearchScreenSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
