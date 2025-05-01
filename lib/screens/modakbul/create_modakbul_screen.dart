@@ -78,10 +78,6 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
       appBar: const LogoAppBar(
         backgroundColor: ColorSchemes.gray000,
       ),
-      bottomNavigationBar: Padding( // 키보드 높이를 Consumer에 전달하기 위한 bottomNavigationBar
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: SizedBox.shrink(),
-      ),
       body: Padding(
         padding:
         EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
