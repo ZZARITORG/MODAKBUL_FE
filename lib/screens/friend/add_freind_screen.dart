@@ -157,7 +157,7 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
                                   profileImage: friend.profileUrl,
                                   userName: friend.name,
                                   userId: friend.userId,
-                                  time: timeAgo(friend.updatedAt, currentTime),
+                                  time: timeAgo(friend.updatedAt != null ? friend.updatedAt! : friend.createdAt, currentTime),
                                   acceptOnPressed: () async {
                                     await friendService.acceptFriend(
                                         Uuid(targetId: friend.id));

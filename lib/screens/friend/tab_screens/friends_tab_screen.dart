@@ -142,7 +142,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: ColorSchemes.gray100,
+      backgroundColor: ColorSchemes.gray000,
       body: SafeArea(
         child: CustomRefreshIndicator(
           triggerMode: IndicatorTriggerMode.onEdge,

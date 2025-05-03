@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:modakbul/constants/api_path.dart';
 import 'package:modakbul/providers/auth_provider.dart';
+import 'package:modakbul/providers/friend_provider.dart';
 import 'package:modakbul/providers/location_provider.dart';
 import 'package:modakbul/providers/meeting_provider.dart';
 import 'package:modakbul/providers/place_provider.dart';
@@ -65,6 +66,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => PlaceProvider()),
         ChangeNotifierProvider(create: (_) => MeetingProvider()),
         ChangeNotifierProvider(create: (_) => LocationProvider()),
+        ChangeNotifierProvider(create: (_) => FriendProvider()),
       ],
       child: MaterialApp(
         navigatorKey: GlobalVariable.navState,

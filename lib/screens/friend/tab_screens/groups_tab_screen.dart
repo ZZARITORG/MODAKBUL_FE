@@ -180,7 +180,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorSchemes.gray100,
+      backgroundColor: ColorSchemes.gray000,
       body: SafeArea(
         child: CustomRefreshIndicator(
           triggerMode: IndicatorTriggerMode.onEdge,

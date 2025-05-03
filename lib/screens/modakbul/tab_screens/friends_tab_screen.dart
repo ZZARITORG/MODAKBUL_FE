@@ -181,7 +181,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   Widget build(BuildContext context) {
     meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     return Scaffold(
-      backgroundColor: ColorSchemes.gray000,
+      backgroundColor: ColorSchemes.orange100,
       body: SafeArea(
         child: Stack(
             children: [
