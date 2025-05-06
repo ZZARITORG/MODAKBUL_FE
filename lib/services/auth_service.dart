@@ -79,26 +79,5 @@ class AuthService {
         options: Options(extra: {'skipToken': true}));
     return RefreshTokenResponse.fromJson(response.data['data']);
   }
-
-  Future<void> changePhoneNumber(String newPhoneNumber, String verificationId, String smsCode) async {
-    try {
-
-      await FirebaseAuthService().updatePhoneNumber(verificationId, smsCode);
-
-      await _userService.updateMyProfile(
-          EditMyProfile(
-              phoneNo: newPhoneNumber
-          )
-      );
-
-      const storage = FlutterSecureStorage();
-      await Future.wait([
-        storage.write(key: AppConstants.phoneNumber, value: newPhoneNumber),
-        prefs.setString(AppConstants.phoneNumber, newPhoneNumber)
-      ]);
-    } catch (e) {
-      throw Exception('Phone number change failed: ${e.toString()}');
-    }
-  }
 }
 

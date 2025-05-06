@@ -7,6 +7,7 @@ import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/auth_service.dart';
+import 'package:modakbul/utils/string_utils.dart';
 
 class ChangePhoneBottomSheet extends StatelessWidget {
   final VoidCallback onConfirm;
@@ -25,7 +26,8 @@ class ChangePhoneBottomSheet extends StatelessWidget {
   void _handleChangeNumber(BuildContext context) async {
     try {
       final authService = AuthService();
-      await authService.changePhoneNumber(newPhoneNumber, verificationId, smsCode);
+    //  await authService.changePhoneNumber(StringUtils().removeHyphens(newPhoneNumber)!, verificationId, smsCode);
+
 
       if (!context.mounted) return;
 
