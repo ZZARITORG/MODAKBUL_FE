@@ -1,16 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:modakbul/services/auth_service.dart';
 
 ///TODO: 열거형으로 상태관리 생각해보기
 class FirebaseAuthService {
+  static final FirebaseAuthService _instance = FirebaseAuthService._internal();
+
+  FirebaseAuthService._internal();
+
+  factory FirebaseAuthService() => _instance;
+
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   String _verificationId = '';
   bool isExpired = false;
+  PhoneAuthCredential? credential;
 
   ///전화번호로 인증번호(OTP)를 보내는 함수
   Future<void> sendVerificationCode(
       String phoneNumber,
       Function onSignInSuccess,
       Function(String) onSignInFailure,
+      {
+        Function(PhoneAuthCredential)? onEditVerified,
+      }
       ) async {
 
     try {
@@ -20,9 +32,15 @@ class FirebaseAuthService {
 
         ///인증번호 보내기 성공
         verificationCompleted: (PhoneAuthCredential credential) async {
-          await firebaseAuth.signInWithCredential(credential).then((_) {
-            onSignInSuccess();
-          });
+          if (onEditVerified != null) {
+            print('번호변경');
+            onEditVerified(credential);
+          } else {
+            print('로그인');
+            await firebaseAuth.signInWithCredential(credential).then((_) {
+              onSignInSuccess();
+            });
+          }
         },
 
         ///인증번호 보내기 실패
@@ -51,6 +69,9 @@ class FirebaseAuthService {
       String smsCode,
       Function onSignInSuccess,
       Function(String) onSignInFailure,
+      {
+        Function(PhoneAuthCredential)? onEditVerified,
+      }
       ) async {
 
     /*if (isExpired) {
@@ -58,24 +79,24 @@ class FirebaseAuthService {
       return;
     }*/
 
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+    credential = PhoneAuthProvider.credential(
         verificationId: _verificationId, smsCode: smsCode);
-
-    try {
-      await firebaseAuth.signInWithCredential(credential).then((_) {
+    if (onEditVerified != null) {
+      print('번호변경');
+      onEditVerified(credential!);
+    } else {
+      try {
+      await firebaseAuth.signInWithCredential(credential!).then((_) {
         onSignInSuccess();
       });
     } on FirebaseAuthException catch (e) {
       onSignInFailure(e.code);
     }
+    }
   }
 
-  Future<void> updatePhoneNumber(String verificationId, String smsCode) async {
+  Future<void> updatePhoneNumber(PhoneAuthCredential credential) async {
     try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: smsCode,
-      );
 
       final user = FirebaseAuth.instance.currentUser;
 

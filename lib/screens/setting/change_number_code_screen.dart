@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,12 +49,16 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     try {
       await _firebaseAuthService.verifyVerificationCode(
           _codeController.text,
-              () => _showChangePhoneBottomSheet(
-              context,
-              _firebaseAuthService.getVerificationId(),
-              _codeController.text
-          ),
-          onSignInFailure
+              () => {},
+          onSignInFailure,
+          onEditVerified: (credential)  {
+                _showChangePhoneBottomSheet(
+                context,
+                credential.verificationId!,
+                credential.smsCode!,
+                  credential
+            );
+          }
       );
     } catch (e) {
       onSignInFailure('인증 실패');
@@ -100,7 +105,15 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     _firebaseAuthService.sendVerificationCode(
         StringUtils().removeHyphens(authProvider.phoneNumber)!,
             () {}, // 빈 콜백 (번호변경은 바텀시트에서 처리)
-        onSignInFailure
+        onSignInFailure,
+        onEditVerified: (credential) async {
+              () => _showChangePhoneBottomSheet(
+              context,
+              credential.verificationId!,
+                credential.smsCode!,
+                credential
+          );
+        }
     );
     _startResendTimer();
   }
@@ -115,7 +128,7 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
         errorMessage = '사용자 계정이 비활성화 되었습니다.';
         break;
       default:
-        errorMessage = '알 수 없는 오류가 발생했습니다.';
+        errorMessage = '알 수 없는 오류가 발생했습니다. $errorCode';
     }
 
     setState(() {
@@ -131,7 +144,17 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     _firebaseAuthService.sendVerificationCode(
         StringUtils().removeHyphens(authProvider.phoneNumber)!,
             () {}, // 빈 콜백
-        onSignInFailure
+        onSignInFailure,
+      onEditVerified: (credential) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showChangePhoneBottomSheet(
+              context,
+              credential.verificationId!,
+              credential.smsCode!,
+            credential
+          );
+        });
+      },
     );
     _startResendTimer();
   }
@@ -143,7 +166,7 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
     super.dispose();
   }
 
-  void _showChangePhoneBottomSheet(BuildContext context, String verificationId, String smsCode) {
+  void _showChangePhoneBottomSheet(BuildContext context, String verificationId, String smsCode, PhoneAuthCredential credential) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -156,7 +179,7 @@ class _ChangeNumberCodeScreenState extends State<ChangeNumberCodeScreen> {
           verificationId: verificationId,
           smsCode: smsCode,
           newPhoneNumber: authProvider.phoneNumber!,
-          onConfirm: () {},
+          onConfirm: () {}, credential: credential,
         );
       },
     );
