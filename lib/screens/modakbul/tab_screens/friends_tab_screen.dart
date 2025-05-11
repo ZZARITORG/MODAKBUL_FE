@@ -30,7 +30,9 @@ class FriendsTabScreen extends StatefulWidget {
   State<FriendsTabScreen> createState() => _FriendsTabScreenState();
 }
 
-class _FriendsTabScreenState extends State<FriendsTabScreen> {
+class _FriendsTabScreenState extends State<FriendsTabScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   List<Map<String, String>> selectedFriends = [];
   String selectedFilter = 'alphabetical';
   String filterText = '가나다순';
@@ -38,6 +40,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   final ScrollController _scrollController = ScrollController();
   FriendService friendService = FriendService();
   List<FriendList> friendList = [];
+  List<FriendList>? _previousData;
   final FocusNode _searchFocusNode = FocusNode();
   late Future<List<FriendList>> getData;
   Timer? _debounce;
@@ -46,6 +49,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   bool isLoading = false;
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
   bool _wasRefreshing = false;
+  bool isFirstLoading = true;
 
   // ValueNotifier로 _filteredFriends 관리
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
@@ -179,9 +183,10 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     return Scaffold(
-      backgroundColor: ColorSchemes.orange100,
+      backgroundColor: ColorSchemes.gray000,
       body: SafeArea(
         child: Stack(
             children: [
@@ -371,7 +376,214 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return const FriendScreenSkeleton();
+                                if (isFirstLoading) {
+                                  return FriendScreenSkeleton();
+                                } else {
+                                  _filteredFriendsNotifier.value = _previousData!;
+                                  return Column(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 4.w,
+                                              ),
+                                              Text(
+                                                filterText,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bigHeadLine4
+                                                    .copyWith(
+                                                    color:
+                                                    ColorSchemes.gray500),
+                                              ),
+                                              const Spacer(),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    showModalBottomSheet(
+                                                      context: context,
+                                                      builder:
+                                                          (BuildContext context) {
+                                                        return Container(
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                            BorderRadius.only(
+                                                              topLeft: Radius.circular(
+                                                                  StyleConstants
+                                                                      .radiusLarge),
+                                                              topRight: Radius.circular(
+                                                                  StyleConstants
+                                                                      .radiusLarge),
+                                                            ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                StyleConstants
+                                                                    .defaultPadding),
+                                                            child: Column(
+                                                              mainAxisSize:
+                                                              MainAxisSize
+                                                                  .min,
+                                                              children: [
+                                                                SizedBox(
+                                                                    height: 38.h),
+                                                                Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      '정렬',
+                                                                      style: Theme.of(
+                                                                          context)
+                                                                          .textTheme
+                                                                          .bigHeadLine3
+                                                                          .copyWith(
+                                                                          color:
+                                                                          ColorSchemes.gray500),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 24.h),
+                                                                _buildFilterOption(
+                                                                    '가나다순',
+                                                                    'alphabetical',
+                                                                    context),
+                                                                SizedBox(
+                                                                    height: 24.h),
+                                                                _buildFilterOption(
+                                                                    '최신순',
+                                                                    'latest',
+                                                                    context),
+                                                                SizedBox(
+                                                                    height: 24.h),
+                                                                _buildFilterOption(
+                                                                    '자주 만나는 친구',
+                                                                    'frequent',
+                                                                    context),
+                                                                SizedBox(
+                                                                    height: 56.h),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Text(
+                                                    '정렬',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .body3
+                                                        .copyWith(
+                                                        color: ColorSchemes
+                                                            .gray300),
+                                                  )),
+                                              SizedBox(
+                                                width: 4.w,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 14.h,
+                                          ),
+                                          ValueListenableBuilder<
+                                              List<FriendList>>(
+                                              valueListenable:
+                                              _filteredFriendsNotifier,
+                                              builder:
+                                                  (context, filteredFriends, _) {
+                                                if (filteredFriends.isEmpty) {
+                                                  return Column(
+                                                    children: [
+                                                      SizedBox(height: 132.h),
+                                                      Text(
+                                                        '검색결과가 없습니다',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bigHeadLine3
+                                                            .copyWith(
+                                                            color: ColorSchemes
+                                                                .orange100),
+                                                      ),
+                                                      SizedBox(height: 8.h),
+                                                      Text(
+                                                        '검색어를 다시 확인해 주세요',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .body2
+                                                            .copyWith(
+                                                            color:
+                                                            ColorSchemes
+                                                                .gray300),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }
+                                                return ListView.builder(
+                                                    primary: false,
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                    filteredFriends.length,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                        int index) {
+                                                      final friend =
+                                                      filteredFriends[index];
+                                                      final isChecked =
+                                                      selectedFriends.any(
+                                                              (selectedFriend) =>
+                                                          selectedFriend[
+                                                          'userId'] ==
+                                                              friend.userId);
+                                                      return GestureDetector(
+                                                        behavior: HitTestBehavior
+                                                            .translucent,
+                                                        /*overlayColor: const WidgetStatePropertyAll(
+                                        Colors.transparent,
+
+                                        ///투명으로 바꿀수도있음
+                                                                        ),*/
+                                                        onTap: () {
+                                                          _toggleSelectGroup(
+                                                              friend.userId,
+                                                              friend.userName,
+                                                              friend.profileUrl,
+                                                              friend.id);
+                                                          //filteredFriends = snapshot.data!;
+                                                          _searchController.text =
+                                                          '';
+                                                        },
+                                                        onTapDown: (_) {
+                                                          /// 터치 이벤트가 상위로 전파되는 것을 막습니다
+                                                          /// 이렇게 하면 SelectUserListProfile을 터치해도 키보드가 내려가지 않습니다
+                                                        },
+                                                        child:
+                                                        SelectUserListProfile(
+                                                          userName:
+                                                          filteredFriends[
+                                                          index]
+                                                              .userName,
+                                                          userId: filteredFriends[
+                                                          index]
+                                                              .userId,
+                                                          profileImage:
+                                                          filteredFriends[
+                                                          index]
+                                                              .profileUrl,
+                                                          isChecked: isChecked,
+                                                        ),
+                                                      );
+                                                    });
+                                              }),
+                                        ],
+                                      ),
+                                      SizedBox(height: 88.h),
+                                    ],
+                                  );
+                                }
                               } else if (snapshot.hasError) {
                                 return const GlobalErrorWidget();
                               } else if (!snapshot.hasData ||
@@ -493,6 +705,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                                 );
                               } else {
                                 friendList = snapshot.data!;
+                                _previousData = friendList;
+                                isFirstLoading = false;
                                 if (_searchController.text.isNotEmpty) {
                                   _filterFriends();
                                 } else {

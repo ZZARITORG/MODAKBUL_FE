@@ -24,7 +24,7 @@ class _AddFreindScreenState extends State<AddFreindScreen> {
   FriendService friendService = FriendService();
   List<FriendReqList> friendRequests = [];
   late Future<List<FriendReqList>> getData;
-  late DateTime currentTime;
+  late DateTime currentTime = DateTime.now();
 
   @override
   void initState() {

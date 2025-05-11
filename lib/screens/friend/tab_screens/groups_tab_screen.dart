@@ -25,7 +25,9 @@ class GroupsTabScreen extends StatefulWidget {
   State<GroupsTabScreen> createState() => _GroupsTabScreenState();
 }
 
-class _GroupsTabScreenState extends State<GroupsTabScreen> {
+class _GroupsTabScreenState extends State<GroupsTabScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   String selectedFilter = 'latest';
   String filterText = '최신순';
   final TextEditingController _searchController = TextEditingController();
@@ -36,9 +38,11 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   final FocusNode _searchFocusNode = FocusNode();
   late Future<List<Group>> getData;
   late DateTime currentTime;
+  List<Group>? _previousData;
   bool _isRefreshing = false;
   bool _wasRefreshing = false;
   Timer? _debounce;
+  bool isFirstLoading = true;
   final ValueNotifier<List<Group>> _filteredGroupsNotifier = ValueNotifier([]);
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
 
@@ -179,6 +183,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: ColorSchemes.gray000,
       body: SafeArea(
@@ -248,7 +253,12 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
               future: getData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const GroupScreenSkeleton();
+                  if (isFirstLoading) {
+                    return GroupScreenSkeleton();
+                  } else {
+                    _filteredGroupsNotifier.value = groupList;
+                    return _buildGroupList();
+                  }
                 } else if (snapshot.hasError) {
                   return const GlobalErrorWidget();
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -256,6 +266,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                   return _buildEmptyGroupList();
                 } else {
                   groupList = snapshot.data!;
+                  _previousData = groupList;
+                  isFirstLoading = false;
                   if (_searchController.text.isNotEmpty) {
                     _filterGroups();
                   } else {

@@ -30,7 +30,9 @@ class GroupsTabScreen extends StatefulWidget {
   State<GroupsTabScreen> createState() => _GroupsTabScreenState();
 }
 
-class _GroupsTabScreenState extends State<GroupsTabScreen> {
+class _GroupsTabScreenState extends State<GroupsTabScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   String selectedFilter = 'latest';
   String filterText = '최신순';
   final TextEditingController _searchController = TextEditingController();
@@ -39,6 +41,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   List<Group> groupList = [];
   final FocusNode _searchFocusNode = FocusNode();
   late Future<List<Group>> getData;
+  List<Group>? _previousData;
   Timer? _debounce;
   Logger logger = Logger(printer: PrettyPrinter());
   String? selectedGroupId;
@@ -47,6 +50,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
   bool isLoading = false;
   static const double _maxDragOffset = 36; // 새로고침 인디케이터를 위한 변수
   bool _wasRefreshing = false;
+  bool isFirstLoading = true;
 
   // ValueNotifier로 _filteredGroups 관리
   ValueNotifier<List<Group>> _filteredGroupsNotifier = ValueNotifier([]);
@@ -201,6 +205,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     meetingProvider = Provider.of<MeetingProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: ColorSchemes.gray000,
@@ -285,9 +290,421 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                       FutureBuilder<List<Group>>(
                           future: getData,
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const GroupScreenSkeleton();
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              if (isFirstLoading) {
+                                return GroupScreenSkeleton();
+                              } else {
+                                _filteredGroupsNotifier.value = groupList;
+                                return Column(
+                                  children: [
+                                    SizedBox(height: 10.h),
+                                    CustomSearchBar(
+                                      hintText: '그룹을 검색해 보세요.',
+                                      controller: _searchController,
+                                      focusNode: _searchFocusNode,
+                                    ),
+                                    SizedBox(height: 24.h),
+                                    Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              filterText,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bigHeadLine4
+                                                  .copyWith(
+                                                  color: ColorSchemes
+                                                      .gray500),
+                                            ),
+                                            Spacer(),
+                                            TextButton(
+                                              onPressed: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                  context) {
+                                                    return Container(
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        color:
+                                                        Colors.white,
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .only(
+                                                          topLeft: Radius
+                                                              .circular(
+                                                              StyleConstants
+                                                                  .radiusLarge),
+                                                          topRight: Radius
+                                                              .circular(
+                                                              StyleConstants
+                                                                  .radiusLarge),
+                                                        ),
+                                                      ),
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                            horizontal:
+                                                            StyleConstants
+                                                                .defaultPadding),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                          MainAxisSize
+                                                              .min,
+                                                          children: [
+                                                            SizedBox(
+                                                                height:
+                                                                38.h),
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  '정렬',
+                                                                  style: Theme.of(context)
+                                                                      .textTheme
+                                                                      .bigHeadLine3
+                                                                      .copyWith(color: ColorSchemes.gray500),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                                height:
+                                                                24.h),
+                                                            _buildFilterOption(
+                                                                '최신순',
+                                                                'latest',
+                                                                context),
+                                                            SizedBox(
+                                                                height:
+                                                                24.h),
+                                                            _buildFilterOption(
+                                                                '가나다순',
+                                                                'alphabetical',
+                                                                context),
+                                                            SizedBox(
+                                                                height:
+                                                                24.h),
+                                                            _buildFilterOption(
+                                                                '자주 만나는 그룹',
+                                                                'frequent',
+                                                                context),
+                                                            SizedBox(
+                                                                height:
+                                                                56.h),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Text(
+                                                '정렬',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .body3
+                                                    .copyWith(
+                                                    color:
+                                                    ColorSchemes
+                                                        .gray300),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 14.h,
+                                        ),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CreateGroupScreen()),
+                                              ).then((_) {
+                                                _reloadGroups();
+                                              });
+                                            },
+                                            behavior:
+                                            HitTestBehavior.opaque,
+                                            child: Card(
+                                              shape:
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    StyleConstants
+                                                        .radiusMedium),
+                                              ),
+                                              color: ColorSchemes.gray100,
+                                              margin: EdgeInsets.zero,
+                                              elevation: 0,
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 20.h,
+                                                    bottom: 14.h),
+                                                child: Column(
+                                                  children: [
+                                                    CircleAvatar(
+                                                      radius: StyleConstants
+                                                          .circleSizeXXXS,
+                                                      backgroundColor:
+                                                      ColorSchemes
+                                                          .gray300,
+                                                      child: SvgPicture
+                                                          .asset(
+                                                          IconPath
+                                                              .plus,
+                                                          width:
+                                                          11.r),
+                                                    ),
+                                                    SizedBox(
+                                                        height: 10.h),
+                                                    Text(
+                                                      '그룹 생성하기',
+                                                      style: Theme.of(
+                                                          context)
+                                                          .textTheme
+                                                          .smallHeadLine3
+                                                          .copyWith(
+                                                          color: ColorSchemes
+                                                              .gray200),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 14.h,
+                                        ),
+                                        ValueListenableBuilder<
+                                            List<Group>>(
+                                            valueListenable:
+                                            _filteredGroupsNotifier,
+                                            builder: (context,
+                                                filteredGroups, _) {
+                                              if (filteredGroups
+                                                  .isEmpty) {
+                                                return Column(
+                                                  children: [
+                                                    SizedBox(
+                                                        height: 132.h),
+                                                    Text(
+                                                      '검색결과가 없습니다',
+                                                      style: Theme.of(
+                                                          context)
+                                                          .textTheme
+                                                          .bigHeadLine3
+                                                          .copyWith(
+                                                          color: ColorSchemes
+                                                              .orange100),
+                                                    ),
+                                                    SizedBox(height: 8.h),
+                                                    Text(
+                                                      '검색어를 다시 확인해 주세요',
+                                                      style: Theme.of(
+                                                          context)
+                                                          .textTheme
+                                                          .body2
+                                                          .copyWith(
+                                                          color: ColorSchemes
+                                                              .gray300),
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                              return ListView.builder(
+                                                  itemCount:
+                                                  filteredGroups
+                                                      .length,
+                                                  primary: false,
+                                                  shrinkWrap: true,
+                                                  itemBuilder:
+                                                      (BuildContext
+                                                  context,
+                                                      int index) {
+                                                    String groupName =
+                                                        filteredGroups[
+                                                        index]
+                                                            .name;
+                                                    String groupId =
+                                                        filteredGroups[
+                                                        index]
+                                                            .id;
+                                                    var members =
+                                                        filteredGroups[
+                                                        index]
+                                                            .members;
+                                                    String profileImage2 =
+                                                    members.length > 1
+                                                        ? members[1]
+                                                        .user
+                                                        .profileUrl
+                                                        : '';
+                                                    return Column(
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () =>
+                                                              _toggleSelectedGroup(
+                                                                  groupId,
+                                                                  groupName),
+                                                          child:
+                                                          GroupListTile(
+                                                            title:
+                                                            groupName,
+                                                            // 그룹 이름
+                                                            time: timeAgo(
+                                                              DateTime.parse(
+                                                                  filteredGroups[index]
+                                                                      .createdAt),
+                                                              //
+                                                              DateTime
+                                                                  .now(), //
+                                                            ),
+                                                            profileLength:
+                                                            filteredGroups[
+                                                            index]
+                                                                .members
+                                                                .length,
+                                                            // 멤버 수
+                                                            profileImage1:
+                                                            members[0]
+                                                                .user
+                                                                .profileUrl,
+                                                            // 첫 번째 멤버의 프로필 이미지
+                                                            profileImage2:
+                                                            profileImage2
+                                                                .isEmpty
+                                                                ? null
+                                                                : profileImage2,
+                                                            // 두 번째 멤버의 프로필 이미지
+                                                            isSelected: filteredGroups[
+                                                            index]
+                                                                .id ==
+                                                                selectedGroupId,
+                                                            onPressed:
+                                                                () {
+                                                              showModalBottomSheet(
+                                                                context:
+                                                                context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                context) {
+                                                                  return Container(
+                                                                    decoration:
+                                                                    BoxDecoration(
+                                                                      color:
+                                                                      Colors.white,
+                                                                      borderRadius:
+                                                                      BorderRadius.only(
+                                                                        topLeft: Radius.circular(StyleConstants.radiusLarge),
+                                                                        topRight: Radius.circular(StyleConstants.radiusLarge),
+                                                                      ),
+                                                                    ),
+                                                                    child:
+                                                                    Padding(
+                                                                      padding:
+                                                                      EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+                                                                      child:
+                                                                      Column(
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                        mainAxisSize: MainAxisSize.min,
+                                                                        children: [
+                                                                          SizedBox(height: 38.h),
+                                                                          Text(groupName, style: Theme.of(context).textTheme.bigHeadLine3.copyWith(color: ColorSchemes.gray500)),
+                                                                          SizedBox(height: 24.h),
+                                                                          InkWell(
+                                                                            overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                                                            onTap: () {
+                                                                              Navigator.push(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                  builder: (context) => GroupEditScreen(),
+                                                                                  settings: RouteSettings(
+                                                                                    arguments: {
+                                                                                      'groupId': filteredGroups[index].id,
+                                                                                      'groupName': filteredGroups[index].name,
+                                                                                      'members': filteredGroups[index].members,
+                                                                                    },
+                                                                                  ),
+                                                                                ),
+                                                                              ).then((_) {
+                                                                                _reloadGroups();
+                                                                              });
+                                                                            },
+                                                                            child: Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              children: [
+                                                                                Text('그룹 수정하기', style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
+                                                                                SizedBox(
+                                                                                  width: 24.r,
+                                                                                  height: 24.r,
+                                                                                  child: Center(
+                                                                                    child: SvgPicture.asset(
+                                                                                      IconPath.arrowForwardGray200,
+                                                                                      width: 9.r,
+                                                                                      height: 16.r,
+                                                                                    ),
+                                                                                  ),
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(height: 24.h),
+                                                                          InkWell(
+                                                                            overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                                                            onTap: () async {
+                                                                              await groupService.deleteGroup(groupId);
+                                                                              setState(() {
+                                                                                filteredGroups.removeWhere((group) => group.id == groupId);
+                                                                                _filteredGroupsNotifier.value = List<Group>.from(groupList);
+                                                                              });
+                                                                              Navigator.pop(context);
+                                                                            },
+                                                                            child: Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              children: [
+                                                                                Text('그룹 삭제하기', style: Theme.of(context).textTheme.smallHeadLine2.copyWith(color: ColorSchemes.gray300)),
+                                                                                SizedBox(
+                                                                                  width: 24.r,
+                                                                                  height: 24.r,
+                                                                                  child: Center(
+                                                                                    child: SvgPicture.asset(
+                                                                                      IconPath.arrowForwardGray200,
+                                                                                      width: 9.r,
+                                                                                      height: 16.r,
+                                                                                    ),
+                                                                                  ),
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(height: 56.h),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
+                                                            }, // 선택된 그룹 여부
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 12.h,
+                                                        )
+                                                      ],
+                                                    );
+                                                  });
+                                            })
+                                      ],
+                                    ),
+                                    SizedBox(height: 88.h),
+                                  ],
+                                );
+                              }
                             } else if (snapshot.hasError) {
                               return const GlobalErrorWidget();
                             } else if (!snapshot.hasData ||
@@ -489,6 +906,8 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                 _filterGroups();
                               } else {
                                 _filteredGroupsNotifier.value = groupList;
+                                _previousData = groupList;
+                                isFirstLoading = false;
                               }
                               return Column(
                                 children: [

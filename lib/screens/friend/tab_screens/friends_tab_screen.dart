@@ -26,7 +26,9 @@ class FriendsTabScreen extends StatefulWidget {
   State<FriendsTabScreen> createState() => _FriendsTabScreenState();
 }
 
-class _FriendsTabScreenState extends State<FriendsTabScreen> {
+class _FriendsTabScreenState extends State<FriendsTabScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   String selectedFilter = 'alphabetical';
   String filterText = '가나다순';
   final TextEditingController _searchController = TextEditingController();
@@ -36,10 +38,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
   List<FriendList> friendList = [];
   final FocusNode _searchFocusNode = FocusNode();
   late Future<List<FriendList>> getData;
+  List<FriendList>? _previousData;
   Timer? _debounce;
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
   bool isLoading = false;
   bool _wasRefreshing = false;
+  bool isFirstLoading = true;
 
   static const double _maxDragOffset = 36;
 
@@ -140,6 +144,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorSchemes.gray000,
@@ -211,7 +216,12 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState ==
                     ConnectionState.waiting) {
-                  return const FriendScreenSkeleton();
+                  if (isFirstLoading) {
+                    return FriendScreenSkeleton();
+                  } else {
+                    _filteredFriendsNotifier.value = _previousData!;
+                    return _buildFriendList();
+                  }
                 } else if (snapshot.hasError) {
                   return const GlobalErrorWidget();
                 } else if (!snapshot.hasData ||
@@ -219,6 +229,8 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> {
                   return _buildEmptyFriendList();
                 } else {
                   friendList = snapshot.data!;
+                  _previousData = friendList;
+                  isFirstLoading = false;
                   if (_searchController.text.isNotEmpty) {
                     _filterFriends();
                   } else {
