@@ -392,15 +392,23 @@ class _MapSearchScreenState extends State<MapSearchScreen>
                   } else if (_filteredLocations.isEmpty) {
                     return Column(
                       children: [
-                        SizedBox(
-                          height: 24.h,
-                        ),
+                        SizedBox(height: 144.h),
                         Center(
                           child: Text(
                             '검색 결과가 없습니다',
                             style: Theme.of(context)
                                 .textTheme
-                                .body1
+                                .bigHeadLine3
+                                .copyWith(color: ColorSchemes.orange100),
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Center(
+                          child: Text(
+                            '검색어를 다시 확인해 주세요.',
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
                                 .copyWith(color: ColorSchemes.gray300),
                           ),
                         ),
