@@ -143,9 +143,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
     String location = modakbulDetailData!.location;
 
     DateTime utcDate = modakbulDetailData!.date;
-    DateTime kstDate = utcDate.add(const Duration(hours: 9));
     Intl.defaultLocale = 'ko_KR';
-    String date = DateFormat('MM.dd(E) a h시 m분').format(kstDate);
+    String date = DateFormat('MM.dd(E) a h시 m분').format(utcDate);
 
     List<UserStatus> users = modakbulDetailData!.users;
     UserStatus host = users.firstWhere((user) => user.id == hostId);
