@@ -59,7 +59,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
   List<FriendList> friendList = [];
   late Future<List<FriendSuggested>> getSug;
   late Future<List<FriendReqList>> getReq;
-  late DateTime currentTime;
+  late DateTime currentTime = DateTime.now();
   late AnimationController _lottieController;
   late FriendProvider _friendProvider;
   late Future<List<dynamic>> futureData;
