@@ -26,26 +26,23 @@ class FixedModakbulCard extends StatelessWidget {
         color: Colors.white,
         elevation: 0,
         margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(
-            StyleConstants.radiusMedium)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(StyleConstants.radiusMedium),
+        ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 24.h, 14.w, 18.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 20.sp * 23.87 / 20 * 2,
-                child: Text(
-                    title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme.bigHeadLine4
-                        .copyWith(
-                    color: ColorSchemes.gray400
-                    )
-                ),
+              Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context)
+                    .textTheme
+                    .bigHeadLine4
+                    .copyWith(color: ColorSchemes.gray400),
               ),
               SizedBox(height: 14.h),
               Row(
@@ -55,26 +52,24 @@ class FixedModakbulCard extends StatelessWidget {
                     height: 20.r,
                     child: Center(
                       child: SvgPicture.asset(
-                          IconPath.timeOrange100,
-                          width: 16.r
+                        IconPath.timeOrange100,
+                        width: 16.r,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 4.w,
-                  ),
-                  Text(
+                  SizedBox(width: 4.w),
+                  Expanded(
+                    child: Text(
                       date,
                       style: Theme.of(context)
-                          .textTheme.body3
-                          .copyWith(color: ColorSchemes.orange001
-                      )
-                  )
+                          .textTheme
+                          .body3
+                          .copyWith(color: ColorSchemes.orange001),
+                    ),
+                  ),
                 ],
               ),
-              SizedBox(
-                  height: 6.h
-              ),
+              SizedBox(height: 6.h),
               Row(
                 children: [
                   SizedBox(
@@ -82,26 +77,24 @@ class FixedModakbulCard extends StatelessWidget {
                     height: 20.r,
                     child: Center(
                       child: SvgPicture.asset(
-                          IconPath.pinDropOrange100,
-                          width: 12.r
+                        IconPath.pinDropOrange100,
+                        width: 12.r,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 4.w,
-                  ),
-                  Flexible(
+                  SizedBox(width: 4.w),
+                  Expanded(
                     child: Text(
-                        location,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme.body3
-                            .copyWith(color: ColorSchemes.orange001)
+                      location,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .body3
+                          .copyWith(color: ColorSchemes.orange001),
                     ),
-                  )
+                  ),
                 ],
               ),
-
             ],
           ),
         ),
