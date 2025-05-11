@@ -128,7 +128,7 @@ class GroupListTile extends StatelessWidget {
                               backgroundColor: ColorSchemes.white,
                               child: CircleAvatar(
                                 radius: StyleConstants.circleSizeXXXS,
-                                backgroundColor: ColorSchemes.gray300,
+                                backgroundColor: ColorSchemes.orange100,
                                 child: FittedBox(
                                   fit: BoxFit.fitWidth,
                                   child: Text(

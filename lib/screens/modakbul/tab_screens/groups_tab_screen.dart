@@ -303,6 +303,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                   SizedBox(height: 24.h),
                                   Row(
                                     children: [
+                                      SizedBox(width: 4.w),
                                       Text(
                                         filterText,
                                         style: Theme.of(context)
@@ -396,6 +397,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
                                                   .gray300),
                                         ),
                                       ),
+                                      SizedBox(width: 4.w),
                                     ],
                                   ),
                                   SizedBox(height: 14.h),

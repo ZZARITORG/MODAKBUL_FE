@@ -35,16 +35,30 @@ class FriendService {
   }
 
   Future<List<FriendReqList>> getFriendReqList() async {
-    Response response = await dio.get(ApiPath.friendReqList);
-    return JsonUtils().parseFriendReqList(response.data['data'] as List);
+    try {
+      Response response = await dio.get(ApiPath.friendReqList);
+      logger.i('getFriendReqList 성공 응답: ${response.data}');
+      return JsonUtils().parseFriendReqList(response.data['data'] as List);
+    } catch (e, stack) {
+      logger.e('getFriendReqList 오류: $e\n$stack');
+      rethrow;
+    }
   }
 
   Future<List<FriendSuggested>> getFriendSuggested(Contacts contacts) async {
-    Response response = await dio.post(ApiPath.friendSuggested,
-      data: contacts.toJson()
-    );
-    return JsonUtils().parseFriendSuggested(response.data['data'] as List);
+    try {
+      Response response = await dio.post(
+        ApiPath.friendSuggested,
+        data: contacts.toJson(),
+      );
+      logger.i('getFriendSuggested 성공 응답: ${response.data}');
+      return JsonUtils().parseFriendSuggested(response.data['data'] as List);
+    } catch (e, stack) {
+      logger.e('getFriendSuggested 오류: $e\n$stack');
+      rethrow;
+    }
   }
+
 
   Future<void> rejectFriend(Uuid uuid) async {
     await dio.post(

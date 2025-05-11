@@ -25,6 +25,10 @@ class CustomSearchBar extends StatelessWidget {
       child: TextField(
           controller: controller,
           focusNode: focusNode,
+          autocorrect: false,        // 자동 수정 비활성화
+          enableSuggestions: false,  // 제안어 비활성화
+          keyboardType: TextInputType.text, // 기본 텍스트 키보드
+          textInputAction: TextInputAction.search, // 검색 액션으로 설정
           style: Theme.of(context)
               .textTheme
               .body1

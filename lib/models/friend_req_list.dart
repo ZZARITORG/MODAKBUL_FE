@@ -4,7 +4,7 @@ class FriendReqList {
   final String name;
   final String profileUrl;
   final DateTime createdAt; // 새로운 createdAt 필드 추가
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   FriendReqList({
     required this.id,
@@ -16,13 +16,16 @@ class FriendReqList {
   });
 
   factory FriendReqList.fromJson(Map<String, dynamic> json) {
+    print('👀 FriendReqList raw json: $json');
     return FriendReqList(
       id: json['id'] as String,
       userId: json['userId'] as String,
       name: json['name'] as String,
       profileUrl: json['profileUrl'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String), // createdAt 파싱
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'] as String)
+            : null,
     );
   }
 
@@ -32,8 +35,8 @@ class FriendReqList {
       'userId': userId,
       'name': name,
       'profileUrl': profileUrl,
-      'createdAt': createdAt.toIso8601String(), // createdAt을 ISO 8601 형식으로 변환
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }

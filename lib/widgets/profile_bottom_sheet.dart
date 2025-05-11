@@ -6,10 +6,12 @@ import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/constants/style_constants.dart';
 import 'package:modakbul/models/user_check.dart';
 import 'package:modakbul/models/uuid.dart';
+import 'package:modakbul/providers/friend_provider.dart';
 import 'package:modakbul/services/friend_service.dart';
 import 'package:modakbul/themes/color_schemes.dart';
 import 'package:modakbul/themes/styles.dart';
 import 'package:modakbul/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
 
 class ProfileBottomSheet extends StatefulWidget {
   final UserCheck userCheckData;
@@ -30,6 +32,7 @@ class ProfileBottomSheet extends StatefulWidget {
 }
 
 class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
+  late FriendProvider _friendProvider;
   bool _isButtonDisabled = false;
 
   void _handleStatusChange(BuildContext context) {
@@ -49,6 +52,7 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
       await widget.friendService
           .requestFriend(Uuid(targetId: widget.selectedUserId));
       _handleStatusChange(context);
+      _friendProvider.updateUserStatus(widget.selectedUserId, 'PENDING');
     } catch (e) {
     } finally {
       Future.delayed(Duration(seconds: 1), () {
@@ -71,6 +75,7 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
       await widget.friendService
           .deleteFriend(Uuid(targetId: widget.selectedUserId));
       _handleStatusChange(context);
+      _friendProvider.updateUserStatus(widget.selectedUserId, 'NONE');
     } catch (e) {
     } finally {
       Future.delayed(Duration(seconds: 1), () {
@@ -106,6 +111,7 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    _friendProvider = Provider.of<FriendProvider>(context, listen: true);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

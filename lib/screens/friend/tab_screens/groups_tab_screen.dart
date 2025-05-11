@@ -288,7 +288,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
         children: [
           SizedBox(height: 10.h),
           CustomSearchBar(
-            hintText: '사용자를 검색해보세요.',
+            hintText: '그룹을 검색해보세요.',
             controller: _searchController,
             focusNode: _searchFocusNode,
           ),
@@ -407,7 +407,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> {
         children: [
           SizedBox(height: 10.h),
           CustomSearchBar(
-            hintText: '사용자를 검색해보세요.',
+            hintText: '그룹을 검색해보세요.',
             controller: _searchController,
             focusNode: _searchFocusNode,
           ),
