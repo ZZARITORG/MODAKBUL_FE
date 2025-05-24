@@ -15,7 +15,6 @@ import 'package:modakbul/widgets/alert_screen_skeleton.dart';
 import 'package:modakbul/widgets/back_button_app_bar.dart';
 import 'package:modakbul/widgets/global_error_widget.dart';
 import 'package:modakbul/models/notifications.dart';
-import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class AlertScreen extends StatefulWidget {
@@ -39,7 +38,8 @@ class _AlertScreenState extends State<AlertScreen> {
   void initState() {
     super.initState();
     initializeDateFormatting();
-    _notificationsFuture = notificationService.getNotifications().whenComplete(() {
+    _notificationsFuture =
+        notificationService.getNotifications().whenComplete(() {
       setState(() {
         isFirstLoading = false;
       });
@@ -98,25 +98,29 @@ class _AlertScreenState extends State<AlertScreen> {
     return {
       '오늘': sortNotifications(
         notifications.where((n) {
-          final d = DateTime(n.createdAt.year, n.createdAt.month, n.createdAt.day);
+          final local = n.createdAt.toLocal();
+          final d = DateTime(local.year, local.month, local.day);
           return d.isAtSameMomentAs(today);
         }).toList(),
       ),
       '어제': sortNotifications(
         notifications.where((n) {
-          final d = DateTime(n.createdAt.year, n.createdAt.month, n.createdAt.day);
+          final local = n.createdAt.toLocal();
+          final d = DateTime(local.year, local.month, local.day);
           return d.isAtSameMomentAs(yesterday);
         }).toList(),
       ),
       '최근 7일': sortNotifications(
         notifications.where((n) {
-          final d = DateTime(n.createdAt.year, n.createdAt.month, n.createdAt.day);
-          return d.isBefore(yesterday) && d.isAfter(weekAgo);
+          final local = n.createdAt.toLocal();
+          final d = DateTime(local.year, local.month, local.day);
+          return d.isBefore(yesterday) && !d.isBefore(weekAgo);
         }).toList(),
       ),
       '이전 활동': sortNotifications(
         notifications.where((n) {
-          final d = DateTime(n.createdAt.year, n.createdAt.month, n.createdAt.day);
+          final local = n.createdAt.toLocal();
+          final d = DateTime(local.year, local.month, local.day);
           return d.isBefore(weekAgo);
         }).toList(),
       ),
@@ -124,9 +128,8 @@ class _AlertScreenState extends State<AlertScreen> {
   }
 
   String formatTime(DateTime timeUtc) {
-    final time = timeUtc.add(const Duration(hours: 9));
-
-    final now = DateTime.now().add(const Duration(hours: 9));
+    final time = timeUtc.toLocal();
+    final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
     final d = DateTime(time.year, time.month, time.day);
@@ -171,20 +174,23 @@ class _AlertScreenState extends State<AlertScreen> {
                     child: Center(
                       child: controller.isLoading
                           ? Lottie.asset(
-                        width: 25.r,
-                        height: 25.r,
-                        AnimationPath.loadingFeed,
-                        animate: true,
-                      )
-                          : _getLoadingAsset(controller.value * _maxDragOffset) != null
-                          ? SvgPicture.asset(
-                        _getLoadingAsset(controller.value * _maxDragOffset)!,
-                        width: 25.r,
-                        height: 25.r,
-                        key: ValueKey<String>(_getLoadingAsset(
-                            controller.value * _maxDragOffset)!),
-                      )
-                          : const SizedBox.shrink(),
+                              width: 25.r,
+                              height: 25.r,
+                              AnimationPath.loadingFeed,
+                              animate: true,
+                            )
+                          : _getLoadingAsset(
+                                      controller.value * _maxDragOffset) !=
+                                  null
+                              ? SvgPicture.asset(
+                                  _getLoadingAsset(
+                                      controller.value * _maxDragOffset)!,
+                                  width: 25.r,
+                                  height: 25.r,
+                                  key: ValueKey<String>(_getLoadingAsset(
+                                      controller.value * _maxDragOffset)!),
+                                )
+                              : const SizedBox.shrink(),
                     ),
                   ),
                 ),
@@ -196,11 +202,13 @@ class _AlertScreenState extends State<AlertScreen> {
           );
         },
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          padding:
+              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: FutureBuilder<List<Notifications>>(
             future: _notificationsFuture,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting && isFirstLoading) {
+              if (snapshot.connectionState == ConnectionState.waiting &&
+                  isFirstLoading) {
                 return AlertScreenSkeleton();
               } else if (snapshot.hasError) {
                 return GlobalErrorWidget();
@@ -288,7 +296,10 @@ class _AlertScreenState extends State<AlertScreen> {
                         Routes.navigateTo(
                           context,
                           Routes.modakbulDetailScreen,
-                          arguments: {'id': notification.meetingId, 'isAccepted': false},
+                          arguments: {
+                            'id': notification.meetingId,
+                            'isAccepted': false
+                          },
                         );
                       }
                       break;
@@ -297,7 +308,10 @@ class _AlertScreenState extends State<AlertScreen> {
                         Routes.navigateTo(
                           context,
                           Routes.modakbulDetailScreen,
-                          arguments: {'id': notification.meetingId, 'isAccepted': true},
+                          arguments: {
+                            'id': notification.meetingId,
+                            'isAccepted': true
+                          },
                         );
                       }
                       break;
