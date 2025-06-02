@@ -35,14 +35,8 @@ class FriendService {
   }
 
   Future<List<FriendReqList>> getFriendReqList() async {
-    try {
       Response response = await dio.get(ApiPath.friendReqList);
-      logger.i('getFriendReqList 성공 응답: ${response.data}');
       return JsonUtils().parseFriendReqList(response.data['data'] as List);
-    } catch (e, stack) {
-      logger.e('getFriendReqList 오류: $e\n$stack');
-      rethrow;
-    }
   }
 
   Future<List<FriendSuggested>> getFriendSuggested(Contacts contacts) async {

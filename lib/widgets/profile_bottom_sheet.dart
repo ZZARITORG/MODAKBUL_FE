@@ -44,47 +44,58 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
 
   void _handleFriendRequest(BuildContext context) async {
     if (_isButtonDisabled) return;
+
     setState(() {
       _isButtonDisabled = true;
     });
 
+    _friendProvider.updateUserStatus(widget.selectedUserId, 'PENDING');
+    Navigator.pop(context);
+
     try {
-      await widget.friendService
-          .requestFriend(Uuid(targetId: widget.selectedUserId));
-      _handleStatusChange(context);
-      _friendProvider.updateUserStatus(widget.selectedUserId, 'PENDING');
+      widget.friendService.requestFriend(Uuid(targetId: widget.selectedUserId));
+      widget.onFriendStatusChanged?.call(widget.selectedUserId);
     } catch (e) {
+      _friendProvider.updateUserStatus(widget.selectedUserId, 'NONE');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('친구 요청에 실패했습니다.')),
+        );
+      }
     } finally {
-      Future.delayed(Duration(seconds: 1), () {
-        if (mounted) {
-          setState(() {
-            _isButtonDisabled = false;
-          });
-        }
-      });
+      if (mounted) {
+        setState(() {
+          _isButtonDisabled = false;
+        });
+      }
     }
   }
 
   void _handleFriendDeletion(BuildContext context) async {
     if (_isButtonDisabled) return;
+
     setState(() {
       _isButtonDisabled = true;
     });
+    _friendProvider.updateUserStatus(widget.selectedUserId, 'NONE');
+    Navigator.pop(context);
 
     try {
-      await widget.friendService
-          .deleteFriend(Uuid(targetId: widget.selectedUserId));
-      _handleStatusChange(context);
-      _friendProvider.updateUserStatus(widget.selectedUserId, 'NONE');
+      widget.friendService.deleteFriend(Uuid(targetId: widget.selectedUserId));
+      widget.onFriendStatusChanged?.call(widget.selectedUserId);
     } catch (e) {
+      _friendProvider.updateUserStatus(widget.selectedUserId, 'PENDING');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('친구 삭제에 실패했습니다.')),
+        );
+      }
     } finally {
-      Future.delayed(Duration(seconds: 1), () {
-        if (mounted) {
-          setState(() {
-            _isButtonDisabled = false;
-          });
-        }
-      });
+      if (mounted) {
+        setState(() {
+          _isButtonDisabled = false;
+        });
+      }
     }
   }
 
@@ -93,19 +104,25 @@ class _ProfileBottomSheetState extends State<ProfileBottomSheet> {
     setState(() {
       _isButtonDisabled = true;
     });
+    _friendProvider.updateUserStatus(widget.selectedUserId, 'FRIEND');
+    Navigator.pop(context);
+
     try {
-      await widget.friendService
-          .acceptFriend(Uuid(targetId: widget.selectedUserId));
-      _handleStatusChange(context);
+      widget.friendService.acceptFriend(Uuid(targetId: widget.selectedUserId));
+      widget.onFriendStatusChanged?.call(widget.selectedUserId);
     } catch (e) {
+      _friendProvider.updateUserStatus(widget.selectedUserId, 'RECEIVED');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('친구 수락에 실패했습니다.')),
+        );
+      }
     } finally {
-      Future.delayed(Duration(seconds: 1), () {
-        if (mounted) {
-          setState(() {
-            _isButtonDisabled = false;
-          });
-        }
-      });
+      if (mounted) {
+        setState(() {
+          _isButtonDisabled = false;
+        });
+      }
     }
   }
 

@@ -42,18 +42,20 @@ class _SuggestedFriendProfileState extends State<SuggestedFriendProfile> {
 
   Future<void> handleAcceptPress() async {
     final currentStatus = _friendProvider.userStatusList?.firstWhere((map) => map['id'] == widget.userId)['status'];
+    final newStatus = currentStatus == 'PENDING' ? 'NONE' : 'PENDING';
+    _friendProvider.updateUserStatus(widget.userId, newStatus);
     try {
       if (currentStatus == 'PENDING') {
-        await widget.deleteFriend(Uuid(targetId: widget.userId));
-        _friendProvider.updateUserStatus(widget.userId, 'NONE');
+        widget.deleteFriend(Uuid(targetId: widget.userId));
       } else {
-        await widget.requestFriend(Uuid(targetId: widget.userId));
-        _friendProvider.updateUserStatus(widget.userId, 'PENDING');
+        widget.requestFriend(Uuid(targetId: widget.userId));
       }
-      //widget.onFriendStatusChanged(_statusNotifier.value);
     } catch (e) {
-      // 에러 처리
+      _friendProvider.updateUserStatus(widget.userId, currentStatus ?? 'NONE');
       print('친구 상태 변경 중 오류 발생: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('네트워크 오류가 발생했습니다. 다시 시도해주세요.')),
+      );
     }
   }
 
