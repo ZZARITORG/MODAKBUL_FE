@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,9 +55,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     FirebaseMessagingService().initialize();
     // foreground 수신처리
-    // FirebaseMessaging.onMessage.listen(FirebaseMessagingService().showFlutterNotification);
+    FirebaseMessaging.onMessage.listen(FirebaseMessagingService().showFlutterNotification);
     // background 수신처리
-    // FirebaseMessaging.onBackgroundMessage(FirebaseMessagingService().firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(FirebaseMessagingService().firebaseMessagingBackgroundHandler);
   }
   @override
   Widget build(BuildContext context) {
