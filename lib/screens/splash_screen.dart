@@ -10,7 +10,10 @@ import 'package:modakbul/constants/app_constants.dart';
 import 'package:modakbul/constants/assets_path.dart';
 import 'package:modakbul/routes/routes.dart';
 import 'package:modakbul/services/health_check_service.dart';
+import 'package:modakbul/services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/my_profile.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,6 +24,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   HealthCheckService healthCheckService = HealthCheckService();
+  UserService userService = UserService();
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
   Logger logger = Logger(
@@ -54,6 +58,19 @@ class _SplashScreenState extends State<SplashScreen> {
           await healthCheckService.healthCheck();
 
           await prefs.setString(AppConstants.phoneNumber, phoneNumber);
+          MyProfile myProfile = await userService.getMyProfile();
+
+          if(myProfile.userId != prefs.getString(AppConstants.userId)){
+            prefs.setString(AppConstants.userId, myProfile.userId);
+          }
+
+          if(myProfile.userId != prefs.getString(AppConstants.userName)){
+            prefs.setString(AppConstants.userName, myProfile.userName);
+          }
+
+          if(myProfile.profileUrl != prefs.getString(AppConstants.profileUrl)){
+            prefs.setString(AppConstants.profileUrl, myProfile.profileUrl);
+          }
 
           if(!context.mounted) return;
           Routes.navigateSplashReplacement(context, Routes.mainScreen);
