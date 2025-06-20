@@ -15,19 +15,19 @@ class LocationManager {
         .toList();
 
     // x와 y가 겹치는 데이터가 있는지 확인
-    bool isDuplicate = decodedLocations.any((existingLocation) =>
-        existingLocation['x'] == location['x'] &&
+    int existingIndex = decodedLocations.indexWhere((existingLocation) =>
+    existingLocation['x'] == location['x'] &&
         existingLocation['y'] == location['y'] &&
         existingLocation['placeName'] == location['placeName']);
 
-    // 중복된 데이터라면 추가하지 않음
-    if (isDuplicate) {
-      print('중복된 위치입니다. 추가하지 않습니다.');
-      return;
+    // 중복이면 제거
+    if (existingIndex != -1) {
+      locations.removeAt(existingIndex);
     }
 
     // 새로운 장소 데이터를 JSON 문자열로 변환 후 추가
-    locations.add(jsonEncode(location));
+    //locations.add(jsonEncode(location));
+    locations.insert(0, jsonEncode(location));
 
     // 10개 초과 시 가장 오래된 데이터 삭제
     if (locations.length > _maxLocations) {
