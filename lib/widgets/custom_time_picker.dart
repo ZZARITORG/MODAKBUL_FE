@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modakbul/providers/meeting_provider.dart';
 import 'package:modakbul/themes/color_schemes.dart';
@@ -102,6 +103,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                   controller: FixedExtentScrollController(
                       initialItem: selectedPeriod == '오전' ? 0 : 1),
                   onSelectedItemChanged: (index) {
+                    HapticFeedback.lightImpact();
                     setState(() {
                       selectedPeriod = index == 0 ? '오전' : '오후';
                       selectedHour = selectedPeriod == '오전' ? selectedHour! % 12 : selectedHour! + 12;
@@ -142,6 +144,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                   controller: FixedExtentScrollController(
                       initialItem: selectedHour!),
                   onSelectedItemChanged: (index) {
+                    HapticFeedback.lightImpact();
                     setState(() {
                       ///12시 일경우 0으로 바꿔야댐
                       selectedHour = selectedPeriod == '오전' ? index : index + 12;  // 1부터 12까지
@@ -186,6 +189,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                   controller: FixedExtentScrollController(
                       initialItem: selectedMinute!),
                   onSelectedItemChanged: (index) {
+                    HapticFeedback.lightImpact();
                     setState(() {
                       selectedMinute = index % 60;
                     });
