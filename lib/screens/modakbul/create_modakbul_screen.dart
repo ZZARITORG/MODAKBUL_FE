@@ -81,6 +81,7 @@ class _CreateModakbulScreenState extends State<CreateModakbulScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
             child: Padding(
                   padding:
                   EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
