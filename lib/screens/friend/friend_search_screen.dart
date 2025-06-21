@@ -71,6 +71,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
   bool showLottie = false;
   bool isEnd = false;
   bool isFirstLoading = true;
+  bool _isModalLoading = false;
+  int _loadingIndex = -1;
   int page = 1;
 
   static const double _maxDragOffset = 36;
@@ -448,14 +450,12 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
           Expanded(
             child: NotificationListener<ScrollNotification>(
               onNotification: (notification) {
-                // 스크롤 시작 시 키보드 내리기
                 if (notification is ScrollStartNotification) {
                   FocusScope.of(context).unfocus();
                 }
                 return false;
               },
               child: GestureDetector(
-                // 화면 터치 시 키보드 내리기
                 onTap: () {
                   FocusScope.of(context).unfocus();
                 },
@@ -470,48 +470,51 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                       return GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         onTap: () async {
+                          if (_isModalLoading) return;
                           FocusScope.of(context).unfocus();
                           final selectedUser = userList[index];
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            isDismissible: true,
-                            enableDrag: false,
-                            builder: (BuildContext context) {
-                              return FutureBuilder<UserCheck>(
-                                future: userService.getUserCheck(userList[index].id),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return Container(
-                                      height: 304.h,
-                                      child: Center(child: SizedBox.shrink()),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return Container(
-                                      height: 304.h,
-                                      child: Center(child: Text('Error: ${snapshot.error}')),
-                                    );
-                                  } else {
-                                    UserCheck userCheckData = snapshot.data!;
-                                    if (userCheckData.status == 'BLOCKED') {
-                                      return SizedBox.shrink();
-                                    }
-                                    return ProfileBottomSheet(
-                                      userCheckData: userCheckData,
-                                      selectedUserId: selectedUser.id,
-                                      friendService: friendService,
-                                      onFriendStatusChanged: updateFriendStatus,
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          );
+                          setState(() {
+                            _isModalLoading = true;
+                            _loadingIndex = index;
+                          });
+                          try {
+                            UserCheck userCheckData = await userService.getUserCheck(userList[index].id);
+                            setState(() {
+                              _isModalLoading = false;
+                              _loadingIndex = -1;
+                            });
+                            if (userCheckData.status == 'BLOCKED') {
+                              return;
+                            }
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              isDismissible: true,
+                              enableDrag: false,
+                              builder: (BuildContext context) {
+                                return ProfileBottomSheet(
+                                  userCheckData: userCheckData,
+                                  selectedUserId: selectedUser.id,
+                                  friendService: friendService,
+                                  onFriendStatusChanged: updateFriendStatus,
+                                );
+                              },
+                            );
+                          } catch (error) {
+                            setState(() {
+                              _isModalLoading = false;
+                              _loadingIndex = -1;
+                            });
+                          }
                         },
-                        child: Participantlistprofile(
-                          userName: user.name,
-                          userId: user.userId,
-                          profileImage: user.profileUrl,
+                        child: Stack(
+                          children: [
+                            Participantlistprofile(
+                              userName: user.name,
+                              userId: user.userId,
+                              profileImage: user.profileUrl,
+                            ),
+                          ],
                         ),
                       );
                     } else if (index == userList.length && showLottie) {
