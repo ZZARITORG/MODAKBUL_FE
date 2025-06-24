@@ -21,30 +21,36 @@ import 'firebase_options.dart';
 
 late SharedPreferences prefs;
 
+@pragma('vm:entry-point')
+Future<void> _firebaseBackgroundHandler(RemoteMessage msg) =>
+    FirebaseMessagingService.firebaseMessagingBackgroundHandler(msg);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // 백그라운드 메시지 핸들러 등록
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+
+  // 로컬 노티 설정 & 토큰
   await FirebaseMessagingService().setupFlutterNotifications();
-  // FirebaseMessagingService().initialize;
+  FirebaseMessagingService().getToken();
+
   await dotenv.load();
   AuthRepository.initialize(appKey: ApiPath.appKey);
+
   runApp(
     ScreenUtilInit(
-      designSize: const Size(393, 852), // 디자인 기준의 크기 (너비, 높이)
+      designSize: const Size(393, 852),
       minTextAdapt: true,
-      builder: (context, child) {
-        return MyApp(); // Your root widget
-      },
+      builder: (_, __) => const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -53,12 +59,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    // 클릭 핸들러 등록
     FirebaseMessagingService().initialize();
-    // foreground 수신처리
-    FirebaseMessaging.onMessage.listen(FirebaseMessagingService().showFlutterNotification);
-    // background 수신처리
-    FirebaseMessaging.onBackgroundMessage(FirebaseMessagingService().firebaseMessagingBackgroundHandler);
+    // foreground 데이터-only 처리
+    FirebaseMessagingService().registerForegroundHandler();
   }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -72,9 +78,9 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         navigatorKey: GlobalVariable.navState,
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        routes: Routes.routes,
+        title: '모닥불',
         theme: Styles.kThemeData,
+        routes: Routes.routes,
         home: const SplashScreen(),
       ),
     );

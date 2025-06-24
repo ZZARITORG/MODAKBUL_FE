@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>BGTaskSchedulerPermittedIdentifiers</key>
-    <array>
-        <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-    </array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -83,6 +83,8 @@
 	<string>$(PRODUCT_NAME) camera description.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>연락처 동기화를 위해 연락처 접근 권한이 필요합니다.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>백그라운드에서도 알림을 위해 위치 정보를 항상 사용합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>NSLocationAlwaysUsageDescription</string>
 	<key>NSPhotoLibraryUsageDescription</key>

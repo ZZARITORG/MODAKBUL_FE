@@ -44,7 +44,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
   bool isLoading = true;
 
   MeetingService meetingService = MeetingService();
-  FriendService  friendService = FriendService();
+  FriendService friendService = FriendService();
   UserService userService = UserService();
 
   @override
@@ -64,7 +64,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
 
   Future<void> _loadData() async {
     final Map<String, dynamic>? arguments =
-    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final String? id = arguments?['id'];
 
     try {
@@ -77,7 +77,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
 
       setState(() {
         modakbulDetailData = modakbulDetail;
-        blockedUsersData = (responses[0] as List<dynamic>?)?.cast<BlockedUser>() ?? [];
+        blockedUsersData =
+            (responses[0] as List<dynamic>?)?.cast<BlockedUser>() ?? [];
         myUserId = (responses[1] as dynamic).userId as String;
         hostUserCheck = responses[2] as UserCheck;
         isLoading = false;
@@ -87,17 +88,17 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
           .where((user) => user.id != modakbulDetailData!.hostId)
           .toList();
 
-      UserStatus host = modakbulDetailData!.users.firstWhere((user) => user.id == modakbulDetailData!.hostId);
+      UserStatus host = modakbulDetailData!.users
+          .firstWhere((user) => user.id == modakbulDetailData!.hostId);
       bool isHost = myUserId == host.userId;
 
-      bool hasBlockedParticipant = participantUsers.any(
-              (participant) => blockedUsersData.any(
-                  (blockedUser) => blockedUser.id == participant.id
-          )
-      );
+      bool hasBlockedParticipant = participantUsers.any((participant) =>
+          blockedUsersData
+              .any((blockedUser) => blockedUser.id == participant.id));
 
       if (hasBlockedParticipant) {
-        CustomToast.showToast(context, '차단된 사용자가 있습니다!', false, customBottom: isHost ? 16.h : 86.h);
+        CustomToast.showToast(context, '차단된 사용자가 있습니다!', false,
+            customBottom: isHost ? 16.h : 86.h);
       }
     } catch (e) {
       setState(() {
@@ -109,7 +110,7 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic>? arguments =
-    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final bool isAccepted = arguments?['isAccepted'] ?? false;
 
     if (isLoading) {
@@ -148,7 +149,8 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
 
     List<UserStatus> users = modakbulDetailData!.users;
     UserStatus host = users.firstWhere((user) => user.id == hostId);
-    List<UserStatus> participantUsers = users.where((user) => user.id != hostId).toList();
+    List<UserStatus> participantUsers =
+        users.where((user) => user.id != hostId).toList();
     double lat = modakbulDetailData!.lat;
     double lng = modakbulDetailData!.lng;
 
@@ -215,9 +217,12 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                   SizedBox(width: 4.w),
                                   Text(
                                     date,
-                                    style: Theme.of(context).textTheme.body2.copyWith(
-                                        color: ColorSchemes.orange200,
-                                        height: 1.5),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .body2
+                                        .copyWith(
+                                            color: ColorSchemes.orange200,
+                                            height: 1.5),
                                   )
                                 ],
                               ),
@@ -225,16 +230,22 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                               Text(
                                 title,
                                 overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bigHeadLine3.copyWith(
-                                  color: ColorSchemes.gray500,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bigHeadLine3
+                                    .copyWith(
+                                      color: ColorSchemes.gray500,
+                                    ),
                               ),
                               SizedBox(height: 8.h),
                               Text(
                                 content,
-                                style: Theme.of(context).textTheme.body2.copyWith(
-                                    color: ColorSchemes.gray400,
-                                    height: 26 / 16),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body2
+                                    .copyWith(
+                                        color: ColorSchemes.gray400,
+                                        height: 26 / 16),
                               ),
                             ],
                           ),
@@ -244,33 +255,39 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       '위치',
-                                      style: Theme.of(context).textTheme.bigHeadLine4.copyWith(
-                                          color: ColorSchemes.gray400,
-                                          height: 1.193),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bigHeadLine4
+                                          .copyWith(
+                                              color: ColorSchemes.gray400,
+                                              height: 1.193),
                                     ),
                                     GestureDetector(
-                                      onTap: () => Routes.navigateTo(
-                                          context,
+                                      onTap: () => Routes.navigateTo(context,
                                           Routes.modakbulMapDetailScreen,
                                           arguments: {
                                             'address': address,
                                             'lat': lat,
                                             'lng': lng,
                                             'detailAddress': detailAddress,
-                                            'location' : location,
+                                            'location': location,
                                           }),
                                       behavior: HitTestBehavior.opaque,
                                       child: Row(
                                         children: [
                                           Text(
                                             '상세 보기',
-                                            style: Theme.of(context).textTheme.body2.copyWith(
-                                                color: ColorSchemes.gray200,
-                                                height: 1.5),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .body2
+                                                .copyWith(
+                                                    color: ColorSchemes.gray200,
+                                                    height: 1.5),
                                           ),
                                           SizedBox(width: 6.w),
                                           SvgPicture.asset(
@@ -306,25 +323,27 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                         StyleConstants.radiusMedium),
                                     child: StatefulBuilder(
                                         builder: (context, setInState) {
-                                          return KakaoMap(
-                                            onMapCreated: ((controller) async {
-                                              mapController = controller;
-                                              mapController.setDraggable(false);
-                                              markers.add(Marker(
-                                                markerId: UniqueKey().toString(),
-                                                latLng: await mapController.getCenter(),
-                                                width: 20,
-                                                height: 28,
-                                                offsetX: 10,
-                                                offsetY: 28,
-                                                markerImageSrc: 'https://zzarit-madakbul-bucket.s3.ap-northeast-2.amazonaws.com/asset/pin_circle_modak.png',
-                                              ));
-                                              setInState(() {});
-                                            }),
-                                            markers: markers.toList(),
-                                            center: LatLng(lat, lng),
-                                          );
+                                      return KakaoMap(
+                                        onMapCreated: ((controller) async {
+                                          mapController = controller;
+                                          mapController.setDraggable(false);
+                                          markers.add(Marker(
+                                            markerId: UniqueKey().toString(),
+                                            latLng:
+                                                await mapController.getCenter(),
+                                            width: 20,
+                                            height: 28,
+                                            offsetX: 10,
+                                            offsetY: 28,
+                                            markerImageSrc:
+                                                'https://zzarit-madakbul-bucket.s3.ap-northeast-2.amazonaws.com/asset/pin_circle_modak.png',
+                                          ));
+                                          setInState(() {});
                                         }),
+                                        markers: markers.toList(),
+                                        center: LatLng(lat, lng),
+                                      );
+                                    }),
                                   ),
                                 ),
                               ),
@@ -337,17 +356,27 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                       fit: BoxFit.fitWidth,
                                       child: Text(
                                         location,
-                                        style: Theme.of(context).textTheme.body3.copyWith(
-                                            color: ColorSchemes.gray300,
-                                            height: 1.571),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .body3
+                                            .copyWith(
+                                                color: ColorSchemes.gray300,
+                                                height: 1.571),
                                       ),
                                     ),
                                   ),
                                   SizedBox(width: 12.w),
                                   GestureDetector(
                                     onTap: () {
-                                      Clipboard.setData(ClipboardData(text: address));
-                                      CustomToast.showToast(context, '주소가 복사되었습니다.', false, customBottom: 86.h);
+                                      Clipboard.setData(
+                                          ClipboardData(text: address));
+                                      isHost
+                                          ? CustomToast.showToast(
+                                              context, '주소가 복사되었습니다.', false,
+                                              customBottom: 30.h)
+                                          : CustomToast.showToast(
+                                              context, '주소가 복사되었습니다.', false,
+                                              customBottom: 86.h);
                                     },
                                     child: Row(
                                       children: [
@@ -358,9 +387,12 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                                         SizedBox(width: 2.w),
                                         Text(
                                           '복사',
-                                          style: Theme.of(context).textTheme.body3.copyWith(
-                                              color: ColorSchemes.orange100,
-                                              height: 1.571),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .body3
+                                              .copyWith(
+                                                  color: ColorSchemes.orange100,
+                                                  height: 1.571),
                                         ),
                                       ],
                                     ),
@@ -401,20 +433,24 @@ class _ModakbulDetailScreenState extends State<ModakbulDetailScreen> {
                             height: 56.h,
                             child: !isHost
                                 ? CustomButton(
-                                text: isAccepted ? '모닥불 취소하기' : '모닥불 참여하기',
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      builder: (BuildContext bottomSheetContext) {
-                                        return ParticipateBottomSheet(
-                                            meetingId: modakbulDetailData!.id,
-                                            isAccepted: isAccepted);
-                                      });
-                                },
-                                buttonColor: ColorSchemes.orange200,
-                                textStyle: Theme.of(context).textTheme.smallHeadLine2,
-                                textColor: ColorSchemes.white)
+                                    text: isAccepted ? '모닥불 취소하기' : '모닥불 참여하기',
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (BuildContext
+                                              bottomSheetContext) {
+                                            return ParticipateBottomSheet(
+                                                meetingId:
+                                                    modakbulDetailData!.id,
+                                                isAccepted: isAccepted);
+                                          });
+                                    },
+                                    buttonColor: ColorSchemes.orange200,
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .smallHeadLine2,
+                                    textColor: ColorSchemes.white)
                                 : SizedBox.shrink())),
                   ],
                 ))
