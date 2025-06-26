@@ -146,6 +146,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> with AutomaticKeepAli
     });
 
     getData = groupService.getGroupList();
+    final data = await getData;
     _filteredGroupsNotifier.value = [];
 
     setState(() {
@@ -191,8 +192,7 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> with AutomaticKeepAli
           triggerMode: IndicatorTriggerMode.onEdge,
           offsetToArmed: _maxDragOffset,
           onRefresh: _refreshData,
-          builder: (BuildContext context, Widget child,
-              IndicatorController controller) {
+          builder: (context, child, controller) {
             if (controller.isLoading && !_wasRefreshing) {
               HapticFeedback.lightImpact();
               _wasRefreshing = true;
@@ -256,16 +256,17 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> with AutomaticKeepAli
                   if (isFirstLoading) {
                     return GroupScreenSkeleton();
                   } else {
-                    _filteredGroupsNotifier.value = groupList;
-                    return _buildGroupList();
+                    _filteredGroupsNotifier.value = _previousData!;
+                    if (_previousData!.isEmpty) {
+                      return _buildEmptyGroupList();
+                    } else {
+                      return _buildGroupList();
+                    }
                   }
                 } else if (snapshot.hasError) {
                   return const GlobalErrorWidget();
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  _filteredGroupsNotifier.value = [];
-                  return _buildEmptyGroupList();
                 } else {
-                  groupList = snapshot.data!;
+                  groupList = snapshot.data ?? [];
                   _previousData = groupList;
                   isFirstLoading = false;
                   if (_searchController.text.isNotEmpty) {
@@ -273,11 +274,14 @@ class _GroupsTabScreenState extends State<GroupsTabScreen> with AutomaticKeepAli
                   } else {
                     _filteredGroupsNotifier.value = groupList;
                   }
+                  if (groupList.isEmpty) {
+                    return _buildEmptyGroupList();
+                  }
                   return _buildGroupList();
                 }
               },
             ),
-          ),
+          )
         ),
       ),
     );

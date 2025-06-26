@@ -41,11 +41,11 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> with AutomaticKeepA
   List<FriendList>? _previousData;
   Timer? _debounce;
   ValueNotifier<List<FriendList>> _filteredFriendsNotifier = ValueNotifier([]);
-  bool isLoading = false;
-  bool _wasRefreshing = false;
   bool isFirstLoading = true;
 
   static const double _maxDragOffset = 36;
+  bool isLoading = false;
+  bool _wasRefreshing = false;
 
   @override
   void initState() {
@@ -108,6 +108,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> with AutomaticKeepA
     });
 
     getData = friendService.getFriendList();
+    final data = await getData;
     _filteredFriendsNotifier.value = [];
 
     setState(() {
@@ -115,120 +116,100 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> with AutomaticKeepA
     });
   }
 
-  String? _getLoadingAsset(double offset) {
-    if (offset < 0.1) return null;
+  String _getLoadingAsset(double offset) {
     int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
     segment = segment.clamp(1, 8);
-
     switch (segment) {
-      case 1:
-        return AnimationPath.loading1;
-      case 2:
-        return AnimationPath.loading2;
-      case 3:
-        return AnimationPath.loading3;
-      case 4:
-        return AnimationPath.loading4;
-      case 5:
-        return AnimationPath.loading5;
-      case 6:
-        return AnimationPath.loading6;
-      case 7:
-        return AnimationPath.loading7;
-      case 8:
-        return AnimationPath.loading8;
-      default:
-        return AnimationPath.loading1;
+      case 1: return AnimationPath.loading1;
+      case 2: return AnimationPath.loading2;
+      case 3: return AnimationPath.loading3;
+      case 4: return AnimationPath.loading4;
+      case 5: return AnimationPath.loading5;
+      case 6: return AnimationPath.loading6;
+      case 7: return AnimationPath.loading7;
+      case 8: return AnimationPath.loading8;
+      default: return AnimationPath.loading1;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: ColorSchemes.gray000,
-      body: SafeArea(
-        child: CustomRefreshIndicator(
-          triggerMode: IndicatorTriggerMode.onEdge,
-          offsetToArmed: _maxDragOffset,
-          onRefresh: _refreshData,
-          builder: (BuildContext context, Widget child,
-              IndicatorController controller) {
-            if (controller.isLoading && !_wasRefreshing) {
-              HapticFeedback.lightImpact();
-              _wasRefreshing = true;
-            } else if (!controller.isLoading && _wasRefreshing) {
-              _wasRefreshing = false;
-            }
-            return Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                if (!controller.isIdle)
-                  Positioned(
-                    top: 10.h,
-                    child: SizedBox(
-                      height: 32,
-                      width: 32,
-                      child: Center(
-                        child: controller.isLoading
-                            ? Lottie.asset(
-                                width: 25.r,
-                                height: 25.r,
-                                AnimationPath.loadingFeed,
-                                animate: controller.isLoading,
-                              )
-                            : AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 200),
-                                transitionBuilder: (Widget child,
-                                    Animation<double> animation) {
-                                  return child;
-                                },
-                                child: _getLoadingAsset(controller.value *
-                                            _maxDragOffset) !=
-                                        null
-                                    ? SvgPicture.asset(
-                                        _getLoadingAsset(
-                                            controller.value * _maxDragOffset)!,
-                                        width: 25.r,
-                                        height: 25.r,
-                                        key: ValueKey<String>(_getLoadingAsset(
-                                            controller.value *
-                                                _maxDragOffset)!),
-                                      )
-                                    : const SizedBox.shrink(),
-                              ),
+    return CustomRefreshIndicator(
+        triggerMode: IndicatorTriggerMode.anywhere,
+        offsetToArmed: _maxDragOffset,
+        onRefresh: _refreshData,
+        builder: (BuildContext context,
+            Widget child,
+            IndicatorController controller) {
+          if (controller.isLoading && !_wasRefreshing) {
+            HapticFeedback.lightImpact();
+            _wasRefreshing = true;
+          } else if (!controller.isLoading && _wasRefreshing) {
+            _wasRefreshing = false;
+          }
+          return Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              if (!controller.isIdle)
+                Positioned(
+                  top: 10.h,
+                  child: SizedBox(
+                    height: 32,
+                    width: 32,
+                    child: Center(
+                      child: controller.isLoading
+                          ? Lottie.asset(
+                        width: 25.r,
+                        height: 25.r,
+                        AnimationPath.loadingFeed,
+                        animate: controller.isLoading,
+                      )
+                          : AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        transitionBuilder: (c, a) => c,
+                        child: SvgPicture.asset(
+                          _getLoadingAsset(controller.value * _maxDragOffset),
+                          width: 25.r,
+                          height: 25.r,
+                          key: ValueKey(
+                              _getLoadingAsset(controller.value * _maxDragOffset)),
+                        ),
                       ),
                     ),
                   ),
-                Transform.translate(
-                  offset: Offset(0, _maxDragOffset * controller.value),
-                  child: child,
                 ),
-              ],
-            );
-          },
-          child: GestureDetector(
+              Transform.translate(
+                offset: Offset(0, _maxDragOffset * controller.value),
+                child: child,
+              ),
+            ],
+          );
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: ColorSchemes.gray000,
+          body: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
             child: FutureBuilder<List<FriendList>>(
               future: getData,
               builder: (context, snapshot) {
-                if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   if (isFirstLoading) {
                     return FriendScreenSkeleton();
                   } else {
                     _filteredFriendsNotifier.value = _previousData!;
-                    return _buildFriendList();
+                    if (_previousData!.isEmpty) {
+                      return _buildEmptyFriendList();
+                    } else {
+                      return _buildFriendList();
+                    }
                   }
                 } else if (snapshot.hasError) {
                   return const GlobalErrorWidget();
-                } else if (!snapshot.hasData ||
-                    snapshot.data!.isEmpty) {
-                  return _buildEmptyFriendList();
                 } else {
-                  friendList = snapshot.data!;
+                  friendList = snapshot.data ?? [];
                   _previousData = friendList;
                   isFirstLoading = false;
                   if (_searchController.text.isNotEmpty) {
@@ -236,13 +217,15 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> with AutomaticKeepA
                   } else {
                     _filteredFriendsNotifier.value = friendList;
                   }
+                  if (friendList.isEmpty) {
+                    return _buildEmptyFriendList();
+                  }
                   return _buildFriendList();
                 }
               },
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -358,14 +341,14 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> with AutomaticKeepA
                 );
               }
               return ListView.builder(
+                primary: false,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: filteredFriends.length,
                 itemBuilder: (context, index) {
                   final friend = filteredFriends[index];
                   return GestureDetector(
-                    behavior: HitTestBehavior
-                        .translucent,
+                    behavior: HitTestBehavior.translucent,
                     onTap: () async {
                       showModalBottomSheet(
                         isScrollControlled: true,
@@ -397,6 +380,7 @@ class _FriendsTabScreenState extends State<FriendsTabScreen> with AutomaticKeepA
                       userId: friend.userId,
                       profileImage: friend.profileUrl,
                       onIconPressed: () {
+                        FocusScope.of(context).unfocus();
                         showModalBottomSheet(
                           isScrollControlled: true,
                           isDismissible: true,

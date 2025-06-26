@@ -71,6 +71,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
   bool showLottie = false;
   bool isEnd = false;
   bool isFirstLoading = true;
+  bool _isModalLoading = false;
+  int _loadingIndex = -1;
   int page = 1;
 
   static const double _maxDragOffset = 36;
@@ -98,30 +100,19 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
     }
   }
 
-  String? _getLoadingAsset(double offset) {
-    if (offset < 0.1) return null;
+  String _getLoadingAsset(double offset) {
     int segment = ((offset / _maxDragOffset) * 8).floor() + 1;
     segment = segment.clamp(1, 8);
-
     switch (segment) {
-      case 1:
-        return AnimationPath.loading1;
-      case 2:
-        return AnimationPath.loading2;
-      case 3:
-        return AnimationPath.loading3;
-      case 4:
-        return AnimationPath.loading4;
-      case 5:
-        return AnimationPath.loading5;
-      case 6:
-        return AnimationPath.loading6;
-      case 7:
-        return AnimationPath.loading7;
-      case 8:
-        return AnimationPath.loading8;
-      default:
-        return AnimationPath.loading1;
+      case 1: return AnimationPath.loading1;
+      case 2: return AnimationPath.loading2;
+      case 3: return AnimationPath.loading3;
+      case 4: return AnimationPath.loading4;
+      case 5: return AnimationPath.loading5;
+      case 6: return AnimationPath.loading6;
+      case 7: return AnimationPath.loading7;
+      case 8: return AnimationPath.loading8;
+      default: return AnimationPath.loading1;
     }
   }
 
@@ -133,13 +124,15 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
     getReq = friendService.getFriendReqList();
     await getContacts();
     await _initializeCurrentTime();
-    futureData = fetchData();
+
+    final newData = await fetchData();
 
     if (isSearching && _searchController.text.isNotEmpty) {
       await fetchAllUsers(_searchController.text.trim());
     }
 
     setState(() {
+      futureData = Future.value(newData);
       isLoading = false;
     });
   }
@@ -277,14 +270,14 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
       ),
       body: SafeArea(
         child: CustomRefreshIndicator(
-          triggerMode: IndicatorTriggerMode.onEdge,
+          triggerMode: IndicatorTriggerMode.anywhere,
           offsetToArmed: _maxDragOffset,
           onRefresh: _refreshData,
           builder: (
-            BuildContext context,
-            Widget child,
-            IndicatorController controller,
-          ) {
+              BuildContext context,
+              Widget child,
+              IndicatorController controller,
+              ) {
             if (controller.isLoading && !_wasRefreshing) {
               HapticFeedback.lightImpact();
               _wasRefreshing = true;
@@ -294,7 +287,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
             return Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
-                if (!controller.isIdle)
+                if (!controller.isIdle && controller.value > 0.01)
                   Positioned(
                     top: 16.h,
                     child: SizedBox(
@@ -303,32 +296,22 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                       child: Center(
                         child: controller.isLoading
                             ? Lottie.asset(
-                                width: 25.r,
-                                height: 25.r,
-                                AnimationPath.loadingFeed,
-                                animate: controller.isLoading,
-                              )
+                          width: 25.r,
+                          height: 25.r,
+                          AnimationPath.loadingFeed,
+                          animate: controller.isLoading,
+                        )
                             : AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 200),
-                                transitionBuilder: (Widget child,
-                                    Animation<double> animation) {
-                                  return child;
-                                },
-                                child: _getLoadingAsset(controller.value *
-                                            _maxDragOffset) !=
-                                        null
-                                    ? SvgPicture.asset(
-                                        _getLoadingAsset(controller.value *
-                                            _maxDragOffset)!,
-                                        width: 25.r,
-                                        height: 25.r,
-                                        key: ValueKey<String>(
-                                            _getLoadingAsset(
-                                                controller.value *
-                                                    _maxDragOffset)!),
-                                      )
-                                    : const SizedBox.shrink(),
-                              ),
+                          duration: const Duration(milliseconds: 200),
+                          transitionBuilder: (c, a) => c,
+                          child: SvgPicture.asset(
+                            _getLoadingAsset(controller.value * _maxDragOffset),
+                            width: 25.r,
+                            height: 25.r,
+                            key: ValueKey(
+                                _getLoadingAsset(controller.value * _maxDragOffset)),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -341,9 +324,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
           },
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: StyleConstants.defaultPadding),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
                 child: Column(
                   children: [
                     SizedBox(height: 32.h),
@@ -360,37 +342,34 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                 child: isSearching
                     ? _buildSearchResults()
                     : NotificationListener<ScrollNotification>(
-                        onNotification: (notification) {
-                          if (notification is ScrollStartNotification) {
-                            FocusScope.of(context)
-                                .unfocus();
-                          }
-                          return false;
-                        },
-                        child: FutureBuilder<List<dynamic>>(
-                          future: futureData,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              if (isFirstLoading) {
-                                return SearchScreenSkeleton();
-                              } else {
-                                return _buildFriendContent(_previousData![0], _previousData![1]);
-                              }
-                            } else if (snapshot.hasError) {
-                              return GlobalErrorWidget();
-                            } else if (!snapshot.hasData ||
-                                snapshot.data!.isEmpty) {
-                              return Center(child: Text('No data available'));
-                            } else {
-                              final friendRequests = snapshot.data![0] as List<FriendReqList>;
-                              final friendSuggested = snapshot.data![1] as List<FriendSuggested>;
-                              _previousData = snapshot.data;
-                              return _buildFriendContent(friendRequests, friendSuggested);
-                            }
-                          },
-                        ),
-                      ),
+                  onNotification: (notification) {
+                    if (notification is ScrollStartNotification) {
+                      FocusScope.of(context).unfocus();
+                    }
+                    return false;
+                  },
+                  child: FutureBuilder<List<dynamic>>(
+                    future: futureData,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (isFirstLoading) {
+                          return SearchScreenSkeleton();
+                        } else {
+                          return _buildFriendContent(_previousData![0], _previousData![1]);
+                        }
+                      } else if (snapshot.hasError) {
+                        return GlobalErrorWidget();
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('No data available'));
+                      } else {
+                        final friendRequests = snapshot.data![0] as List<FriendReqList>;
+                        final friendSuggested = snapshot.data![1] as List<FriendSuggested>;
+                        _previousData = snapshot.data;
+                        return _buildFriendContent(friendRequests, friendSuggested);
+                      }
+                    },
+                  ),
+                ),
               ),
             ],
           ),
@@ -407,8 +386,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
         },
         onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
         child: Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
+          padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
           child: ListView(
             physics: AlwaysScrollableScrollPhysics(),
             children: [
@@ -449,6 +427,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
         ),
       );
     }
+
+    // 검색 결과가 있을 때도 키보드 처리 추가
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: StyleConstants.defaultPadding),
       child: Column(
@@ -468,85 +448,100 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
           ),
           SizedBox(height: 14.h),
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: userList.length + (showLottie ? 1 : 0),
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                if (index < userList.length) {
-                  final user = userList[index];
-                  return GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () async {
-                      FocusScope.of(context).unfocus();
-                      final selectedUser = userList[index];
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        isDismissible: true,
-                        enableDrag: false,
-                        builder: (BuildContext context) {
-                          return FutureBuilder<UserCheck>(
-                            future: userService.getUserCheck(userList[index].id),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Container(
-                                  height: 304.h,
-                                  child: Center(child: SizedBox.shrink()),
-                                );
-                              } else if (snapshot.hasError) {
-                                return Container(
-                                  height: 304.h,
-                                  child: Center(
-                                      child: Text('Error: ${snapshot.error}')),
-                                );
-                              } else {
-                                UserCheck userCheckData = snapshot.data!;
-                                if (userCheckData.status == 'BLOCKED') {
-                                  return SizedBox.shrink();
-                                }
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollStartNotification) {
+                  FocusScope.of(context).unfocus();
+                }
+                return false;
+              },
+              child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                behavior: HitTestBehavior.translucent,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: userList.length + (showLottie ? 1 : 0),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (index < userList.length) {
+                      final user = userList[index];
+                      return GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () async {
+                          if (_isModalLoading) return;
+                          FocusScope.of(context).unfocus();
+                          final selectedUser = userList[index];
+                          setState(() {
+                            _isModalLoading = true;
+                            _loadingIndex = index;
+                          });
+                          try {
+                            UserCheck userCheckData = await userService.getUserCheck(userList[index].id);
+                            setState(() {
+                              _isModalLoading = false;
+                              _loadingIndex = -1;
+                            });
+                            if (userCheckData.status == 'BLOCKED') {
+                              return;
+                            }
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              isDismissible: true,
+                              enableDrag: false,
+                              builder: (BuildContext context) {
                                 return ProfileBottomSheet(
                                   userCheckData: userCheckData,
                                   selectedUserId: selectedUser.id,
                                   friendService: friendService,
                                   onFriendStatusChanged: updateFriendStatus,
                                 );
-                              }
-                            },
-                          );
+                              },
+                            );
+                          } catch (error) {
+                            setState(() {
+                              _isModalLoading = false;
+                              _loadingIndex = -1;
+                            });
+                          }
                         },
+                        child: Stack(
+                          children: [
+                            Participantlistprofile(
+                              userName: user.name,
+                              userId: user.userId,
+                              profileImage: user.profileUrl,
+                            ),
+                          ],
+                        ),
                       );
-                    },
-                    child: Participantlistprofile(
-                      userName: user.name,
-                      userId: user.userId,
-                      profileImage: user.profileUrl,
-                    ),
-                  );
-                } else if (index == userList.length && showLottie) {
-                  return SizedBox(
-                    height: 72.h,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 14.h, bottom: 26.h),
-                      child: Center(
-                        child: SizedBox(
-                          height: 32,
-                          width: 32,
-                          child: Lottie.asset(
-                            controller: _lottieController,
-                            AnimationPath.loadingFeed,
-                            fit: BoxFit.contain,
-                            repeat: true,
-                            animate: true,
+                    } else if (index == userList.length && showLottie) {
+                      return SizedBox(
+                        height: 72.h,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 14.h, bottom: 26.h),
+                          child: Center(
+                            child: SizedBox(
+                              height: 32,
+                              width: 32,
+                              child: Lottie.asset(
+                                controller: _lottieController,
+                                AnimationPath.loadingFeed,
+                                fit: BoxFit.contain,
+                                repeat: true,
+                                animate: true,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                }
-                return SizedBox.shrink();
-              },
+                      );
+                    }
+                    return SizedBox.shrink();
+                  },
+                ),
+              ),
             ),
           ),
         ],
@@ -621,7 +616,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
           Column(
             children: List.generate(
               friendRequests.length >= 2 ? 2 : friendRequests.length,
-              (index) {
+                  (index) {
                 final friend = friendRequests[index];
                 return Padding(
                   padding: EdgeInsets.only(bottom: 24.h),
@@ -636,8 +631,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                           return FutureBuilder<UserCheck>(
                             future: userService.getUserCheck(friend.id),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
                                 return Container(
                                   height: 304.h,
                                   child: SizedBox.shrink(),
@@ -645,8 +639,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                               } else if (snapshot.hasError) {
                                 return Container(
                                   height: 304.h,
-                                  child: Center(
-                                      child: Text('Error: ${snapshot.error}')),
+                                  child: Center(child: Text('Error: ${snapshot.error}')),
                                 );
                               } else {
                                 UserCheck userCheckData = snapshot.data!;
@@ -675,21 +668,16 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                               : friend.createdAt,
                           currentTime),
                       acceptOnPressed: () async {
-                        await friendService
-                            .acceptFriend(Uuid(targetId: friend.id));
+                        await friendService.acceptFriend(Uuid(targetId: friend.id));
                         setState(() {
-                          friendRequests.removeWhere(
-                              (request) => request.id == friend.id);
-                          friendSuggested.removeWhere(
-                              (suggested) => suggested.id == friend.id);
+                          friendRequests.removeWhere((request) => request.id == friend.id);
+                          friendSuggested.removeWhere((suggested) => suggested.id == friend.id);
                         });
                       },
                       rejectOnPressed: () async {
-                        await friendService
-                            .rejectFriend(Uuid(targetId: friend.id));
+                        await friendService.rejectFriend(Uuid(targetId: friend.id));
                         setState(() {
-                          friendRequests.removeWhere(
-                              (request) => request.id == friend.id);
+                          friendRequests.removeWhere((request) => request.id == friend.id);
                         });
                       },
                     ),
@@ -746,14 +734,12 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
           Column(
             children: List.generate(
               friendSuggested.length,
-              (index) {
+                  (index) {
                 final friend = friendSuggested[index];
                 _friendProvider.userStatusList?.add({'id': friend.id, 'status': 'NONE'});
-                print('스테이터스: ${_friendProvider.userStatusList?[0]}');
                 return Padding(
                   padding: EdgeInsets.only(
-                      bottom:
-                      index == friendSuggested.length - 1 ? 0 : 24.h),
+                      bottom: index == friendSuggested.length - 1 ? 0 : 24.h),
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () {
@@ -766,8 +752,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                           return FutureBuilder<UserCheck>(
                             future: userService.getUserCheck(friend.id),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
                                 return Container(
                                   height: 304.h,
                                   child: SizedBox.shrink(),
@@ -775,9 +760,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                               } else if (snapshot.hasError) {
                                 return Container(
                                   height: 304.h,
-                                  child: Center(
-                                      child: Text(
-                                          'Error: ${snapshot.error}')),
+                                  child: Center(child: Text('Error: ${snapshot.error}')),
                                 );
                               } else {
                                 UserCheck userCheckData = snapshot.data!;
@@ -788,8 +771,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                                   userCheckData: userCheckData,
                                   selectedUserId: friend.id,
                                   friendService: friendService,
-                                  onFriendStatusChanged:
-                                  updateFriendStatus,
+                                  onFriendStatusChanged: updateFriendStatus,
                                 );
                               }
                             },
@@ -800,8 +782,7 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                     child: SuggestedFriendProfile(
                       profileImage: friend.profileUrl,
                       userName: friend.name,
-                      mutualFriendCount:
-                      friend.mutualFriendCount.toString(),
+                      mutualFriendCount: friend.mutualFriendCount.toString(),
                       userId: friend.id,
                       requestFriend: friendService.requestFriend,
                       deleteFriend: friendService.deleteFriend,
@@ -809,16 +790,12 @@ class _FriendSearchScreenState extends State<FriendSearchScreen>
                         // 필요한 경우 상태 변경 처리
                       },
                       onReject: () async {
-                        final prefs =
-                        await SharedPreferences.getInstance();
-                        List<String> delSugList =
-                            prefs.getStringList('delSugList') ?? [];
+                        final prefs = await SharedPreferences.getInstance();
+                        List<String> delSugList = prefs.getStringList('delSugList') ?? [];
                         delSugList.add(friend.id);
-                        await prefs.setStringList(
-                            'delSugList', delSugList);
+                        await prefs.setStringList('delSugList', delSugList);
                         setState(() {
-                          friendSuggested.removeWhere(
-                                  (item) => item.id == friend.id);
+                          friendSuggested.removeWhere((item) => item.id == friend.id);
                         });
                       },
                     ),
